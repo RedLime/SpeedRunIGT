@@ -6,7 +6,6 @@ import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -64,7 +63,7 @@ public class Options {
                 if (!check) return;
             }
 
-            Files.write(config.toPath(), ("timerPos:"+timerPos.name()).getBytes(StandardCharsets.UTF_8));
+            Files.writeString(config.toPath(), "timerPos:"+timerPos.name());
         } catch (IOException e) {
             e.printStackTrace();
         }

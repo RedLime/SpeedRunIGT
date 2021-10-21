@@ -11,6 +11,7 @@ public class InGameTimer {
     @NotNull
     public static InGameTimer INSTANCE = new InGameTimer();
 
+    private boolean isStart = false;
     private long startTime = 0;
     private long endTime = 0;
     private long pauseTime = 0;
@@ -23,7 +24,7 @@ public class InGameTimer {
      * Start the Timer, Trigger when player to join(created) the world
      */
     public void start() {
-        this.startTime = System.currentTimeMillis();
+        this.startTime = 0;
         this.pauseTime = 0;
         this.endTime = 0;
         this.setPause(true, TimerStatus.IDLE);
@@ -34,6 +35,7 @@ public class InGameTimer {
      */
     public void end() {
         pauseStartTime = 0;
+        this.isStart = false;
         this.setStatus(TimerStatus.NONE);
     }
 
@@ -68,8 +70,12 @@ public class InGameTimer {
                 this.setStatus(toPause);
             }
         } else {
-            if (this.isPause()) {
+            if (this.isPause() && this.isStart) {
                 this.pauseTime += System.currentTimeMillis() - this.pauseStartTime;
+            }
+            if (!this.isStart) {
+                this.isStart = true;
+                this.startTime = System.currentTimeMillis();
             }
             this.pauseStartTime = 0;
             this.setStatus(TimerStatus.RUNNING);
@@ -84,13 +90,17 @@ public class InGameTimer {
         return this.getStatus() == TimerStatus.COMPLETED ? this.endTime : System.currentTimeMillis();
     }
 
+    public long getStartTime() {
+        return this.isStart ? startTime : System.currentTimeMillis();
+    }
+
     public long getRealTimeAttack() {
-        return this.getStatus() == TimerStatus.NONE ? 0 : this.getEndTime() - this.startTime;
+        return this.getStatus() == TimerStatus.NONE ? 0 : this.getEndTime() - this.getStartTime();
     }
 
     public long getInGameTime() {
-        return this.getStatus() == TimerStatus.NONE ? 0 : this.getEndTime() - this.startTime - this.pauseTime
-                - (this.isPause() ? System.currentTimeMillis() - pauseStartTime : 0);
+        return this.getStatus() == TimerStatus.NONE ? 0 : this.getEndTime() - this.getStartTime() - this.pauseTime
+                - (this.isPause() && this.isStart ? System.currentTimeMillis() - pauseStartTime : 0);
     }
 
     public static String timeToStringFormat(long time) {

@@ -9,19 +9,20 @@ import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.SaveLevelScreen;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.options.GameOptions;
-import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.option.GameOptions;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.render.LightmapTextureManager;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.registry.RegistryTracker;
+import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.world.gen.GeneratorOptions;
 import net.minecraft.world.level.LevelInfo;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -39,25 +40,21 @@ public abstract class MinecraftClientMixin {
 
     @Shadow public abstract boolean isInSingleplayer();
 
-    @Shadow @Final private static Logger LOGGER;
-
-    @Shadow @Final public GameOptions options;
     @Shadow @Final public TextRenderer textRenderer;
 
     @Shadow public abstract boolean isPaused();
 
     @Shadow @Nullable public Screen currentScreen;
     @Shadow @Final private Window window;
+    @Shadow @Final public GameOptions options;
     private static String lastWorldName = null;
     private static boolean lastWorldOpen = false;
 
     private @NotNull
     final InGameTimer timer = InGameTimer.INSTANCE;
 
-    @Inject(at = @At("HEAD"), method = "method_29607(Ljava/lang/String;Lnet/minecraft/world/level/LevelInfo;Lnet/minecraft/util/registry/RegistryTracker$Modifiable;Lnet/minecraft/world/gen/GeneratorOptions;)V")
-    public void onCreate(String worldName, LevelInfo levelInfo, RegistryTracker.Modifiable registryTracker, GeneratorOptions generatorOptions, CallbackInfo ci) {
-        LOGGER.log(Level.INFO, "world create");
-
+    @Inject(at = @At("HEAD"), method = "createWorld")
+    public void onCreate(String worldName, LevelInfo levelInfo, DynamicRegistryManager.Impl registryTracker, GeneratorOptions generatorOptions, CallbackInfo ci) {
         if (timer.getStatus() != TimerStatus.NONE) {
             timer.end();
         }
@@ -67,14 +64,15 @@ public abstract class MinecraftClientMixin {
 
     @Inject(at = @At("HEAD"), method = "startIntegratedServer(Ljava/lang/String;)V")
     public void onWorldOpen(String worldName, CallbackInfo ci) {
-        LOGGER.log(Level.INFO, "world open" + lastWorldOpen);
         lastWorldOpen = worldName.equals(lastWorldName);
+        if (!lastWorldOpen) {
+            timer.end();
+        }
     }
 
     @Inject(at = @At("HEAD"), method = "joinWorld")
     public void onJoin(ClientWorld world, CallbackInfo ci) {
         if (!isInSingleplayer()) return;
-        LOGGER.log(Level.INFO, "world join");
 
         if (this.timer.getStatus() == TimerStatus.NONE && lastWorldOpen) {
             this.timer.start();
@@ -85,8 +83,6 @@ public abstract class MinecraftClientMixin {
 
     @Inject(at = @At("HEAD"), method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V")
     public void onDisconnect(Screen screen, CallbackInfo ci) {
-        LOGGER.log(Level.INFO, "world disconnect");
-
         if (this.timer.getStatus() != TimerStatus.NONE && screen instanceof SaveLevelScreen) {
             if (this.timer.getStatus() == TimerStatus.COMPLETED) {
                 this.timer.end();
@@ -129,36 +125,26 @@ public abstract class MinecraftClientMixin {
                 MutableText igt = new LiteralText("IGT: ").append(new LiteralText(InGameTimer.timeToStringFormat(timer.getInGameTime())));
                 MutableText rta = new LiteralText("RTA: ").append(new LiteralText(InGameTimer.timeToStringFormat(timer.getRealTimeAttack())));
                 switch (pos) {
-                    case LEFT_TOP:
-                        y = 12;
-                        break;
-                    case RIGHT_BOTTOM:
+                    case LEFT_TOP -> y = 12;
+                    case RIGHT_BOTTOM -> {
                         x = window.getScaledWidth() - 12 - this.textRenderer.getWidth(rta);
                         y = window.getScaledHeight() - 32;
-                        break;
-                    case RIGHT_TOP:
+                    }
+                    case RIGHT_TOP -> {
                         x = window.getScaledWidth() - 12 - this.textRenderer.getWidth(rta);
                         y = 12;
-                        break;
+                    }
                 }
                 if ((!this.isPaused() || this.currentScreen instanceof GameMenuScreen) && !(this.currentScreen instanceof ChatScreen)) {
-                    drawOutLine(this.textRenderer, matrixStack, x, y+10, rta, Formatting.AQUA);
-                    drawOutLine(this.textRenderer, matrixStack, x, y, igt, Formatting.YELLOW);
-                    //drawOutLine(this.textRenderer, matrixStack, x, y-10, new LiteralText(timer.getStatus().name()), Formatting.RED);
+                    matrixStack.translate(0, 0, 1000);
+                    VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(Tessellator.getInstance().getBuffer());
+                    textRenderer.drawWithOutline(rta.formatted(Formatting.AQUA).asOrderedText(),
+                            x, y+10, 16777215, 0, matrixStack.peek().getModel(), immediate, LightmapTextureManager.MAX_LIGHT_COORDINATE);
+                    textRenderer.drawWithOutline(igt.formatted(Formatting.YELLOW).asOrderedText(),
+                            x, y, 16777215, 0, matrixStack.peek().getModel(), immediate, LightmapTextureManager.MAX_LIGHT_COORDINATE);
+                    immediate.draw();
                 }
             }
         }
-    }
-
-    private static void drawOutLine(TextRenderer textRenderer, MatrixStack matrixStack, int x, int y, MutableText text, Formatting color) {
-        textRenderer.draw(matrixStack, text, (float)x + 1, (float)y + 1, 0);
-        textRenderer.draw(matrixStack, text, (float)x + 1, (float)y, 0);
-        textRenderer.draw(matrixStack, text, (float)x + 1, (float)y - 1, 0);
-        textRenderer.draw(matrixStack, text, (float)x, (float)y - 1, 0);
-        textRenderer.draw(matrixStack, text, (float)x, (float)y + 1, 0);
-        textRenderer.draw(matrixStack, text, (float)x - 1, (float)y + 1, 0);
-        textRenderer.draw(matrixStack, text, (float)x - 1, (float)y, 0);
-        textRenderer.draw(matrixStack, text, (float)x - 1, (float)y - 1, 0);
-        textRenderer.draw(matrixStack, text.formatted(color), (float)x, (float)y, 16777215);
     }
 }

@@ -43,18 +43,18 @@ public class SpeedRunOptionScreen extends Screen {
         for (ButtonWidget button : buttons) {
             button.x = width / 2 - 155 + buttonCount % 2 * 160;
             button.y = height / 6 - 12 + 24 * (buttonCount / 2);
-            addButton(button);
+            addDrawableChild(button);
             buttonCount++;
         }
 
-        addButton(new ButtonWidget(width / 2 - 100, height / 6 + 168, 200, 20, ScreenTexts.DONE, (ButtonWidget button) -> {
-            if (client != null) client.openScreen(parent);
+        addDrawableChild(new ButtonWidget(width / 2 - 100, height / 6 + 168, 200, 20, ScreenTexts.DONE, (ButtonWidget button) -> {
+            if (client != null) client.setScreen(parent);
         }));
     }
 
     @Override
     public void onClose() {
-        if (this.client != null) this.client.openScreen(parent);
+        if (this.client != null) this.client.setScreen(parent);
     }
 
     private static Options.TimerPosition getTimePosNext(Options.TimerPosition tp) {
@@ -65,7 +65,7 @@ public class SpeedRunOptionScreen extends Screen {
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         this.renderBackground(matrices);
-        this.drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 15, 16777215);
+        drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 15, 16777215);
         super.render(matrices, mouseX, mouseY, delta);
     }
 }
