@@ -1,9 +1,9 @@
-# Fabric Example Mod
+# SpeedRun IGT
 
-## Setup
+## Features
+- Add Timer with RTA, IGT in Minecraft
+- Configure Timer Position (Hide / Left & Top / Left & Bottom / Right & Top / Right & Bottom)
+
+## Download
 
 For setup instructions please see the [fabric wiki page](https://fabricmc.net/wiki/tutorial:setup) that relates to the IDE that you are using.
-
-## License
-
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.

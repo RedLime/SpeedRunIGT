@@ -4,7 +4,9 @@ import com.google.common.base.Charsets;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import net.fabricmc.loader.api.FabricLoader;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -44,7 +46,7 @@ public class Options {
                     }
                 }
 
-                timerPos = TimerPosition.valueOf(optionData.getOrDefault("timerPos", "NONE"));
+                timerPos = TimerPosition.valueOf(optionData.getOrDefault("timerPos", "LEFT_TOP"));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -58,16 +60,11 @@ public class Options {
             File config = new File(configPath.toFile(), "options.txt");
 
             if (!config.exists()) {
-                config.createNewFile();
+                boolean check = config.createNewFile();
+                if (!check) return;
             }
 
-            FileOutputStream fos = new FileOutputStream(config);
-            BufferedOutputStream bos = new BufferedOutputStream(fos);
-            DataOutputStream dos = new DataOutputStream(bos);
-
-            dos.writeUTF("timerPos:"+timerPos.name());
-
-            bos.close();
+            Files.write(config.toPath(), ("timerPos:"+timerPos.name()).getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             e.printStackTrace();
         }

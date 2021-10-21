@@ -3,20 +3,19 @@
   "id": "speedrunigt",
   "version": "${version}",
 
-  "name": "Speedrun IGT",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "SpeedrunIGT",
+  "description": "Displays the timer with RTA, IGT in Minecraft",
   "authors": [
     "RedLime"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "sources": "https://github.com/RedLime/SpeedRunIGT"
   },
 
-  "license": "CC0-1.0",
+  "license": "MIT",
   "icon": "assets/speedrunigt/icon.png",
 
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
     "client": [
       "com.redlimerl.speedrunigt.SpeedRunIGT"
@@ -29,8 +28,5 @@
   "depends": {
     "fabricloader": ">=0.11.3",
     "minecraft": "1.16.1"
-  },
-  "suggests": {
-    "another-mod": "*"
   }
 }
