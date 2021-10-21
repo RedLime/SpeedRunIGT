@@ -4,6 +4,7 @@
   "package": "com.redlimerl.speedrunigt.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "ClientPlayerEntityMixin",
     "CreditsScreenMixin",
     "MinecraftClientMixin",
     "MouseMixin",

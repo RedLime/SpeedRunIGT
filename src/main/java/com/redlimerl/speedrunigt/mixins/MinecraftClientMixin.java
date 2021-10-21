@@ -20,8 +20,6 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.registry.RegistryTracker;
 import net.minecraft.world.gen.GeneratorOptions;
 import net.minecraft.world.level.LevelInfo;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -39,8 +37,6 @@ public abstract class MinecraftClientMixin {
 
     @Shadow public abstract boolean isInSingleplayer();
 
-    @Shadow @Final private static Logger LOGGER;
-
     @Shadow @Final public GameOptions options;
     @Shadow @Final public TextRenderer textRenderer;
 
@@ -56,8 +52,6 @@ public abstract class MinecraftClientMixin {
 
     @Inject(at = @At("HEAD"), method = "method_29607(Ljava/lang/String;Lnet/minecraft/world/level/LevelInfo;Lnet/minecraft/util/registry/RegistryTracker$Modifiable;Lnet/minecraft/world/gen/GeneratorOptions;)V")
     public void onCreate(String worldName, LevelInfo levelInfo, RegistryTracker.Modifiable registryTracker, GeneratorOptions generatorOptions, CallbackInfo ci) {
-        LOGGER.log(Level.INFO, "world create");
-
         if (timer.getStatus() != TimerStatus.NONE) {
             timer.end();
         }
@@ -67,14 +61,15 @@ public abstract class MinecraftClientMixin {
 
     @Inject(at = @At("HEAD"), method = "startIntegratedServer(Ljava/lang/String;)V")
     public void onWorldOpen(String worldName, CallbackInfo ci) {
-        LOGGER.log(Level.INFO, "world open" + lastWorldOpen);
         lastWorldOpen = worldName.equals(lastWorldName);
+        if (!lastWorldOpen) {
+            timer.end();
+        }
     }
 
     @Inject(at = @At("HEAD"), method = "joinWorld")
     public void onJoin(ClientWorld world, CallbackInfo ci) {
         if (!isInSingleplayer()) return;
-        LOGGER.log(Level.INFO, "world join");
 
         if (this.timer.getStatus() == TimerStatus.NONE && lastWorldOpen) {
             this.timer.start();
@@ -85,8 +80,6 @@ public abstract class MinecraftClientMixin {
 
     @Inject(at = @At("HEAD"), method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V")
     public void onDisconnect(Screen screen, CallbackInfo ci) {
-        LOGGER.log(Level.INFO, "world disconnect");
-
         if (this.timer.getStatus() != TimerStatus.NONE && screen instanceof SaveLevelScreen) {
             if (this.timer.getStatus() == TimerStatus.COMPLETED) {
                 this.timer.end();
