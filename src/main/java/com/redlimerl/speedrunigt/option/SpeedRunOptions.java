@@ -2,7 +2,10 @@ package com.redlimerl.speedrunigt.option;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.apache.commons.io.FileUtils;
 
@@ -12,7 +15,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class SpeedRunOptions {
 
@@ -21,7 +26,6 @@ public class SpeedRunOptions {
     static final HashMap<Identifier, OptionArgument<?>> optionArguments = new HashMap<>();
 
     private static final HashMap<OptionArgument<?>, String> options = new HashMap<>();
-    static ArrayList<ClickableWidget> buttons = new ArrayList<>();
 
     public static final OptionArgument<TimerPosition> TIMER_POS = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "timerpos"), TimerPosition.LEFT_TOP) {
         @Override
@@ -90,9 +94,12 @@ public class SpeedRunOptions {
         }
     }
 
-    public void addOptionButton(ClickableWidget abstractButtonWidget) {
+    static ArrayList<ClickableWidget> buttons = new ArrayList<>();
+    static HashMap<Element, List<Text>> tooltips = new HashMap<>();
+    public static void addOptionButton(ClickableWidget abstractButtonWidget, Text... texts) {
         if (abstractButtonWidget.getWidth() != 150 || abstractButtonWidget.getHeight() != 20)
             throw new IllegalArgumentException("Only can be set to width to 150 and height to 20");
         buttons.add(abstractButtonWidget);
+        tooltips.put(abstractButtonWidget, Arrays.stream(texts).toList());
     }
 }

@@ -6,5 +6,6 @@
   "speedrunigt.option.timer_position.left_bottom": "Left & Bottom",
   "speedrunigt.option.timer_position.right_top": "Right & Top",
   "speedrunigt.option.timer_position.right_bottom": "Right & Bottom",
-  "speedrunigt.option.any_percent_mode": "Any% Mode (Pause credit)"
+  "speedrunigt.option.any_percent_mode": "Any% Mode",
+  "speedrunigt.option.any_percent_mode.description": "When a defeat the ender dragon, the timer will stop."
 }
