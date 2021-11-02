@@ -1,4 +1,4 @@
-package com.redlimerl.speedrunigt.config;
+package com.redlimerl.speedrunigt.option;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import net.fabricmc.loader.api.FabricLoader;
@@ -14,40 +14,12 @@ import java.util.HashMap;
 
 public class SpeedRunOptions {
 
-    public static abstract class OptionArgument<T> {
-        private final Identifier key;
-        private final T defaultValue;
-
-        public OptionArgument(Identifier key, T defaultValue) {
-            this.key = key;
-            this.defaultValue = defaultValue;
-        }
-
-        public T getDefaultValue() {
-            return defaultValue;
-        }
-
-        public Identifier getKey() {
-            return key;
-        }
-
-        public OptionArgument<T> register() {
-            optionArguments.put(this.getKey(), this);
-            return this;
-        }
-
-        public abstract T valueFromString(String string);
-
-        public abstract String valueToString(T value);
-    }
-
-    public enum TimerPosition {
-        NONE, LEFT_TOP, LEFT_BOTTOM, RIGHT_TOP, RIGHT_BOTTOM
-    }
-
-    private static final HashMap<Identifier, OptionArgument<?>> optionArguments = new HashMap<>();
-
     private static final Path configPath = FabricLoader.getInstance().getConfigDir().resolve(SpeedRunIGT.MOD_ID);
+
+    static final HashMap<Identifier, OptionArgument<?>> optionArguments = new HashMap<>();
+
+    private static final HashMap<OptionArgument<?>, String> options = new HashMap<>();
+
     public static final OptionArgument<TimerPosition> TIMER_POS = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "timerpos"), TimerPosition.LEFT_TOP) {
         @Override
         public TimerPosition valueFromString(String string) {
@@ -59,8 +31,6 @@ public class SpeedRunOptions {
             return value.name();
         }
     }.register();
-
-    public static HashMap<OptionArgument<?>, String> options = new HashMap<>();
 
     public static <T> T getOption(OptionArgument<T> option) {
         return options.containsKey(option) ? option.valueFromString(options.get(option)) : option.getDefaultValue();

@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.screen;
 
-import com.redlimerl.speedrunigt.config.SpeedRunOptions;
+import com.redlimerl.speedrunigt.option.SpeedRunOptions;
+import com.redlimerl.speedrunigt.option.TimerPosition;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -57,8 +58,8 @@ public class SpeedRunOptionScreen extends Screen {
         if (this.client != null) this.client.setScreen(parent);
     }
 
-    private static SpeedRunOptions.TimerPosition getTimePosNext(SpeedRunOptions.TimerPosition tp) {
-        SpeedRunOptions.TimerPosition[] v = SpeedRunOptions.TimerPosition.values();
+    private static TimerPosition getTimePosNext(TimerPosition tp) {
+        TimerPosition[] v = TimerPosition.values();
         return v[(tp.ordinal() + 1) % v.length];
     }
 

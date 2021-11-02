@@ -1,6 +1,6 @@
 package com.redlimerl.speedrunigt;
 
-import com.redlimerl.speedrunigt.config.SpeedRunOptions;
+import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
