@@ -2,6 +2,7 @@ package com.redlimerl.speedrunigt.option;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.util.Identifier;
 import org.apache.commons.io.FileUtils;
 
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SpeedRunOptions {
@@ -19,6 +21,7 @@ public class SpeedRunOptions {
     static final HashMap<Identifier, OptionArgument<?>> optionArguments = new HashMap<>();
 
     private static final HashMap<OptionArgument<?>, String> options = new HashMap<>();
+    static ArrayList<ClickableWidget> buttons = new ArrayList<>();
 
     public static final OptionArgument<TimerPosition> TIMER_POS = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "timerpos"), TimerPosition.LEFT_TOP) {
         @Override
@@ -41,7 +44,6 @@ public class SpeedRunOptions {
         save();
     }
 
-    @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
     public static void init() {
         try {
             Files.createDirectories(configPath);
@@ -74,5 +76,11 @@ public class SpeedRunOptions {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void addOptionButton(ClickableWidget abstractButtonWidget) {
+        if (abstractButtonWidget.getWidth() != 150 || abstractButtonWidget.getHeight() != 20)
+            throw new IllegalArgumentException("Only can be set to width to 150 and height to 20");
+        buttons.add(abstractButtonWidget);
     }
 }
