@@ -6,7 +6,7 @@
 - Add Timer with RTA, IGT in Minecraft
 - Configure Timer Position (Hide / Left & Top / Left & Bottom / Right & Top / Right & Bottom)
 - For third party mods API
-- 
+
 ## Downloads
 - [curseforge](https://www.curseforge.com/minecraft/mc-mods/speedrunigt)
 - [modrinth](https://modrinth.com/mod/speedrunigt/)
