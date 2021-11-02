@@ -1,6 +1,6 @@
 package com.redlimerl.speedrunigt;
 
-import com.redlimerl.speedrunigt.config.Options;
+import com.redlimerl.speedrunigt.config.SpeedRunOptions;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
@@ -14,6 +14,6 @@ public class SpeedRunIGT implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        Options.INSTANCE.init();
+        SpeedRunOptions.init();
     }
 }

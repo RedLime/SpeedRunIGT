@@ -1,6 +1,6 @@
 package com.redlimerl.speedrunigt.screen;
 
-import com.redlimerl.speedrunigt.config.Options;
+import com.redlimerl.speedrunigt.config.SpeedRunOptions;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -24,11 +24,11 @@ public class SpeedRunOptionScreen extends Screen {
         buttons.add(
                 new ButtonWidget(0, 0, 150, 20,
                         new TranslatableText("speedrunigt.option.timer_position").append(": ").append(
-                                new TranslatableText("speedrunigt.option.timer_position."+ Options.INSTANCE.getTimerPos().name().toLowerCase(Locale.ROOT))
+                                new TranslatableText("speedrunigt.option.timer_position."+ SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS).name().toLowerCase(Locale.ROOT))
                         ), (ButtonWidget button) -> {
-                        Options.INSTANCE.setTimerPos(getTimePosNext(Options.INSTANCE.getTimerPos()));
+                        SpeedRunOptions.setOption(SpeedRunOptions.TIMER_POS, getTimePosNext(SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS)));
                         button.setMessage(new TranslatableText("speedrunigt.option.timer_position").append(": ").append(
-                                new TranslatableText("speedrunigt.option.timer_position."+ Options.INSTANCE.getTimerPos().name().toLowerCase(Locale.ROOT))
+                                new TranslatableText("speedrunigt.option.timer_position."+ SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS).name().toLowerCase(Locale.ROOT))
                         ));
                     }
                 )
@@ -57,8 +57,8 @@ public class SpeedRunOptionScreen extends Screen {
         if (this.client != null) this.client.openScreen(parent);
     }
 
-    private static Options.TimerPosition getTimePosNext(Options.TimerPosition tp) {
-        Options.TimerPosition[] v = Options.TimerPosition.values();
+    private static SpeedRunOptions.TimerPosition getTimePosNext(SpeedRunOptions.TimerPosition tp) {
+        SpeedRunOptions.TimerPosition[] v = SpeedRunOptions.TimerPosition.values();
         return v[(tp.ordinal() + 1) % v.length];
     }
 
