@@ -6,6 +6,7 @@ import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -72,11 +73,11 @@ public class SpeedRunOptionScreen extends Screen {
         }));
 
         if (SpeedRunOptions.buttons.size() > 12) {
-            ButtonWidget nextButton = addDrawableChild(new ButtonWidget(width / 2 - 155 + 160 + 70, height / 6 + 144, 80, 20, new TranslatableText("createWorld.customize.custom.next"),
+            ButtonWidget nextButton = addDrawableChild(new ButtonWidget(width / 2 - 155 + 260, height / 6 + 144, 50, 20, new LiteralText(">>>"),
                     (ButtonWidget button) -> {
                         if (client != null) client.setScreen(new SpeedRunOptionScreen(parent, page + 1));
                     }));
-            ButtonWidget prevButton = addDrawableChild(new ButtonWidget(width / 2 - 155, height / 6 + 144, 80, 20, new TranslatableText("createWorld.customize.custom.prev"),
+            ButtonWidget prevButton = addDrawableChild(new ButtonWidget(width / 2 - 155, height / 6 + 144, 50, 20, new LiteralText("<<<"),
                     (ButtonWidget button) -> {
                         if (client != null) client.setScreen(new SpeedRunOptionScreen(parent, page - 1));
                     }));
