@@ -1,25 +1,36 @@
 package com.redlimerl.speedrunigt.option;
 
+import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 
+import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 public class SpeedRunOptionScreen extends Screen {
 
     private final Screen parent;
+    private final int page;
 
     public SpeedRunOptionScreen(Screen parent) {
+        this(parent, 0);
+    }
+
+    public SpeedRunOptionScreen(Screen parent, int page) {
         super(new TranslatableText("speedrunigt.title.options"));
+        this.page = page;
         this.parent = parent;
     }
 
     static {
-        SpeedRunOptions.buttons.add(
+        SpeedRunOptions.addOptionButton(
                 new ButtonWidget(0, 0, 150, 20,
                         new TranslatableText("speedrunigt.option.timer_position").append(": ").append(
                                 new TranslatableText("speedrunigt.option.timer_position."+ SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS).name().toLowerCase(Locale.ROOT))
@@ -31,7 +42,7 @@ public class SpeedRunOptionScreen extends Screen {
                 }
                 )
         );
-        SpeedRunOptions.buttons.add(
+        SpeedRunOptions.addOptionButton(
                 new ButtonWidget(0, 0, 150, 20,
                         new TranslatableText("speedrunigt.option.timer_position").append(": ").append(
                                 new TranslatableText("speedrunigt.option.timer_position."+ SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS).name().toLowerCase(Locale.ROOT))
@@ -41,7 +52,7 @@ public class SpeedRunOptionScreen extends Screen {
                             new TranslatableText("speedrunigt.option.timer_position."+ SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS).name().toLowerCase(Locale.ROOT))
                     ));
                 }
-                )
+                ), new TranslatableText("speedrunigt.option.any_percent_mode.description")
         );
     }
 
@@ -50,7 +61,7 @@ public class SpeedRunOptionScreen extends Screen {
         super.init();
 
         int buttonCount = 0;
-        for (AbstractButtonWidget button : SpeedRunOptions.buttons) {
+        for (AbstractButtonWidget button : SpeedRunOptions.buttons.subList(page*12, Math.min(SpeedRunOptions.buttons.size(), (page + 1) * 12))) {
             button.x = width / 2 - 155 + buttonCount % 2 * 160;
             button.y = height / 6 - 12 + 24 * (buttonCount / 2);
             addButton(button);
@@ -60,6 +71,23 @@ public class SpeedRunOptionScreen extends Screen {
         addButton(new ButtonWidget(width / 2 - 100, height / 6 + 168, 200, 20, ScreenTexts.DONE, (ButtonWidget button) -> {
             if (client != null) client.openScreen(parent);
         }));
+
+        if (SpeedRunOptions.buttons.size() > 12) {
+            ButtonWidget nextButton = addButton(new ButtonWidget(width / 2 - 155 + 260, height / 6 + 144, 50, 20, new LiteralText(">>>"),
+                    (ButtonWidget button) -> {
+                        if (client != null) client.openScreen(new SpeedRunOptionScreen(parent, page + 1));
+                    }));
+            ButtonWidget prevButton = addButton(new ButtonWidget(width / 2 - 155, height / 6 + 144, 50, 20, new LiteralText("<<<"),
+                    (ButtonWidget button) -> {
+                        if (client != null) client.openScreen(new SpeedRunOptionScreen(parent, page - 1));
+                    }));
+            if ((SpeedRunOptions.buttons.size() - 1) / 12 == page) {
+                nextButton.active = false;
+            }
+            if (page == 0) {
+                prevButton.active = false;
+            }
+        }
     }
 
     @Override
@@ -77,5 +105,11 @@ public class SpeedRunOptionScreen extends Screen {
         this.renderBackground(matrices);
         this.drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 15, 16777215);
         super.render(matrices, mouseX, mouseY, delta);
+
+        Optional<Element> e = this.hoveredElement(mouseX, mouseY);
+        if (e.isPresent()) {
+            List<Text> tooltips = SpeedRunOptions.tooltips.get(e.get());
+            if (tooltips != null && !tooltips.isEmpty()) this.renderTooltip(matrices, tooltips, mouseX, mouseY);
+        }
     }
 }
