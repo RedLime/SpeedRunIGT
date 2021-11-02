@@ -32,7 +32,7 @@ public class SpeedRunOptionScreen extends Screen {
     }
 
     static {
-        SpeedRunOptions.buttons.add(
+        SpeedRunOptions.addOptionButton(
                 new ButtonWidget(0, 0, 150, 20,
                         new TranslatableText("speedrunigt.option.timer_position").append(": ").append(
                                 new TranslatableText("speedrunigt.option.timer_position."+ SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS).name().toLowerCase(Locale.ROOT))
