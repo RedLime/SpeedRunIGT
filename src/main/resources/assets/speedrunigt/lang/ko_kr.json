@@ -5,5 +5,6 @@
   "speedrunigt.option.timer_position.left_top": "왼쪽 상단",
   "speedrunigt.option.timer_position.left_bottom": "왼쪽 하단",
   "speedrunigt.option.timer_position.right_top": "오른쪽 상단",
-  "speedrunigt.option.timer_position.right_bottom": "오른쪽 하단"
+  "speedrunigt.option.timer_position.right_bottom": "오른쪽 하단",
+  "speedrunigt.option.any_percent_mode": "Any% 모드"
 }

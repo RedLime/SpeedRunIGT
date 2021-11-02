@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.timer;
 
+import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public class InGameTimer {
     public void complete() {
         pauseStartTime = 0;
         this.endTime = System.currentTimeMillis();
-        this.setStatus(TimerStatus.COMPLETED);
+        if (SpeedRunOptions.getOption(SpeedRunOptions.ANY_PERCENT_MODE)) this.setStatus(TimerStatus.COMPLETED);
         for (Consumer<InGameTimer> onCompleteConsumer : onCompleteConsumers) {
             onCompleteConsumer.accept(this);
         }

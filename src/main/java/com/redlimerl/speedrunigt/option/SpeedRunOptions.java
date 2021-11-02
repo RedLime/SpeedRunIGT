@@ -35,6 +35,18 @@ public class SpeedRunOptions {
         }
     }.register();
 
+    public static final OptionArgument<Boolean> ANY_PERCENT_MODE = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "any_percent"), true) {
+        @Override
+        public Boolean valueFromString(String string) {
+            return Boolean.parseBoolean(string);
+        }
+
+        @Override
+        public String valueToString(Boolean value) {
+            return Boolean.toString(value);
+        }
+    }.register();
+
     public static <T> T getOption(OptionArgument<T> option) {
         return options.containsKey(option) ? option.valueFromString(options.get(option)) : option.getDefaultValue();
     }

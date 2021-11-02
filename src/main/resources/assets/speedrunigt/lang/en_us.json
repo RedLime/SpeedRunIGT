@@ -5,5 +5,6 @@
   "speedrunigt.option.timer_position.left_top": "Left & Top",
   "speedrunigt.option.timer_position.left_bottom": "Left & Bottom",
   "speedrunigt.option.timer_position.right_top": "Right & Top",
-  "speedrunigt.option.timer_position.right_bottom": "Right & Bottom"
+  "speedrunigt.option.timer_position.right_bottom": "Right & Bottom",
+  "speedrunigt.option.any_percent_mode": "Any% Mode"
 }
