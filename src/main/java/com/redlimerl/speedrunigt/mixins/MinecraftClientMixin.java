@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.mixins;
 
-import com.redlimerl.speedrunigt.config.SpeedRunOptions;
+import com.redlimerl.speedrunigt.option.SpeedRunOptions;
+import com.redlimerl.speedrunigt.option.TimerPosition;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import net.minecraft.client.MinecraftClient;
@@ -116,8 +117,8 @@ public abstract class MinecraftClientMixin {
     private void drawTimer(CallbackInfo ci) {
         if (!this.options.hudHidden && this.isInSingleplayer()) {
             MatrixStack matrixStack = new MatrixStack();
-            SpeedRunOptions.TimerPosition pos = SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS);
-            if (pos != SpeedRunOptions.TimerPosition.NONE && timer.getStatus() != TimerStatus.NONE) {
+            TimerPosition pos = SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS);
+            if (pos != TimerPosition.NONE && timer.getStatus() != TimerStatus.NONE) {
                 int x = 12, y = window.getScaledHeight() - 32;
                 MutableText igt = new LiteralText("IGT: ").append(new LiteralText(InGameTimer.timeToStringFormat(timer.getInGameTime())));
                 MutableText rta = new LiteralText("RTA: ").append(new LiteralText(InGameTimer.timeToStringFormat(timer.getRealTimeAttack())));
