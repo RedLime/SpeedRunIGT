@@ -1,19 +1,16 @@
-package com.redlimerl.speedrunigt.screen;
+package com.redlimerl.speedrunigt.option;
 
-import com.redlimerl.speedrunigt.option.SpeedRunOptions;
-import com.redlimerl.speedrunigt.option.TimerPosition;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
+import net.minecraft.client.gui.widget.AbstractButtonWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.TranslatableText;
 
-import java.util.ArrayList;
 import java.util.Locale;
 
 public class SpeedRunOptionScreen extends Screen {
 
-    public static ArrayList<ButtonWidget> buttons = new ArrayList<>();
     private final Screen parent;
 
     public SpeedRunOptionScreen(Screen parent) {
@@ -22,16 +19,28 @@ public class SpeedRunOptionScreen extends Screen {
     }
 
     static {
-        buttons.add(
+        SpeedRunOptions.buttons.add(
                 new ButtonWidget(0, 0, 150, 20,
                         new TranslatableText("speedrunigt.option.timer_position").append(": ").append(
                                 new TranslatableText("speedrunigt.option.timer_position."+ SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS).name().toLowerCase(Locale.ROOT))
                         ), (ButtonWidget button) -> {
-                        SpeedRunOptions.setOption(SpeedRunOptions.TIMER_POS, getTimePosNext(SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS)));
-                        button.setMessage(new TranslatableText("speedrunigt.option.timer_position").append(": ").append(
+                    SpeedRunOptions.setOption(SpeedRunOptions.TIMER_POS, getTimePosNext(SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS)));
+                    button.setMessage(new TranslatableText("speedrunigt.option.timer_position").append(": ").append(
+                            new TranslatableText("speedrunigt.option.timer_position."+ SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS).name().toLowerCase(Locale.ROOT))
+                    ));
+                }
+                )
+        );
+        SpeedRunOptions.buttons.add(
+                new ButtonWidget(0, 0, 150, 20,
+                        new TranslatableText("speedrunigt.option.timer_position").append(": ").append(
                                 new TranslatableText("speedrunigt.option.timer_position."+ SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS).name().toLowerCase(Locale.ROOT))
-                        ));
-                    }
+                        ), (ButtonWidget button) -> {
+                    SpeedRunOptions.setOption(SpeedRunOptions.TIMER_POS, getTimePosNext(SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS)));
+                    button.setMessage(new TranslatableText("speedrunigt.option.timer_position").append(": ").append(
+                            new TranslatableText("speedrunigt.option.timer_position."+ SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS).name().toLowerCase(Locale.ROOT))
+                    ));
+                }
                 )
         );
     }
@@ -41,7 +50,7 @@ public class SpeedRunOptionScreen extends Screen {
         super.init();
 
         int buttonCount = 0;
-        for (ButtonWidget button : buttons) {
+        for (AbstractButtonWidget button : SpeedRunOptions.buttons) {
             button.x = width / 2 - 155 + buttonCount % 2 * 160;
             button.y = height / 6 - 12 + 24 * (buttonCount / 2);
             addButton(button);
