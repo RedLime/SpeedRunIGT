@@ -71,7 +71,7 @@ public class SpeedRunOptionScreen extends Screen {
             if (client != null) client.setScreen(parent);
         }));
 
-        if (SpeedRunOptions.buttons.size() > 0) {
+        if (SpeedRunOptions.buttons.size() > 12) {
             ButtonWidget nextButton = addDrawableChild(new ButtonWidget(width / 2 - 155 + 160 + 70, height / 6 + 144, 80, 20, new TranslatableText("createWorld.customize.custom.next"),
                     (ButtonWidget button) -> {
                         if (client != null) client.setScreen(new SpeedRunOptionScreen(parent, page + 1));
