@@ -44,15 +44,13 @@ public class SpeedRunOptionScreen extends Screen {
         );
         SpeedRunOptions.addOptionButton(
                 new ButtonWidget(0, 0, 150, 20,
-                        new TranslatableText("speedrunigt.option.timer_position").append(": ").append(
-                                new TranslatableText("speedrunigt.option.timer_position."+ SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS).name().toLowerCase(Locale.ROOT))
-                        ), (ButtonWidget button) -> {
-                    SpeedRunOptions.setOption(SpeedRunOptions.TIMER_POS, getTimePosNext(SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS)));
-                    button.setMessage(new TranslatableText("speedrunigt.option.timer_position").append(": ").append(
-                            new TranslatableText("speedrunigt.option.timer_position."+ SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS).name().toLowerCase(Locale.ROOT))
-                    ));
-                }
-                ), new TranslatableText("speedrunigt.option.any_percent_mode.description")
+                        new TranslatableText("speedrunigt.option.any_percent_mode").append(": ").append(
+                                SpeedRunOptions.getOption(SpeedRunOptions.ANY_PERCENT_MODE) ? ScreenTexts.ON : ScreenTexts.OFF)
+                        , (ButtonWidget button) -> {
+                    SpeedRunOptions.setOption(SpeedRunOptions.ANY_PERCENT_MODE, !SpeedRunOptions.getOption(SpeedRunOptions.ANY_PERCENT_MODE));
+                    button.setMessage(new TranslatableText("speedrunigt.option.any_percent_mode").append(": ").append(
+                            SpeedRunOptions.getOption(SpeedRunOptions.ANY_PERCENT_MODE) ? ScreenTexts.ON : ScreenTexts.OFF));
+                }), new TranslatableText("speedrunigt.option.any_percent_mode.description")
         );
     }
 
