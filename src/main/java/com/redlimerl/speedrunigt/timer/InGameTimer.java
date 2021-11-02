@@ -2,6 +2,10 @@ package com.redlimerl.speedrunigt.timer;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 /**
  * In-game Timer class.
  * {@link TimerStatus}
@@ -10,6 +14,10 @@ public class InGameTimer {
 
     @NotNull
     public static InGameTimer INSTANCE = new InGameTimer();
+    private static final ArrayList<Consumer<InGameTimer>> onCompleteConsumers = new ArrayList<>();
+    public static void onComplete(Consumer<InGameTimer> supplier) {
+        onCompleteConsumers.add(supplier);
+    }
 
     private boolean isStart = false;
     private long startTime = 0;
@@ -47,6 +55,9 @@ public class InGameTimer {
         pauseStartTime = 0;
         this.endTime = System.currentTimeMillis();
         this.setStatus(TimerStatus.COMPLETED);
+        for (Consumer<InGameTimer> onCompleteConsumer : onCompleteConsumers) {
+            onCompleteConsumer.accept(this);
+        }
     }
 
     public @NotNull TimerStatus getStatus() {
