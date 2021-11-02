@@ -5,3 +5,6 @@
 ## Features
 - Add Timer with RTA, IGT in Minecraft
 - Configure Timer Position (Hide / Left & Top / Left & Bottom / Right & Top / Right & Bottom)
+
+## API
+[API Document](https://github.com/RedLime/SpeedRunIGT/wiki/SpeedRunIGT-API-Document)
