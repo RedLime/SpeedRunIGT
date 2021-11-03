@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * In-game Timer class.
@@ -34,6 +33,7 @@ public class InGameTimer {
      */
     public void start() {
         this.isStart = false;
+        this.pauseStartTime = 0;
         this.startTime = 0;
         this.pauseTime = 0;
         this.endTime = 0;
