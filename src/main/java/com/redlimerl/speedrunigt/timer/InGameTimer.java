@@ -33,6 +33,7 @@ public class InGameTimer {
      * Start the Timer, Trigger when player to join(created) the world
      */
     public void start() {
+        this.isStart = false;
         this.startTime = 0;
         this.pauseTime = 0;
         this.endTime = 0;
