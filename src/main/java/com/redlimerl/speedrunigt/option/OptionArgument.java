@@ -19,11 +19,6 @@ public abstract class OptionArgument<T> {
         return key;
     }
 
-    public OptionArgument<T> register() {
-        SpeedRunOptions.optionArguments.put(this.getKey(), this);
-        return this;
-    }
-
     public abstract T valueFromString(String string);
 
     public abstract String valueToString(T value);
