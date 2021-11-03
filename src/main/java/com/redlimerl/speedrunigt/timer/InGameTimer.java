@@ -33,7 +33,7 @@ public class InGameTimer {
      */
     public void start() {
         this.isStart = false;
-        pauseStartTime = 0;
+        this.pauseStartTime = 0;
         this.startTime = 0;
         this.pauseTime = 0;
         this.endTime = 0;
