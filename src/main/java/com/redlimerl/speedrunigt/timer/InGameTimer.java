@@ -44,8 +44,10 @@ public class InGameTimer {
      * End the Timer, Trigger when player leave
      */
     public void end() {
-        pauseStartTime = 0;
-        this.isStart = false;
+        this.pauseStartTime = 0;
+        this.startTime = 0;
+        this.pauseTime = 0;
+        this.endTime = 0;
         this.setStatus(TimerStatus.NONE);
     }
 
@@ -67,7 +69,7 @@ public class InGameTimer {
     }
 
     public void setStatus(@NotNull TimerStatus status) {
-        if (this.getStatus() == TimerStatus.COMPLETED) return;
+        if (this.getStatus() == TimerStatus.COMPLETED && status != TimerStatus.NONE) return;
         this.status = status;
     }
 
