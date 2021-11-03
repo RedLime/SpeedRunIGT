@@ -30,7 +30,7 @@ public class SpeedRunOptions {
 
     static final HashMap<Identifier, OptionArgument<?>> optionArguments = new HashMap<>();
 
-    private static final HashMap<OptionArgument<?>, String> options = new HashMap<>();
+    private static final HashMap<Identifier, String> options = new HashMap<>();
 
     public static final OptionArgument<TimerPosition> TIMER_POS = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "timerpos"), TimerPosition.LEFT_TOP) {
         @Override
@@ -42,7 +42,7 @@ public class SpeedRunOptions {
         public String valueToString(TimerPosition value) {
             return value.name();
         }
-    }.register();
+    };
 
     public static final OptionArgument<Boolean> ANY_PERCENT_MODE = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "any_percent"), true) {
         @Override
@@ -54,14 +54,14 @@ public class SpeedRunOptions {
         public String valueToString(Boolean value) {
             return Boolean.toString(value);
         }
-    }.register();
+    };
 
     public static <T> T getOption(OptionArgument<T> option) {
-        return options.containsKey(option) ? option.valueFromString(options.get(option)) : option.getDefaultValue();
+        return options.containsKey(option.getKey()) ? option.valueFromString(options.get(option.getKey())) : option.getDefaultValue();
     }
 
     public static <T> void setOption(OptionArgument<T> option, T value) {
-        options.put(option, option.valueToString(value));
+        options.put(option.getKey(), option.valueToString(value));
         save();
     }
 
@@ -76,8 +76,7 @@ public class SpeedRunOptions {
                 for (String s : optionData.split("\n")) {
                     String[] od = s.split(":", 3);
                     if (od.length == 3) {
-                        OptionArgument<?> id = optionArguments.get(new Identifier(od[0], od[1]));
-                        options.put(id, od[2]);
+                        options.put(new Identifier(od[0], od[1]), od[2]);
                     }
                 }
             }
@@ -92,7 +91,7 @@ public class SpeedRunOptions {
 
             File config = new File(configPath.toFile(), "options.txt");
             StringBuilder stringBuilder = new StringBuilder();
-            options.forEach((key, value) -> stringBuilder.append(key.getKey().toString()).append(":").append(value).append("\n"));
+            options.forEach((key, value) -> stringBuilder.append(key.toString()).append(":").append(value).append("\n"));
             FileUtils.writeStringToFile(config, stringBuilder.length() == 0 ? "" : stringBuilder.substring(0, stringBuilder.length()-1), StandardCharsets.UTF_8);
         } catch (IOException e) {
             e.printStackTrace();
