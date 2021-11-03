@@ -3,6 +3,7 @@ package com.redlimerl.speedrunigt.option;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -18,6 +19,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class SpeedRunOptions {
 
@@ -94,12 +99,10 @@ public class SpeedRunOptions {
         }
     }
 
-    static ArrayList<ClickableWidget> buttons = new ArrayList<>();
-    static HashMap<Element, List<Text>> tooltips = new HashMap<>();
-    public static void addOptionButton(ClickableWidget abstractButtonWidget, Text... texts) {
-        if (abstractButtonWidget.getWidth() != 150 || abstractButtonWidget.getHeight() != 20)
-            throw new IllegalArgumentException("Only can be set to width to 150 and height to 20");
-        buttons.add(abstractButtonWidget);
-        tooltips.put(abstractButtonWidget, Arrays.stream(texts).toList());
+    static ArrayList<Function<Screen, ClickableWidget>> buttons = new ArrayList<>();
+    static HashMap<Function<Screen, ClickableWidget>, List<Text>> tooltips = new HashMap<>();
+    public static void addOptionButton(Function<Screen, ClickableWidget> consumer, Text... texts) {
+        buttons.add(consumer);
+        tooltips.put(consumer, Arrays.stream(texts).toList());
     }
 }

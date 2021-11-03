@@ -7,14 +7,11 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 
 public class SpeedRunOptionScreen extends Screen {
 
@@ -32,36 +29,39 @@ public class SpeedRunOptionScreen extends Screen {
     }
 
     static {
-        SpeedRunOptions.addOptionButton(
-                new ButtonWidget(0, 0, 150, 20,
-                        new TranslatableText("speedrunigt.option.timer_position").append(": ").append(
-                                new TranslatableText("speedrunigt.option.timer_position."+ SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS).name().toLowerCase(Locale.ROOT))
-                        ), (ButtonWidget button) -> {
-                    SpeedRunOptions.setOption(SpeedRunOptions.TIMER_POS, getTimePosNext(SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS)));
-                    button.setMessage(new TranslatableText("speedrunigt.option.timer_position").append(": ").append(
-                            new TranslatableText("speedrunigt.option.timer_position."+ SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS).name().toLowerCase(Locale.ROOT))
-                    ));
-                }
-                )
-        );
-        SpeedRunOptions.addOptionButton(
-                new ButtonWidget(0, 0, 150, 20,
-                        new TranslatableText("speedrunigt.option.any_percent_mode").append(": ").append(
-                                SpeedRunOptions.getOption(SpeedRunOptions.ANY_PERCENT_MODE) ? ScreenTexts.ON : ScreenTexts.OFF)
-                        , (ButtonWidget button) -> {
-                    SpeedRunOptions.setOption(SpeedRunOptions.ANY_PERCENT_MODE, !SpeedRunOptions.getOption(SpeedRunOptions.ANY_PERCENT_MODE));
-                    button.setMessage(new TranslatableText("speedrunigt.option.any_percent_mode").append(": ").append(
-                            SpeedRunOptions.getOption(SpeedRunOptions.ANY_PERCENT_MODE) ? ScreenTexts.ON : ScreenTexts.OFF));
-                }), new TranslatableText("speedrunigt.option.any_percent_mode.description")
-        );
+        SpeedRunOptions.addOptionButton(screen -> new ButtonWidget(0, 0, 150, 20,
+                new TranslatableText("speedrunigt.option.timer_position").append(": ").append(
+                        new TranslatableText("speedrunigt.option.timer_position."+ SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS).name().toLowerCase(Locale.ROOT))
+                ), (ButtonWidget button) -> {
+            SpeedRunOptions.setOption(SpeedRunOptions.TIMER_POS, getTimePosNext(SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS)));
+            button.setMessage(new TranslatableText("speedrunigt.option.timer_position").append(": ").append(
+                    new TranslatableText("speedrunigt.option.timer_position."+ SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS).name().toLowerCase(Locale.ROOT))
+            ));
+        }));
+
+        SpeedRunOptions.addOptionButton(screen -> new ButtonWidget(0, 0, 150, 20,
+                new TranslatableText("speedrunigt.option.any_percent_mode").append(": ").append(
+                        SpeedRunOptions.getOption(SpeedRunOptions.ANY_PERCENT_MODE) ? ScreenTexts.ON : ScreenTexts.OFF)
+                , (ButtonWidget button) -> {
+            SpeedRunOptions.setOption(SpeedRunOptions.ANY_PERCENT_MODE, !SpeedRunOptions.getOption(SpeedRunOptions.ANY_PERCENT_MODE));
+            button.setMessage(new TranslatableText("speedrunigt.option.any_percent_mode").append(": ").append(
+                    SpeedRunOptions.getOption(SpeedRunOptions.ANY_PERCENT_MODE) ? ScreenTexts.ON : ScreenTexts.OFF));
+        }), new TranslatableText("speedrunigt.option.any_percent_mode.description"));
     }
 
+    static HashMap<Element, List<Text>> tooltips = new HashMap<>();
     @Override
     protected void init() {
         super.init();
 
         int buttonCount = 0;
-        for (ClickableWidget button : SpeedRunOptions.buttons.subList(page*12, Math.min(SpeedRunOptions.buttons.size(), (page + 1) * 12))) {
+        for (Function<Screen, ClickableWidget> function : SpeedRunOptions.buttons.subList(page*12, Math.min(SpeedRunOptions.buttons.size(), (page + 1) * 12))) {
+            ClickableWidget button = function.apply(this);
+            tooltips.put(button, SpeedRunOptions.tooltips.get(function));
+
+            if (button.getWidth() != 150 || button.getHeight() != 20)
+                throw new IllegalArgumentException("Only can be set to width to 150 and height to 20");
+
             button.x = width / 2 - 155 + buttonCount % 2 * 160;
             button.y = height / 6 - 12 + 24 * (buttonCount / 2);
             addDrawableChild(button);
@@ -108,8 +108,8 @@ public class SpeedRunOptionScreen extends Screen {
 
         Optional<Element> e = this.hoveredElement(mouseX, mouseY);
         if (e.isPresent()) {
-            List<Text> tooltips = SpeedRunOptions.tooltips.get(e.get());
-            if (tooltips != null && !tooltips.isEmpty()) this.renderTooltip(matrices, tooltips, mouseX, mouseY);
+            List<Text> tts = tooltips.get(e.get());
+            if (tts != null && !tts.isEmpty()) this.renderTooltip(matrices, tts, mouseX, mouseY);
         }
     }
 }
