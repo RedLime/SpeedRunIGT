@@ -10,9 +10,11 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class SpeedRunOptionScreen extends Screen {
 
@@ -30,7 +32,7 @@ public class SpeedRunOptionScreen extends Screen {
     }
 
     static {
-        SpeedRunOptions.addOptionButton(
+        SpeedRunOptions.addOptionButton(screen ->
                 new ButtonWidget(0, 0, 150, 20,
                         new TranslatableText("speedrunigt.option.timer_position").append(": ").append(
                                 new TranslatableText("speedrunigt.option.timer_position."+ SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS).name().toLowerCase(Locale.ROOT))
@@ -42,7 +44,7 @@ public class SpeedRunOptionScreen extends Screen {
                 }
                 )
         );
-        SpeedRunOptions.addOptionButton(
+        SpeedRunOptions.addOptionButton(screen ->
                 new ButtonWidget(0, 0, 150, 20,
                         new TranslatableText("speedrunigt.option.any_percent_mode").append(": ").append(
                                 SpeedRunOptions.getOption(SpeedRunOptions.ANY_PERCENT_MODE) ? ScreenTexts.ON : ScreenTexts.OFF)
@@ -54,12 +56,16 @@ public class SpeedRunOptionScreen extends Screen {
         );
     }
 
+    static HashMap<Element, List<Text>> tooltips = new HashMap<>();
     @Override
     protected void init() {
         super.init();
 
         int buttonCount = 0;
-        for (AbstractButtonWidget button : SpeedRunOptions.buttons.subList(page*12, Math.min(SpeedRunOptions.buttons.size(), (page + 1) * 12))) {
+        for (Function<Screen, AbstractButtonWidget> function : SpeedRunOptions.buttons.subList(page*12, Math.min(SpeedRunOptions.buttons.size(), (page + 1) * 12))) {
+            AbstractButtonWidget button = function.apply(this);
+            tooltips.put(button, SpeedRunOptions.tooltips.get(function));
+
             button.x = width / 2 - 155 + buttonCount % 2 * 160;
             button.y = height / 6 - 12 + 24 * (buttonCount / 2);
             addButton(button);
@@ -106,8 +112,8 @@ public class SpeedRunOptionScreen extends Screen {
 
         Optional<Element> e = this.hoveredElement(mouseX, mouseY);
         if (e.isPresent()) {
-            List<Text> tooltips = SpeedRunOptions.tooltips.get(e.get());
-            if (tooltips != null && !tooltips.isEmpty()) this.renderTooltip(matrices, tooltips, mouseX, mouseY);
+            List<Text> tts = tooltips.get(e.get());
+            if (tts != null && !tts.isEmpty()) this.renderTooltip(matrices, tts, mouseX, mouseY);
         }
     }
 }
