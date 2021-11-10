@@ -4,12 +4,14 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.function.Consumer;
 
 /**
  * In-game Timer class.
  * {@link TimerStatus}
  */
+@SuppressWarnings("unused")
 public class InGameTimer {
 
     @NotNull
@@ -28,6 +30,8 @@ public class InGameTimer {
     @NotNull
     private TimerStatus status = TimerStatus.NONE;
 
+    private final HashMap<Integer, Integer> moreData = new HashMap<>();
+
     /**
      * Start the Timer, Trigger when player to join(created) the world
      */
@@ -37,6 +41,7 @@ public class InGameTimer {
         this.startTime = 0;
         this.pauseTime = 0;
         this.endTime = 0;
+        this.moreData.clear();
         this.setPause(true, TimerStatus.IDLE);
     }
 
@@ -56,12 +61,26 @@ public class InGameTimer {
      * End the Timer, Trigger when Complete Ender Dragon
      */
     public void complete() {
+        if (this.getStatus() == TimerStatus.COMPLETED) return;
+
         pauseStartTime = 0;
         this.endTime = System.currentTimeMillis();
-        if (SpeedRunOptions.getOption(SpeedRunOptions.ANY_PERCENT_MODE)) this.setStatus(TimerStatus.COMPLETED);
+        this.setStatus(TimerStatus.COMPLETED);
         for (Consumer<InGameTimer> onCompleteConsumer : onCompleteConsumers) {
             onCompleteConsumer.accept(this);
         }
+    }
+
+    public @NotNull RunCategory getCategory() {
+        return SpeedRunOptions.getOption(SpeedRunOptions.TIMER_CATEGORY);
+    }
+
+    public int getMoreData(int key) {
+        return moreData.getOrDefault(key, 0);
+    }
+
+    public void updateMoreData(int key, int value) {
+        moreData.put(key, value);
     }
 
     public @NotNull TimerStatus getStatus() {

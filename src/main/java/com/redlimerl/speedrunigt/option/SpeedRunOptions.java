@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.option;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.timer.RunCategory;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -23,33 +24,7 @@ public class SpeedRunOptions {
 
     private static final Path configPath = FabricLoader.getInstance().getConfigDir().resolve(SpeedRunIGT.MOD_ID);
 
-    static final HashMap<Identifier, OptionArgument<?>> optionArguments = new HashMap<>();
-
     private static final HashMap<Identifier, String> options = new HashMap<>();
-
-    public static final OptionArgument<TimerPosition> TIMER_POS = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "timerpos"), TimerPosition.LEFT_TOP) {
-        @Override
-        public TimerPosition valueFromString(String string) {
-            return TimerPosition.valueOf(string);
-        }
-
-        @Override
-        public String valueToString(TimerPosition value) {
-            return value.name();
-        }
-    };
-
-    public static final OptionArgument<Boolean> ANY_PERCENT_MODE = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "any_percent"), true) {
-        @Override
-        public Boolean valueFromString(String string) {
-            return Boolean.parseBoolean(string);
-        }
-
-        @Override
-        public String valueToString(Boolean value) {
-            return Boolean.toString(value);
-        }
-    };
 
     public static <T> T getOption(OptionArgument<T> option) {
         return options.containsKey(option.getKey()) ? option.valueFromString(options.get(option.getKey())) : option.getDefaultValue();
@@ -99,4 +74,30 @@ public class SpeedRunOptions {
         buttons.add(consumer);
         tooltips.put(consumer, Arrays.stream(texts).toList());
     }
+
+
+
+    public static final OptionArgument<TimerPosition> TIMER_POS = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "timerpos"), TimerPosition.LEFT_TOP) {
+        @Override
+        public TimerPosition valueFromString(String string) {
+            return TimerPosition.valueOf(string);
+        }
+
+        @Override
+        public String valueToString(TimerPosition value) {
+            return value.name();
+        }
+    };
+
+    public static final OptionArgument<RunCategory> TIMER_CATEGORY = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "timer_category"), RunCategory.ANY) {
+        @Override
+        public RunCategory valueFromString(String string) {
+            return RunCategory.valueOf(string);
+        }
+
+        @Override
+        public String valueToString(RunCategory value) {
+            return value.name();
+        }
+    };
 }
