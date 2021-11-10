@@ -12,7 +12,6 @@ import net.minecraft.text.TranslatableText;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
 
