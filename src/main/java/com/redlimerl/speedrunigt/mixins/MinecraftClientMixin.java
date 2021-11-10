@@ -3,6 +3,7 @@ package com.redlimerl.speedrunigt.mixins;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.TimerPosition;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
+import com.redlimerl.speedrunigt.timer.RunCategory;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -22,6 +23,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.GeneratorOptions;
 import net.minecraft.world.level.LevelInfo;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +37,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin {
@@ -79,6 +82,16 @@ public abstract class MinecraftClientMixin {
             this.timer.start();
         } else if (lastWorldOpen) {
             this.timer.setPause(true, TimerStatus.IDLE);
+        }
+
+        //Enter Nether
+        if (timer.getCategory() == RunCategory.ENTER_NETHER && Objects.equals(world.getRegistryKey().getValue().toString(), DimensionType.THE_NETHER_ID.toString())) {
+            timer.complete();
+        }
+
+        //Enter End
+        if (timer.getCategory() == RunCategory.ENTER_END && Objects.equals(world.getRegistryKey().getValue().toString(), DimensionType.THE_END_ID.toString())) {
+            timer.complete();
         }
     }
 

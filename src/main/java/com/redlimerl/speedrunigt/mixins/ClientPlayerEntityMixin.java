@@ -46,18 +46,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             return;
         }
 
-        //Enter Nether
-        if (timer.getCategory() == RunCategory.ENTER_NETHER && Objects.equals(this.world.getRegistryKey().getValue().toString(), DimensionType.THE_NETHER_ID.toString())) {
-            timer.complete();
-            return;
-        }
-
-        //Enter End
-        if (timer.getCategory() == RunCategory.ENTER_END && Objects.equals(this.world.getRegistryKey().getValue().toString(), DimensionType.THE_END_ID.toString())) {
-            timer.complete();
-            return;
-        }
-
         //Full Inventory
         if (timer.getCategory() == RunCategory.FULL_INV) {
             if (this.getInventory().main.stream().filter(itemStack -> itemStack != null && itemStack != ItemStack.EMPTY).map(ItemStack::getItem).distinct().toArray().length == 36)
