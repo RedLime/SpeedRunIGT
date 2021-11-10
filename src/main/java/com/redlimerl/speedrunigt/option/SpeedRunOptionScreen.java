@@ -31,31 +31,6 @@ public class SpeedRunOptionScreen extends Screen {
         this.parent = parent;
     }
 
-    static {
-        SpeedRunOptions.addOptionButton(screen ->
-                new ButtonWidget(0, 0, 150, 20,
-                        new TranslatableText("speedrunigt.option.timer_position").append(": ").append(
-                                new TranslatableText("speedrunigt.option.timer_position."+ SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS).name().toLowerCase(Locale.ROOT))
-                        ), (ButtonWidget button) -> {
-                    SpeedRunOptions.setOption(SpeedRunOptions.TIMER_POS, getTimePosNext(SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS)));
-                    button.setMessage(new TranslatableText("speedrunigt.option.timer_position").append(": ").append(
-                            new TranslatableText("speedrunigt.option.timer_position."+ SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS).name().toLowerCase(Locale.ROOT))
-                    ));
-                }
-                )
-        );
-        SpeedRunOptions.addOptionButton(screen ->
-                new ButtonWidget(0, 0, 150, 20,
-                        new TranslatableText("speedrunigt.option.any_percent_mode").append(": ").append(
-                                SpeedRunOptions.getOption(SpeedRunOptions.ANY_PERCENT_MODE) ? ScreenTexts.ON : ScreenTexts.OFF)
-                        , (ButtonWidget button) -> {
-                    SpeedRunOptions.setOption(SpeedRunOptions.ANY_PERCENT_MODE, !SpeedRunOptions.getOption(SpeedRunOptions.ANY_PERCENT_MODE));
-                    button.setMessage(new TranslatableText("speedrunigt.option.any_percent_mode").append(": ").append(
-                            SpeedRunOptions.getOption(SpeedRunOptions.ANY_PERCENT_MODE) ? ScreenTexts.ON : ScreenTexts.OFF));
-                }), new TranslatableText("speedrunigt.option.any_percent_mode.description")
-        );
-    }
-
     static HashMap<Element, List<Text>> tooltips = new HashMap<>();
     @Override
     protected void init() {
@@ -97,11 +72,6 @@ public class SpeedRunOptionScreen extends Screen {
     @Override
     public void onClose() {
         if (this.client != null) this.client.openScreen(parent);
-    }
-
-    private static TimerPosition getTimePosNext(TimerPosition tp) {
-        TimerPosition[] v = TimerPosition.values();
-        return v[(tp.ordinal() + 1) % v.length];
     }
 
     @Override
