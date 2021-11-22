@@ -33,7 +33,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             at = @At("TAIL"))
     private void onMove(MovementType movementType, Vec3d vec3d, CallbackInfo ci) {
         @NotNull InGameTimer timer = InGameTimer.INSTANCE;
-        if (timer.getStatus() == TimerStatus.IDLE && timer.isPause() && (vec3d.x != 0 || vec3d.z != 0 || this.jumping)) {
+        if (timer.getStatus() == TimerStatus.IDLE && (vec3d.x != 0 || vec3d.z != 0 || this.jumping)) {
             timer.setPause(false);
         }
         

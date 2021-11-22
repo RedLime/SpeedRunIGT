@@ -24,8 +24,11 @@ public class InGameTimer {
     private boolean isStart = false;
     private long startTime = 0;
     private long endTime = 0;
-    private long pauseTime = 0;
-    private long pauseStartTime = 0;
+    private long firstInputDelays = 0;
+    private int ticks = 0;
+    private int pauseTicks = 0;
+    private int pausePointTick = 0;
+    private long lastTickTime = 0;
 
     @NotNull
     private TimerStatus status = TimerStatus.NONE;
@@ -37,10 +40,11 @@ public class InGameTimer {
      */
     public void start() {
         this.isStart = false;
-        this.pauseStartTime = 0;
         this.startTime = 0;
-        this.pauseTime = 0;
+        this.firstInputDelays = 0;
         this.endTime = 0;
+        this.ticks = 0;
+        this.pauseTicks = 0;
         this.moreData.clear();
         this.setPause(true, TimerStatus.IDLE);
     }
@@ -49,9 +53,8 @@ public class InGameTimer {
      * End the Timer, Trigger when player leave
      */
     public void end() {
-        this.pauseStartTime = 0;
         this.startTime = 0;
-        this.pauseTime = 0;
+        this.firstInputDelays = 0;
         this.endTime = 0;
         this.setStatus(TimerStatus.NONE);
     }
@@ -63,7 +66,6 @@ public class InGameTimer {
     public void complete() {
         if (this.getStatus() == TimerStatus.COMPLETED) return;
 
-        pauseStartTime = 0;
         this.endTime = System.currentTimeMillis();
         this.setStatus(TimerStatus.COMPLETED);
         for (Consumer<InGameTimer> onCompleteConsumer : onCompleteConsumers) {
@@ -93,31 +95,39 @@ public class InGameTimer {
     }
 
     public void setPause(boolean isPause) { this.setPause(isPause, TimerStatus.PAUSED); }
-    public void setPause(boolean isPause, TimerStatus toPause) {
+    public void setPause(boolean toPause, TimerStatus toStatus) {
         if (this.getStatus() == TimerStatus.COMPLETED) return;
 
-        if (isPause) {
-            if (!this.isPause()) {
-                this.pauseStartTime = System.currentTimeMillis();
-            }
-            if (!(this.getStatus() == TimerStatus.IDLE && toPause == TimerStatus.PAUSED)) {
-                this.setStatus(toPause);
+        if (toPause) {
+            //IDLE 전환 후 PAUSE 전환 시도 시 무시
+            if (!(this.getStatus() == TimerStatus.IDLE && toStatus == TimerStatus.PAUSED)) {
+                this.setStatus(toStatus);
+                this.pausePointTick = ticks;
             }
         } else {
-            if (this.isPause() && this.isStart) {
-                this.pauseTime += System.currentTimeMillis() - this.pauseStartTime;
+            //첫 입력 대기 시간 적용
+            if (this.getStatus() == TimerStatus.IDLE && this.isStart) {
+                this.pauseTicks += this.ticks - this.pausePointTick;
+                this.firstInputDelays += System.currentTimeMillis() - this.lastTickTime;
             }
+
+            //첫 입력 타이머 시작
             if (!this.isStart) {
                 this.isStart = true;
                 this.startTime = System.currentTimeMillis();
+                this.pauseTicks = this.ticks;
+                this.firstInputDelays += this.startTime - lastTickTime;
             }
-            this.pauseStartTime = 0;
             this.setStatus(TimerStatus.RUNNING);
         }
     }
 
-    public boolean isPause() {
-        return this.pauseStartTime != 0;
+    public boolean isPaused() {
+        return this.getStatus() == TimerStatus.PAUSED || this.getStatus() == TimerStatus.IDLE;
+    }
+
+    public boolean isPausedOrCompleted() {
+        return this.isPaused() || this.getStatus() == TimerStatus.COMPLETED;
     }
 
     private long getEndTime() {
@@ -132,9 +142,22 @@ public class InGameTimer {
         return this.getStatus() == TimerStatus.NONE ? 0 : this.getEndTime() - this.getStartTime();
     }
 
+    public int getTicks() {
+        return !this.isStart ? 0 : this.ticks - this.pauseTicks - (this.isPaused() ? this.ticks - this.pausePointTick : 0);
+    }
+
+    public void tick() {
+        if (this.getStatus() == TimerStatus.COMPLETED) return;
+        this.ticks++;
+        this.lastTickTime = System.currentTimeMillis();
+    }
+
     public long getInGameTime() {
-        return this.getStatus() == TimerStatus.NONE ? 0 : this.getEndTime() - this.getStartTime() - this.pauseTime
-                - (this.isPause() && this.isStart ? System.currentTimeMillis() - pauseStartTime : 0);
+        long ms = System.currentTimeMillis();
+        return this.getStatus() == TimerStatus.NONE ? 0 :
+                        (this.getTicks() * 50L) // Tick Based
+                        + (!isPausedOrCompleted() && this.pausePointTick != this.ticks ? ms - this.lastTickTime : 0) // More smooth timer in playing
+                        - (this.firstInputDelays); // Subtract First Input Delays
     }
 
     public static String timeToStringFormat(long time) {
