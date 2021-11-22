@@ -9,10 +9,10 @@
     "ClientPlayerEntityMixin",
     "ClientWorldMixin",
     "CreditsScreenMixin",
+    "LivingEntityMixin",
     "MinecraftClientMixin",
     "MouseMixin",
-    "OptionsScreenMixin",
-    "LivingEntityMixin"
+    "OptionsScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
