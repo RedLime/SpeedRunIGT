@@ -3,7 +3,8 @@
   "minVersion": "0.8",
   "package": "com.redlimerl.speedrunigt.mixins",
   "compatibilityLevel": "JAVA_16",
-  "mixins": [
+  "mixins": [],
+  "client": [
     "ClientAdvancementManagerMixin",
     "ClientPlayerEntityMixin",
     "ClientWorldMixin",
@@ -12,8 +13,6 @@
     "MinecraftClientMixin",
     "MouseMixin",
     "OptionsScreenMixin"
-  ],
-  "client": [
   ],
   "injectors": {
     "defaultRequire": 1
