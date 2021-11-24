@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.option;
 
+import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import net.minecraft.client.gui.screen.Screen;
@@ -70,6 +71,7 @@ public class TimerCustomizeScreen extends Screen {
             SpeedRunOptions.setOption(SpeedRunOptions.REVERSED_IGT_RTA, drawer.isReversed());
             SpeedRunOptions.setOption(SpeedRunOptions.DISPLAY_TIME_ONLY, drawer.isSimply());
             changed = false;
+            SpeedRunIGT.TIMER_DRAWER.setStatus(drawer.getXPos(), drawer.getYPos(), drawer.getScale(), drawer.getBgOpacity(), drawer.isReversed(), drawer.isSimply());
         }));
 
         addButton(new ButtonWidget(width / 2 + 1, height / 2 + 40, 58, 20, ScreenTexts.CANCEL, (ButtonWidget button) -> {
