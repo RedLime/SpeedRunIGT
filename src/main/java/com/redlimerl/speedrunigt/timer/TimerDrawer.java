@@ -1,14 +1,16 @@
 package com.redlimerl.speedrunigt.timer;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.BackgroundHelper;
+import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.Matrix4f;
 
 public class TimerDrawer {
 
@@ -20,8 +22,8 @@ public class TimerDrawer {
 
     private float xPos = 0.035f;
     private float yPos = 0.035f;
-    private int scaleX = 12;
-    private int scaleY = 12;
+    private float scaleX = 12;
+    private float scaleY = 12;
     private float scale = 1.0f;
     private float bgOpacity = 1.0f;
     private boolean reversed = false;
@@ -94,18 +96,18 @@ public class TimerDrawer {
 
         this.windowWidth = this.client.getWindow().getScaledWidth();
         this.windowHeight = this.client.getWindow().getScaledHeight();
-        int translateX = (int) (this.xPos * this.windowWidth);
-        int translateY = (int) (this.yPos * this.windowHeight);
-        this.scaleX = (int) (translateX / this.scale);
-        this.scaleY = (int) (translateY / this.scale);
+        float translateX = this.xPos * this.windowWidth;
+        float translateY = this.yPos * this.windowHeight;
+        this.scaleX = translateX / this.scale;
+        this.scaleY = translateY / this.scale;
 
         this.igtWidth = textRenderer.getWidth(getIGTText());
         this.rtaWidth = textRenderer.getWidth(getRTAText());
-        int scaledIGTWidth = (int) (this.igtWidth * this.scale);
-        int scaledRTAWidth = (int) (this.rtaWidth * this.scale);
+        float scaledIGTWidth = this.igtWidth * this.scale;
+        float scaledRTAWidth = this.rtaWidth * this.scale;
 
         int gap = this.igtWidth - this.rtaWidth;
-        int maxWidth = Math.max(scaledIGTWidth, scaledRTAWidth);
+        float maxWidth = Math.max(scaledIGTWidth, scaledRTAWidth);
 
         if (maxWidth + translateX > this.windowWidth) {
             this.scaleX = this.scaleX - ((int) (Math.max(scaledIGTWidth, scaledRTAWidth) / this.scale)) + 2;
@@ -116,7 +118,7 @@ public class TimerDrawer {
             this.scaleY = this.scaleY - height + 2;
         }
 
-        boolean rightSide = (translateX + (maxWidth / 2)) > this.windowWidth / 2;
+        boolean rightSide = (translateX + (maxWidth / 2f)) > this.windowWidth / 2f;
         if (!rightSide) {
             this.igtWidthGap = 0;
             this.rtaWidthGap = 0;
@@ -132,17 +134,12 @@ public class TimerDrawer {
         this.preUpdated = true;
     }
 
-    public MutableText getIGTText() {
-        return new LiteralText(this.simply ? "" : "IGT: ").append(new LiteralText(InGameTimer.timeToStringFormat(this.timer.getInGameTime())));
-    }
+    public MutableText getIGTText() { return new LiteralText(this.simply ? "" : "IGT: ").append(new LiteralText(InGameTimer.timeToStringFormat(this.timer.getInGameTime()))); }
 
-    public MutableText getRTAText() {
-        return new LiteralText(this.simply ? "" : "RTA: ").append(new LiteralText(InGameTimer.timeToStringFormat(this.timer.getRealTimeAttack())));
-    }
+    public MutableText getRTAText() { return new LiteralText(this.simply ? "" : "RTA: ").append(new LiteralText(InGameTimer.timeToStringFormat(this.timer.getRealTimeAttack()))); }
 
     public void draw() {
-        if (!preUpdated || windowWidth != client.getWindow().getScaledWidth() || windowHeight != client.getWindow().getScaledHeight())
-            updatePos();
+        if (!preUpdated || windowWidth != client.getWindow().getScaledWidth() || windowHeight != client.getWindow().getScaledHeight()) updatePos();
         if (!preUpdated) return;
 
         TextRenderer textRenderer = client.textRenderer;
@@ -155,7 +152,8 @@ public class TimerDrawer {
         if (this.translateZ) matrixStack.translate(0, 0, 1000);
         matrixStack.scale(scale, scale, 1f);
         int bgWidth = 3;
-        DrawableHelper.fill(matrixStack, scaleX - bgWidth - 1, scaleY - bgWidth - 1,
+        //DrawableHelper.fill - int to float
+        fill(matrixStack.peek().getModel(), scaleX - bgWidth - 1, scaleY - bgWidth - 1,
                 scaleX + Math.max(igtWidth, rtaWidth) + bgWidth, scaleY + height + bgWidth, bgColor);
         drawOutLine(textRenderer, matrixStack, scaleX + igtWidthGap, scaleY + (this.reversed ? 10 : 0), igt, Formatting.YELLOW.getColorValue());
         drawOutLine(textRenderer, matrixStack, scaleX + rtaWidthGap, scaleY + (this.reversed ? 0 : 10), rta, Formatting.AQUA.getColorValue());
@@ -163,15 +161,49 @@ public class TimerDrawer {
         matrixStack.pop();
     }
 
-    private void drawOutLine(TextRenderer textRenderer, MatrixStack matrixStack, int x, int y, MutableText text, Integer color) {
-        textRenderer.draw(matrixStack, text, (float)x + 1, (float)y + 1, 0);
-        textRenderer.draw(matrixStack, text, (float)x + 1, (float)y, 0);
-        textRenderer.draw(matrixStack, text, (float)x + 1, (float)y - 1, 0);
-        textRenderer.draw(matrixStack, text, (float)x, (float)y - 1, 0);
-        textRenderer.draw(matrixStack, text, (float)x, (float)y + 1, 0);
-        textRenderer.draw(matrixStack, text, (float)x - 1, (float)y + 1, 0);
-        textRenderer.draw(matrixStack, text, (float)x - 1, (float)y, 0);
-        textRenderer.draw(matrixStack, text, (float)x - 1, (float)y - 1, 0);
-        textRenderer.draw(matrixStack, text, (float)x, (float)y, color);
+    private void drawOutLine(TextRenderer textRenderer, MatrixStack matrixStack, float x, float y, MutableText text, Integer color) {
+        textRenderer.draw(matrixStack, text, x + 1, y + 1, 0);
+        textRenderer.draw(matrixStack, text, x + 1, y, 0);
+        textRenderer.draw(matrixStack, text, x + 1, y - 1, 0);
+        textRenderer.draw(matrixStack, text, x, y - 1, 0);
+        textRenderer.draw(matrixStack, text, x, y + 1, 0);
+        textRenderer.draw(matrixStack, text, x - 1, y + 1, 0);
+        textRenderer.draw(matrixStack, text, x - 1, y, 0);
+        textRenderer.draw(matrixStack, text, x - 1, y - 1, 0);
+        textRenderer.draw(matrixStack, text, x, y, color);
+    }
+
+    private static void fill(Matrix4f matrix, float x1, float y1, float x2, float y2, int color) {
+        float j;
+        if (x1 < x2) {
+            j = x1;
+            x1 = x2;
+            x2 = j;
+        }
+
+        if (y1 < y2) {
+            j = y1;
+            y1 = y2;
+            y2 = j;
+        }
+
+        float f = (float)(color >> 24 & 255) / 255.0F;
+        float g = (float)(color >> 16 & 255) / 255.0F;
+        float h = (float)(color >> 8 & 255) / 255.0F;
+        float k = (float)(color & 255) / 255.0F;
+        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+        RenderSystem.enableBlend();
+        RenderSystem.disableTexture();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+        bufferBuilder.vertex(matrix, x1, y2, 0.0F).color(g, h, k, f).next();
+        bufferBuilder.vertex(matrix, x2, y2, 0.0F).color(g, h, k, f).next();
+        bufferBuilder.vertex(matrix, x2, y1, 0.0F).color(g, h, k, f).next();
+        bufferBuilder.vertex(matrix, x1, y1, 0.0F).color(g, h, k, f).next();
+        bufferBuilder.end();
+        BufferRenderer.draw(bufferBuilder);
+        RenderSystem.enableTexture();
+        RenderSystem.disableBlend();
     }
 }
