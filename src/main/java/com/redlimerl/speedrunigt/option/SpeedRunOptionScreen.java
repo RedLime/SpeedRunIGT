@@ -10,6 +10,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -81,8 +82,15 @@ public class SpeedRunOptionScreen extends Screen {
 
         Optional<Element> e = this.hoveredElement(mouseX, mouseY);
         if (e.isPresent()) {
-            List<Text> tts = tooltips.get(e.get());
-            if (tts != null && !tts.isEmpty()) this.renderTooltip(matrices, tts, mouseX, mouseY);
+            if (!tooltips.containsKey(e.get())) return;
+
+            ArrayList<Text> tts = new ArrayList<>();
+            for (Text text : tooltips.get(e.get())) {
+                for (String s : text.getString().split("\n")) {
+                    tts.add(new LiteralText(s));
+                }
+            }
+            if (!tts.isEmpty()) this.renderTooltip(matrices, tts, mouseX, mouseY);
         }
     }
 }
