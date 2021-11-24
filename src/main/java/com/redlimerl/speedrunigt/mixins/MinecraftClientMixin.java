@@ -1,24 +1,17 @@
 package com.redlimerl.speedrunigt.mixins;
 
-import com.redlimerl.speedrunigt.option.SpeedRunOptions;
-import com.redlimerl.speedrunigt.option.TimerPosition;
+import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.RunCategory;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.SaveLevelScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.options.GameOptions;
 import net.minecraft.client.options.KeyBinding;
-import net.minecraft.client.util.Window;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.MutableText;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.registry.RegistryTracker;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.GeneratorOptions;
@@ -41,12 +34,10 @@ public abstract class MinecraftClientMixin {
     @Shadow public abstract boolean isInSingleplayer();
 
     @Shadow @Final public GameOptions options;
-    @Shadow @Final public TextRenderer textRenderer;
 
     @Shadow public abstract boolean isPaused();
 
     @Shadow @Nullable public Screen currentScreen;
-    @Shadow @Final private Window window;
     private static String lastWorldName = null;
     private static boolean lastWorldOpen = false;
 
@@ -127,44 +118,9 @@ public abstract class MinecraftClientMixin {
     @Inject(method = "render", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/toast/ToastManager;draw(Lnet/minecraft/client/util/math/MatrixStack;)V", shift = At.Shift.AFTER))
     private void drawTimer(CallbackInfo ci) {
-        if (!this.options.hudHidden && this.isInSingleplayer()) {
-            MatrixStack matrixStack = new MatrixStack();
-            TimerPosition pos = SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS);
-            if (pos != TimerPosition.NONE && timer.getStatus() != TimerStatus.NONE) {
-                int x = 12, y = window.getScaledHeight() - 32;
-                MutableText igt = new LiteralText("IGT: ").append(new LiteralText(InGameTimer.timeToStringFormat(timer.getInGameTime())));
-                MutableText rta = new LiteralText("RTA: ").append(new LiteralText(InGameTimer.timeToStringFormat(timer.getRealTimeAttack())));
-                switch (pos) {
-                    case LEFT_TOP:
-                        y = 12;
-                        break;
-                    case RIGHT_BOTTOM:
-                        x = window.getScaledWidth() - 12 - this.textRenderer.getWidth(rta);
-                        y = window.getScaledHeight() - 32;
-                        break;
-                    case RIGHT_TOP:
-                        x = window.getScaledWidth() - 12 - this.textRenderer.getWidth(rta);
-                        y = 12;
-                        break;
-                }
-                if ((!this.isPaused() || this.currentScreen instanceof GameMenuScreen) && !(this.currentScreen instanceof ChatScreen)) {
-                    drawOutLine(this.textRenderer, matrixStack, x, y+10, rta, Formatting.AQUA);
-                    drawOutLine(this.textRenderer, matrixStack, x, y, igt, Formatting.YELLOW);
-                    //drawOutLine(this.textRenderer, matrixStack, x, y-10, new LiteralText(timer.getStatus().name()), Formatting.RED);
-                }
-            }
+        if (!this.options.hudHidden && this.isInSingleplayer() && timer.getStatus() != TimerStatus.NONE
+                && (!this.isPaused() || this.currentScreen instanceof GameMenuScreen) && !(this.currentScreen instanceof ChatScreen)) {
+            SpeedRunIGT.TIMER_DRAWER.draw();
         }
-    }
-
-    private static void drawOutLine(TextRenderer textRenderer, MatrixStack matrixStack, int x, int y, MutableText text, Formatting color) {
-        textRenderer.draw(matrixStack, text, (float)x + 1, (float)y + 1, 0);
-        textRenderer.draw(matrixStack, text, (float)x + 1, (float)y, 0);
-        textRenderer.draw(matrixStack, text, (float)x + 1, (float)y - 1, 0);
-        textRenderer.draw(matrixStack, text, (float)x, (float)y - 1, 0);
-        textRenderer.draw(matrixStack, text, (float)x, (float)y + 1, 0);
-        textRenderer.draw(matrixStack, text, (float)x - 1, (float)y + 1, 0);
-        textRenderer.draw(matrixStack, text, (float)x - 1, (float)y, 0);
-        textRenderer.draw(matrixStack, text, (float)x - 1, (float)y - 1, 0);
-        textRenderer.draw(matrixStack, text.formatted(color), (float)x, (float)y, 16777215);
     }
 }

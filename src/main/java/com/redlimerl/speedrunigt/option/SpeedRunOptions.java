@@ -14,19 +14,19 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 
 public class SpeedRunOptions {
+
+    private static boolean isInit = false;
 
     private static final Path configPath = FabricLoader.getInstance().getConfigDir().resolve(SpeedRunIGT.MOD_ID);
 
     private static final HashMap<Identifier, String> options = new HashMap<>();
 
     public static <T> T getOption(OptionArgument<T> option) {
+        if (!isInit) init();
         return options.containsKey(option.getKey()) ? option.valueFromString(options.get(option.getKey())) : option.getDefaultValue();
     }
 
@@ -36,6 +36,8 @@ public class SpeedRunOptions {
     }
 
     public static void init() {
+        if (isInit) return;
+
         try {
             Files.createDirectories(configPath);
 
@@ -50,6 +52,7 @@ public class SpeedRunOptions {
                     }
                 }
             }
+            isInit = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -77,17 +80,6 @@ public class SpeedRunOptions {
 
 
 
-    public static final OptionArgument<TimerPosition> TIMER_POS = new OptionArgument<TimerPosition>(new Identifier(SpeedRunIGT.MOD_ID, "timerpos"), TimerPosition.LEFT_TOP) {
-        @Override
-        public TimerPosition valueFromString(String string) {
-            return TimerPosition.valueOf(string);
-        }
-
-        @Override
-        public String valueToString(TimerPosition value) {
-            return value.name();
-        }
-    };
 
     public static final OptionArgument<RunCategory> TIMER_CATEGORY = new OptionArgument<RunCategory>(new Identifier(SpeedRunIGT.MOD_ID, "timer_category"), RunCategory.ANY) {
         @Override
@@ -98,6 +90,78 @@ public class SpeedRunOptions {
         @Override
         public String valueToString(RunCategory value) {
             return value.name();
+        }
+    };
+
+    public static final OptionArgument<Float> TIMER_POSITION_X = new OptionArgument<Float>(new Identifier(SpeedRunIGT.MOD_ID, "timer_pos_x"), 0.035f) {
+        @Override
+        public Float valueFromString(String string) {
+            return Float.parseFloat(string);
+        }
+
+        @Override
+        public String valueToString(Float value) {
+            return value.toString();
+        }
+    };
+
+    public static final OptionArgument<Float> TIMER_POSITION_Y = new OptionArgument<Float>(new Identifier(SpeedRunIGT.MOD_ID, "timer_pos_y"), 0.035f) {
+        @Override
+        public Float valueFromString(String string) {
+            return Float.parseFloat(string);
+        }
+
+        @Override
+        public String valueToString(Float value) {
+            return value.toString();
+        }
+    };
+
+    public static final OptionArgument<Float> TIMER_SCALE = new OptionArgument<Float>(new Identifier(SpeedRunIGT.MOD_ID, "timer_scale"), 1.0f) {
+        @Override
+        public Float valueFromString(String string) {
+            return Float.parseFloat(string);
+        }
+
+        @Override
+        public String valueToString(Float value) {
+            return value.toString();
+        }
+    };
+
+    public static final OptionArgument<Float> TIMER_BG_OPACITY = new OptionArgument<Float>(new Identifier(SpeedRunIGT.MOD_ID, "timer_bg_opacity"), 0.4f) {
+        @Override
+        public Float valueFromString(String string) {
+            return Float.parseFloat(string);
+        }
+
+        @Override
+        public String valueToString(Float value) {
+            return value.toString();
+        }
+    };
+
+    public static final OptionArgument<Boolean> REVERSED_IGT_RTA = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "revered_timer"), false) {
+        @Override
+        public Boolean valueFromString(String string) {
+            return Objects.equals(string, "true");
+        }
+
+        @Override
+        public String valueToString(Boolean value) {
+            return value.toString();
+        }
+    };
+
+    public static final OptionArgument<Boolean> DISPLAY_TIME_ONLY = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "display_time_only"), false) {
+        @Override
+        public Boolean valueFromString(String string) {
+            return Objects.equals(string, "true");
+        }
+
+        @Override
+        public String valueToString(Boolean value) {
+            return value.toString();
         }
     };
 }
