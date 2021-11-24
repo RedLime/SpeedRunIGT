@@ -1,27 +1,17 @@
 package com.redlimerl.speedrunigt.mixins;
 
-import com.redlimerl.speedrunigt.option.SpeedRunOptions;
-import com.redlimerl.speedrunigt.option.TimerPosition;
+import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.RunCategory;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.SaveLevelScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.render.LightmapTextureManager;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.Window;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.MutableText;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.GeneratorOptions;
@@ -44,12 +34,9 @@ public abstract class MinecraftClientMixin {
 
     @Shadow public abstract boolean isInSingleplayer();
 
-    @Shadow @Final public TextRenderer textRenderer;
-
     @Shadow public abstract boolean isPaused();
 
     @Shadow @Nullable public Screen currentScreen;
-    @Shadow @Final private Window window;
     @Shadow @Final public GameOptions options;
     private static String lastWorldName = null;
     private static boolean lastWorldOpen = false;
@@ -128,37 +115,13 @@ public abstract class MinecraftClientMixin {
         }
     }
 
+
     @Inject(method = "render", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/toast/ToastManager;draw(Lnet/minecraft/client/util/math/MatrixStack;)V", shift = At.Shift.AFTER))
     private void drawTimer(CallbackInfo ci) {
-        if (!this.options.hudHidden && this.isInSingleplayer()) {
-            MatrixStack matrixStack = new MatrixStack();
-            TimerPosition pos = SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POS);
-            if (pos != TimerPosition.NONE && timer.getStatus() != TimerStatus.NONE) {
-                int x = 12, y = window.getScaledHeight() - 32;
-                MutableText igt = new LiteralText("IGT: ").append(new LiteralText(InGameTimer.timeToStringFormat(timer.getInGameTime())));
-                MutableText rta = new LiteralText("RTA: ").append(new LiteralText(InGameTimer.timeToStringFormat(timer.getRealTimeAttack())));
-                switch (pos) {
-                    case LEFT_TOP -> y = 12;
-                    case RIGHT_BOTTOM -> {
-                        x = window.getScaledWidth() - 12 - this.textRenderer.getWidth(rta);
-                        y = window.getScaledHeight() - 32;
-                    }
-                    case RIGHT_TOP -> {
-                        x = window.getScaledWidth() - 12 - this.textRenderer.getWidth(rta);
-                        y = 12;
-                    }
-                }
-                if ((!this.isPaused() || this.currentScreen instanceof GameMenuScreen) && !(this.currentScreen instanceof ChatScreen)) {
-                    matrixStack.translate(0, 0, 1000);
-                    VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(Tessellator.getInstance().getBuffer());
-                    textRenderer.drawWithOutline(rta.formatted(Formatting.AQUA).asOrderedText(),
-                            x, y+10, 16777215, 0, matrixStack.peek().getModel(), immediate, LightmapTextureManager.MAX_LIGHT_COORDINATE);
-                    textRenderer.drawWithOutline(igt.formatted(Formatting.YELLOW).asOrderedText(),
-                            x, y, 16777215, 0, matrixStack.peek().getModel(), immediate, LightmapTextureManager.MAX_LIGHT_COORDINATE);
-                    immediate.draw();
-                }
-            }
+        if (!this.options.hudHidden && this.isInSingleplayer() && timer.getStatus() != TimerStatus.NONE
+                && (!this.isPaused() || this.currentScreen instanceof GameMenuScreen) && !(this.currentScreen instanceof ChatScreen)) {
+            SpeedRunIGT.TIMER_DRAWER.draw();
         }
     }
 }
