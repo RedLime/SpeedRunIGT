@@ -1,7 +1,6 @@
 package com.redlimerl.speedrunigt.option;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
-import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
@@ -12,7 +11,7 @@ import net.minecraft.text.TranslatableText;
 
 public class TimerCustomizeScreen extends Screen {
 
-    private final TimerDrawer drawer = new TimerDrawer(new InGameTimer(), false);
+    private final TimerDrawer drawer = new TimerDrawer(false);
     private final Screen parent;
 
     private boolean changed = false;

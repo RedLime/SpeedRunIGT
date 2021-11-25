@@ -1,5 +1,9 @@
 package com.redlimerl.speedrunigt.timer;
 
+import net.minecraft.text.TranslatableText;
+
+import java.util.Locale;
+
 public enum RunCategory {
     ANY("mc#Any_Glitchless"),
     HIGH("mcce#High"),
@@ -26,5 +30,9 @@ public enum RunCategory {
 
     public String getCode() {
         return code;
+    }
+
+    public TranslatableText getText() {
+        return new TranslatableText("speedrunigt.option.timer_category." + this.name().toLowerCase(Locale.ROOT));
     }
 }

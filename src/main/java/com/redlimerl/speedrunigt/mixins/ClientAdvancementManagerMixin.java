@@ -29,26 +29,28 @@ public abstract class ClientAdvancementManagerMixin {
 
     @Redirect(method = "onAdvancements", at = @At(value = "INVOKE", target = "Ljava/util/Map$Entry;getValue()Ljava/lang/Object;"))
     public Object advancement(Map.Entry<Identifier, AdvancementProgress> entry) {
+        InGameTimer timer = InGameTimer.getInstance();
+        
         Advancement advancement = this.manager.get(entry.getKey());
         AdvancementProgress advancementProgress = entry.getValue();
         assert advancement != null;
         advancementProgress.init(advancement.getCriteria(), advancement.getRequirements());
 
-        if (advancementProgress.isDone() && InGameTimer.INSTANCE.getStatus() != TimerStatus.NONE) {
+        if (advancementProgress.isDone() && timer.getStatus() != TimerStatus.NONE) {
 
             //How Did We Get Here
-            if (InGameTimer.INSTANCE.getCategory() == RunCategory.HOW_DID_WE_GET_HERE && Objects.equals(advancement.getId().toString(), new Identifier("nether/all_effects").toString())) {
-                InGameTimer.INSTANCE.complete();
+            if (timer.getCategory() == RunCategory.HOW_DID_WE_GET_HERE && Objects.equals(advancement.getId().toString(), new Identifier("nether/all_effects").toString())) {
+                timer.complete();
             }
 
             //Hero of Village
-            if (InGameTimer.INSTANCE.getCategory() == RunCategory.HERO_OF_VILLAGE && Objects.equals(advancement.getId().toString(), new Identifier("adventure/hero_of_the_village").toString())) {
-                InGameTimer.INSTANCE.complete();
+            if (timer.getCategory() == RunCategory.HERO_OF_VILLAGE && Objects.equals(advancement.getId().toString(), new Identifier("adventure/hero_of_the_village").toString())) {
+                timer.complete();
             }
 
             //Arbalistic
-            if (InGameTimer.INSTANCE.getCategory() == RunCategory.ARBALISTIC && Objects.equals(advancement.getId().toString(), new Identifier("adventure/arbalistic").toString())) {
-                InGameTimer.INSTANCE.complete();
+            if (timer.getCategory() == RunCategory.ARBALISTIC && Objects.equals(advancement.getId().toString(), new Identifier("adventure/arbalistic").toString())) {
+                timer.complete();
             }
         }
         return entry.getValue();
@@ -56,18 +58,20 @@ public abstract class ClientAdvancementManagerMixin {
 
     @Inject(at = @At("RETURN"), method = "onAdvancements")
     public void onComplete(AdvancementUpdateS2CPacket packet, CallbackInfo ci) {
+        InGameTimer timer = InGameTimer.getInstance();
+
         //All Advancements
-        if (InGameTimer.INSTANCE.getStatus() != TimerStatus.NONE && InGameTimer.INSTANCE.getCategory() == RunCategory.ALL_ADVANCEMENTS) {
+        if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategory.ALL_ADVANCEMENTS) {
             int completes = this.getManager().getAdvancements().stream()
                     .filter(advancement -> advancement.getDisplay() != null).toArray().length;
-            if (completes == 80) InGameTimer.INSTANCE.complete();
+            if (completes == 80) timer.complete();
         }
 
         //Half%
-        if (InGameTimer.INSTANCE.getStatus() != TimerStatus.NONE && InGameTimer.INSTANCE.getCategory() == RunCategory.HALF) {
+        if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategory.HALF) {
             int completes = this.getManager().getAdvancements().stream()
                     .filter(advancement -> advancement.getDisplay() != null).toArray().length;
-            if (completes == 40) InGameTimer.INSTANCE.complete();
+            if (completes == 40) timer.complete();
         }
     }
 

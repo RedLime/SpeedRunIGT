@@ -12,7 +12,6 @@ import net.minecraft.util.Formatting;
 
 public class TimerDrawer {
 
-    private final InGameTimer timer;
     private final boolean translateZ;
     private final MinecraftClient client = MinecraftClient.getInstance();
 
@@ -39,12 +38,7 @@ public class TimerDrawer {
 
     private int bgColor = 0;
 
-    public TimerDrawer(InGameTimer timer) {
-        this(timer, true);
-    }
-
-    public TimerDrawer(InGameTimer timer, boolean translateZ) {
-        this.timer = timer;
+    public TimerDrawer(boolean translateZ) {
         this.translateZ = translateZ;
         this.setStatus(SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POSITION_X),
                 SpeedRunOptions.getOption(SpeedRunOptions.TIMER_POSITION_Y),
@@ -133,11 +127,11 @@ public class TimerDrawer {
     }
 
     public MutableText getIGTText() {
-        return new LiteralText(this.simply ? "" : "IGT: ").append(new LiteralText(InGameTimer.timeToStringFormat(this.timer.getInGameTime())));
+        return new LiteralText(this.simply ? "" : "IGT: ").append(new LiteralText(InGameTimer.timeToStringFormat(InGameTimer.getInstance().getInGameTime())));
     }
 
     public MutableText getRTAText() {
-        return new LiteralText(this.simply ? "" : "RTA: ").append(new LiteralText(InGameTimer.timeToStringFormat(this.timer.getRealTimeAttack())));
+        return new LiteralText(this.simply ? "" : "RTA: ").append(new LiteralText(InGameTimer.timeToStringFormat(InGameTimer.getInstance().getRealTimeAttack())));
     }
 
     public void draw() {
@@ -159,7 +153,7 @@ public class TimerDrawer {
                 scaleX + Math.max(igtWidth, rtaWidth) + bgWidth, scaleY + height + bgWidth, bgColor);
         drawOutLine(textRenderer, matrixStack, scaleX + igtWidthGap, scaleY + (this.reversed ? 10 : 0), igt, Formatting.YELLOW.getColorValue());
         drawOutLine(textRenderer, matrixStack, scaleX + rtaWidthGap, scaleY + (this.reversed ? 0 : 10), rta, Formatting.AQUA.getColorValue());
-        //drawOutLine(textRenderer, matrixStack, scaleX + rtaWidthGap, scaleY + 20, new LiteralText(timer.getStatus().name()), Formatting.RED);
+        drawOutLine(textRenderer, matrixStack, scaleX + rtaWidthGap, scaleY + 20, new LiteralText(InGameTimer.getInstance().getStatus().name()), Formatting.RED.getColorValue());
         matrixStack.pop();
     }
 
