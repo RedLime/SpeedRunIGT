@@ -16,7 +16,7 @@ public class CreditsScreenMixin {
     @Inject(method = "init()V", at = @At("TAIL"))
     private void initMixin(CallbackInfo ci) {
         @NotNull
-        InGameTimer timer = InGameTimer.INSTANCE;
+        InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() != TimerStatus.NONE) {
             if (timer.getCategory() == RunCategory.ANY) {
                 timer.complete();

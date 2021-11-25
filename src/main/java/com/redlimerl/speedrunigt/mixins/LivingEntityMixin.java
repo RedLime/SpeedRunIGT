@@ -26,7 +26,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Inject(at = @At("HEAD"), method = "onDeath")
     public void onDeath(DamageSource source, CallbackInfo ci) {
-        @NotNull InGameTimer timer = InGameTimer.INSTANCE;
+        @NotNull InGameTimer timer = InGameTimer.getInstance();
 
         if (this.removed || this.dead || timer.getStatus() == TimerStatus.NONE) return;
 

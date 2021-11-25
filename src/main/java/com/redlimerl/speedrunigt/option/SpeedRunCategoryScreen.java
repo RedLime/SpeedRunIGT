@@ -24,7 +24,6 @@ import net.minecraft.util.math.MathHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class SpeedRunCategoryScreen extends Screen {
@@ -105,8 +104,7 @@ public class SpeedRunCategoryScreen extends Screen {
                 private final RunCategory category;
 
                 public CategoryCheckBoxWidget(RunCategory category) {
-                    super(0, 0, 20, 20,
-                            new TranslatableText("speedrunigt.option.timer_category."+category.name().toLowerCase(Locale.ROOT)), false);
+                    super(0, 0, 20, 20, category.getText(), false);
                     this.category = category;
                 }
 

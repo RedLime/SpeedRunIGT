@@ -7,7 +7,6 @@ import com.redlimerl.speedrunigt.timer.TimerStatus;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
-import net.minecraft.client.gui.screen.SaveLevelScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.options.GameOptions;
 import net.minecraft.client.options.KeyBinding;
@@ -16,7 +15,6 @@ import net.minecraft.util.registry.RegistryTracker;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.GeneratorOptions;
 import net.minecraft.world.level.LevelInfo;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -38,37 +36,31 @@ public abstract class MinecraftClientMixin {
     @Shadow public abstract boolean isPaused();
 
     @Shadow @Nullable public Screen currentScreen;
-    private static String lastWorldName = null;
-    private static boolean lastWorldOpen = false;
 
-    private @NotNull
-    final InGameTimer timer = InGameTimer.INSTANCE;
+    @Shadow @Nullable public ClientWorld world;
+
 
     @Inject(at = @At("HEAD"), method = "method_29607(Ljava/lang/String;Lnet/minecraft/world/level/LevelInfo;Lnet/minecraft/util/registry/RegistryTracker$Modifiable;Lnet/minecraft/world/gen/GeneratorOptions;)V")
     public void onCreate(String worldName, LevelInfo levelInfo, RegistryTracker.Modifiable registryTracker, GeneratorOptions generatorOptions, CallbackInfo ci) {
-        if (timer.getStatus() != TimerStatus.NONE) {
-            timer.end();
-        }
-        lastWorldName = worldName;
-        lastWorldOpen = true;
+        InGameTimer.start();
+        InGameTimer.currentWorldName = worldName;
     }
 
     @Inject(at = @At("HEAD"), method = "startIntegratedServer(Ljava/lang/String;)V")
     public void onWorldOpen(String worldName, CallbackInfo ci) {
-        lastWorldOpen = worldName.equals(lastWorldName);
-        if (!lastWorldOpen) {
-            timer.end();
-        }
+        InGameTimer timer = InGameTimer.getInstance();
+        boolean loaded = InGameTimer.load(worldName);
+        if (!loaded) timer.end();
+        else InGameTimer.currentWorldName = worldName;
     }
 
     @Inject(at = @At("HEAD"), method = "joinWorld")
     public void onJoin(ClientWorld world, CallbackInfo ci) {
         if (!isInSingleplayer()) return;
+        InGameTimer timer = InGameTimer.getInstance();
 
-        if (this.timer.getStatus() == TimerStatus.NONE && lastWorldOpen) {
-            this.timer.start();
-        } else if (lastWorldOpen) {
-            this.timer.setPause(true, TimerStatus.IDLE);
+        if (timer.getStatus() != TimerStatus.NONE) {
+            timer.setPause(true, TimerStatus.IDLE);
         }
 
         //Enter Nether
@@ -82,23 +74,13 @@ public abstract class MinecraftClientMixin {
         }
     }
 
-    @Inject(at = @At("HEAD"), method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V")
-    public void onDisconnect(Screen screen, CallbackInfo ci) {
-        if (this.timer.getStatus() != TimerStatus.NONE && screen instanceof SaveLevelScreen) {
-            if (this.timer.getStatus() == TimerStatus.COMPLETED) {
-                this.timer.end();
-            } else {
-                this.timer.setPause(true, TimerStatus.LEAVE);
-            }
-        }
-    }
-
     @ModifyVariable(method = "render(Z)V", at = @At(value = "STORE"), ordinal = 1)
     private boolean renderMixin(boolean paused) {
-        if (this.timer.getStatus() == TimerStatus.RUNNING && paused) {
-            this.timer.setPause(true, TimerStatus.PAUSED);
-        } else if (this.timer.getStatus() == TimerStatus.PAUSED && !paused) {
-            this.timer.setPause(false);
+        InGameTimer timer = InGameTimer.getInstance();
+        if (timer.getStatus() == TimerStatus.RUNNING && paused) {
+            timer.setPause(true, TimerStatus.PAUSED);
+        } else if (timer.getStatus() == TimerStatus.PAUSED && !paused) {
+            timer.setPause(false);
         }
 
         return paused;
@@ -107,6 +89,8 @@ public abstract class MinecraftClientMixin {
     @Inject(method = "handleInputEvents", at = @At(value = "HEAD"))
     private void slotChange(CallbackInfo ci) {
         GameOptions o = this.options;
+        InGameTimer timer = InGameTimer.getInstance();
+
         if (timer.getStatus() == TimerStatus.IDLE) {
             if (o.keyAttack.isPressed() || o.keyDrop.isPressed() || o.keyInventory.isPressed() || o.keySneak.wasPressed() || o.keySwapHands.isPressed()
                     || o.keyUse.isPressed() || o.keyPickItem.isPressed() || o.keySprint.wasPressed() || Arrays.stream(o.keysHotbar).anyMatch(KeyBinding::isPressed)) {
@@ -118,7 +102,9 @@ public abstract class MinecraftClientMixin {
     @Inject(method = "render", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/toast/ToastManager;draw(Lnet/minecraft/client/util/math/MatrixStack;)V", shift = At.Shift.AFTER))
     private void drawTimer(CallbackInfo ci) {
-        if (!this.options.hudHidden && this.isInSingleplayer() && timer.getStatus() != TimerStatus.NONE
+        InGameTimer timer = InGameTimer.getInstance();
+
+        if (!this.options.hudHidden && this.isInSingleplayer() && this.world != null && timer.getStatus() != TimerStatus.NONE
                 && (!this.isPaused() || this.currentScreen instanceof GameMenuScreen) && !(this.currentScreen instanceof ChatScreen)) {
             SpeedRunIGT.TIMER_DRAWER.draw();
         }
