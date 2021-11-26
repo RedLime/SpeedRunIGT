@@ -1,6 +1,5 @@
 package com.redlimerl.speedrunigt.timer;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -93,7 +92,7 @@ public class TimerDrawer {
         int translateY = (int) (this.yPos * this.windowHeight);
         this.scaleX = (int) (translateX / this.scale);
         this.scaleY = (int) (translateY / this.scale);
-        
+
         this.igtWidth = textRenderer.getWidth(getIGTText());
         this.rtaWidth = textRenderer.getWidth(getRTAText());
         int scaledIGTWidth = (int) (this.igtWidth * this.scale);
@@ -135,9 +134,9 @@ public class TimerDrawer {
         return new LiteralText(this.simply ? "" : "RTA: ").append(new LiteralText(InGameTimer.timeToStringFormat(InGameTimer.getInstance().getRealTimeAttack())));
     }
 
-    @SuppressWarnings("deprecation")
     public void draw() {
-        if (!preUpdated || windowWidth != client.getWindow().getScaledWidth() || windowHeight != client.getWindow().getScaledHeight()) updatePos();
+        if (!preUpdated || windowWidth != client.getWindow().getScaledWidth() || windowHeight != client.getWindow().getScaledHeight())
+            updatePos();
         if (!preUpdated) return;
 
         TextRenderer textRenderer = client.textRenderer;
@@ -145,22 +144,20 @@ public class TimerDrawer {
         MatrixStack matrixStack = new MatrixStack();
         MutableText igt = getIGTText();
         MutableText rta = getRTAText();
-        
-        RenderSystem.pushMatrix();
-        if (this.translateZ) RenderSystem.translatef(0, 0, 1000);
-        RenderSystem.scalef(scale, scale, 1f);
+
+        matrixStack.push();
+        if (this.translateZ) matrixStack.translate(0, 0, 1000);
+        matrixStack.scale(scale, scale, 1f);
         int bgWidth = 3;
-        DrawableHelper.fill(matrixStack,
-                scaleX - bgWidth - 1, scaleY - bgWidth - 1,
-                scaleX + Math.max(igtWidth, rtaWidth) + bgWidth, scaleY + height + bgWidth,
-                bgColor);
-        drawOutLine(textRenderer, matrixStack, scaleX + igtWidthGap, scaleY + (this.reversed ? 10 : 0), igt, Formatting.YELLOW);
-        drawOutLine(textRenderer, matrixStack, scaleX + rtaWidthGap, scaleY + (this.reversed ? 0 : 10), rta, Formatting.AQUA);
-        //drawOutLine(textRenderer, matrixStack, scaleX + rtaWidthGap, scaleY + 20, new LiteralText(InGameTimer.getInstance().getStatus().name()), Formatting.RED);
-        RenderSystem.popMatrix();
+        DrawableHelper.fill(matrixStack, scaleX - bgWidth - 1, scaleY - bgWidth - 1,
+                scaleX + Math.max(igtWidth, rtaWidth) + bgWidth, scaleY + height + bgWidth, bgColor);
+        drawOutLine(textRenderer, matrixStack, scaleX + igtWidthGap, scaleY + (this.reversed ? 10 : 0), igt, Formatting.YELLOW.getColorValue());
+        drawOutLine(textRenderer, matrixStack, scaleX + rtaWidthGap, scaleY + (this.reversed ? 0 : 10), rta, Formatting.AQUA.getColorValue());
+        //drawOutLine(textRenderer, matrixStack, scaleX + rtaWidthGap, scaleY + 20, new LiteralText(SpeedRunIGT.DEBUG_DATA), Formatting.RED.getColorValue());
+        matrixStack.pop();
     }
 
-    private void drawOutLine(TextRenderer textRenderer, MatrixStack matrixStack, int x, int y, MutableText text, Formatting color) {
+    private void drawOutLine(TextRenderer textRenderer, MatrixStack matrixStack, int x, int y, MutableText text, Integer color) {
         textRenderer.draw(matrixStack, text, (float)x + 1, (float)y + 1, 0);
         textRenderer.draw(matrixStack, text, (float)x + 1, (float)y, 0);
         textRenderer.draw(matrixStack, text, (float)x + 1, (float)y - 1, 0);
@@ -169,6 +166,6 @@ public class TimerDrawer {
         textRenderer.draw(matrixStack, text, (float)x - 1, (float)y + 1, 0);
         textRenderer.draw(matrixStack, text, (float)x - 1, (float)y, 0);
         textRenderer.draw(matrixStack, text, (float)x - 1, (float)y - 1, 0);
-        textRenderer.draw(matrixStack, text.formatted(color), (float)x, (float)y, 16777215);
+        textRenderer.draw(matrixStack, text, (float)x, (float)y, color);
     }
 }
