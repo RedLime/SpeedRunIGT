@@ -25,6 +25,7 @@ public class InGameTimer {
     private static InGameTimer INSTANCE = new InGameTimer();
     public static InGameTimer getInstance() { return INSTANCE; }
     public static String currentWorldName = "";
+    public static int renderedWorld = 0;
 
     private static final ArrayList<Consumer<InGameTimer>> onCompleteConsumers = new ArrayList<>();
 
@@ -33,15 +34,17 @@ public class InGameTimer {
     }
 
     private RunCategory category = RunCategory.ANY;
+
     private long startTime = 0;
+    private long rsgStartTime = 0;
     private long endTime = 0;
     private long firstInputDelays = 0;
+
     private int ticks = 0;
     private int pauseTicks = 0;
     private int pausePointTick = 0;
-    private int idlePointTick = 0;
-    private long lastTickTime = 0;
 
+    private long lastTickTime = 0;
     private long lastPauseTime = 0;
     private TimerStatus lastPauseStatus = TimerStatus.NONE;
     private final StringBuilder pauseLog = new StringBuilder();
@@ -145,37 +148,58 @@ public class InGameTimer {
             //IDLE 전환 후 PAUSE 전환 시도 시 무시
             if (!(this.getStatus() == TimerStatus.IDLE && toStatus == TimerStatus.PAUSED)) {
                 if (this.getStatus().getPause() < 1) {
-                    this.idlePointTick = ticks;
-                    if (this.startTime != 0) {
+                    this.pausePointTick = ticks;
+                    if (this.isStarted()) {
                         lastPauseTime = getRealTimeAttack();
                         lastPauseStatus = toStatus;
                         pauseLog.append(timeToStringFormat(getInGameTime())).append(" IGT, ").append(timeToStringFormat(lastPauseTime)).append(" RTA S, ");
                     }
                 }
                 this.setStatus(toStatus);
-            } else {
-                this.pausePointTick = ticks;
             }
         } else {
-            if (isPaused() && this.startTime != 0) {
+            if (isPaused() && this.isStarted()) {
                 long nowTime = getRealTimeAttack();
                 pauseLog.append(timeToStringFormat(nowTime)).append(" RTA E, ").append(timeToStringFormat(nowTime - lastPauseTime)).append(" Length (").append(lastPauseStatus.getMessage()).append(")\n");
             }
 
             //첫 입력 대기 시간 적용
-            if (this.getStatus() == TimerStatus.IDLE && this.startTime != 0) {
-                this.pauseTicks += this.ticks - this.idlePointTick;
+            if (this.getStatus() == TimerStatus.IDLE && this.isStarted()) {
+                this.pauseTicks += this.ticks - this.pausePointTick;
                 this.firstInputDelays += this.pausePointTick == this.ticks ? 0 : System.currentTimeMillis() - this.lastTickTime;
             }
 
             //첫 입력 타이머 시작
-            if (this.startTime == 0) {
+            if (!this.isStarted()) {
                 this.startTime = System.currentTimeMillis();
                 this.pauseTicks = this.ticks;
                 this.firstInputDelays += this.startTime - lastTickTime;
+                if (this.isCanStartRSG()) this.rsgStartTime = this.startTime;
             }
             this.setStatus(TimerStatus.RUNNING);
         }
+    }
+
+    private boolean wasResetRSG = false;
+    public void startRSGTime() {
+        if (this.getStatus() == TimerStatus.IDLE && this.isCanStartRSG()) {
+            this.rsgStartTime = System.currentTimeMillis();
+        }
+    }
+
+    public void resetRSGTime() {
+        if (wasResetRSG || ticks == 0) return;
+
+        this.rsgStartTime = 0;
+        wasResetRSG = true;
+    }
+
+    private boolean isCanStartRSG() {
+        return this.rsgStartTime == 0;
+    }
+
+    public boolean isStarted() {
+        return this.startTime != 0;
     }
 
     public boolean isPaused() {
@@ -191,7 +215,7 @@ public class InGameTimer {
     }
 
     public long getStartTime() {
-        return this.startTime != 0 ? startTime : System.currentTimeMillis();
+        return this.rsgStartTime != 0 ? rsgStartTime : System.currentTimeMillis();
     }
 
     public long getRealTimeAttack() {
@@ -199,7 +223,7 @@ public class InGameTimer {
     }
 
     public int getTicks() {
-        return this.startTime == 0 ? 0 : this.ticks - this.pauseTicks - (this.isPaused() ? this.ticks - this.idlePointTick : 0);
+        return !this.isStarted() ? 0 : this.ticks - this.pauseTicks - (this.isPaused() ? this.ticks - this.pausePointTick : 0);
     }
 
     public void tick() {
@@ -212,7 +236,7 @@ public class InGameTimer {
         long ms = System.currentTimeMillis();
         return this.getStatus() == TimerStatus.NONE ? 0 :
                         (this.getTicks() * 50L) // Tick Based
-                        + (!isPausedOrCompleted() && this.idlePointTick != this.ticks ? ms - this.lastTickTime : 0) // More smooth timer in playing
+                        + (!isPausedOrCompleted() && this.pausePointTick != this.ticks ? ms - this.lastTickTime : 0) // More smooth timer in playing
                         - (this.firstInputDelays); // Subtract First Input Delays
     }
 
