@@ -6,6 +6,7 @@
   "speedrunigt.option.timer_position.background_opacity": "BG Opacity",
   "speedrunigt.option.timer_position.top_timer": "Top Timer",
   "speedrunigt.option.timer_position.show_time_only": "Show Time Only",
+  "speedrunigt.option.timer_position.toggle_timer": "Toggle Timer",
   "speedrunigt.option.more": "More",
   "speedrunigt.option.timer_category": "Timer Category",
   "speedrunigt.option.timer_category.warning": "There are several unsupported categories, which will be updated later.",
@@ -25,5 +26,8 @@
   "speedrunigt.option.timer_category.all_minerals": "All Minerals",
   "speedrunigt.option.timer_category.full_ia_15_lvl": "Full IA, 15 LVL",
   "speedrunigt.option.timer_category.all_workstations": "All Workstations",
-  "speedrunigt.option.timer_category.full_inv": "Full Inventory"
+  "speedrunigt.option.timer_category.full_inv": "Full Inventory",
+  "speedrunigt.option.timer_category.custom": "Custom (for Co-op, etc)",
+  "speedrunigt.controls.start_timer": "Start Timer (for 'Custom' Category)",
+  "speedrunigt.controls.stop_timer": "Stop Timer (for 'Custom' Category)"
 }

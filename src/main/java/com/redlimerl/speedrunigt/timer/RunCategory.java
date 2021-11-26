@@ -6,6 +6,7 @@ import java.util.Locale;
 
 public enum RunCategory {
     ANY("mc#Any_Glitchless"),
+    CUSTOM("mc#"),
     HIGH("mcce#High"),
     KILL_ALL_BOSSES("mcce#Kill_Bosses"),
     KILL_WITHER("mcce#Kill_Bosses"),

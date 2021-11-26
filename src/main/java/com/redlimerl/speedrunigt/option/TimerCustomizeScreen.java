@@ -24,7 +24,14 @@ public class TimerCustomizeScreen extends Screen {
 
     @Override
     protected void init() {
-        addButton(new SliderWidget(width / 2 - 60, height / 2 - 48, 120, 20, new TranslatableText("speedrunigt.option.timer_position.scale").append(" : ").append(((int) (drawer.getScale() * 100)) + "%"), (drawer.getScale() - 0.5f) / 2.5f) {
+
+        addButton(new ButtonWidget(width / 2 - 60, height / 2 - 48, 120, 20, new TranslatableText("speedrunigt.option.timer_position.toggle_timer").append(" : ").append(drawer.isToggle() ? ScreenTexts.ON : ScreenTexts.OFF), (ButtonWidget button) -> {
+            drawer.setStatus(drawer.getXPos(), drawer.getYPos(), drawer.getScale(), drawer.getBgOpacity(), drawer.isReversed(), drawer.isSimply(), !drawer.isToggle());
+            changed = true;
+            button.setMessage(new TranslatableText("speedrunigt.option.timer_position.toggle_timer").append(" : ").append(drawer.isToggle() ? ScreenTexts.ON : ScreenTexts.OFF));
+        }));
+
+        addButton(new SliderWidget(width / 2 - 60, height / 2 - 26, 120, 20, new TranslatableText("speedrunigt.option.timer_position.scale").append(" : ").append(((int) (drawer.getScale() * 100)) + "%"), (drawer.getScale() - 0.5f) / 2.5f) {
             @Override
             protected void updateMessage() {
                 this.setMessage(new TranslatableText("speedrunigt.option.timer_position.scale").append(" : ").append(((int) (drawer.getScale() * 100)) + "%"));
@@ -32,12 +39,12 @@ public class TimerCustomizeScreen extends Screen {
 
             @Override
             protected void applyValue() {
-                drawer.setStatus(drawer.getXPos(), drawer.getYPos(), Math.round((float) (0.5f + (this.value * 2.5f)) * 20f)/20f, drawer.getBgOpacity(), drawer.isReversed(), drawer.isSimply());
+                drawer.setStatus(drawer.getXPos(), drawer.getYPos(), Math.round((float) (0.5f + (this.value * 2.5f)) * 20f)/20f, drawer.getBgOpacity(), drawer.isReversed(), drawer.isSimply(), drawer.isToggle());
                 changed = true;
             }
         });
 
-        addButton(new SliderWidget(width / 2 - 60, height / 2 - 26, 120, 20, new TranslatableText("speedrunigt.option.timer_position.background_opacity").append(" : ").append(((int) (drawer.getBgOpacity() * 100)) + "%"), drawer.getBgOpacity()) {
+        addButton(new SliderWidget(width / 2 - 60, height / 2 - 4, 120, 20, new TranslatableText("speedrunigt.option.timer_position.background_opacity").append(" : ").append(((int) (drawer.getBgOpacity() * 100)) + "%"), drawer.getBgOpacity()) {
             @Override
             protected void updateMessage() {
                 this.setMessage(new TranslatableText("speedrunigt.option.timer_position.background_opacity").append(" : ").append(((int) (drawer.getBgOpacity() * 100)) + "%"));
@@ -45,24 +52,24 @@ public class TimerCustomizeScreen extends Screen {
 
             @Override
             protected void applyValue() {
-                drawer.setStatus(drawer.getXPos(), drawer.getYPos(), drawer.getScale(), (float) this.value, drawer.isReversed(), drawer.isSimply());
+                drawer.setStatus(drawer.getXPos(), drawer.getYPos(), drawer.getScale(), (float) this.value, drawer.isReversed(), drawer.isSimply(), drawer.isToggle());
                 changed = true;
             }
         });
 
-        addButton(new ButtonWidget(width / 2 - 60, height / 2 - 4, 120, 20, new TranslatableText("speedrunigt.option.timer_position.top_timer").append(" : ").append(drawer.isReversed() ?  "RTA" : "IGT"), (ButtonWidget button) -> {
-            drawer.setStatus(drawer.getXPos(), drawer.getYPos(), drawer.getScale(), drawer.getBgOpacity(), !drawer.isReversed(), drawer.isSimply());
+        addButton(new ButtonWidget(width / 2 - 60, height / 2 + 18, 120, 20, new TranslatableText("speedrunigt.option.timer_position.top_timer").append(" : ").append(drawer.isReversed() ?  "RTA" : "IGT"), (ButtonWidget button) -> {
+            drawer.setStatus(drawer.getXPos(), drawer.getYPos(), drawer.getScale(), drawer.getBgOpacity(), !drawer.isReversed(), drawer.isSimply(), drawer.isToggle());
             changed = true;
             button.setMessage(new TranslatableText("speedrunigt.option.timer_position.top_timer").append(" : ").append(drawer.isReversed() ?  "RTA" : "IGT"));
         }));
 
-        addButton(new ButtonWidget(width / 2 - 60, height / 2 + 18, 120, 20, new TranslatableText("speedrunigt.option.timer_position.show_time_only").append(" : ").append(drawer.isSimply() ? ScreenTexts.ON : ScreenTexts.OFF), (ButtonWidget button) -> {
-            drawer.setStatus(drawer.getXPos(), drawer.getYPos(), drawer.getScale(), drawer.getBgOpacity(), drawer.isReversed(), !drawer.isSimply());
+        addButton(new ButtonWidget(width / 2 - 60, height / 2 + 40, 120, 20, new TranslatableText("speedrunigt.option.timer_position.show_time_only").append(" : ").append(drawer.isSimply() ? ScreenTexts.ON : ScreenTexts.OFF), (ButtonWidget button) -> {
+            drawer.setStatus(drawer.getXPos(), drawer.getYPos(), drawer.getScale(), drawer.getBgOpacity(), drawer.isReversed(), !drawer.isSimply(), drawer.isToggle());
             changed = true;
             button.setMessage(new TranslatableText("speedrunigt.option.timer_position.show_time_only").append(" : ").append(drawer.isSimply() ? ScreenTexts.ON : ScreenTexts.OFF));
         }));
 
-        this.saveButton = addButton(new ButtonWidget(width / 2 - 60, height / 2 + 40, 58, 20, new TranslatableText("selectWorld.edit.save"), (ButtonWidget button) -> {
+        this.saveButton = addButton(new ButtonWidget(width / 2 - 60, height / 2 + 62, 58, 20, new TranslatableText("selectWorld.edit.save"), (ButtonWidget button) -> {
             SpeedRunOptions.setOption(SpeedRunOptions.TIMER_POSITION_X, drawer.getXPos());
             SpeedRunOptions.setOption(SpeedRunOptions.TIMER_POSITION_Y, drawer.getYPos());
             SpeedRunOptions.setOption(SpeedRunOptions.TIMER_SCALE, drawer.getScale());
@@ -70,10 +77,10 @@ public class TimerCustomizeScreen extends Screen {
             SpeedRunOptions.setOption(SpeedRunOptions.REVERSED_IGT_RTA, drawer.isReversed());
             SpeedRunOptions.setOption(SpeedRunOptions.DISPLAY_TIME_ONLY, drawer.isSimply());
             changed = false;
-            SpeedRunIGT.TIMER_DRAWER.setStatus(drawer.getXPos(), drawer.getYPos(), drawer.getScale(), drawer.getBgOpacity(), drawer.isReversed(), drawer.isSimply());
+            SpeedRunIGT.TIMER_DRAWER.setStatus(drawer.getXPos(), drawer.getYPos(), drawer.getScale(), drawer.getBgOpacity(), drawer.isReversed(), drawer.isSimply(), drawer.isToggle());
         }));
 
-        addButton(new ButtonWidget(width / 2 + 1, height / 2 + 40, 58, 20, ScreenTexts.CANCEL, (ButtonWidget button) -> {
+        addButton(new ButtonWidget(width / 2 + 1, height / 2 + 62, 58, 20, ScreenTexts.CANCEL, (ButtonWidget button) -> {
             if (client != null) client.openScreen(parent);
         }));
     }
@@ -82,7 +89,7 @@ public class TimerCustomizeScreen extends Screen {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         boolean isClicked = super.mouseClicked(mouseX, mouseY, button);
         if (!isClicked) {
-            drawer.setStatus((float) (mouseX / width), (float) (mouseY / height), drawer.getScale(), drawer.getBgOpacity(), drawer.isReversed(), drawer.isSimply());
+            drawer.setStatus((float) (mouseX / width), (float) (mouseY / height), drawer.getScale(), drawer.getBgOpacity(), drawer.isReversed(), drawer.isSimply(), drawer.isToggle());
             changed = true;
         }
         return isClicked;

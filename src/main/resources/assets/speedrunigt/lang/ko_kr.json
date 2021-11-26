@@ -5,7 +5,8 @@
   "speedrunigt.option.timer_position.scale": "크기",
   "speedrunigt.option.timer_position.background_opacity": "배경 투명도",
   "speedrunigt.option.timer_position.top_timer": "상단 타이머",
-  "speedrunigt.option.timer_position.show_time_only": "시간만 표시",
+  "speedrunigt.option.timer_position.show_time_only": "시간만 보기",
+  "speedrunigt.option.timer_position.toggle_timer": "타이머 사용",
   "speedrunigt.option.more": "더보기",
   "speedrunigt.option.timer_category": "타이머 카테고리",
   "speedrunigt.option.timer_category.warning": "일부 카테고리는 현재 지원하지 않으며, 추후에 업데이트됩니다.",
@@ -25,5 +26,8 @@
   "speedrunigt.option.timer_category.all_minerals": "모든 광물",
   "speedrunigt.option.timer_category.full_ia_15_lvl": "철 갑옷 풀세트, 15레벨",
   "speedrunigt.option.timer_category.all_workstations": "모든 주민 직업대",
-  "speedrunigt.option.timer_category.full_inv": "인벤토리 꽉 채우기"
+  "speedrunigt.option.timer_category.full_inv": "인벤토리 꽉 채우기",
+  "speedrunigt.option.timer_category.custom": "커스텀 (Co-op 등 전용)",
+  "speedrunigt.controls.start_timer": "타이머 시작 ('커스텀' 카테고리 전용)",
+  "speedrunigt.controls.stop_timer": "타이머 종료 ('커스텀' 카테고리 전용)"
 }
