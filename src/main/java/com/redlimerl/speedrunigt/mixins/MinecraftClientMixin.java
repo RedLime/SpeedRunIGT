@@ -36,6 +36,7 @@ public abstract class MinecraftClientMixin {
 
     @Shadow @Final public GameOptions options;
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     @Shadow public abstract boolean isPaused();
 
     @Shadow @Nullable public Screen currentScreen;
@@ -96,6 +97,7 @@ public abstract class MinecraftClientMixin {
         } else if (timer.getStatus() == TimerStatus.PAUSED && !paused) {
             timer.setPause(false);
         }
+
         if (!paused && mouse.isCursorLocked()) {
             timer.startRSGTime();
         }
@@ -125,15 +127,17 @@ public abstract class MinecraftClientMixin {
     private void drawTimer(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
-        int chunks = worldRenderer.getCompletedChunkCount();
-        int entities = worldRenderer.regularEntityCount - (options.getPerspective().isFirstPerson() ? 0 : 1);
-        SpeedRunIGT.DEBUG_DATA = timer.getStatus().name() + chunks + ", " + entities;
+        if (timer.getStatus() == TimerStatus.IDLE && !isPaused() && world == currWorld && timer.isStarted() ) {
+            int chunks = worldRenderer.getCompletedChunkCount();
+            int entities = worldRenderer.regularEntityCount - (options.getPerspective().isFirstPerson() ? 0 : 1);
 
-        if (world == currWorld && timer.getStatus() == TimerStatus.IDLE && timer.isStarted() && isPaused() && chunks + entities > 0) {
-           timer.setPause(false);
+            if (chunks + entities > 0) {
+                timer.setPause(false);
+            }
         }
+        SpeedRunIGT.DEBUG_DATA = timer.getStatus().name();
         if (!this.options.hudHidden && this.isInSingleplayer() && this.world != null && timer.getStatus() != TimerStatus.NONE
-                && (this.isPaused() || this.currentScreen instanceof GameMenuScreen) && !(this.currentScreen instanceof ChatScreen)) {
+                && (!this.isPaused() || this.currentScreen instanceof GameMenuScreen) && !(this.currentScreen instanceof ChatScreen)) {
             SpeedRunIGT.TIMER_DRAWER.draw();
         }
     }

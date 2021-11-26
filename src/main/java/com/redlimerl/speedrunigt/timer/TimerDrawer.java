@@ -25,6 +25,7 @@ public class TimerDrawer {
     private float bgOpacity = 1.0f;
     private boolean reversed = false;
     private boolean simply = false;
+    private boolean toggle = true;
 
     private boolean preUpdated = false;
 
@@ -45,7 +46,8 @@ public class TimerDrawer {
                 SpeedRunOptions.getOption(SpeedRunOptions.TIMER_SCALE),
                 SpeedRunOptions.getOption(SpeedRunOptions.TIMER_BG_OPACITY),
                 SpeedRunOptions.getOption(SpeedRunOptions.REVERSED_IGT_RTA),
-                SpeedRunOptions.getOption(SpeedRunOptions.DISPLAY_TIME_ONLY));
+                SpeedRunOptions.getOption(SpeedRunOptions.DISPLAY_TIME_ONLY),
+                SpeedRunOptions.getOption(SpeedRunOptions.TOGGLE_TIMER));
     }
 
     public float getXPos() {
@@ -72,13 +74,18 @@ public class TimerDrawer {
         return simply;
     }
 
-    public void setStatus(float xPos, float yPos, float scale, float bgOpacity, boolean isReversed, boolean isSimply) {
+    public boolean isToggle() {
+        return toggle;
+    }
+
+    public void setStatus(float xPos, float yPos, float scale, float bgOpacity, boolean isReversed, boolean isSimply, boolean toggle) {
         this.scale = scale;
         this.xPos = xPos;
         this.yPos = yPos;
         this.bgOpacity = bgOpacity;
         this.reversed = isReversed;
         this.simply = isSimply;
+        this.toggle = toggle;
         this.preUpdated = false;
     }
 
@@ -135,6 +142,8 @@ public class TimerDrawer {
     }
 
     public void draw() {
+        if (!toggle) return;
+
         if (!preUpdated || windowWidth != client.getWindow().getScaledWidth() || windowHeight != client.getWindow().getScaledHeight())
             updatePos();
         if (!preUpdated) return;

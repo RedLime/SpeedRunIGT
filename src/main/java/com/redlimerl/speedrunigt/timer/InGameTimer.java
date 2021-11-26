@@ -59,8 +59,8 @@ public class InGameTimer {
      */
     public static void start() {
         INSTANCE = new InGameTimer();
-        INSTANCE.setPause(true, TimerStatus.IDLE);
         INSTANCE.category = SpeedRunOptions.getOption(SpeedRunOptions.TIMER_CATEGORY);
+        INSTANCE.setPause(true, INSTANCE.getCategory() == RunCategory.CUSTOM ? TimerStatus.WAITING : TimerStatus.IDLE);
     }
 
     /**
@@ -145,8 +145,7 @@ public class InGameTimer {
         if (this.getStatus() == TimerStatus.COMPLETED) return;
 
         if (toPause) {
-            //IDLE 전환 후 PAUSE 전환 시도 시 무시
-            if (!(this.getStatus() == TimerStatus.IDLE && toStatus == TimerStatus.PAUSED)) {
+            if (this.getStatus().getPause() <= toStatus.getPause()) {
                 if (this.getStatus().getPause() < 1) {
                     this.pausePointTick = ticks;
                     if (this.isStarted()) {
@@ -174,7 +173,7 @@ public class InGameTimer {
                 this.startTime = System.currentTimeMillis();
                 this.pauseTicks = this.ticks;
                 this.firstInputDelays += this.startTime - lastTickTime;
-                if (this.isCanStartRSG()) this.rsgStartTime = this.startTime;
+                if (this.isCanStartRSG() || this.status == TimerStatus.WAITING) this.rsgStartTime = this.startTime;
             }
             this.setStatus(TimerStatus.RUNNING);
         }
@@ -195,15 +194,15 @@ public class InGameTimer {
     }
 
     private boolean isCanStartRSG() {
-        return this.rsgStartTime == 0;
+        return this.rsgStartTime == 0 && this.status != TimerStatus.WAITING;
     }
 
     public boolean isStarted() {
-        return this.startTime != 0;
+        return this.startTime != 0 && this.status != TimerStatus.WAITING;
     }
 
     public boolean isPaused() {
-        return this.getStatus() == TimerStatus.PAUSED || this.getStatus() == TimerStatus.IDLE || this.getStatus() == TimerStatus.LEAVE;
+        return this.getStatus() == TimerStatus.PAUSED || this.getStatus() == TimerStatus.IDLE || this.getStatus() == TimerStatus.LEAVE || this.getStatus() == TimerStatus.WAITING;
     }
 
     public boolean isPausedOrCompleted() {

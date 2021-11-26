@@ -11,6 +11,12 @@ public enum TimerStatus {
     NONE("", -1),
 
     /**
+     * Nothing, When the player is in the world select menu.
+     * But, It's different to {@link TimerStatus#LEAVE}
+     */
+    WAITING("", 3),
+
+    /**
      * When the player created the world or changed dimension.
      * Waits for the first input of the player's interaction.
      * It will be not change by {@link TimerStatus#PAUSED}.

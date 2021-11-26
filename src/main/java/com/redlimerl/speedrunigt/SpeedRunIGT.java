@@ -5,14 +5,18 @@ import com.google.gson.GsonBuilder;
 import com.redlimerl.speedrunigt.option.SpeedRunCategoryScreen;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.TimerCustomizeScreen;
+import com.redlimerl.speedrunigt.timer.InGameTimer;
+import com.redlimerl.speedrunigt.timer.RunCategory;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
@@ -37,7 +41,8 @@ public class SpeedRunIGT implements ClientModInitializer {
         TIMER_PATH.toFile().mkdirs();
     }
 
-    private static KeyBinding keyBinding;
+    private static KeyBinding timerStartKeyBinding;
+    private static KeyBinding timerStopKeyBinding;
 
     @Override
     public void onInitializeClient() {
@@ -51,12 +56,37 @@ public class SpeedRunIGT implements ClientModInitializer {
         );
         SpeedRunOptions.init();
 
-        keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.examplemod.spook", // The translation key of the keybinding's name
-                InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
-                GLFW.GLFW_KEY_U, // The keycode of the key
-                "category.examplemod.test" // The translation key of the keybinding's category.
+        timerStartKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "speedrunigt.controls.start_timer",
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_U,
+                "speedrunigt.title.options"
         ));
+
+        timerStopKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "speedrunigt.controls.stop_timer",
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_I,
+                "speedrunigt.title.options"
+        ));
+
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            while (timerStartKeyBinding.wasPressed()) {
+                InGameTimer timer = InGameTimer.getInstance();
+                if (timer.getCategory() == RunCategory.CUSTOM && !timer.isStarted()) {
+                    timer.setPause(false);
+                }
+            }
+        });
+
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            while (timerStopKeyBinding.wasPressed()) {
+                InGameTimer timer = InGameTimer.getInstance();
+                if (timer.getCategory() == RunCategory.CUSTOM && timer.isStarted()) {
+                    timer.complete();
+                }
+            }
+        });
     }
 
     public static void debug(Object obj) {
