@@ -38,7 +38,6 @@ public abstract class MouseMixin {
             timer.setPause(false);
         }
         if (this.isCursorLocked() && !MinecraftClient.getInstance().isPaused()) {
-            System.out.println("b");
             timer.updateFirstInput();
         }
     }

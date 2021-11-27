@@ -36,7 +36,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             timer.setPause(false);
         }
         if (vec3d.x != 0 || vec3d.z != 0 || this.jumping) {
-            System.out.println("c");
             timer.updateFirstInput();
         }
         

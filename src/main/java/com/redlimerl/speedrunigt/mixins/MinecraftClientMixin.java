@@ -109,7 +109,6 @@ public abstract class MinecraftClientMixin {
             if (timer.getStatus() == TimerStatus.IDLE) {
                 timer.setPause(false);
             }
-            System.out.println("a");
             timer.updateFirstInput();
         }
     }
