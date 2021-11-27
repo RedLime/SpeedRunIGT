@@ -26,11 +26,20 @@ public abstract class MouseMixin {
         unlock();
     }
 
+    @Inject(at = @At("HEAD"), method = "onMouseButton")
+    public void onMouseButton(CallbackInfo ci) {
+        unlock();
+    }
+
     private void unlock() {
         @NotNull
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() == TimerStatus.IDLE && this.isCursorLocked() && !MinecraftClient.getInstance().isPaused()) {
             timer.setPause(false);
+        }
+        if (this.isCursorLocked() && !MinecraftClient.getInstance().isPaused()) {
+            System.out.println("b");
+            timer.updateFirstInput();
         }
     }
 }

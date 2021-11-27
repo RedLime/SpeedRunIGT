@@ -176,4 +176,16 @@ public class SpeedRunOptions {
             return value.toString();
         }
     };
+
+    public static final OptionArgument<Boolean> WAITING_FIRST_INPUT = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "waiting_first_input"), false) {
+        @Override
+        public Boolean valueFromString(String string) {
+            return Objects.equals(string, "true");
+        }
+
+        @Override
+        public String valueToString(Boolean value) {
+            return value.toString();
+        }
+    };
 }
