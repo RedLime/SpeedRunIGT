@@ -36,7 +36,6 @@ public class InGameTimer {
     private RunCategory category = RunCategory.ANY;
 
     private long startTime = 0;
-    private long rsgStartTime = 0;
     private long endTime = 0;
     private long firstInputDelays = 0;
 
@@ -47,6 +46,7 @@ public class InGameTimer {
     private long lastTickTime = 0;
     private long lastPauseTime = 0;
     private TimerStatus lastPauseStatus = TimerStatus.NONE;
+    private String firstInput = "";
     private final StringBuilder pauseLog = new StringBuilder();
 
     @NotNull
@@ -85,7 +85,7 @@ public class InGameTimer {
 
         new Thread(() -> {
             try {
-                FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(currentWorldName).toFile(), "igt_log.txt"), pauseLog.toString(), Charsets.UTF_8);
+                FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(currentWorldName).toFile(), "igt_log.txt"), firstInput + "\n" + pauseLog, Charsets.UTF_8);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -149,6 +149,7 @@ public class InGameTimer {
                 if (this.getStatus().getPause() < 1) {
                     this.pausePointTick = ticks;
                     if (this.isStarted()) {
+                        this.firstInputDelays -= System.currentTimeMillis() - this.lastTickTime;
                         lastPauseTime = getRealTimeAttack();
                         lastPauseStatus = toStatus;
                         pauseLog.append(timeToStringFormat(getInGameTime())).append(" IGT, ").append(timeToStringFormat(lastPauseTime)).append(" RTA S, ");
@@ -157,44 +158,29 @@ public class InGameTimer {
                 this.setStatus(toStatus);
             }
         } else {
-            if (isPaused() && this.isStarted()) {
-                long nowTime = getRealTimeAttack();
-                pauseLog.append(timeToStringFormat(nowTime)).append(" RTA E, ").append(timeToStringFormat(nowTime - lastPauseTime)).append(" Length (").append(lastPauseStatus.getMessage()).append(")\n");
-            }
-
             //첫 입력 대기 시간 적용
-            if (this.getStatus() == TimerStatus.IDLE && this.isStarted()) {
-                this.pauseTicks += this.ticks - this.pausePointTick;
-                this.firstInputDelays += this.pausePointTick == this.ticks ? 0 : System.currentTimeMillis() - this.lastTickTime;
-            }
-
-            //첫 입력 타이머 시작
-            if (!this.isStarted()) {
+            if (this.isStarted()) {
+                if (isPaused()) {
+                    long nowTime = getRealTimeAttack();
+                    pauseLog.append(timeToStringFormat(nowTime)).append(" RTA E, ").append(timeToStringFormat(nowTime - lastPauseTime)).append(" Length (").append(lastPauseStatus.getMessage()).append(")\n");
+                }
+                if (this.getStatus() == TimerStatus.IDLE) {
+                    this.pauseTicks += this.ticks - this.pausePointTick;
+                    this.firstInputDelays += this.pausePointTick == this.ticks ? 0 : System.currentTimeMillis() - this.lastTickTime;
+                }
+            } else {
                 this.startTime = System.currentTimeMillis();
                 this.pauseTicks = this.ticks;
-                this.firstInputDelays += this.startTime - lastTickTime;
-                if (this.isCanStartRSG() || this.status == TimerStatus.WAITING) this.rsgStartTime = this.startTime;
+                this.firstInputDelays += this.lastTickTime == 0 ? 0 : this.startTime - this.lastTickTime;
             }
             this.setStatus(TimerStatus.RUNNING);
         }
     }
 
-    private boolean wasResetRSG = false;
-    public void startRSGTime() {
-        if (this.getStatus() == TimerStatus.IDLE && this.isCanStartRSG()) {
-            this.rsgStartTime = System.currentTimeMillis();
+    public void updateFirstInput() {
+        if (firstInput.isEmpty()) {
+            firstInput = "First Input: IGT " + timeToStringFormat(getInGameTime()) + ", RTA " + timeToStringFormat(getRealTimeAttack());
         }
-    }
-
-    public void resetRSGTime() {
-        if (wasResetRSG || ticks == 0) return;
-
-        this.rsgStartTime = 0;
-        wasResetRSG = true;
-    }
-
-    private boolean isCanStartRSG() {
-        return this.rsgStartTime == 0 && this.status != TimerStatus.WAITING;
     }
 
     public boolean isStarted() {
@@ -214,13 +200,14 @@ public class InGameTimer {
     }
 
     public long getStartTime() {
-        return this.rsgStartTime != 0 ? rsgStartTime : System.currentTimeMillis();
+        return this.startTime != 0 ? startTime : System.currentTimeMillis();
     }
 
     public long getRealTimeAttack() {
         return this.getStatus() == TimerStatus.NONE ? 0 : this.getEndTime() - this.getStartTime();
     }
 
+    public int getRawTicks() { return ticks; }
     public int getTicks() {
         return !this.isStarted() ? 0 : this.ticks - this.pauseTicks - (this.isPaused() ? this.ticks - this.pausePointTick : 0);
     }

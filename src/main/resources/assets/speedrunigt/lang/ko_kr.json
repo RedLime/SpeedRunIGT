@@ -28,6 +28,8 @@
   "speedrunigt.option.timer_category.all_workstations": "모든 주민 직업대",
   "speedrunigt.option.timer_category.full_inv": "인벤토리 꽉 채우기",
   "speedrunigt.option.timer_category.custom": "커스텀 (Co-op 등 전용)",
+  "speedrunigt.option.waiting_first_input": "첫 입력 때 시작",
+  "speedrunigt.option.waiting_first_input.description": "타이머의 시작점을 월드 로드에서\n플레이어의 첫 입력(이동, 인벤토리 등)으로 바꿉니다.\n일부 카테고리를 위한 옵션입니다.",
   "speedrunigt.controls.start_timer": "타이머 시작 ('커스텀' 카테고리 전용)",
   "speedrunigt.controls.stop_timer": "타이머 종료 ('커스텀' 카테고리 전용)"
 }

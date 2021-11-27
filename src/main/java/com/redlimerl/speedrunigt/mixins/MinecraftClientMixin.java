@@ -1,11 +1,11 @@
 package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.RunCategory;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.Mouse;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -40,8 +40,6 @@ public abstract class MinecraftClientMixin {
     @Shadow public abstract boolean isPaused();
 
     @Shadow @Nullable public Screen currentScreen;
-
-    @Shadow @Final public Mouse mouse;
 
     @Shadow @Final public WorldRenderer worldRenderer;
 
@@ -98,13 +96,6 @@ public abstract class MinecraftClientMixin {
             timer.setPause(false);
         }
 
-        if (!paused && mouse.isCursorLocked()) {
-            timer.startRSGTime();
-        }
-        if (paused && !timer.isStarted()) {
-            timer.resetRSGTime();
-        }
-
         return paused;
     }
 
@@ -113,11 +104,13 @@ public abstract class MinecraftClientMixin {
         GameOptions o = this.options;
         InGameTimer timer = InGameTimer.getInstance();
 
-        if (timer.getStatus() == TimerStatus.IDLE) {
-            if (o.keyAttack.isPressed() || o.keyDrop.isPressed() || o.keyInventory.isPressed() || o.keySneak.wasPressed() || o.keySwapHands.isPressed()
-                    || o.keyUse.isPressed() || o.keyPickItem.isPressed() || o.keySprint.wasPressed() || Arrays.stream(o.keysHotbar).anyMatch(KeyBinding::isPressed)) {
+        if (o.keyAttack.isPressed() || o.keyDrop.isPressed() || o.keyInventory.isPressed() || o.keySneak.wasPressed() || o.keySwapHands.isPressed()
+                || o.keyUse.isPressed() || o.keyPickItem.isPressed() || o.keySprint.wasPressed() || Arrays.stream(o.keysHotbar).anyMatch(KeyBinding::isPressed)) {
+            if (timer.getStatus() == TimerStatus.IDLE) {
                 timer.setPause(false);
             }
+            System.out.println("a");
+            timer.updateFirstInput();
         }
     }
 
@@ -127,7 +120,8 @@ public abstract class MinecraftClientMixin {
     private void drawTimer(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
-        if (timer.getStatus() == TimerStatus.IDLE && !isPaused() && world == currWorld && timer.isStarted() ) {
+        if ((timer.getStatus() == TimerStatus.IDLE || (timer.getStatus() == TimerStatus.PAUSED && timer.getRawTicks() == 0))
+                && !isPaused() && world == currWorld && (!SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) || timer.isStarted())) {
             int chunks = worldRenderer.getCompletedChunkCount();
             int entities = worldRenderer.regularEntityCount - (options.getPerspective().isFirstPerson() ? 0 : 1);
 
