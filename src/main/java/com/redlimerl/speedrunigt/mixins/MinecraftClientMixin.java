@@ -6,6 +6,7 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.RunCategory;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Mouse;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -44,6 +45,8 @@ public abstract class MinecraftClientMixin {
 
     @Shadow @Nullable public ClientWorld world;
 
+
+    @Shadow @Final public Mouse mouse;
 
     @Inject(at = @At("HEAD"), method = "method_29607(Ljava/lang/String;Lnet/minecraft/world/level/LevelInfo;Lnet/minecraft/util/registry/RegistryTracker$Modifiable;Lnet/minecraft/world/gen/GeneratorOptions;)V")
     public void onCreate(String worldName, LevelInfo levelInfo, RegistryTracker.Modifiable registryTracker, GeneratorOptions generatorOptions, CallbackInfo ci) {
@@ -120,7 +123,7 @@ public abstract class MinecraftClientMixin {
         InGameTimer timer = InGameTimer.getInstance();
 
         if ((timer.getStatus() == TimerStatus.IDLE || (timer.getStatus() == TimerStatus.PAUSED && timer.getRawTicks() == 0))
-                && !isPaused() && world == currWorld && (!SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) || timer.isStarted())) {
+                && !isPaused() && mouse.isCursorLocked() && world == currWorld && (!SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) || timer.isStarted())) {
             int chunks = worldRenderer.getCompletedChunkCount();
             int entities = worldRenderer.regularEntityCount - (options.perspective > 0 ? 0 : 1);
 
