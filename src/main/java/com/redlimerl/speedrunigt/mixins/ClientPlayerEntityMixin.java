@@ -120,6 +120,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     @Inject(at = @At("HEAD"), method = "tick")
     public void updateNausea(CallbackInfo ci) {
         if (this.inNetherPortal && nextNauseaStrength + 0.0125F >= 1F && InGameTimer.getInstance().getStatus() != TimerStatus.IDLE) {
+            InGameTimer.checkingWorld = false;
             InGameTimer.getInstance().setPause(true, TimerStatus.IDLE);
         }
     }

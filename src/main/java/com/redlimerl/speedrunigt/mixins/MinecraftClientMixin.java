@@ -71,6 +71,7 @@ public abstract class MinecraftClientMixin {
         InGameTimer timer = InGameTimer.getInstance();
 
         currWorld = targetWorld;
+        InGameTimer.checkingWorld = true;
 
         if (timer.getStatus() != TimerStatus.NONE) {
             timer.setPause(true, TimerStatus.IDLE);
@@ -107,7 +108,7 @@ public abstract class MinecraftClientMixin {
 
         if (o.keyAttack.isPressed() || o.keyDrop.isPressed() || o.keyInventory.isPressed() || o.keySneak.wasPressed() || o.keySwapHands.isPressed()
                 || o.keyUse.isPressed() || o.keyPickItem.isPressed() || o.keySprint.wasPressed() || Arrays.stream(o.keysHotbar).anyMatch(KeyBinding::isPressed)) {
-            if (timer.getStatus() == TimerStatus.IDLE) {
+            if (timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld) {
                 timer.setPause(false);
             }
             timer.updateFirstInput();
@@ -121,7 +122,7 @@ public abstract class MinecraftClientMixin {
         InGameTimer timer = InGameTimer.getInstance();
 
         if (worldRenderer != null && world != null && world == currWorld
-                && timer.getStatus() == TimerStatus.IDLE
+                && timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld
                 && (!SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) || timer.isStarted())) {
             int chunks = worldRenderer.getCompletedChunkCount();
             int entities = worldRenderer.regularEntityCount - (options.getPerspective().isFirstPerson() ? 0 : 1);

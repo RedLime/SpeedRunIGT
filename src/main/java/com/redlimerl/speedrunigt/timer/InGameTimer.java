@@ -27,6 +27,7 @@ public class InGameTimer {
 
     public static InGameTimer getInstance() { return INSTANCE; }
     public static String currentWorldName = "";
+    public static boolean checkingWorld = true;
 
     private static final ArrayList<Consumer<InGameTimer>> onCompleteConsumers = new ArrayList<>();
 
