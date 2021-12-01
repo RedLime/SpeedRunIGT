@@ -39,19 +39,19 @@ public abstract class LivingEntityMixin extends Entity {
                 timer.updateMoreData(2, 1);
             }
             if (timer.getMoreData(0) == 1 && timer.getMoreData(1) == 1 && timer.getMoreData(2) == 1)
-                timer.complete();
+                InGameTimer.complete();
             return;
         }
 
         //Kill Wither
         if (timer.getCategory() == RunCategory.KILL_WITHER && this.getType() == EntityType.WITHER) {
-            timer.complete();
+            InGameTimer.complete();
             return;
         }
 
         //Kill Elder Guardian
         if (timer.getCategory() == RunCategory.KILL_ELDER_GUARDIAN && this.getType() == EntityType.ELDER_GUARDIAN) {
-            timer.complete();
+            InGameTimer.complete();
         }
     }
 }

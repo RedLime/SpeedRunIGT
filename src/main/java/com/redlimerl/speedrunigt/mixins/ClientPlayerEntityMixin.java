@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -22,6 +23,8 @@ import java.util.stream.Collectors;
 
 @Mixin(ClientPlayerEntity.class)
 public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
+
+    @Shadow public float nextNauseaStrength;
 
     public ClientPlayerEntityMixin(ClientWorld world, GameProfile profile) {
         super(world, profile);
@@ -36,7 +39,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             timer.setPause(false);
         }
         if (vec3d.x != 0 || vec3d.z != 0 || this.jumping) {
-            System.out.println("c");
             timer.updateFirstInput();
         }
         
@@ -44,14 +46,14 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
         //HIGH%
         if (timer.getCategory() == RunCategory.HIGH && this.getY() >= 420) {
-            timer.complete();
+            InGameTimer.complete();
             return;
         }
 
         //Full Inventory
         if (timer.getCategory() == RunCategory.FULL_INV) {
             if (this.getInventory().main.stream().filter(itemStack -> itemStack != null && itemStack != ItemStack.EMPTY).map(ItemStack::getItem).distinct().toArray().length == 36)
-                timer.complete();
+                InGameTimer.complete();
             return;
         }
 
@@ -71,7 +73,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                     items.contains(Items.LOOM) &&
                     items.contains(Items.SMITHING_TABLE) &&
                     items.contains(Items.GRINDSTONE)) {
-                timer.complete();
+                InGameTimer.complete();
             }
         }
 
@@ -84,7 +86,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                     items.contains(Items.IRON_SWORD) &&
                     items.contains(Items.NETHERITE_SWORD) &&
                     items.contains(Items.WOODEN_SWORD)) {
-                timer.complete();
+                InGameTimer.complete();
             }
         }
 
@@ -99,7 +101,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                     items.contains(Items.LAPIS_LAZULI) &&
                     items.contains(Items.EMERALD) &&
                     items.contains(Items.QUARTZ)) {
-                timer.complete();
+                InGameTimer.complete();
             }
         }
 
@@ -110,8 +112,15 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                     items.contains(Items.IRON_CHESTPLATE) &&
                     items.contains(Items.IRON_BOOTS) &&
                     items.contains(Items.IRON_LEGGINGS) && experienceLevel >= 15) {
-                timer.complete();
+                InGameTimer.complete();
             }
+        }
+    }
+
+    @Inject(at = @At("HEAD"), method = "tick")
+    public void updateNausea(CallbackInfo ci) {
+        if (this.inNetherPortal && nextNauseaStrength + 0.0125F >= 1F && InGameTimer.getInstance().getStatus() != TimerStatus.IDLE) {
+            InGameTimer.getInstance().setPause(true, TimerStatus.IDLE);
         }
     }
 }

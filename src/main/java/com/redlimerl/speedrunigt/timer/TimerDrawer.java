@@ -144,16 +144,17 @@ public class TimerDrawer {
     public void draw() {
         if (!toggle) return;
 
-        if (!preUpdated || windowWidth != client.getWindow().getScaledWidth() || windowHeight != client.getWindow().getScaledHeight())
-            updatePos();
-        if (!preUpdated) return;
-
         TextRenderer textRenderer = client.textRenderer;
-
-        MatrixStack matrixStack = new MatrixStack();
         MutableText igt = getIGTText();
         MutableText rta = getRTAText();
 
+        if (!preUpdated || windowWidth != client.getWindow().getScaledWidth() || windowHeight != client.getWindow().getScaledHeight()
+            || Math.max(igtWidth, rtaWidth) != Math.max(textRenderer.getWidth(igt), textRenderer.getWidth(igt)))
+            updatePos();
+        if (!preUpdated) return;
+
+
+        MatrixStack matrixStack = new MatrixStack();
         matrixStack.push();
         if (this.translateZ) matrixStack.translate(0, 0, 1000);
         matrixStack.scale(scale, scale, 1f);

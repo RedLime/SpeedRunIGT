@@ -19,12 +19,12 @@ public class CreditsScreenMixin {
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() != TimerStatus.NONE) {
             if (timer.getCategory() == RunCategory.ANY) {
-                timer.complete();
+                InGameTimer.complete();
             }
             if (timer.getCategory() == RunCategory.KILL_ALL_BOSSES) {
                 timer.updateMoreData(0, 1);
                 if (timer.getMoreData(0) == 1 && timer.getMoreData(1) == 1 && timer.getMoreData(2) == 1)
-                    timer.complete();
+                    InGameTimer.complete();
             }
         }
     }

@@ -91,7 +91,7 @@ public class SpeedRunIGT implements ClientModInitializer {
             while (timerStopKeyBinding.wasPressed()) {
                 InGameTimer timer = InGameTimer.getInstance();
                 if (timer.getCategory() == RunCategory.CUSTOM && timer.isStarted()) {
-                    timer.complete();
+                    InGameTimer.complete();
                 }
             }
         });
