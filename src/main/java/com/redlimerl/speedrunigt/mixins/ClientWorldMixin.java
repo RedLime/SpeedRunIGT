@@ -21,9 +21,9 @@ public class ClientWorldMixin {
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() != TimerStatus.NONE) {
             if (timer.getStatus() == TimerStatus.COMPLETED) {
-                timer.end();
+                InGameTimer.end();
             } else {
-                timer.leave();
+                InGameTimer.leave();
             }
         }
     }

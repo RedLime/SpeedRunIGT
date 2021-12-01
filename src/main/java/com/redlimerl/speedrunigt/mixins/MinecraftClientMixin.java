@@ -6,7 +6,6 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.RunCategory;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.Mouse;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -45,12 +44,10 @@ public abstract class MinecraftClientMixin {
 
     @Shadow @Nullable public ClientWorld world;
 
-
-    @Shadow @Final public Mouse mouse;
-
     @Inject(at = @At("HEAD"), method = "method_29607(Ljava/lang/String;Lnet/minecraft/world/level/LevelInfo;Lnet/minecraft/util/registry/RegistryTracker$Modifiable;Lnet/minecraft/world/gen/GeneratorOptions;)V")
     public void onCreate(String worldName, LevelInfo levelInfo, RegistryTracker.Modifiable registryTracker, GeneratorOptions generatorOptions, CallbackInfo ci) {
         InGameTimer.start();
+        currWorld = null;
         InGameTimer.currentWorldName = worldName;
     }
 
@@ -58,11 +55,12 @@ public abstract class MinecraftClientMixin {
     public void onWorldOpen(String worldName, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
         boolean loaded = InGameTimer.load(worldName);
-        if (!loaded) timer.end();
+        if (!loaded) InGameTimer.end();
         else {
             InGameTimer.currentWorldName = worldName;
             timer.setPause(true, TimerStatus.IDLE);
         }
+        currWorld = null;
     }
 
     private static ClientWorld currWorld;
@@ -75,17 +73,16 @@ public abstract class MinecraftClientMixin {
 
         if (timer.getStatus() != TimerStatus.NONE) {
             timer.setPause(true, TimerStatus.IDLE);
-            InGameTimer.renderedWorld = 0;
         }
 
         //Enter Nether
         if (timer.getCategory() == RunCategory.ENTER_NETHER && targetWorld.getDimensionRegistryKey() == DimensionType.THE_NETHER_REGISTRY_KEY) {
-            timer.complete();
+            InGameTimer.complete();
         }
 
         //Enter End
         if (timer.getCategory() == RunCategory.ENTER_END && targetWorld.getDimensionRegistryKey() == DimensionType.THE_END_REGISTRY_KEY) {
-            timer.complete();
+            InGameTimer.complete();
         }
     }
 
@@ -122,8 +119,9 @@ public abstract class MinecraftClientMixin {
     private void drawTimer(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
-        if ((timer.getStatus() == TimerStatus.IDLE || (timer.getStatus() == TimerStatus.PAUSED && timer.getRawTicks() == 0))
-                && !isPaused() && mouse.isCursorLocked() && world == currWorld && (!SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) || timer.isStarted())) {
+        if (worldRenderer != null && world != null && world == currWorld
+                && timer.getStatus() == TimerStatus.IDLE
+                && (!SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) || timer.isStarted())) {
             int chunks = worldRenderer.getCompletedChunkCount();
             int entities = worldRenderer.regularEntityCount - (options.perspective > 0 ? 0 : 1);
 
@@ -132,7 +130,7 @@ public abstract class MinecraftClientMixin {
             }
         }
         SpeedRunIGT.DEBUG_DATA = timer.getStatus().name();
-        if (!this.options.hudHidden && this.isInSingleplayer() && this.world != null && timer.getStatus() != TimerStatus.NONE
+        if (!this.options.hudHidden && this.world != null && timer.getStatus() != TimerStatus.NONE
                 && (!this.isPaused() || this.currentScreen instanceof GameMenuScreen) && !(this.currentScreen instanceof ChatScreen)) {
             SpeedRunIGT.TIMER_DRAWER.draw();
         }

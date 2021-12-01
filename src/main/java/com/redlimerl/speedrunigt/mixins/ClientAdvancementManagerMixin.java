@@ -40,17 +40,17 @@ public abstract class ClientAdvancementManagerMixin {
 
             //How Did We Get Here
             if (timer.getCategory() == RunCategory.HOW_DID_WE_GET_HERE && Objects.equals(advancement.getId().toString(), new Identifier("nether/all_effects").toString())) {
-                timer.complete();
+                InGameTimer.complete();
             }
 
             //Hero of Village
             if (timer.getCategory() == RunCategory.HERO_OF_VILLAGE && Objects.equals(advancement.getId().toString(), new Identifier("adventure/hero_of_the_village").toString())) {
-                timer.complete();
+                InGameTimer.complete();
             }
 
             //Arbalistic
             if (timer.getCategory() == RunCategory.ARBALISTIC && Objects.equals(advancement.getId().toString(), new Identifier("adventure/arbalistic").toString())) {
-                timer.complete();
+                InGameTimer.complete();
             }
         }
         return entry.getValue();
@@ -64,14 +64,14 @@ public abstract class ClientAdvancementManagerMixin {
         if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategory.ALL_ADVANCEMENTS) {
             int completes = this.getManager().getAdvancements().stream()
                     .filter(advancement -> advancement.getDisplay() != null).toArray().length;
-            if (completes == 80) timer.complete();
+            if (completes == 80) InGameTimer.complete();
         }
 
         //Half%
         if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategory.HALF) {
             int completes = this.getManager().getAdvancements().stream()
                     .filter(advancement -> advancement.getDisplay() != null).toArray().length;
-            if (completes == 40) timer.complete();
+            if (completes == 40) InGameTimer.complete();
         }
     }
 
