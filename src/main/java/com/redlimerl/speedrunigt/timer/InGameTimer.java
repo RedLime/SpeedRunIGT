@@ -158,6 +158,10 @@ public class InGameTimer {
         return category;
     }
 
+    public void setCategory(RunCategory category) {
+        this.category = category;
+    }
+
     public long getTicks() {
         return this.activateTicks;
     }

@@ -2,6 +2,7 @@ package com.redlimerl.speedrunigt.option;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.RunCategory;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -112,6 +113,7 @@ public class SpeedRunCategoryScreen extends Screen {
                 public void onPress() {
                     super.onPress();
                     SpeedRunOptions.setOption(SpeedRunOptions.TIMER_CATEGORY, this.category);
+                    InGameTimer.getInstance().setCategory(this.category);
                 }
 
                 @Override
