@@ -6,6 +6,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.apache.commons.io.FileUtils;
 
@@ -15,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.List;
 import java.util.function.Function;
 
 public class SpeedRunOptions {
@@ -116,7 +118,19 @@ public class SpeedRunOptions {
         }
     };
 
-    public static final OptionArgument<Float> TIMER_SCALE = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "timer_scale"), 1.0f) {
+    public static final OptionArgument<Float> TIMER_IGT_SCALE = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "timer_scale_igt"), 1.0f) {
+        @Override
+        public Float valueFromString(String string) {
+            return Float.parseFloat(string);
+        }
+
+        @Override
+        public String valueToString(Float value) {
+            return value.toString();
+        }
+    };
+
+    public static final OptionArgument<Float> TIMER_RTA_SCALE = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "timer_scale_rta"), 1.0f) {
         @Override
         public Float valueFromString(String string) {
             return Float.parseFloat(string);
@@ -177,6 +191,54 @@ public class SpeedRunOptions {
     };
 
     public static final OptionArgument<Boolean> WAITING_FIRST_INPUT = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "waiting_first_input"), false) {
+        @Override
+        public Boolean valueFromString(String string) {
+            return Objects.equals(string, "true");
+        }
+
+        @Override
+        public String valueToString(Boolean value) {
+            return value.toString();
+        }
+    };
+
+    public static final OptionArgument<Integer> TIMER_IGT_COLOR = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "timer_igt_color"), Formatting.YELLOW.getColorValue()) {
+        @Override
+        public Integer valueFromString(String string) {
+            return Integer.parseInt(string);
+        }
+
+        @Override
+        public String valueToString(Integer value) {
+            return String.valueOf(value);
+        }
+    };
+
+    public static final OptionArgument<Boolean> TIMER_IGT_OUTLINE = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "timer_igt_outline"), true) {
+        @Override
+        public Boolean valueFromString(String string) {
+            return Objects.equals(string, "true");
+        }
+
+        @Override
+        public String valueToString(Boolean value) {
+            return value.toString();
+        }
+    };
+
+    public static final OptionArgument<Integer> TIMER_RTA_COLOR = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "timer_rta_color"), Formatting.AQUA.getColorValue()) {
+        @Override
+        public Integer valueFromString(String string) {
+            return Integer.parseInt(string);
+        }
+
+        @Override
+        public String valueToString(Integer value) {
+            return String.valueOf(value);
+        }
+    };
+
+    public static final OptionArgument<Boolean> TIMER_RTA_OUTLINE = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "timer_rta_outline"), true) {
         @Override
         public Boolean valueFromString(String string) {
             return Objects.equals(string, "true");
