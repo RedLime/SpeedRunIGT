@@ -44,6 +44,8 @@ public abstract class MinecraftClientMixin {
 
     @Shadow @Nullable public ClientWorld world;
 
+    @Shadow public abstract boolean isWindowFocused();
+
     @Inject(at = @At("HEAD"), method = "method_29607(Ljava/lang/String;Lnet/minecraft/world/level/LevelInfo;Lnet/minecraft/util/registry/RegistryTracker$Modifiable;Lnet/minecraft/world/gen/GeneratorOptions;)V")
     public void onCreate(String worldName, LevelInfo levelInfo, RegistryTracker.Modifiable registryTracker, GeneratorOptions generatorOptions, CallbackInfo ci) {
         InGameTimer.start();
@@ -120,7 +122,7 @@ public abstract class MinecraftClientMixin {
     private void drawTimer(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
-        if (worldRenderer != null && world != null && world == currWorld
+        if (worldRenderer != null && world != null && world == currWorld && !isPaused() && isWindowFocused()
                 && timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld
                 && (!SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) || timer.isStarted())) {
             int chunks = worldRenderer.getCompletedChunkCount();

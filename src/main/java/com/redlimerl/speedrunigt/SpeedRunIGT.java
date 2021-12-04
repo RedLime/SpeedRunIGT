@@ -54,6 +54,11 @@ public class SpeedRunIGT implements ClientModInitializer {
                 new ButtonWidget(0, 0, 150, 20,
                         new TranslatableText("speedrunigt.option.timer_category"), (ButtonWidget button) -> MinecraftClient.getInstance().openScreen(new SpeedRunCategoryScreen(screen)))
         );
+        SpeedRunOptions.addOptionButton(screen -> new ButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.timer_position.toggle_timer").append(" : ").append(TIMER_DRAWER.isToggle() ? ScreenTexts.ON : ScreenTexts.OFF), (ButtonWidget button) -> {
+            TIMER_DRAWER.setToggle(!TIMER_DRAWER.isToggle());
+            SpeedRunOptions.setOption(SpeedRunOptions.TOGGLE_TIMER, TIMER_DRAWER.isToggle());
+            button.setMessage(new TranslatableText("speedrunigt.option.timer_position.toggle_timer").append(" : ").append(TIMER_DRAWER.isToggle() ? ScreenTexts.ON : ScreenTexts.OFF));
+        }));
         SpeedRunOptions.addOptionButton(screen ->
                 new ButtonWidget(0, 0, 150, 20,
                         new TranslatableText("speedrunigt.option.waiting_first_input").append(" : ").append(SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) ? ScreenTexts.ON : ScreenTexts.OFF),

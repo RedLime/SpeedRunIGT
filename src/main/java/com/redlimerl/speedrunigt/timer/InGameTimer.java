@@ -242,7 +242,7 @@ public class InGameTimer {
             leastStartTime = 0;
             throwFPSTick = loggerTicks;
         }
-        if (tickDelays < 49 && loggerTicks - throwFPSTick < 100) {
+        if (!isPaused() && tickDelays < 49 && loggerTicks - throwFPSTick < 100) {
             rebaseRealTime += Math.max(0, 50 - tickDelays);
             isRebasedRTA = true;
         }
