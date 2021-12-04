@@ -86,13 +86,10 @@ public class SpeedRunIGT implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (timerStartKeyBinding.wasPressed()) {
                 InGameTimer timer = InGameTimer.getInstance();
-                if (timer.getCategory() == RunCategory.CUSTOM && !timer.isStarted()) {
-                    timer.setPause(false);
+                if (timer.getCategory() == RunCategory.CUSTOM && timer.isResettable()) {
+                    InGameTimer.reset();
                 }
             }
-        });
-
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (timerStopKeyBinding.wasPressed()) {
                 InGameTimer timer = InGameTimer.getInstance();
                 if (timer.getCategory() == RunCategory.CUSTOM && timer.isStarted()) {
