@@ -35,7 +35,15 @@ public class InGameTimer {
         onCompleteConsumers.add(supplier);
     }
 
+    public InGameTimer() {
+        this(true);
+    }
+    public InGameTimer(boolean isResettable) {
+        this.isResettable = isResettable;
+    }
+
     private RunCategory category = RunCategory.ANY;
+    private final boolean isResettable;
 
     //Timer time
     private long startTime = 0;
@@ -67,7 +75,17 @@ public class InGameTimer {
     public static void start() {
         INSTANCE = new InGameTimer();
         INSTANCE.category = SpeedRunOptions.getOption(SpeedRunOptions.TIMER_CATEGORY);
-        INSTANCE.setPause(true, INSTANCE.getCategory() == RunCategory.CUSTOM ? TimerStatus.WAITING : TimerStatus.IDLE);
+        INSTANCE.setPause(true, TimerStatus.IDLE);
+    }
+
+    /**
+     * Start the Timer, Trigger when player to join(created) the world
+     */
+    public static void reset() {
+        INSTANCE = new InGameTimer(false);
+        INSTANCE.category = RunCategory.CUSTOM;
+        INSTANCE.setPause(true, TimerStatus.IDLE);
+        INSTANCE.setPause(false);
     }
 
     /**
@@ -184,11 +202,11 @@ public class InGameTimer {
     }
 
     public boolean isStarted() {
-        return this.startTime != 0 && this.status != TimerStatus.WAITING;
+        return this.startTime != 0;
     }
 
     public boolean isPaused() {
-        return this.getStatus() == TimerStatus.PAUSED || this.getStatus() == TimerStatus.IDLE || this.getStatus() == TimerStatus.LEAVE || this.getStatus() == TimerStatus.WAITING;
+        return this.getStatus() == TimerStatus.PAUSED || this.getStatus() == TimerStatus.IDLE || this.getStatus() == TimerStatus.LEAVE;
     }
 
     public boolean isPlaying() {
@@ -295,5 +313,9 @@ public class InGameTimer {
             }
             this.setStatus(TimerStatus.RUNNING);
         }
+    }
+
+    public boolean isResettable() {
+        return isResettable;
     }
 }

@@ -36,6 +36,6 @@
   "speedrunigt.option.timer_category.custom": "Custom (for Co-op, etc)",
   "speedrunigt.option.waiting_first_input": "Start at First Input",
   "speedrunigt.option.waiting_first_input.description": "Change the timer's starting point from\nthe world load to the player's first input\n(movement, inventory, etc.).\nThis option is for some categories.",
-  "speedrunigt.controls.start_timer": "Start Timer (for 'Custom' Category)",
+  "speedrunigt.controls.start_timer": "Restart Timer (for 'Custom' Category)",
   "speedrunigt.controls.stop_timer": "Stop Timer (for 'Custom' Category)"
 }
