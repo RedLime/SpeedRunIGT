@@ -103,20 +103,6 @@ public abstract class MinecraftClientMixin {
         return paused;
     }
 
-    @Inject(method = "handleInputEvents", at = @At(value = "HEAD"))
-    private void slotChange(CallbackInfo ci) {
-        GameOptions o = this.options;
-        InGameTimer timer = InGameTimer.getInstance();
-
-        if (o.keyAttack.isPressed() || o.keyDrop.isPressed() || o.keyInventory.isPressed() || o.keySneak.wasPressed() || o.keySwapHands.isPressed()
-                || o.keyUse.isPressed() || o.keyPickItem.isPressed() || o.keySprint.wasPressed() || Arrays.stream(o.keysHotbar).anyMatch(KeyBinding::isPressed)) {
-            if (timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld) {
-                timer.setPause(false);
-            }
-            timer.updateFirstInput();
-        }
-    }
-
 
     @Inject(method = "render", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/toast/ToastManager;draw(Lnet/minecraft/client/util/math/MatrixStack;)V", shift = At.Shift.AFTER))
@@ -124,15 +110,19 @@ public abstract class MinecraftClientMixin {
         InGameTimer timer = InGameTimer.getInstance();
 
         if (worldRenderer != null && world != null && world == currWorld && !isPaused() && isWindowFocused()
-                && timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld
-                && (!SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) || timer.isStarted())) {
+                && timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld) {
             int chunks = worldRenderer.getCompletedChunkCount();
             int entities = worldRenderer.regularEntityCount - (options.getPerspective().isFirstPerson() ? 0 : 1);
 
             if (chunks + entities > 0) {
-                timer.setPause(false);
+                if (!(SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) || timer.isStarted())) {
+                    timer.setPause(false);
+                } else {
+                    timer.updateFirstRendered();
+                }
             }
         }
+
         SpeedRunIGT.DEBUG_DATA = timer.getStatus().name();
         if (!this.options.hudHidden && this.world != null && timer.getStatus() != TimerStatus.NONE
                 && (!this.isPaused() || this.currentScreen instanceof GameMenuScreen) && !(this.currentScreen instanceof ChatScreen)) {

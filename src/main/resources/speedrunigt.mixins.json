@@ -12,7 +12,8 @@
     "LivingEntityMixin",
     "MinecraftClientMixin",
     "MouseMixin",
-    "OptionsScreenMixin"
+    "OptionsScreenMixin",
+    "KeyBindingMixin"
   ],
   "accessWidener": "speedrunigt.accesswidener",
   "injectors": {

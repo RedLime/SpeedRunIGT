@@ -41,8 +41,8 @@ public class SpeedRunIGT implements ClientModInitializer {
         TIMER_PATH.toFile().mkdirs();
     }
 
-    private static KeyBinding timerStartKeyBinding;
-    private static KeyBinding timerStopKeyBinding;
+    public static KeyBinding timerResetKeyBinding;
+    public static KeyBinding timerStopKeyBinding;
 
     @Override
     public void onInitializeClient() {
@@ -69,7 +69,7 @@ public class SpeedRunIGT implements ClientModInitializer {
         , new TranslatableText("speedrunigt.option.waiting_first_input.description"));
         SpeedRunOptions.init();
 
-        timerStartKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        timerResetKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "speedrunigt.controls.start_timer",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_U,
@@ -82,21 +82,6 @@ public class SpeedRunIGT implements ClientModInitializer {
                 GLFW.GLFW_KEY_I,
                 "speedrunigt.title.options"
         ));
-
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            while (timerStartKeyBinding.wasPressed()) {
-                InGameTimer timer = InGameTimer.getInstance();
-                if (timer.getCategory() == RunCategory.CUSTOM && timer.isResettable()) {
-                    InGameTimer.reset();
-                }
-            }
-            while (timerStopKeyBinding.wasPressed()) {
-                InGameTimer timer = InGameTimer.getInstance();
-                if (timer.getCategory() == RunCategory.CUSTOM && timer.isStarted()) {
-                    InGameTimer.complete();
-                }
-            }
-        });
     }
 
     public static void debug(Object obj) {
