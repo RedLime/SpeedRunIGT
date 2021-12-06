@@ -53,7 +53,6 @@ public class InGameTimer {
     private long activateTicks = 0;
     private long leastTickTime = 0;
     private long leastStartTime = 0;
-    private int throwFPSTick = 0;
 
     //Logs
     private String firstInput = "";
@@ -113,11 +112,12 @@ public class InGameTimer {
     public static void complete() {
         InGameTimer timer = INSTANCE;
         if (timer.getStatus() == TimerStatus.COMPLETED) return;
-
         timer.endTime = System.currentTimeMillis();
+        timer.rebaseIGTime -= timer.endTime - timer.leastTickTime;
+
         timer.setStatus(TimerStatus.COMPLETED);
-        timer.pauseLog.append("Result > IGT ").append(timeToStringFormat(timer.getInGameTime(false)))
-                .append(", R-RTA ").append(timeToStringFormat(timer.getRealTimeAttack(true)))
+        timer.pauseLog.append("Result > IGT ").append(timeToStringFormat(timer.getInGameTime()))
+                .append(", R-RTA ").append(timeToStringFormat(timer.getRealTimeAttack()))
                 .append(", RTA ").append(timeToStringFormat(timer.getRealTimeAttack(false)))
                 .append(", Counted Ticks: ").append(timer.activateTicks)
                 .append(", Total Ticks: ").append(timer.loggerTicks)
@@ -239,9 +239,19 @@ public class InGameTimer {
                         - this.rebaseIGTime; // Subtract Rebased time
     }
 
+    private long firstRenderedTime = 0;
     public void updateFirstInput() {
-        if (firstInput.isEmpty()) {
-            firstInput = "First Input: IGT " + timeToStringFormat(getInGameTime()) + ", RTA " + timeToStringFormat(getRealTimeAttack());
+        if (firstInput.isEmpty() && !SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT)) {
+            firstInput = "First Input: IGT " + timeToStringFormat(getInGameTime(false)) + (leastTickTime == 0 ? "" : " (+ " + (System.currentTimeMillis() - this.leastTickTime) + "ms)") + ", RTA " + timeToStringFormat(getRealTimeAttack());
+        }
+        if (firstRenderedTime != 0) {
+            firstInput = "First World Rendered: " + (System.currentTimeMillis() - this.firstRenderedTime) + "ms before first input";
+        }
+    }
+
+    public void updateFirstRendered() {
+        if (firstInput.isEmpty() && firstRenderedTime == 0 && SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT)) {
+            firstRenderedTime = System.currentTimeMillis();
         }
     }
 
@@ -262,9 +272,8 @@ public class InGameTimer {
         if (leastStartTime != 0 && leastTickTime != 0) {
             rebaseIGTime += MathHelper.clamp((leastStartTime - leastTickTime) * 1.0 / tickDelays, 0, 1) * 50.0;
             leastStartTime = 0;
-            throwFPSTick = loggerTicks;
         }
-        if (!isPaused() && tickDelays < 49 && loggerTicks - throwFPSTick < 100) {
+        if (!isPaused() && tickDelays < 49 && getInGameTime(false) > getRealTimeAttack()) {
             rebaseRealTime += Math.max(0, 50 - tickDelays);
             isRebasedRTA = true;
         }
