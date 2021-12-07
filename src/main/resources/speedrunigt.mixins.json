@@ -9,11 +9,11 @@
     "ClientPlayerEntityMixin",
     "ClientWorldMixin",
     "CreditsScreenMixin",
+    "KeyBindingMixin",
     "LivingEntityMixin",
     "MinecraftClientMixin",
     "MouseMixin",
-    "OptionsScreenMixin",
-    "KeyBindingMixin"
+    "OptionsScreenMixin"
   ],
   "accessWidener": "speedrunigt.accesswidener",
   "injectors": {
