@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.timer;
 
+import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -8,6 +9,7 @@ import net.minecraft.client.gui.hud.BackgroundHelper;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.MathHelper;
 
 public class TimerDrawer {
@@ -280,7 +282,7 @@ public class TimerDrawer {
         Position rtaPos = new Position(rtaScaledPos.getX() + (int) (rtaWidthGap / rtaScale),
                 rtaScaledPos.getY() + (!this.reversed ? (int) Math.ceil(8 * this.igtScale / rtaScale) + 2 : 0));
         drawOutLine(textRenderer, matrixStack, rtaPos.getX(), rtaPos.getY(), rta, rtaColor, rtaDrawOutline);
-        //drawOutLine(textRenderer, matrixStack, scaleX + rtaWidthGap, scaleY + 20, new LiteralText(SpeedRunIGT.DEBUG_DATA), Formatting.RED.getColorValue());
+        //drawOutLine(textRenderer, matrixStack, 20, 20, new LiteralText(SpeedRunIGT.DEBUG_DATA), Formatting.RED.getColorValue(), true);
         matrixStack.pop();
 
 

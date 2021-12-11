@@ -48,7 +48,7 @@ public abstract class MinecraftClientMixin {
     @Inject(at = @At("HEAD"), method = "createWorld")
     public void onCreate(String worldName, LevelInfo levelInfo, DynamicRegistryManager.Impl registryTracker, GeneratorOptions generatorOptions, CallbackInfo ci) {
         InGameTimer.start();
-        currWorld = null;
+        currentDimension = null;
         InGameTimer.currentWorldName = worldName;
     }
 
@@ -61,16 +61,17 @@ public abstract class MinecraftClientMixin {
             InGameTimer.currentWorldName = worldName;
             timer.setPause(true, TimerStatus.IDLE);
         }
-        currWorld = null;
+        currentDimension = null;
     }
 
-    private static ClientWorld currWorld;
+    private static DimensionType currentDimension = null;
+
     @Inject(at = @At("HEAD"), method = "joinWorld")
     public void onJoin(ClientWorld targetWorld, CallbackInfo ci) {
         if (!isInSingleplayer()) return;
         InGameTimer timer = InGameTimer.getInstance();
 
-        currWorld = targetWorld;
+        currentDimension = targetWorld.getDimension();
         InGameTimer.checkingWorld = true;
 
         if (timer.getStatus() != TimerStatus.NONE) {
@@ -107,13 +108,13 @@ public abstract class MinecraftClientMixin {
     private void drawTimer(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
-        if (worldRenderer != null && world != null && world == currWorld && !isPaused() && isWindowFocused()
+        if (worldRenderer != null && world != null && world.getDimension() == currentDimension && !isPaused() && isWindowFocused()
                 && timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld) {
             int chunks = worldRenderer.getCompletedChunkCount();
             int entities = worldRenderer.regularEntityCount - (options.getPerspective().isFirstPerson() ? 0 : 1);
 
             if (chunks + entities > 0) {
-                if (!(SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) || timer.isStarted())) {
+                if (!(SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) && !timer.isStarted())) {
                     timer.setPause(false);
                 } else {
                     timer.updateFirstRendered();
