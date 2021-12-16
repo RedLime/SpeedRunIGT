@@ -25,7 +25,6 @@ public class TimerCustomizeScreen extends Screen {
     private final ArrayList<AbstractButtonWidget> normalOptions = new ArrayList<>();
     private final ArrayList<AbstractButtonWidget> igtOptions = new ArrayList<>();
     private final ArrayList<AbstractButtonWidget> rtaOptions = new ArrayList<>();
-    private final ArrayList<ButtonWidget> movementButtons = new ArrayList<>();
     private ButtonWidget normalButton;
     private ButtonWidget igtButton;
     private ButtonWidget rtaButton;

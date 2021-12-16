@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.redlimerl.speedrunigt.option.SpeedRunCategoryScreen;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.TimerCustomizeScreen;
-import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -20,7 +19,6 @@ import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 import java.nio.file.Path;
-import java.util.Stack;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class SpeedRunIGT implements ClientModInitializer {
