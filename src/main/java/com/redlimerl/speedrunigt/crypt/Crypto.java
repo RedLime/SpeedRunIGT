@@ -17,7 +17,7 @@ public class Crypto {
     private static final Base64.Decoder decoder = Base64.getDecoder();
 
     private static Cipher cipher(int opMode, String key) {
-        if (key.length() != 32) throw new RuntimeException("SecretKey length is not 32 chars");
+        if (key.length() != 32 && key.length() != 16) throw new RuntimeException("SecretKey length is not 16 or 32 chars");
 
         try {
             Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
@@ -26,6 +26,7 @@ public class Crypto {
             c.init(opMode, sk, iv);
             return c;
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException | InvalidKeyException e) {
+            e.printStackTrace();
             throw new RuntimeException("Cipher Algorithm Exception");
         }
     }

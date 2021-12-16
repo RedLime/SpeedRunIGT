@@ -31,7 +31,7 @@ public class KeyBindingMixin {
                     || keyBinding == MinecraftClient.getInstance().options.keySprint // Sprint
                     || Objects.equals(keyBinding.getCategory(), "key.categories.inventory")
                     || Objects.equals(keyBinding.getCategory(), "key.categories.gameplay")) {
-                if (timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld) {
+                if ((timer.getStatus() == TimerStatus.IDLE || timer.getStatus() == TimerStatus.LEAVE) && InGameTimer.checkingWorld) {
                     timer.setPause(false);
                 }
                 timer.updateFirstInput();

@@ -2,11 +2,13 @@ package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
+import com.redlimerl.speedrunigt.option.TimerCustomizeScreen;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.RunCategory;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
+import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.option.GameOptions;
@@ -54,12 +56,10 @@ public abstract class MinecraftClientMixin {
 
     @Inject(at = @At("HEAD"), method = "startIntegratedServer(Ljava/lang/String;)V")
     public void onWorldOpen(String worldName, CallbackInfo ci) {
-        InGameTimer timer = InGameTimer.getInstance();
         boolean loaded = InGameTimer.load(worldName);
         if (!loaded) InGameTimer.end();
         else {
             InGameTimer.currentWorldName = worldName;
-            timer.setPause(true, TimerStatus.IDLE);
         }
         currentDimension = null;
     }
@@ -74,7 +74,7 @@ public abstract class MinecraftClientMixin {
         currentDimension = targetWorld.getDimension();
         InGameTimer.checkingWorld = true;
 
-        if (timer.getStatus() != TimerStatus.NONE) {
+        if (timer.getStatus() != TimerStatus.NONE && timer.getStatus() != TimerStatus.LEAVE) {
             timer.setPause(true, TimerStatus.IDLE);
         }
 
@@ -109,7 +109,7 @@ public abstract class MinecraftClientMixin {
         InGameTimer timer = InGameTimer.getInstance();
 
         if (worldRenderer != null && world != null && world.getDimension() == currentDimension && !isPaused() && isWindowFocused()
-                && timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld) {
+                && (timer.getStatus() == TimerStatus.IDLE || timer.getStatus() == TimerStatus.LEAVE) && InGameTimer.checkingWorld) {
             int chunks = worldRenderer.getCompletedChunkCount();
             int entities = worldRenderer.regularEntityCount - (options.getPerspective().isFirstPerson() ? 0 : 1);
 
@@ -124,7 +124,8 @@ public abstract class MinecraftClientMixin {
 
         SpeedRunIGT.DEBUG_DATA = timer.getStatus().name();
         if (!this.options.hudHidden && this.world != null && timer.getStatus() != TimerStatus.NONE
-                && (!this.isPaused() || this.currentScreen instanceof GameMenuScreen) && !(this.currentScreen instanceof ChatScreen)) {
+                && (!this.isPaused() || this.currentScreen instanceof CreditsScreen || this.currentScreen instanceof GameMenuScreen || !SpeedRunOptions.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS))
+                && !(this.currentScreen instanceof TimerCustomizeScreen)) {
             SpeedRunIGT.TIMER_DRAWER.draw();
         }
     }
