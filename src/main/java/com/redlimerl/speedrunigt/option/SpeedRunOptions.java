@@ -94,78 +94,6 @@ public class SpeedRunOptions {
         }
     };
 
-    public static final OptionArgument<Float> TIMER_POSITION_X = new OptionArgument<Float>(new Identifier(SpeedRunIGT.MOD_ID, "timer_pos_x"), 0.035f) {
-        @Override
-        public Float valueFromString(String string) {
-            return Float.parseFloat(string);
-        }
-
-        @Override
-        public String valueToString(Float value) {
-            return value.toString();
-        }
-    };
-
-    public static final OptionArgument<Float> TIMER_POSITION_Y = new OptionArgument<Float>(new Identifier(SpeedRunIGT.MOD_ID, "timer_pos_y"), 0.035f) {
-        @Override
-        public Float valueFromString(String string) {
-            return Float.parseFloat(string);
-        }
-
-        @Override
-        public String valueToString(Float value) {
-            return value.toString();
-        }
-    };
-
-    public static final OptionArgument<Float> TIMER_IGT_SCALE = new OptionArgument<Float>(new Identifier(SpeedRunIGT.MOD_ID, "timer_scale_igt"), 1.0f) {
-        @Override
-        public Float valueFromString(String string) {
-            return Float.parseFloat(string);
-        }
-
-        @Override
-        public String valueToString(Float value) {
-            return value.toString();
-        }
-    };
-
-    public static final OptionArgument<Float> TIMER_RTA_SCALE = new OptionArgument<Float>(new Identifier(SpeedRunIGT.MOD_ID, "timer_scale_rta"), 1.0f) {
-        @Override
-        public Float valueFromString(String string) {
-            return Float.parseFloat(string);
-        }
-
-        @Override
-        public String valueToString(Float value) {
-            return value.toString();
-        }
-    };
-
-    public static final OptionArgument<Float> TIMER_BG_OPACITY = new OptionArgument<Float>(new Identifier(SpeedRunIGT.MOD_ID, "timer_bg_opacity"), 0.4f) {
-        @Override
-        public Float valueFromString(String string) {
-            return Float.parseFloat(string);
-        }
-
-        @Override
-        public String valueToString(Float value) {
-            return value.toString();
-        }
-    };
-
-    public static final OptionArgument<Boolean> REVERSED_IGT_RTA = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "revered_timer"), false) {
-        @Override
-        public Boolean valueFromString(String string) {
-            return Objects.equals(string, "true");
-        }
-
-        @Override
-        public String valueToString(Boolean value) {
-            return value.toString();
-        }
-    };
-
     public static final OptionArgument<Boolean> DISPLAY_TIME_ONLY = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "display_time_only"), false) {
         @Override
         public Boolean valueFromString(String string) {
@@ -198,6 +126,90 @@ public class SpeedRunOptions {
 
         @Override
         public String valueToString(Boolean value) {
+            return value.toString();
+        }
+    };
+
+    public static final OptionArgument<Boolean> HIDE_TIMER_IN_OPTIONS = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "hide_timer_in_options"), true) {
+        @Override
+        public Boolean valueFromString(String string) {
+            return Objects.equals(string, "true");
+        }
+
+        @Override
+        public String valueToString(Boolean value) {
+            return value.toString();
+        }
+    };
+
+    public static final OptionArgument<Float> TIMER_RTA_POSITION_X = new OptionArgument<Float>(new Identifier(SpeedRunIGT.MOD_ID, "timer_rta_pos_x"), 0.017f) {
+        @Override
+        public Float valueFromString(String string) {
+            return Float.parseFloat(string);
+        }
+
+        @Override
+        public String valueToString(Float value) {
+            return value.toString();
+        }
+    };
+
+    public static final OptionArgument<Float> TIMER_RTA_POSITION_Y = new OptionArgument<Float>(new Identifier(SpeedRunIGT.MOD_ID, "timer_rta_pos_y"), 0.035f) {
+        @Override
+        public Float valueFromString(String string) {
+            return Float.parseFloat(string);
+        }
+
+        @Override
+        public String valueToString(Float value) {
+            return value.toString();
+        }
+    };
+
+    public static final OptionArgument<Float> TIMER_IGT_POSITION_X = new OptionArgument<Float>(new Identifier(SpeedRunIGT.MOD_ID, "timer_igt_pos_x"), 0.017f) {
+        @Override
+        public Float valueFromString(String string) {
+            return Float.parseFloat(string);
+        }
+
+        @Override
+        public String valueToString(Float value) {
+            return value.toString();
+        }
+    };
+
+    public static final OptionArgument<Float> TIMER_IGT_POSITION_Y = new OptionArgument<Float>(new Identifier(SpeedRunIGT.MOD_ID, "timer_igt_pos_y"), 0.08f) {
+        @Override
+        public Float valueFromString(String string) {
+            return Float.parseFloat(string);
+        }
+
+        @Override
+        public String valueToString(Float value) {
+            return value.toString();
+        }
+    };
+
+    public static final OptionArgument<Float> TIMER_IGT_SCALE = new OptionArgument<Float>(new Identifier(SpeedRunIGT.MOD_ID, "timer_scale_igt"), 1.0f) {
+        @Override
+        public Float valueFromString(String string) {
+            return Float.parseFloat(string);
+        }
+
+        @Override
+        public String valueToString(Float value) {
+            return value.toString();
+        }
+    };
+
+    public static final OptionArgument<Float> TIMER_RTA_SCALE = new OptionArgument<Float>(new Identifier(SpeedRunIGT.MOD_ID, "timer_scale_rta"), 1.0f) {
+        @Override
+        public Float valueFromString(String string) {
+            return Float.parseFloat(string);
+        }
+
+        @Override
+        public String valueToString(Float value) {
             return value.toString();
         }
     };

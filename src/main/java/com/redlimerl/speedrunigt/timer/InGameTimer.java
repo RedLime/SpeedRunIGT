@@ -3,6 +3,8 @@ package com.redlimerl.speedrunigt.timer;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.crypt.Crypto;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.SharedConstants;
 import net.minecraft.util.math.MathHelper;
 import org.apache.commons.compress.utils.Charsets;
 import org.apache.commons.io.FileUtils;
@@ -11,7 +13,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
@@ -48,6 +52,7 @@ public class InGameTimer {
     //Timer time
     private long startTime = 0;
     private long endTime = 0;
+    private long endIGTTime = 0;
     private long rebaseIGTime = 0;
     private long rebaseRealTime = 0;
     private long activateTicks = 0;
@@ -113,7 +118,7 @@ public class InGameTimer {
         InGameTimer timer = INSTANCE;
         if (timer.getStatus() == TimerStatus.COMPLETED) return;
         timer.endTime = System.currentTimeMillis();
-        timer.rebaseIGTime -= timer.endTime - timer.leastTickTime;
+        timer.endIGTTime = timer.endTime - timer.leastTickTime;
 
         timer.setStatus(TimerStatus.COMPLETED);
         timer.pauseLog.append("Result > IGT ").append(timeToStringFormat(timer.getInGameTime()))
@@ -124,10 +129,16 @@ public class InGameTimer {
                 .append(", Rebased RTA Time: ").append(timeToStringFormat(timer.rebaseRealTime))
                 .append(", Rebased IGT Time: ").append(timeToStringFormat(timer.rebaseIGTime));
 
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy.MM.dd HH:mm:ss");
+        String logInfo = "MC Version : " + SharedConstants.getGameVersion().getName() + "\r\n"
+                + "Timer Version : " + (FabricLoader.getInstance().getModContainer(SpeedRunIGT.MOD_ID).isPresent() ? FabricLoader.getInstance().getModContainer(SpeedRunIGT.MOD_ID).get().getMetadata().getVersion().getFriendlyString() : "Unknown") + "\r\n"
+                + "Run Date : " + simpleDateFormat.format(new Date()) + "\r\n"
+                + "====================\r\n";
+
         new Thread(() -> {
             try {
-                FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(currentWorldName).toFile(), "igt_log.txt"), timer.firstInput + "\n" + timer.pauseLog, Charsets.UTF_8);
-                FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(currentWorldName).toFile(), "freeze_log.txt"), timer.freezeLog.toString(), Charsets.UTF_8);
+                FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(currentWorldName).toFile(), "igt_timer.log"), logInfo + timer.firstInput + "\r\n" + timer.pauseLog, Charsets.UTF_8);
+                FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(currentWorldName).toFile(), "igt_freeze.log"), logInfo + timer.freezeLog, Charsets.UTF_8);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -148,7 +159,7 @@ public class InGameTimer {
         INSTANCE.setPause(true, TimerStatus.LEAVE);
 
         String data = SpeedRunIGT.GSON.toJson(INSTANCE);
-        String timerData = Crypto.encrypt(data, "faRQOs2GK5j863ePvCBe5SiZLypm4UOM");
+        String timerData = Crypto.encrypt(data, "faRQOs2GK5j863eP");
         try {
             FileUtils.writeStringToFile(new File(SpeedRunIGT.TIMER_PATH.toFile(), currentWorldName+".igt"), timerData, Charsets.UTF_8);
         } catch (IOException e) {
@@ -160,11 +171,11 @@ public class InGameTimer {
         File file = new File(SpeedRunIGT.TIMER_PATH.toFile(), name+".igt");
         if (file.exists()) {
             try {
-                String data = Crypto.decrypt(FileUtils.readFileToString(file, StandardCharsets.UTF_8), "faRQOs2GK5j863ePvCBe5SiZLypm4UOM");
+                String data = Crypto.decrypt(FileUtils.readFileToString(file, StandardCharsets.UTF_8), "faRQOs2GK5j863eP");
                 INSTANCE = SpeedRunIGT.GSON.fromJson(data, InGameTimer.class);
                 return true;
             } catch (Exception e) {
-                e.printStackTrace();
+                return false;
             }
         }
         return false;
@@ -236,7 +247,8 @@ public class InGameTimer {
         return !isStarted() ? 0 :
                 (this.getTicks() * 50L) // Tick Based
                         + Math.min(50, smooth && isPlaying() && this.leastTickTime != 0 ? ms - this.leastTickTime : 0) // More smooth timer in playing
-                        - this.rebaseIGTime; // Subtract Rebased time
+                        - this.rebaseIGTime // Subtract Rebased time
+                        + this.endIGTTime;
     }
 
     private long firstRenderedTime = 0;
@@ -291,7 +303,7 @@ public class InGameTimer {
             if (isRebasedRTA && Math.max(0, 50 - tickDelays) > 0) {
                 this.freezeLog.append(", Retimed RTA +").append(Math.max(0, 50 - tickDelays)).append("ms");
             }
-            this.freezeLog.append("\n");
+            this.freezeLog.append("\r\n");
         }
     }
 
@@ -311,7 +323,7 @@ public class InGameTimer {
             if (this.isStarted()) {
                 if (isPaused()) {
                     long nowTime = getRealTimeAttack();
-                    pauseLog.append(timeToStringFormat(nowTime)).append(" RTA E, ").append(timeToStringFormat(nowTime - loggerPausedTime)).append(" Length (").append(getStatus().getMessage()).append(")\n");
+                    pauseLog.append(timeToStringFormat(nowTime)).append(" RTA E, ").append(timeToStringFormat(nowTime - loggerPausedTime)).append(" Length (").append(getStatus().getMessage()).append(")\r\n");
                 }
                 if (this.getStatus() == TimerStatus.IDLE && loggerTicks != 0) {
                     leastStartTime = System.currentTimeMillis();

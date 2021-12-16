@@ -1,5 +1,5 @@
+//file:noinspection GroovyUnusedAssignment
 //file:noinspection GroovyAssignabilityCheck
-//file:noinspection GroovyAccessibility
 plugins {
 	id 'fabric-loom' version '0.7-SNAPSHOT'
 	id 'maven-publish'
@@ -41,7 +41,6 @@ dependencies {
 	//modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	modIncludeImplementation(fabricApi.module("fabric-api-base", project.fabric_version))
 	modIncludeImplementation(fabricApi.module("fabric-resource-loader-v0", project.fabric_version))
-	modIncludeImplementation(fabricApi.module("fabric-lifecycle-events-v1", project.fabric_version))
 	modIncludeImplementation(fabricApi.module("fabric-key-binding-api-v1", project.fabric_version))
 
 	// PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.

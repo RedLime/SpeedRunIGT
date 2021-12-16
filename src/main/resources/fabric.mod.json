@@ -33,6 +33,6 @@
   },
 
   "breaks": {
-    "ghostrunner": "<=2.0"
+    "ghostrunner": "<=3.0"
   }
 }
