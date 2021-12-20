@@ -1,9 +1,8 @@
 package com.redlimerl.speedrunigt.timer;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.redlimerl.speedrunigt.timer.TimerDrawer.Position;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
 
 public class TimerElement {
@@ -22,8 +21,8 @@ public class TimerElement {
         this.text = text;
         this.color = color;
         this.doDrawOutline = doDrawOutline;
-        int scaledWindowWidth = client.getWindow().getScaledWidth();
-        int scaledWindowHeight = client.getWindow().getScaledHeight();
+        int scaledWindowWidth = client.window.getScaledWidth();
+        int scaledWindowHeight = client.window.getScaledHeight();
 
         int translateX = (int) (xPos * scaledWindowWidth);
         int translateY = (int) (yPos * scaledWindowHeight);
@@ -45,12 +44,12 @@ public class TimerElement {
         }
     }
 
-    public void draw(MatrixStack matrixStack, boolean doTranslate) {
-        RenderSystem.pushMatrix();
-        if (doTranslate) RenderSystem.translatef(0, 0, 999);
-        RenderSystem.scalef(scale, scale, 1.0F);
-        TimerDrawer.drawOutLine(client.textRenderer, matrixStack, scaledPosition.getX(), scaledPosition.getY(), text, color, doDrawOutline);
-        RenderSystem.popMatrix();
+    public void draw(boolean doTranslate) {
+        GlStateManager.pushMatrix();
+        if (doTranslate) GlStateManager.translatef(0, 0, 999);
+        GlStateManager.scalef(scale, scale, 1.0F);
+        TimerDrawer.drawOutLine(client.textRenderer, scaledPosition.getX(), scaledPosition.getY(), text, color, doDrawOutline);
+        GlStateManager.popMatrix();
     }
 
     private int getScaledTextWidth() {

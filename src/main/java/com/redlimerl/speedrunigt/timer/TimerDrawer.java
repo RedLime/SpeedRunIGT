@@ -4,7 +4,6 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecimals;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 
 public class TimerDrawer {
 
@@ -219,14 +218,13 @@ public class TimerDrawer {
         igtTimerElement.init(igtXPos, igtYPos, igtScale, igtText, igtColor, igtDrawOutline);
 
         //렌더
-        MatrixStack matrixStack = new MatrixStack();
-        if (igtScale != 0) igtTimerElement.draw(matrixStack, translateZ);
-        if (rtaScale != 0) rtaTimerElement.draw(matrixStack, translateZ);
+        if (igtScale != 0) igtTimerElement.draw(translateZ);
+        if (rtaScale != 0) rtaTimerElement.draw(translateZ);
 
         client.getProfiler().pop();
     }
 
-    static void drawOutLine(TextRenderer textRenderer, MatrixStack matrixStack, int x, int y, String text, Integer color, boolean drawOutline) {
+    static void drawOutLine(TextRenderer textRenderer, int x, int y, String text, Integer color, boolean drawOutline) {
         if (drawOutline) {
             textRenderer.draw(text, (float)x + 1, (float)y + 1, 0);
             textRenderer.draw(text, (float)x + 1, (float)y, 0);

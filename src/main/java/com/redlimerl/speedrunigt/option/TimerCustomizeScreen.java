@@ -180,13 +180,13 @@ public class TimerCustomizeScreen extends Screen {
             int moveX = keyCode == 262 ? 1 : keyCode == 263 ? -1 : 0;
             int moveY = keyCode == 265 ? -1 : keyCode == 264 ? 1 : 0;
             if (!igtButton.active) {
-                drawer.setIGT_XPos(MathHelper.clamp(drawer.getIGT_XPos() + moveX * drawer.getIGTScale() / minecraft.getWindow().getScaledWidth(), 0, 1));
-                drawer.setIGT_YPos(MathHelper.clamp(drawer.getIGT_YPos() + moveY * drawer.getIGTScale() / minecraft.getWindow().getScaledHeight(), 0, 1));
+                drawer.setIGT_XPos(MathHelper.clamp(drawer.getIGT_XPos() + moveX * drawer.getIGTScale() / minecraft.window.getScaledWidth(), 0, 1));
+                drawer.setIGT_YPos(MathHelper.clamp(drawer.getIGT_YPos() + moveY * drawer.getIGTScale() / minecraft.window.getScaledHeight(), 0, 1));
                 changed = true;
             }
             if (!rtaButton.active) {
-                drawer.setRTA_XPos(MathHelper.clamp(drawer.getRTA_XPos() + moveX * drawer.getRTAScale() / minecraft.getWindow().getScaledWidth(), 0, 1));
-                drawer.setRTA_YPos(MathHelper.clamp(drawer.getRTA_YPos() + moveY * drawer.getRTAScale() / minecraft.getWindow().getScaledHeight(), 0, 1));
+                drawer.setRTA_XPos(MathHelper.clamp(drawer.getRTA_XPos() + moveX * drawer.getRTAScale() / minecraft.window.getScaledWidth(), 0, 1));
+                drawer.setRTA_YPos(MathHelper.clamp(drawer.getRTA_YPos() + moveY * drawer.getRTAScale() / minecraft.window.getScaledHeight(), 0, 1));
                 changed = true;
             }
             setFocused(null);

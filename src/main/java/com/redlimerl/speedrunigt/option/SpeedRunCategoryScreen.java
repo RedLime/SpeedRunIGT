@@ -1,7 +1,6 @@
 package com.redlimerl.speedrunigt.option;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.RunCategory;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
@@ -124,12 +123,12 @@ public class SpeedRunCategoryScreen extends Screen {
                 public void render(int mouseX, int mouseY, float delta) {
                     MinecraftClient minecraftClient = MinecraftClient.getInstance();
                     minecraftClient.getTextureManager().bindTexture(TEXTURE);
-                    RenderSystem.enableDepthTest();
+                    GlStateManager.enableDepthTest();
                     TextRenderer textRenderer = minecraftClient.textRenderer;
-                    RenderSystem.color4f(1.0F, 1.0F, 1.0F, this.alpha);
-                    RenderSystem.enableBlend();
-                    RenderSystem.defaultBlendFunc();
-                    RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
+                    GlStateManager.color4f(1.0F, 1.0F, 1.0F, this.alpha);
+                    GlStateManager.enableBlend();
+                    GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+                    GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
                     blit(this.x, this.y, this.isFocused() ? 20.0F : 0.0F, this.isChecked() ? 20.0F : 0.0F, 20, this.height, 32, 64);
                     this.renderBg(minecraftClient, mouseX, mouseY);
                     drawString(textRenderer, this.getMessage(), this.x + 24, this.y + (this.height - 8) / 2, 14737632 | MathHelper.ceil(this.alpha * 255.0F) << 24);
