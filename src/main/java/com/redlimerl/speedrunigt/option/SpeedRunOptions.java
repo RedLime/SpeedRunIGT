@@ -106,6 +106,39 @@ public class SpeedRunOptions {
         }
     };
 
+    public enum TimerDecimals { TWO(2), THREE(3);
+        private final int number;
+        TimerDecimals(int number) {
+            this.number = number;
+        }
+        public int getNumber() {
+            return number;
+        }
+    }
+    public static final OptionArgument<TimerDecimals> DISPLAY_DECIMALS = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "timer_display_decimals"), TimerDecimals.THREE) {
+        @Override
+        public TimerDecimals valueFromString(String string) {
+            return TimerDecimals.valueOf(string);
+        }
+
+        @Override
+        public String valueToString(TimerDecimals value) {
+            return value.name();
+        }
+    };
+
+    public static final OptionArgument<Boolean> LOCK_TIMER_POSITION = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "lock_timer_position"), false) {
+        @Override
+        public Boolean valueFromString(String string) {
+            return Objects.equals(string, "true");
+        }
+
+        @Override
+        public String valueToString(Boolean value) {
+            return value.toString();
+        }
+    };
+
     public static final OptionArgument<Boolean> TOGGLE_TIMER = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "toggle_timer"), true) {
         @Override
         public Boolean valueFromString(String string) {

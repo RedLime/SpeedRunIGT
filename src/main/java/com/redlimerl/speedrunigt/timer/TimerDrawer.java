@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.timer;
 
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
+import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecimals;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -26,6 +27,8 @@ public class TimerDrawer {
 
     private boolean simply;
     private boolean toggle;
+    private boolean isLocked;
+    private TimerDecimals timerDecimals;
 
     public TimerDrawer(boolean translateZ) {
         this(translateZ,
@@ -40,13 +43,15 @@ public class TimerDrawer {
                 SpeedRunOptions.getOption(SpeedRunOptions.TIMER_RTA_COLOR),
                 SpeedRunOptions.getOption(SpeedRunOptions.TIMER_RTA_OUTLINE),
                 SpeedRunOptions.getOption(SpeedRunOptions.DISPLAY_TIME_ONLY),
-                SpeedRunOptions.getOption(SpeedRunOptions.TOGGLE_TIMER));
+                SpeedRunOptions.getOption(SpeedRunOptions.TOGGLE_TIMER),
+                SpeedRunOptions.getOption(SpeedRunOptions.LOCK_TIMER_POSITION),
+                SpeedRunOptions.getOption(SpeedRunOptions.DISPLAY_DECIMALS));
     }
 
     public TimerDrawer(boolean translateZ,
                        float igtXPos, float igtYPos, float igtScale, Integer igtColor, boolean igtDrawOutline,
                        float rtaXPos, float rtaYPos, float rtaScale, Integer rtaColor, boolean rtaDrawOutline,
-                       boolean simply, boolean toggle) {
+                       boolean simply, boolean toggle, boolean isLocked, TimerDecimals timerDecimals) {
         this.translateZ = translateZ;
         this.igtXPos = igtXPos;
         this.igtYPos = igtYPos;
@@ -60,6 +65,8 @@ public class TimerDrawer {
         this.rtaDrawOutline = rtaDrawOutline;
         this.simply = simply;
         this.toggle = toggle;
+        this.isLocked = isLocked;
+        this.timerDecimals = timerDecimals;
     }
 
     public float getIGT_XPos() {
@@ -158,12 +165,44 @@ public class TimerDrawer {
         this.rtaDrawOutline = rtaDrawOutline;
     }
 
+
+    public boolean isLocked() {
+        return isLocked;
+    }
+
+    public void setLocked(boolean locked) {
+        isLocked = locked;
+    }
+
+    public TimerDecimals getTimerDecimals() {
+        return timerDecimals;
+    }
+
+    public void setTimerDecimals(TimerDecimals timerDecimals) {
+        this.timerDecimals = timerDecimals;
+    }
+
+    private String getTimeFormat(long time) {
+        if (!InGameTimer.getInstance().isPlaying() && translateZ) {
+            return InGameTimer.timeToStringFormat(time);
+        }
+        int seconds = ((int) (time / 1000)) % 60;
+        int minutes = ((int) (time / 1000)) / 60;
+        if (minutes > 59) {
+            int hours = minutes / 60;
+            minutes = minutes % 60;
+            return String.format("%d:%02d:%02d.%0" + timerDecimals.getNumber() + ".0f", hours, minutes, seconds, time % Math.pow(10, timerDecimals.getNumber()));
+        } else {
+            return String.format("%02d:%02d.%0" + timerDecimals.getNumber() + ".0f", minutes, seconds, time % Math.pow(10, timerDecimals.getNumber()));
+        }
+    }
+
     public MutableText getIGTText() {
-        return new LiteralText(this.simply ? "" : "IGT: ").append(new LiteralText(InGameTimer.timeToStringFormat(InGameTimer.getInstance().getInGameTime())));
+        return new LiteralText(this.simply ? "" : "IGT: ").append(new LiteralText(getTimeFormat(InGameTimer.getInstance().getInGameTime())));
     }
 
     public MutableText getRTAText() {
-        return new LiteralText(this.simply ? "" : "RTA: ").append(new LiteralText(InGameTimer.timeToStringFormat(InGameTimer.getInstance().getRealTimeAttack())));
+        return new LiteralText(this.simply ? "" : "RTA: ").append(new LiteralText(getTimeFormat(InGameTimer.getInstance().getRealTimeAttack())));
     }
 
     public void draw() {
