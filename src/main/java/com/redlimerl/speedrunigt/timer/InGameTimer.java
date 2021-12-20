@@ -105,7 +105,7 @@ public class InGameTimer {
         if (minutes > 59) {
             int hours = minutes / 60;
             minutes = minutes % 60;
-            return String.format("%02d:%02d:%02d.%03d", hours, minutes, seconds, time % 1000);
+            return String.format("%d:%02d:%02d.%03d", hours, minutes, seconds, time % 1000);
         } else {
             return String.format("%02d:%02d.%03d", minutes, seconds, time % 1000);
         }

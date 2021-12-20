@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.option;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecimals;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import net.minecraft.client.gui.hud.BackgroundHelper.ColorMixer;
 import net.minecraft.client.gui.screen.Screen;
@@ -131,6 +132,10 @@ public class TimerCustomizeScreen extends Screen {
 
             SpeedRunOptions.setOption(SpeedRunOptions.DISPLAY_TIME_ONLY, drawer.isSimplyTimer());
             SpeedRunIGT.TIMER_DRAWER.setSimplyTimer(drawer.isSimplyTimer());
+            SpeedRunOptions.setOption(SpeedRunOptions.LOCK_TIMER_POSITION, drawer.isLocked());
+            SpeedRunIGT.TIMER_DRAWER.setLocked(drawer.isLocked());
+            SpeedRunOptions.setOption(SpeedRunOptions.DISPLAY_DECIMALS, drawer.getTimerDecimals());
+            SpeedRunIGT.TIMER_DRAWER.setTimerDecimals(drawer.getTimerDecimals());
 
             changed = false;
         }));
@@ -154,7 +159,7 @@ public class TimerCustomizeScreen extends Screen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         boolean isClicked = super.mouseClicked(mouseX, mouseY, button);
-        if (!isClicked && button == 0) {
+        if (!isClicked && button == 0 && !drawer.isLocked()) {
             if (!this.igtButton.active) {
                 drawer.setIGT_XPos(MathHelper.clamp((float) (mouseX / width), 0, 1));
                 drawer.setIGT_YPos(MathHelper.clamp((float) (mouseY / height), 0, 1));
@@ -171,7 +176,7 @@ public class TimerCustomizeScreen extends Screen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (modifiers == 2 && keyCode >= 262 && keyCode <= 265 && client != null) {
+        if (modifiers == 2 && keyCode >= 262 && keyCode <= 265 && client != null && !drawer.isLocked()) {
             int moveX = keyCode == 262 ? 1 : keyCode == 263 ? -1 : 0;
             int moveY = keyCode == 265 ? -1 : keyCode == 264 ? 1 : 0;
             if (!igtButton.active) {
@@ -199,10 +204,15 @@ public class TimerCustomizeScreen extends Screen {
 
         this.drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 15, 16777215);
         if (!hide && normalButton.active) {
-            this.drawCenteredText(matrices, this.textRenderer,
-                    new TranslatableText("speedrunigt.option.timer_position.description"), this.width / 2, this.height / 2 - 80, 16777215);
-            this.drawCenteredText(matrices, this.textRenderer,
-                    new TranslatableText("speedrunigt.option.timer_position.description.move"), this.width / 2, this.height / 2 - 69, 16777215);
+            if (drawer.isLocked()) {
+                drawCenteredText(matrices, this.textRenderer,
+                        new TranslatableText("speedrunigt.option.timer_position.description.lock"), this.width / 2, this.height / 2 - 80, 16777215);
+            } else {
+                drawCenteredText(matrices, this.textRenderer,
+                        new TranslatableText("speedrunigt.option.timer_position.description"), this.width / 2, this.height / 2 - 80, 16777215);
+                drawCenteredText(matrices, this.textRenderer,
+                        new TranslatableText("speedrunigt.option.timer_position.description.move"), this.width / 2, this.height / 2 - 69, 16777215);
+            }
         }
         super.render(matrices, mouseX, mouseY, delta);
     }
@@ -216,11 +226,28 @@ public class TimerCustomizeScreen extends Screen {
 
     public void initNormal() {
         normalOptions.add(
-                addButton(new ButtonWidget(width / 2 - 60, height / 2 - 16, 120, 20, new TranslatableText("speedrunigt.option.timer_position.show_time_only").append(" : ").append(drawer.isSimplyTimer() ? ScreenTexts.ON : ScreenTexts.OFF), (ButtonWidget button) -> {
+                addButton(new ButtonWidget(width / 2 - 80, height / 2 - 16, 160, 20, new TranslatableText("speedrunigt.option.timer_position.show_time_only").append(" : ").append(drawer.isSimplyTimer() ? ScreenTexts.ON : ScreenTexts.OFF), (ButtonWidget button) -> {
                     drawer.setSimplyTimer(!drawer.isSimplyTimer());
                     changed = true;
                     button.setMessage(new TranslatableText("speedrunigt.option.timer_position.show_time_only").append(" : ").append(drawer.isSimplyTimer() ? ScreenTexts.ON : ScreenTexts.OFF));
                 }))
+        );
+
+        normalOptions.add(
+                addButton(new ButtonWidget(width / 2 - 80, height / 2 + 6, 160, 20, new TranslatableText("speedrunigt.option.timer_position.lock_timer_position").append(" : ").append(drawer.isLocked() ? ScreenTexts.ON : ScreenTexts.OFF), (ButtonWidget button) -> {
+                    drawer.setLocked(!drawer.isLocked());
+                    changed = true;
+                    button.setMessage(new TranslatableText("speedrunigt.option.timer_position.lock_timer_position").append(" : ").append(drawer.isLocked() ? ScreenTexts.ON : ScreenTexts.OFF));
+                }))
+        );
+
+        normalOptions.add(
+                addButton(new ButtonWidget(width / 2 - 80, height / 2 + 28, 160, 20, new TranslatableText("speedrunigt.option.timer_position.show_decimals").append(" : ").append(new TranslatableText("speedrunigt.option.timer_position.show_decimals.context", drawer.getTimerDecimals().getNumber())), (ButtonWidget button) -> {
+                    int order = drawer.getTimerDecimals().ordinal();
+                    drawer.setTimerDecimals(TimerDecimals.values()[(++order) % TimerDecimals.values().length]);
+                    changed = true;
+                    button.setMessage(new TranslatableText("speedrunigt.option.timer_position.show_decimals").append(" : ").append(new TranslatableText("speedrunigt.option.timer_position.show_decimals.context", drawer.getTimerDecimals().getNumber())));
+                }, (button, matrices, mouseX, mouseY) -> renderTooltip(matrices, new TranslatableText("speedrunigt.option.timer_position.show_decimals.description"), mouseX, mouseY)))
         );
     }
 
