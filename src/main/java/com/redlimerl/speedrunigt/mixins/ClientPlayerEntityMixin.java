@@ -84,7 +84,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                     items.contains(Items.DIAMOND_SWORD) &&
                     items.contains(Items.GOLDEN_SWORD) &&
                     items.contains(Items.IRON_SWORD) &&
-                    items.contains(Items.NETHERITE_SWORD) &&
                     items.contains(Items.WOODEN_SWORD)) {
                 InGameTimer.complete();
             }

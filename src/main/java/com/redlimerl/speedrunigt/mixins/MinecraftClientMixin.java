@@ -13,9 +13,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.options.GameOptions;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.registry.RegistryTracker;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.gen.GeneratorOptions;
 import net.minecraft.world.level.LevelInfo;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -44,21 +42,20 @@ public abstract class MinecraftClientMixin {
 
     @Shadow public abstract boolean isWindowFocused();
 
-    @Inject(at = @At("HEAD"), method = "method_29607(Ljava/lang/String;Lnet/minecraft/world/level/LevelInfo;Lnet/minecraft/util/registry/RegistryTracker$Modifiable;Lnet/minecraft/world/gen/GeneratorOptions;)V")
-    public void onCreate(String worldName, LevelInfo levelInfo, RegistryTracker.Modifiable registryTracker, GeneratorOptions generatorOptions, CallbackInfo ci) {
-        InGameTimer.start();
-        currentDimension = null;
-        InGameTimer.currentWorldName = worldName;
-    }
-
-    @Inject(at = @At("HEAD"), method = "startIntegratedServer(Ljava/lang/String;)V")
-    public void onWorldOpen(String worldName, CallbackInfo ci) {
-        boolean loaded = InGameTimer.load(worldName);
-        if (!loaded) InGameTimer.end();
-        else {
-            InGameTimer.currentWorldName = worldName;
+    @Inject(at = @At("HEAD"), method = "startIntegratedServer")
+    public void onCreate(String name, String displayName, LevelInfo levelInfo, CallbackInfo ci) {
+        if (levelInfo != null) {
+            InGameTimer.start();
+            currentDimension = null;
+            InGameTimer.currentWorldName = name;
+        } else {
+            boolean loaded = InGameTimer.load(name);
+            if (!loaded) InGameTimer.end();
+            else {
+                InGameTimer.currentWorldName = name;
+            }
+            currentDimension = null;
         }
-        currentDimension = null;
     }
 
     private static DimensionType currentDimension = null;
@@ -68,7 +65,7 @@ public abstract class MinecraftClientMixin {
         if (!isInSingleplayer()) return;
         InGameTimer timer = InGameTimer.getInstance();
 
-        currentDimension = targetWorld.getDimension();
+        currentDimension = targetWorld.getDimension().getType();
         InGameTimer.checkingWorld = true;
 
         if (timer.getStatus() != TimerStatus.NONE && timer.getStatus() != TimerStatus.LEAVE) {
@@ -76,12 +73,12 @@ public abstract class MinecraftClientMixin {
         }
 
         //Enter Nether
-        if (timer.getCategory() == RunCategory.ENTER_NETHER && targetWorld.getDimensionRegistryKey() == DimensionType.THE_NETHER_REGISTRY_KEY) {
+        if (timer.getCategory() == RunCategory.ENTER_NETHER && targetWorld.getDimension().getType() == DimensionType.THE_NETHER) {
             InGameTimer.complete();
         }
 
         //Enter End
-        if (timer.getCategory() == RunCategory.ENTER_END && targetWorld.getDimensionRegistryKey() == DimensionType.THE_END_REGISTRY_KEY) {
+        if (timer.getCategory() == RunCategory.ENTER_END && targetWorld.getDimension().getType() == DimensionType.THE_END) {
             InGameTimer.complete();
         }
     }
@@ -101,11 +98,11 @@ public abstract class MinecraftClientMixin {
 
 
     @Inject(method = "render", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/client/toast/ToastManager;draw(Lnet/minecraft/client/util/math/MatrixStack;)V", shift = At.Shift.AFTER))
+            target = "Lnet/minecraft/client/toast/ToastManager;draw()V", shift = At.Shift.AFTER))
     private void drawTimer(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
-        if (worldRenderer != null && world != null && world.getDimension() == currentDimension && !isPaused() && isWindowFocused()
+        if (worldRenderer != null && world != null && world.getDimension().getType() == currentDimension && !isPaused() && isWindowFocused()
                 && (timer.getStatus() == TimerStatus.IDLE || timer.getStatus() == TimerStatus.LEAVE) && InGameTimer.checkingWorld) {
             int chunks = worldRenderer.getCompletedChunkCount();
             int entities = worldRenderer.regularEntityCount - (options.perspective > 0 ? 0 : 1);

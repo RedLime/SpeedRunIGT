@@ -1,9 +1,9 @@
 package com.redlimerl.speedrunigt.timer;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.redlimerl.speedrunigt.timer.TimerDrawer.Position;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.MutableText;
 import net.minecraft.util.math.MathHelper;
 
 public class TimerElement {
@@ -13,11 +13,11 @@ public class TimerElement {
     private final Position scaledPosition = new Position(0, 0);
     private float scale = 1;
     private int textWidth = 0;
-    private MutableText text;
+    private String text;
     private Integer color;
     private boolean doDrawOutline;
 
-    public void init(float xPos, float yPos, float scale, MutableText text, Integer color, boolean doDrawOutline) {
+    public void init(float xPos, float yPos, float scale, String text, Integer color, boolean doDrawOutline) {
         this.scale = scale;
         this.text = text;
         this.color = color;
@@ -33,7 +33,7 @@ public class TimerElement {
         this.scaledPosition.setX(Math.round(translateX / this.scale));
         this.scaledPosition.setY(Math.round(translateY / this.scale));
 
-        this.textWidth = client.textRenderer.getWidth(text);
+        this.textWidth = client.textRenderer.getStringWidth(text);
 
         //가로 화면 밖으로 나갈 시 재조정
         if (getScaledTextWidth() + this.position.getX() > scaledWindowWidth) {
@@ -46,11 +46,11 @@ public class TimerElement {
     }
 
     public void draw(MatrixStack matrixStack, boolean doTranslate) {
-        matrixStack.push();
-        if (doTranslate) matrixStack.translate(0, 0, 1000);
-        matrixStack.scale(scale, scale, 1f);
+        RenderSystem.pushMatrix();
+        if (doTranslate) RenderSystem.translatef(0, 0, 999);
+        RenderSystem.scalef(scale, scale, 1.0F);
         TimerDrawer.drawOutLine(client.textRenderer, matrixStack, scaledPosition.getX(), scaledPosition.getY(), text, color, doDrawOutline);
-        matrixStack.pop();
+        RenderSystem.popMatrix();
     }
 
     private int getScaledTextWidth() {

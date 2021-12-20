@@ -1,11 +1,10 @@
 package com.redlimerl.speedrunigt.option;
 
+import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -48,17 +47,17 @@ public class SpeedRunOptionScreen extends Screen {
         }
 
         addButton(new ButtonWidget(width / 2 - 100, height / 6 + 168, 200, 20, ScreenTexts.DONE, (ButtonWidget button) -> {
-            if (client != null) client.openScreen(parent);
+            if (minecraft != null) minecraft.openScreen(parent);
         }));
 
         if (SpeedRunOptions.buttons.size() > 12) {
-            ButtonWidget nextButton = addButton(new ButtonWidget(width / 2 - 155 + 260, height / 6 + 144, 50, 20, new LiteralText(">>>"),
+            ButtonWidget nextButton = addButton(new ButtonWidget(width / 2 - 155 + 260, height / 6 + 144, 50, 20,">>>",
                     (ButtonWidget button) -> {
-                        if (client != null) client.openScreen(new SpeedRunOptionScreen(parent, page + 1));
+                        if (minecraft != null) minecraft.openScreen(new SpeedRunOptionScreen(parent, page + 1));
                     }));
-            ButtonWidget prevButton = addButton(new ButtonWidget(width / 2 - 155, height / 6 + 144, 50, 20, new LiteralText("<<<"),
+            ButtonWidget prevButton = addButton(new ButtonWidget(width / 2 - 155, height / 6 + 144, 50, 20, "<<<",
                     (ButtonWidget button) -> {
-                        if (client != null) client.openScreen(new SpeedRunOptionScreen(parent, page - 1));
+                        if (minecraft != null) minecraft.openScreen(new SpeedRunOptionScreen(parent, page - 1));
                     }));
             if ((SpeedRunOptions.buttons.size() - 1) / 12 == page) {
                 nextButton.active = false;
@@ -71,26 +70,26 @@ public class SpeedRunOptionScreen extends Screen {
 
     @Override
     public void onClose() {
-        if (this.client != null) this.client.openScreen(parent);
+        if (this.minecraft != null) this.minecraft.openScreen(parent);
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        this.renderBackground(matrices);
-        this.drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 15, 16777215);
-        super.render(matrices, mouseX, mouseY, delta);
+    public void render(int mouseX, int mouseY, float delta) {
+        this.renderBackground();
+        this.drawCenteredString(this.font, this.title.asFormattedString(), this.width / 2, 15, 16777215);
+        super.render(mouseX, mouseY, delta);
 
         Optional<Element> e = this.hoveredElement(mouseX, mouseY);
         if (e.isPresent()) {
             if (!tooltips.containsKey(e.get())) return;
 
-            ArrayList<Text> tts = new ArrayList<>();
+            ArrayList<String> tts = new ArrayList<>();
             for (Text text : tooltips.get(e.get())) {
                 for (String s : text.getString().split("\n")) {
-                    tts.add(new LiteralText(s));
+                    tts.add(new LiteralText(s).asFormattedString());
                 }
             }
-            if (!tts.isEmpty()) this.renderTooltip(matrices, tts, mouseX, mouseY);
+            if (!tts.isEmpty()) this.renderTooltip(tts, mouseX, mouseY);
         }
     }
 }

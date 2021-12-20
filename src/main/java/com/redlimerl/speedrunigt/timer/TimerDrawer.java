@@ -5,8 +5,6 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecimals;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.MutableText;
 
 public class TimerDrawer {
 
@@ -197,12 +195,12 @@ public class TimerDrawer {
         }
     }
 
-    public MutableText getIGTText() {
-        return new LiteralText(this.simply ? "" : "IGT: ").append(new LiteralText(getTimeFormat(InGameTimer.getInstance().getInGameTime())));
+    public String getIGTText() {
+        return (this.simply ? "" : "IGT: ") + getTimeFormat(InGameTimer.getInstance().getInGameTime());
     }
 
-    public MutableText getRTAText() {
-        return new LiteralText(this.simply ? "" : "RTA: ").append(new LiteralText(getTimeFormat(InGameTimer.getInstance().getRealTimeAttack())));
+    public String getRTAText() {
+        return (this.simply ? "" : "RTA: ") + getTimeFormat(InGameTimer.getInstance().getRealTimeAttack());
     }
 
     public void draw() {
@@ -210,8 +208,8 @@ public class TimerDrawer {
 
         client.getProfiler().push("timer");
 
-        MutableText igtText = getIGTText();
-        MutableText rtaText = getRTAText();
+        String igtText = getIGTText();
+        String rtaText = getRTAText();
 
         TimerElement igtTimerElement = new TimerElement();
         TimerElement rtaTimerElement = new TimerElement();
@@ -228,18 +226,18 @@ public class TimerDrawer {
         client.getProfiler().pop();
     }
 
-    static void drawOutLine(TextRenderer textRenderer, MatrixStack matrixStack, int x, int y, MutableText text, Integer color, boolean drawOutline) {
+    static void drawOutLine(TextRenderer textRenderer, MatrixStack matrixStack, int x, int y, String text, Integer color, boolean drawOutline) {
         if (drawOutline) {
-            textRenderer.draw(matrixStack, text, (float)x + 1, (float)y + 1, 0);
-            textRenderer.draw(matrixStack, text, (float)x + 1, (float)y, 0);
-            textRenderer.draw(matrixStack, text, (float)x + 1, (float)y - 1, 0);
-            textRenderer.draw(matrixStack, text, (float)x, (float)y - 1, 0);
-            textRenderer.draw(matrixStack, text, (float)x, (float)y + 1, 0);
-            textRenderer.draw(matrixStack, text, (float)x - 1, (float)y + 1, 0);
-            textRenderer.draw(matrixStack, text, (float)x - 1, (float)y, 0);
-            textRenderer.draw(matrixStack, text, (float)x - 1, (float)y - 1, 0);
+            textRenderer.draw(text, (float)x + 1, (float)y + 1, 0);
+            textRenderer.draw(text, (float)x + 1, (float)y, 0);
+            textRenderer.draw(text, (float)x + 1, (float)y - 1, 0);
+            textRenderer.draw(text, (float)x, (float)y - 1, 0);
+            textRenderer.draw(text, (float)x, (float)y + 1, 0);
+            textRenderer.draw(text, (float)x - 1, (float)y + 1, 0);
+            textRenderer.draw(text, (float)x - 1, (float)y, 0);
+            textRenderer.draw(text, (float)x - 1, (float)y - 1, 0);
         }
-        textRenderer.draw(matrixStack, text, (float)x, (float)y, color);
+        textRenderer.draw(text, (float)x, (float)y, color);
     }
 
 
