@@ -1,3 +1,5 @@
 accessWidener   v1      named
 accessible    field    net/minecraft/client/render/WorldRenderer    regularEntityCount    I
 accessible    method    net/minecraft/client/render/WorldRenderer    getCompletedChunkCount    ()I
+accessible    field    net/minecraft/client/MinecraftClient    fontManager    Lnet/minecraft/client/font/FontManager;
+accessible    field    net/minecraft/client/font/FontManager    fontStorages    Ljava/util/Map;
