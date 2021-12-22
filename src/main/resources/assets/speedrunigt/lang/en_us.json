@@ -19,6 +19,7 @@
   "speedrunigt.option.timer_position.color_red": "%s Color Red",
   "speedrunigt.option.timer_position.color_blue": "%s Color Blue",
   "speedrunigt.option.timer_position.color_green": "%s Color Green",
+  "speedrunigt.option.timer_position.font.description": "Add Timer Font Guide",
   "speedrunigt.option.hide": "Hide",
   "speedrunigt.option.show": "Show",
   "speedrunigt.option.more": "More",

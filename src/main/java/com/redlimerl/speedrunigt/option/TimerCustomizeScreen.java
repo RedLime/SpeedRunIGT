@@ -15,6 +15,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
@@ -286,7 +287,7 @@ public class TimerCustomizeScreen extends Screen {
                         }
 
                         if (fontIdentifier.toString().equals(drawer.getTimerFont().toString())) {
-                            text.append(" [Selected]").formatted(Formatting.BOLD);
+                            text.append(" [Selected]").formatted(Formatting.ITALIC);
                         }
                         drawCenteredText(matrices, this.textRenderer, text, this.width / 2 - 30,
                                 this.height / 2 - 11 + (i * 22), 16777215);
@@ -574,6 +575,9 @@ public class TimerCustomizeScreen extends Screen {
             fontSelectButton.visible = false;
         }
         fontOptions.addAll(fontSelectButtons);
+
+
+        fontOptions.add(addButton(new ButtonWidget(width / 2 - 90, height / 2 - 80, 180, 20, new TranslatableText("speedrunigt.option.timer_position.font.description"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://youtu.be/XthpWa39r5o"))));
     }
 
     public void openFontPage() {
