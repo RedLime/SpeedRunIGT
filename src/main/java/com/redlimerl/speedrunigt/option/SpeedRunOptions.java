@@ -2,6 +2,7 @@ package com.redlimerl.speedrunigt.option;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.RunCategory;
+import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -106,7 +107,7 @@ public class SpeedRunOptions {
         }
     };
 
-    public enum TimerDecimals { TWO(2), THREE(3);
+    public enum TimerDecimals { NONE(0), ONE(1), TWO(2), THREE(3);
         private final int number;
         TimerDecimals(int number) {
             this.number = number;
@@ -135,6 +136,18 @@ public class SpeedRunOptions {
 
         @Override
         public String valueToString(Boolean value) {
+            return value.toString();
+        }
+    };
+
+    public static final OptionArgument<Identifier> TIMER_TEXT_FONT = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "timer_text_font"), TimerDrawer.DEFAULT_FONT) {
+        @Override
+        public Identifier valueFromString(String string) {
+            return Identifier.tryParse(string);
+        }
+
+        @Override
+        public String valueToString(Identifier value) {
             return value.toString();
         }
     };
@@ -259,18 +272,6 @@ public class SpeedRunOptions {
         }
     };
 
-    public static final OptionArgument<Boolean> TIMER_IGT_OUTLINE = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "timer_igt_outline"), true) {
-        @Override
-        public Boolean valueFromString(String string) {
-            return Objects.equals(string, "true");
-        }
-
-        @Override
-        public String valueToString(Boolean value) {
-            return value.toString();
-        }
-    };
-
     public static final OptionArgument<Integer> TIMER_RTA_COLOR = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "timer_rta_color"), Formatting.AQUA.getColorValue()) {
         @Override
         public Integer valueFromString(String string) {
@@ -283,15 +284,28 @@ public class SpeedRunOptions {
         }
     };
 
-    public static final OptionArgument<Boolean> TIMER_RTA_OUTLINE = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "timer_rta_outline"), true) {
+    public enum TimerDecoration { NONE, OUTLINE, SHADOW }
+    public static final OptionArgument<TimerDecoration> TIMER_RTA_DECO = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "timer_rta_decoration"), TimerDecoration.OUTLINE) {
         @Override
-        public Boolean valueFromString(String string) {
-            return Objects.equals(string, "true");
+        public TimerDecoration valueFromString(String string) {
+            return TimerDecoration.valueOf(string);
         }
 
         @Override
-        public String valueToString(Boolean value) {
-            return value.toString();
+        public String valueToString(TimerDecoration value) {
+            return value.name();
+        }
+    };
+
+    public static final OptionArgument<TimerDecoration> TIMER_IGT_DECO = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "timer_igt_decoration"), TimerDecoration.OUTLINE) {
+        @Override
+        public TimerDecoration valueFromString(String string) {
+            return TimerDecoration.valueOf(string);
+        }
+
+        @Override
+        public String valueToString(TimerDecoration value) {
+            return value.name();
         }
     };
 }

@@ -1,7 +1,9 @@
 package com.redlimerl.speedrunigt.timer;
 
+import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
 import com.redlimerl.speedrunigt.timer.TimerDrawer.Position;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.util.math.MathHelper;
@@ -15,13 +17,13 @@ public class TimerElement {
     private int textWidth = 0;
     private MutableText text;
     private Integer color;
-    private boolean doDrawOutline;
+    private TimerDecoration decoration;
 
-    public void init(float xPos, float yPos, float scale, MutableText text, Integer color, boolean doDrawOutline) {
+    public void init(float xPos, float yPos, float scale, MutableText text, Integer color, TimerDecoration decoration) {
         this.scale = scale;
         this.text = text;
         this.color = color;
-        this.doDrawOutline = doDrawOutline;
+        this.decoration = decoration;
         int scaledWindowWidth = client.getWindow().getScaledWidth();
         int scaledWindowHeight = client.getWindow().getScaledHeight();
 
@@ -49,9 +51,26 @@ public class TimerElement {
         matrixStack.push();
         if (doTranslate) matrixStack.translate(0, 0, 1000);
         matrixStack.scale(scale, scale, 1f);
-        TimerDrawer.drawOutLine(client.textRenderer, matrixStack, scaledPosition.getX(), scaledPosition.getY(), text, color, doDrawOutline);
+        drawOutLine(client.textRenderer, matrixStack, scaledPosition.getX(), scaledPosition.getY(), text, color, decoration);
         matrixStack.pop();
     }
+
+    private static void drawOutLine(TextRenderer textRenderer, MatrixStack matrixStack, int x, int y, MutableText text, Integer color, TimerDecoration decoration) {
+        if (decoration == TimerDecoration.OUTLINE) {
+            textRenderer.draw(matrixStack, text, (float)x + 1, (float)y + 1, 0);
+            textRenderer.draw(matrixStack, text, (float)x + 1, (float)y, 0);
+            textRenderer.draw(matrixStack, text, (float)x + 1, (float)y - 1, 0);
+            textRenderer.draw(matrixStack, text, (float)x, (float)y - 1, 0);
+            textRenderer.draw(matrixStack, text, (float)x, (float)y + 1, 0);
+            textRenderer.draw(matrixStack, text, (float)x - 1, (float)y + 1, 0);
+            textRenderer.draw(matrixStack, text, (float)x - 1, (float)y, 0);
+            textRenderer.draw(matrixStack, text, (float)x - 1, (float)y - 1, 0);
+        } else if (decoration == TimerDecoration.SHADOW) {
+            textRenderer.draw(matrixStack, text, (float)x + 1, (float)y + 1, -12566464);
+        }
+        textRenderer.draw(matrixStack, text, (float)x, (float)y, color);
+    }
+
 
     private int getScaledTextWidth() {
         return Math.round(textWidth * scale);
