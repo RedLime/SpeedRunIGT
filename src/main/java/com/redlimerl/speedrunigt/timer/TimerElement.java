@@ -1,26 +1,33 @@
 package com.redlimerl.speedrunigt.timer;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
 import com.redlimerl.speedrunigt.timer.TimerDrawer.Position;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.util.math.MathHelper;
 
 public class TimerElement {
     private static final MinecraftClient client = MinecraftClient.getInstance();
 
+    private final TextRenderer textRenderer;
     private final Position position = new Position(0, 0);
     private final Position scaledPosition = new Position(0, 0);
     private float scale = 1;
     private int textWidth = 0;
     private String text;
     private Integer color;
-    private boolean doDrawOutline;
+    private TimerDecoration decoration;
 
-    public void init(float xPos, float yPos, float scale, String text, Integer color, boolean doDrawOutline) {
+    public TimerElement(TextRenderer textRenderer) {
+        this.textRenderer = textRenderer;
+    }
+
+    public void init(float xPos, float yPos, float scale, String text, Integer color, TimerDecoration decoration) {
         this.scale = scale;
         this.text = text;
         this.color = color;
-        this.doDrawOutline = doDrawOutline;
+        this.decoration = decoration;
         int scaledWindowWidth = client.window.getScaledWidth();
         int scaledWindowHeight = client.window.getScaledHeight();
 
@@ -32,7 +39,7 @@ public class TimerElement {
         this.scaledPosition.setX(Math.round(translateX / this.scale));
         this.scaledPosition.setY(Math.round(translateY / this.scale));
 
-        this.textWidth = client.textRenderer.getStringWidth(text);
+        this.textWidth = this.textRenderer.getStringWidth(text);
 
         //가로 화면 밖으로 나갈 시 재조정
         if (getScaledTextWidth() + this.position.getX() > scaledWindowWidth) {
@@ -48,9 +55,26 @@ public class TimerElement {
         GlStateManager.pushMatrix();
         if (doTranslate) GlStateManager.translatef(0, 0, 999);
         GlStateManager.scalef(scale, scale, 1.0F);
-        TimerDrawer.drawOutLine(client.textRenderer, scaledPosition.getX(), scaledPosition.getY(), text, color, doDrawOutline);
+        drawOutLine(this.textRenderer, scaledPosition.getX(), scaledPosition.getY(), text, color, decoration);
         GlStateManager.popMatrix();
     }
+
+    private static void drawOutLine(TextRenderer textRenderer, int x, int y, String text, Integer color, TimerDecoration decoration) {
+        if (decoration == TimerDecoration.OUTLINE) {
+            textRenderer.draw(text, (float)x + 1, (float)y + 1, 0);
+            textRenderer.draw(text, (float)x + 1, (float)y, 0);
+            textRenderer.draw(text, (float)x + 1, (float)y - 1, 0);
+            textRenderer.draw(text, (float)x, (float)y - 1, 0);
+            textRenderer.draw(text, (float)x, (float)y + 1, 0);
+            textRenderer.draw(text, (float)x - 1, (float)y + 1, 0);
+            textRenderer.draw(text, (float)x - 1, (float)y, 0);
+            textRenderer.draw(text, (float)x - 1, (float)y - 1, 0);
+        } else if (decoration == TimerDecoration.SHADOW) {
+            textRenderer.draw(text, (float)x + 1, (float)y + 1, -12566464);
+        }
+        textRenderer.draw(text, (float)x, (float)y, color);
+    }
+
 
     private int getScaledTextWidth() {
         return Math.round(textWidth * scale);
