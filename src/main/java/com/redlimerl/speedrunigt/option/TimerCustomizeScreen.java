@@ -4,6 +4,7 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecimals;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
+import com.redlimerl.speedrunigt.version.ColorMixer;
 import com.redlimerl.speedrunigt.version.CustomSliderWidget;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.minecraft.client.font.TextRenderer;
@@ -346,14 +347,14 @@ public class TimerCustomizeScreen extends Screen {
 
                     @Override
                     protected void applyValue() {
-                        Color color = new Color(drawer.getIGTColor());
+                        int color = drawer.getIGTColor();
                         drawer.setIGTColor(
-                                new Color(
-                                        color.getAlpha(),
+                                ColorMixer.getArgb(
+                                        ColorMixer.getAlpha(color),
                                         (int) (this.value * 255),
-                                        color.getGreen(),
-                                        color.getBlue()
-                                ).getRGB()
+                                        ColorMixer.getGreen(color),
+                                        ColorMixer.getBlue(color)
+                                )
                         );
                         changed = true;
                     }
@@ -369,14 +370,14 @@ public class TimerCustomizeScreen extends Screen {
 
                     @Override
                     protected void applyValue() {
-                        Color color = new Color(drawer.getIGTColor());
+                        int color = drawer.getIGTColor();
                         drawer.setIGTColor(
-                                new Color(
-                                        color.getAlpha(),
-                                        color.getRed(),
+                                ColorMixer.getArgb(
+                                        ColorMixer.getAlpha(color),
+                                        ColorMixer.getRed(color),
                                         (int) (this.value * 255),
-                                        color.getBlue()
-                                ).getRGB()
+                                        ColorMixer.getBlue(color)
+                                )
                         );
                         changed = true;
                     }
@@ -392,14 +393,14 @@ public class TimerCustomizeScreen extends Screen {
 
                     @Override
                     protected void applyValue() {
-                        Color color = new Color(drawer.getIGTColor());
+                        int color = drawer.getIGTColor();
                         drawer.setIGTColor(
-                                new Color(
-                                        color.getAlpha(),
-                                        color.getRed(),
-                                        color.getGreen(),
+                                ColorMixer.getArgb(
+                                        ColorMixer.getAlpha(color),
+                                        ColorMixer.getRed(color),
+                                        ColorMixer.getGreen(color),
                                         (int) (this.value * 255)
-                                ).getRGB()
+                                )
                         );
                         changed = true;
                     }
@@ -441,14 +442,14 @@ public class TimerCustomizeScreen extends Screen {
 
                     @Override
                     protected void applyValue() {
-                        Color color = new Color(drawer.getRTAColor());
+                        int color = drawer.getRTAColor();
                         drawer.setRTAColor(
-                                new Color(
-                                        color.getAlpha(),
+                                ColorMixer.getArgb(
+                                        ColorMixer.getAlpha(color),
                                         (int) (this.value * 255),
-                                        color.getGreen(),
-                                        color.getBlue()
-                                ).getRGB()
+                                        ColorMixer.getGreen(color),
+                                        ColorMixer.getBlue(color)
+                                )
                         );
                         changed = true;
                     }
@@ -464,14 +465,14 @@ public class TimerCustomizeScreen extends Screen {
 
                     @Override
                     protected void applyValue() {
-                        Color color = new Color(drawer.getRTAColor());
+                        int color = drawer.getRTAColor();
                         drawer.setRTAColor(
-                                new Color(
-                                        color.getAlpha(),
-                                        color.getRed(),
+                                ColorMixer.getArgb(
+                                        ColorMixer.getAlpha(color),
+                                        ColorMixer.getRed(color),
                                         (int) (this.value * 255),
-                                        color.getBlue()
-                                ).getRGB()
+                                        ColorMixer.getBlue(color)
+                                )
                         );
                         changed = true;
                     }
@@ -487,14 +488,14 @@ public class TimerCustomizeScreen extends Screen {
 
                     @Override
                     protected void applyValue() {
-                        Color color = new Color(drawer.getRTAColor());
+                        int color = drawer.getRTAColor();
                         drawer.setRTAColor(
-                                new Color(
-                                        color.getAlpha(),
-                                        color.getRed(),
-                                        color.getGreen(),
+                                ColorMixer.getArgb(
+                                        ColorMixer.getAlpha(color),
+                                        ColorMixer.getRed(color),
+                                        ColorMixer.getGreen(color),
                                         (int) (this.value * 255)
-                                ).getRGB()
+                                )
                         );
                         changed = true;
                     }
