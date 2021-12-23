@@ -26,6 +26,6 @@ public class OptionsScreenMixin extends Screen {
             if (this.client != null) {
                 this.client.openScreen(new SpeedRunOptionScreen(this));
             }
-        }, new TranslatableText("ghostrunner.title")));
+        }, new TranslatableText("speedrunigt.title")));
     }
 }

@@ -39,8 +39,8 @@ public class TimerCustomizeScreen extends Screen {
     private ButtonWidget saveButton;
 
     private int fontPage = 0;
-    private ArrayList<Identifier> availableFonts = new ArrayList<>();
-    private ArrayList<ButtonWidget> fontSelectButtons = new ArrayList<>();
+    private final ArrayList<Identifier> availableFonts = new ArrayList<>();
+    private final ArrayList<ButtonWidget> fontSelectButtons = new ArrayList<>();
 
     public TimerCustomizeScreen(Screen parent) {
         super(new TranslatableText("speedrunigt.option.timer_position"));

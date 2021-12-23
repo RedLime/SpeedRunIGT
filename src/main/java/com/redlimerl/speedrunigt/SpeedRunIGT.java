@@ -3,6 +3,7 @@ package com.redlimerl.speedrunigt;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.redlimerl.speedrunigt.option.SpeedRunCategoryScreen;
+import com.redlimerl.speedrunigt.option.SpeedRunIGTInfoScreen;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.TimerCustomizeScreen;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
@@ -28,6 +29,7 @@ public class SpeedRunIGT implements ClientModInitializer {
     public static final TimerDrawer TIMER_DRAWER = new TimerDrawer(true);
 
     public static String DEBUG_DATA = "";
+    public static String MOD_VERSION;
 
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     public static final Path MAIN_PATH = FabricLoader.getInstance().getGameDir().resolve(MOD_ID);
@@ -43,6 +45,8 @@ public class SpeedRunIGT implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        MOD_VERSION = (FabricLoader.getInstance().getModContainer(SpeedRunIGT.MOD_ID).isPresent()
+                        ? FabricLoader.getInstance().getModContainer(SpeedRunIGT.MOD_ID).get().getMetadata().getVersion().getFriendlyString() : "Unknown+Unknown");
         SpeedRunOptions.addOptionButton(screen ->
                 new ButtonWidget(0, 0, 150, 20,
                         new TranslatableText("speedrunigt.option.timer_position"), (ButtonWidget button) -> MinecraftClient.getInstance().openScreen(new TimerCustomizeScreen(screen)))
@@ -50,6 +54,10 @@ public class SpeedRunIGT implements ClientModInitializer {
         SpeedRunOptions.addOptionButton(screen ->
                 new ButtonWidget(0, 0, 150, 20,
                         new TranslatableText("speedrunigt.option.timer_category"), (ButtonWidget button) -> MinecraftClient.getInstance().openScreen(new SpeedRunCategoryScreen(screen)))
+        );
+        SpeedRunOptions.addOptionButton(screen ->
+                new ButtonWidget(0, 0, 150, 20,
+                        new TranslatableText("speedrunigt.option.check_info"), (ButtonWidget button) -> MinecraftClient.getInstance().openScreen(new SpeedRunIGTInfoScreen(screen)))
         );
         SpeedRunOptions.addOptionButton(screen -> new ButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.timer_position.toggle_timer").append(" : ").append(TIMER_DRAWER.isToggle() ? ScreenTexts.ON : ScreenTexts.OFF), (ButtonWidget button) -> {
             TIMER_DRAWER.setToggle(!TIMER_DRAWER.isToggle());
@@ -59,6 +67,10 @@ public class SpeedRunIGT implements ClientModInitializer {
         SpeedRunOptions.addOptionButton(screen -> new ButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.hide_timer_in_options").append(" : ").append(SpeedRunOptions.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS) ? ScreenTexts.ON : ScreenTexts.OFF), (ButtonWidget button) -> {
             SpeedRunOptions.setOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS, !SpeedRunOptions.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS));
             button.setMessage(new TranslatableText("speedrunigt.option.hide_timer_in_options").append(" : ").append(SpeedRunOptions.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS) ? ScreenTexts.ON : ScreenTexts.OFF));
+        }));
+        SpeedRunOptions.addOptionButton(screen -> new ButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.hide_timer_in_debugs").append(" : ").append(SpeedRunOptions.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) ? ScreenTexts.ON : ScreenTexts.OFF), (ButtonWidget button) -> {
+            SpeedRunOptions.setOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS, !SpeedRunOptions.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS));
+            button.setMessage(new TranslatableText("speedrunigt.option.hide_timer_in_debugs").append(" : ").append(SpeedRunOptions.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) ? ScreenTexts.ON : ScreenTexts.OFF));
         }));
         SpeedRunOptions.addOptionButton(screen ->
                 new ButtonWidget(0, 0, 150, 20,
