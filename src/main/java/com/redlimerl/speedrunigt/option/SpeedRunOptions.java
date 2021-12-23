@@ -188,6 +188,18 @@ public class SpeedRunOptions {
         }
     };
 
+    public static final OptionArgument<Boolean> HIDE_TIMER_IN_DEBUGS = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "hide_timer_in_debugs"), false) {
+        @Override
+        public Boolean valueFromString(String string) {
+            return Objects.equals(string, "true");
+        }
+
+        @Override
+        public String valueToString(Boolean value) {
+            return value.toString();
+        }
+    };
+
     public static final OptionArgument<Float> TIMER_RTA_POSITION_X = new OptionArgument<>(new Identifier(SpeedRunIGT.MOD_ID, "timer_rta_pos_x"), 0.017f) {
         @Override
         public Float valueFromString(String string) {

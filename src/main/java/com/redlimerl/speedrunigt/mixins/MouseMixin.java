@@ -26,11 +26,6 @@ public abstract class MouseMixin {
         unlock();
     }
 
-    @Inject(at = @At("HEAD"), method = "onMouseButton")
-    public void onMouseButton(CallbackInfo ci) {
-        unlock();
-    }
-
     private void unlock() {
         @NotNull
         InGameTimer timer = InGameTimer.getInstance();
