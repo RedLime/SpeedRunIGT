@@ -101,7 +101,9 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                     items.contains(Items.LAPIS_LAZULI) &&
                     items.contains(Items.EMERALD) &&
                     items.contains(Items.QUARTZ) &&
-                    items.contains(Items.NETHERITE_INGOT)) {
+                    items.contains(Items.NETHERITE_INGOT) &&
+                    items.contains(Items.COPPER_INGOT) &&
+                    items.contains(Items.AMETHYST_SHARD)) {
                 InGameTimer.complete();
             }
         }
