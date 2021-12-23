@@ -26,7 +26,7 @@ public class KeyBindingMixin {
     private static void onPress(InputUtil.KeyCode key, boolean pressed, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
         KeyBinding keyBinding = keysByCode.get(key);
-        if (keyBinding != null) {
+        if (keyBinding != null && pressed) {
             if (keyBinding == MinecraftClient.getInstance().options.keyAdvancements // Advancement
                     || keyBinding == MinecraftClient.getInstance().options.keySprint // Sprint
                     || Objects.equals(keyBinding.getCategory(), "key.categories.inventory")
@@ -36,12 +36,12 @@ public class KeyBindingMixin {
                 }
                 timer.updateFirstInput();
             }
-            if (keyBinding == SpeedRunIGT.timerResetKeyBinding && pressed) {
+            if (keyBinding == SpeedRunIGT.timerResetKeyBinding) {
                 if (timer.getCategory() == RunCategory.CUSTOM && timer.isResettable()) {
                     InGameTimer.reset();
                 }
             }
-            if (keyBinding == SpeedRunIGT.timerStopKeyBinding && pressed) {
+            if (keyBinding == SpeedRunIGT.timerStopKeyBinding) {
                 if (timer.getCategory() == RunCategory.CUSTOM && timer.isStarted()) {
                     InGameTimer.complete();
                 }

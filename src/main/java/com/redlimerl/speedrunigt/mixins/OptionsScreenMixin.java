@@ -26,6 +26,6 @@ public class OptionsScreenMixin extends Screen {
             if (this.minecraft != null) {
                 this.minecraft.openScreen(new SpeedRunOptionScreen(this));
             }
-        }, I18n.translate("ghostrunner.title")));
+        }, I18n.translate("speedrunigt.title")));
     }
 }
