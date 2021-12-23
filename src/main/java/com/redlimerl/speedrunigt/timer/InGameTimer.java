@@ -131,7 +131,7 @@ public class InGameTimer {
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy.MM.dd HH:mm:ss");
         String logInfo = "MC Version : " + SharedConstants.getGameVersion().getName() + "\r\n"
-                + "Timer Version : " + (FabricLoader.getInstance().getModContainer(SpeedRunIGT.MOD_ID).isPresent() ? FabricLoader.getInstance().getModContainer(SpeedRunIGT.MOD_ID).get().getMetadata().getVersion().getFriendlyString() : "Unknown") + "\r\n"
+                + "Timer Version : " + SpeedRunIGT.MOD_VERSION + "\r\n"
                 + "Run Date : " + simpleDateFormat.format(new Date()) + "\r\n"
                 + "====================\r\n";
 

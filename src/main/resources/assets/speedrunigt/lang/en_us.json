@@ -1,6 +1,12 @@
 {
+  "speedrunigt.title": "SpeedRunIGT",
   "speedrunigt.title.options": "Speedrun Options",
   "speedrunigt.title.font": "Font...",
+  "speedrunigt.menu.open_github_repo": "Open Github Repository",
+  "speedrunigt.menu.open_support_page": "Support to me!",
+  "speedrunigt.menu.download_update": "Download New Update",
+  "speedrunigt.menu.latest_change_log": "Check Latest Changelog",
+  "speedrunigt.option.check_info": "SpeedRunIGT Info",
   "speedrunigt.option.timer_position": "Timer Display Options",
   "speedrunigt.option.timer_position.description": "§eClick on a position to change the timer position.",
   "speedrunigt.option.timer_position.description.move": "You can finely adjust the position by pressing §eCtrl + arrow key.",
@@ -45,8 +51,12 @@
   "speedrunigt.option.timer_category.full_inv": "Full Inventory",
   "speedrunigt.option.timer_category.custom": "Custom (for Co-op, etc)",
   "speedrunigt.option.hide_timer_in_options": "Hide Timer in Options",
+  "speedrunigt.option.hide_timer_in_debugs": "Hide Timer in Debugs",
   "speedrunigt.option.waiting_first_input": "Start at First Input",
   "speedrunigt.option.waiting_first_input.description": "Change the timer's starting point from\nthe world load to the player's first input\n(movement, inventory, etc.).\nThis option is for categories that start on first input.",
   "speedrunigt.controls.start_timer": "Restart Timer (for 'Custom' Category)",
-  "speedrunigt.controls.stop_timer": "Stop Timer (for 'Custom' Category)"
+  "speedrunigt.controls.stop_timer": "Stop Timer (for 'Custom' Category)",
+  "speedrunigt.message.update.unknown": "Failed to get latest version of information.",
+  "speedrunigt.message.update.updated": "You are using the latest version.",
+  "speedrunigt.message.update.outdated": "A new version has been found."
 }
