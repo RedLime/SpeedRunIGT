@@ -62,7 +62,6 @@ public abstract class ClientAdvancementManagerMixin {
     public void onComplete(AdvancementUpdateS2CPacket packet, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
-        System.out.println(getCompleteAdvancementsCount());
         //All Advancements
         if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategory.ALL_ADVANCEMENTS) {
             if (getCompleteAdvancementsCount() >= 69) InGameTimer.complete();
