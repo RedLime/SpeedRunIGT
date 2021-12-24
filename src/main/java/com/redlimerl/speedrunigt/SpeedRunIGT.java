@@ -36,9 +36,11 @@ public class SpeedRunIGT implements ClientModInitializer {
     public static final Path MAIN_PATH = FabricLoader.getInstance().getGameDir().resolve(MOD_ID);
     public static final Path WORLDS_PATH = FabricLoader.getInstance().getGameDir().resolve("saves");
     public static final Path TIMER_PATH = MAIN_PATH.resolve("worlds");
+    public static final Path FONT_PATH = MAIN_PATH.resolve("fonts");
     static {
         MAIN_PATH.toFile().mkdirs();
         TIMER_PATH.toFile().mkdirs();
+        MAIN_PATH.toFile().mkdirs();
     }
 
     public static KeyBinding timerResetKeyBinding;

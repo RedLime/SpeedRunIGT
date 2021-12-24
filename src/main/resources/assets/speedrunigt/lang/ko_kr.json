@@ -25,6 +25,7 @@
   "speedrunigt.option.timer_position.color_red": "%s 색상 Red",
   "speedrunigt.option.timer_position.color_blue": "%s 색상 Blue",
   "speedrunigt.option.timer_position.color_green": "%s 색상 Green",
+  "speedrunigt.option.timer_position.font.open_folder": "폰트 폴더 열기",
   "speedrunigt.option.timer_position.font.description": "타이머 폰트 추가 가이드",
   "speedrunigt.option.hide": "숨기기",
   "speedrunigt.option.show": "보이기",

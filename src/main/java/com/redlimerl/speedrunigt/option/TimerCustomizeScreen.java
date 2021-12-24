@@ -8,6 +8,7 @@ import com.redlimerl.speedrunigt.version.ColorMixer;
 import com.redlimerl.speedrunigt.version.CustomSliderWidget;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -48,6 +49,17 @@ public class TimerCustomizeScreen extends Screen {
     public TimerCustomizeScreen(Screen parent) {
         super(new TranslatableText("speedrunigt.option.timer_position"));
         this.parent = parent;
+    }
+
+    @Override
+    public void resize(MinecraftClient client, int width, int height) {
+        normalOptions.clear();
+        igtOptions.clear();
+        rtaOptions.clear();
+        fontOptions.clear();
+        availableFonts.clear();
+        fontSelectButtons.clear();
+        super.resize(client, width, height);
     }
 
     @Override
@@ -582,7 +594,8 @@ public class TimerCustomizeScreen extends Screen {
         fontOptions.addAll(fontSelectButtons);
 
 
-        fontOptions.add(addButton(new ButtonWidget(width / 2 - 90, height / 2 - 80, 180, 20, new TranslatableText("speedrunigt.option.timer_position.font.description").asString(), (ButtonWidget button) -> Util.getOperatingSystem().open("https://youtu.be/XthpWa39r5o"))));
+        fontOptions.add(addButton(new ButtonWidget(width / 2 - 154, height / 2 - 80, 150, 20, I18n.translate("speedrunigt.option.timer_position.font.open_folder"), (ButtonWidget button) -> Util.getOperatingSystem().open(SpeedRunIGT.FONT_PATH.toFile()))));
+        fontOptions.add(addButton(new ButtonWidget(width / 2 + 4, height / 2 - 80, 150, 20, I18n.translate("speedrunigt.option.timer_position.font.description"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://youtu.be/agBbiTQWj78"))));
     }
 
     public void openFontPage() {
