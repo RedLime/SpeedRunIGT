@@ -64,12 +64,12 @@ public abstract class ClientAdvancementManagerMixin {
 
         //All Advancements
         if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategory.ALL_ADVANCEMENTS) {
-            if (getCompleteAdvancementsCount() >= 80) InGameTimer.complete();
+            if (getCompleteAdvancementsCount() >= 91) InGameTimer.complete();
         }
 
         //Half%
         if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategory.HALF) {
-            if (getCompleteAdvancementsCount() >= 40) InGameTimer.complete();
+            if (getCompleteAdvancementsCount() >= 46) InGameTimer.complete();
         }
     }
 
