@@ -103,7 +103,7 @@ public class SpeedRunCategoryScreen extends Screen {
                 private final RunCategory category;
 
                 public CategoryCheckBoxWidget(RunCategory category) {
-                    super(0, 0, 20, 20, category.getText().asFormattedString(), false);
+                    super(0, 0, 20, 20, category.getText(), false);
                     this.category = category;
                 }
 

@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.timer;
 
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.text.TranslatableText;
 
 import java.util.Locale;
@@ -33,7 +34,7 @@ public enum RunCategory {
         return code;
     }
 
-    public TranslatableText getText() {
-        return new TranslatableText("speedrunigt.option.timer_category." + this.name().toLowerCase(Locale.ROOT));
+    public String getText() {
+        return I18n.translate("speedrunigt.option.timer_category." + this.name().toLowerCase(Locale.ROOT));
     }
 }

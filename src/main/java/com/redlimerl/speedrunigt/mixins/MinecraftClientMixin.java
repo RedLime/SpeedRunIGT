@@ -10,6 +10,7 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.RunCategory;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Mouse;
 import net.minecraft.client.font.*;
 import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
@@ -65,6 +66,8 @@ public abstract class MinecraftClientMixin {
     @Shadow private ReloadableResourceManager resourceManager;
 
     @Shadow public abstract Profiler getProfiler();
+
+    @Shadow public Mouse mouse;
 
     @Inject(at = @At("HEAD"), method = "startIntegratedServer")
     public void onCreate(String name, String displayName, LevelInfo levelInfo, CallbackInfo ci) {
@@ -128,12 +131,13 @@ public abstract class MinecraftClientMixin {
         InGameTimer timer = InGameTimer.getInstance();
 
         if (worldRenderer != null && world != null && world.getDimension().getType() == currentDimension && !isPaused() && isWindowFocused()
-                && timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld) {
+                && timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld && this.mouse.isCursorLocked()) {
             int chunks = worldRenderer.getCompletedChunkCount();
             int entities = worldRenderer.regularEntityCount - (options.perspective > 0 ? 0 : 1);
 
             if (chunks + entities > 0) {
                 if (!(SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) && !timer.isStarted())) {
+                    System.out.println("aaaaaaaa");
                     timer.setPause(false);
                 } else {
                     timer.updateFirstRendered();
