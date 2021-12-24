@@ -18,11 +18,11 @@ Simply, the **Timer** Mod for Minecraft Speedrun
 \*: No longer support new feature update (Legacy) 
 - 1.16.1
 - 1.17.1 
-- 1.16.5 \* [2.13]
-- 1.18.1 \* [2.13]
+- 1.16.5 \* [Last ver. 2.14]
+- 1.18.1 \* [Last ver. 2.14]
 - 1.15.2
 - 1.14.4
-- 20w14∞ \* [2.13]
+- 20w14∞ \* [Last ver. 2.14]
 - ~~1.8.9~~ (working on)
 - ~~1.7.10~~ (working on)
 
@@ -38,7 +38,7 @@ Simply, the **Timer** Mod for Minecraft Speedrun
 - Where is timer config file? (for multi-instances)
   - `Minecraft Instance Folder`/config/speedrunigt/option.txt
 - How to add custom font in timer?
-  - check out guide [video with description](https://www.youtube.com/watch?v=XthpWa39r5o)
+  - check out guide [video with description](https://youtu.be/agBbiTQWj78)
 - License?
   - [Here](https://github.com/RedLime/SpeedRunIGT/blob/1.16.1/LICENSE)
 
