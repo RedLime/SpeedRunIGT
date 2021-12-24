@@ -199,6 +199,7 @@ public class TimerDrawer {
         if (!InGameTimer.getInstance().isPlaying() && translateZ) {
             return InGameTimer.timeToStringFormat(time);
         }
+        String millsString = String.format("%03d", time % 1000).substring(0, timerDecimals.getNumber());
         int seconds = ((int) (time / 1000)) % 60;
         int minutes = ((int) (time / 1000)) / 60;
         if (minutes > 59) {
@@ -207,21 +208,21 @@ public class TimerDrawer {
             if (timerDecimals == TimerDecimals.NONE) {
                 return String.format("%d:%02d:%02d", hours, minutes, seconds);
             }
-            return String.format("%d:%02d:%02d.%0" + timerDecimals.getNumber() + ".0f", hours, minutes, seconds, time % Math.pow(10, timerDecimals.getNumber()));
+            return String.format("%d:%02d:%02d.%s", hours, minutes, seconds, millsString);
         } else {
             if (timerDecimals == TimerDecimals.NONE) {
                 return String.format("%02d:%02d", minutes, seconds);
             }
-            return String.format("%02d:%02d.%0" + timerDecimals.getNumber() + ".0f", minutes, seconds, time % Math.pow(10, timerDecimals.getNumber()));
+            return String.format("%02d:%02d.%s", minutes, seconds, millsString);
         }
     }
 
     public String getIGTText() {
-        return new LiteralText(this.simply ? "" : "IGT: ").append(new LiteralText(getTimeFormat(InGameTimer.getInstance().getInGameTime()))).asFormattedString();
+        return (this.simply ? "" : "IGT: ") + getTimeFormat(InGameTimer.getInstance().getInGameTime());
     }
 
     public String getRTAText() {
-        return new LiteralText(this.simply ? "" : "RTA: ").append(new LiteralText(getTimeFormat(InGameTimer.getInstance().getRealTimeAttack()))).asFormattedString();
+        return (this.simply ? "" : "RTA: ") + getTimeFormat(InGameTimer.getInstance().getRealTimeAttack());
     }
 
     public void draw() {
@@ -232,21 +233,24 @@ public class TimerDrawer {
         String igtText = getIGTText();
         String rtaText = getRTAText();
 
-        TextRenderer targetFont = client.textRenderer;
-
+        client.getProfiler().swap("font");
         //폰트 조정
+        TextRenderer targetFont = client.textRenderer;
         if (getTimerFont() != DEFAULT_FONT && client.fontManager.textRenderers.containsKey(getTimerFont())) {
             targetFont = client.fontManager.textRenderers.get(getTimerFont());
         }
 
+        //초기 값 조정
+        client.getProfiler().swap("init");
+
         TimerElement igtTimerElement = new TimerElement(targetFont);
         TimerElement rtaTimerElement = new TimerElement(targetFont);
-
-        //초기 값 조정
         rtaTimerElement.init(rtaXPos, rtaYPos, rtaScale, rtaText, rtaColor, rtaDecoration);
         igtTimerElement.init(igtXPos, igtYPos, igtScale, igtText, igtColor, igtDecoration);
 
+
         //렌더
+        client.getProfiler().swap("draw");
         if (igtScale != 0) igtTimerElement.draw(translateZ);
         if (rtaScale != 0) rtaTimerElement.draw(translateZ);
 

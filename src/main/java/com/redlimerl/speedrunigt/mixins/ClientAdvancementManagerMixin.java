@@ -27,6 +27,8 @@ public abstract class ClientAdvancementManagerMixin {
 
     @Shadow public abstract AdvancementManager getManager();
 
+    @Shadow @Final private Map<Advancement, AdvancementProgress> advancementProgresses;
+
     @Redirect(method = "onAdvancements", at = @At(value = "INVOKE", target = "Ljava/util/Map$Entry;getValue()Ljava/lang/Object;"))
     public Object advancement(Map.Entry<Identifier, AdvancementProgress> entry) {
         InGameTimer timer = InGameTimer.getInstance();
@@ -62,17 +64,25 @@ public abstract class ClientAdvancementManagerMixin {
 
         //All Advancements
         if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategory.ALL_ADVANCEMENTS) {
-            int completes = this.getManager().getAdvancements().stream()
-                    .filter(advancement -> advancement.getDisplay() != null).toArray().length;
-            if (completes == 80) InGameTimer.complete();
+            if (getCompleteAdvancementsCount() >= 80) InGameTimer.complete();
         }
 
         //Half%
         if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategory.HALF) {
-            int completes = this.getManager().getAdvancements().stream()
-                    .filter(advancement -> advancement.getDisplay() != null).toArray().length;
-            if (completes == 40) InGameTimer.complete();
+            if (getCompleteAdvancementsCount() >= 40) InGameTimer.complete();
         }
     }
 
+    private int getCompleteAdvancementsCount() {
+        int count = 0;
+        for (Advancement advancement : this.getManager().getAdvancements()) {
+            if (this.advancementProgresses.containsKey(advancement) && advancement.getDisplay() != null && !advancement.getId().getNamespace().startsWith("recipes")) {
+                AdvancementProgress advancementProgress = this.advancementProgresses.get(advancement);
+
+                advancementProgress.init(advancement.getCriteria(), advancement.getRequirements());
+                if (advancementProgress.isDone()) count++;
+            }
+        }
+        return count;
+    }
 }
