@@ -13,8 +13,6 @@ Simply, the **Timer** Mod for Minecraft Speedrun
 
 ## Downloads
 - [Release Page](https://github.com/RedLime/SpeedRunIGT/releases)
-- [curseforge](https://www.curseforge.com/minecraft/mc-mods/speedrunigt)
-- [modrinth](https://modrinth.com/mod/speedrunigt/)
 
 ## Support Versions
 \*: No longer support new feature update (Legacy) 
