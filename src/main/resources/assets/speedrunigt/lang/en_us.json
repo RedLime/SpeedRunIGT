@@ -25,6 +25,7 @@
   "speedrunigt.option.timer_position.color_red": "%s Red",
   "speedrunigt.option.timer_position.color_blue": "%s Blue",
   "speedrunigt.option.timer_position.color_green": "%s Green",
+  "speedrunigt.option.timer_position.font.open_folder": "Open Fonts Folder",
   "speedrunigt.option.timer_position.font.description": "Guide For Adding Fonts",
   "speedrunigt.option.hide": "Hide",
   "speedrunigt.option.show": "Show",

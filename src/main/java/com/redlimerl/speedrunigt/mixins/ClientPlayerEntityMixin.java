@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.RunCategory;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
@@ -12,6 +13,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.Vec3d;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,6 +28,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
     @Shadow public float nextNauseaStrength;
 
+    @Shadow @Final protected MinecraftClient client;
+
     public ClientPlayerEntityMixin(ClientWorld world, GameProfile profile) {
         super(world, profile);
     }
@@ -35,7 +39,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     private void onMove(MovementType movementType, Vec3d vec3d, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
-        if (timer.getStatus() == TimerStatus.IDLE && (vec3d.x != 0 || vec3d.z != 0 || this.jumping)) {
+        if (timer.getStatus() == TimerStatus.IDLE && (vec3d.x != 0 || vec3d.z != 0 || this.jumping || this.isSneaking())) {
             timer.setPause(false);
         }
         if (vec3d.x != 0 || vec3d.z != 0 || this.jumping) {
@@ -120,7 +124,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
     @Inject(at = @At("HEAD"), method = "tick")
     public void updateNausea(CallbackInfo ci) {
-        if (this.inNetherPortal && nextNauseaStrength + 0.0125F >= 1F && InGameTimer.getInstance().getStatus() != TimerStatus.IDLE) {
+        if (this.inNetherPortal && nextNauseaStrength + 0.0125F >= 1F && InGameTimer.getInstance().getStatus() != TimerStatus.IDLE && client.isInSingleplayer()) {
             InGameTimer.checkingWorld = false;
             InGameTimer.getInstance().setPause(true, TimerStatus.IDLE);
         }

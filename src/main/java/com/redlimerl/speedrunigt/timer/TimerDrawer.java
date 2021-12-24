@@ -200,6 +200,7 @@ public class TimerDrawer {
         if (!InGameTimer.getInstance().isPlaying() && translateZ) {
             return InGameTimer.timeToStringFormat(time);
         }
+        String millsString = String.format("%03d", time % 1000).substring(0, timerDecimals.getNumber());
         int seconds = ((int) (time / 1000)) % 60;
         int minutes = ((int) (time / 1000)) / 60;
         if (minutes > 59) {
@@ -208,45 +209,47 @@ public class TimerDrawer {
             if (timerDecimals == TimerDecimals.NONE) {
                 return String.format("%d:%02d:%02d", hours, minutes, seconds);
             }
-            return String.format("%d:%02d:%02d.%0" + timerDecimals.getNumber() + ".0f", hours, minutes, seconds, time % Math.pow(10, timerDecimals.getNumber()));
+            return String.format("%d:%02d:%02d.%s", hours, minutes, seconds, millsString);
         } else {
             if (timerDecimals == TimerDecimals.NONE) {
                 return String.format("%02d:%02d", minutes, seconds);
             }
-            return String.format("%02d:%02d.%0" + timerDecimals.getNumber() + ".0f", minutes, seconds, time % Math.pow(10, timerDecimals.getNumber()));
+            return String.format("%02d:%02d.%s", minutes, seconds, millsString);
         }
     }
 
     public MutableText getIGTText() {
-        return new LiteralText(this.simply ? "" : "IGT: ").append(new LiteralText(getTimeFormat(InGameTimer.getInstance().getInGameTime())));
+        return new LiteralText((this.simply ? "" : "IGT: ") + getTimeFormat(InGameTimer.getInstance().getInGameTime()));
     }
 
     public MutableText getRTAText() {
-        return new LiteralText(this.simply ? "" : "RTA: ").append(new LiteralText(getTimeFormat(InGameTimer.getInstance().getRealTimeAttack())));
+        return new LiteralText((this.simply ? "" : "RTA: ") + getTimeFormat(InGameTimer.getInstance().getRealTimeAttack()));
     }
 
     public void draw() {
         if (!toggle) return;
 
-        client.getProfiler().push("timer");
-
+        client.getProfiler().push("create");
         MutableText igtText = getIGTText();
         MutableText rtaText = getRTAText();
 
+        client.getProfiler().swap("font");
         //폰트 조정
         if (getTimerFont() != DEFAULT_FONT && client.fontManager.fontStorages.containsKey(getTimerFont())) {
             rtaText.setStyle(rtaText.getStyle().withFont(getTimerFont()));
             igtText.setStyle(igtText.getStyle().withFont(getTimerFont()));
         }
 
+        //초기 값 조정
+        client.getProfiler().swap("init");
         TimerElement igtTimerElement = new TimerElement();
         TimerElement rtaTimerElement = new TimerElement();
-
-        //초기 값 조정
         rtaTimerElement.init(rtaXPos, rtaYPos, rtaScale, rtaText, rtaColor, rtaDecoration);
         igtTimerElement.init(igtXPos, igtYPos, igtScale, igtText, igtColor, igtDecoration);
 
+
         //렌더
+        client.getProfiler().swap("draw");
         MatrixStack matrixStack = new MatrixStack();
         if (igtScale != 0) igtTimerElement.draw(matrixStack, translateZ);
         if (rtaScale != 0) rtaTimerElement.draw(matrixStack, translateZ);
