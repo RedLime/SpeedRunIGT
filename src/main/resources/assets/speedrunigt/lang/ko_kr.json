@@ -59,5 +59,6 @@
   "speedrunigt.controls.stop_timer": "타이머 종료 ('커스텀' 카테고리 전용)",
   "speedrunigt.message.update.unknown": "최근 버전 정보를 불러오는데 실패했습니다.",
   "speedrunigt.message.update.updated": "최신 버전을 사용하고 있습니다.",
-  "speedrunigt.message.update.outdated": "새로운 버전이 발견되었습니다."
+  "speedrunigt.message.update.outdated": "새로운 버전이 발견되었습니다.",
+  "speedrunigt.message.update_found": "SpeedRunIGT의 새로운 버전이 발견되었습니다. 'SpeedRunIGT 정보'에서 확인하세요."
 }

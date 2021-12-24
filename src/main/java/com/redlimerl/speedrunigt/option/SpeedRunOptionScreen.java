@@ -4,6 +4,7 @@ import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
@@ -70,6 +71,8 @@ public class SpeedRunOptionScreen extends Screen {
                 prevButton.active = false;
             }
         }
+
+        SpeedRunIGTInfoScreen.checkUpdate();
     }
 
     @Override
@@ -82,6 +85,10 @@ public class SpeedRunOptionScreen extends Screen {
         this.renderBackground(matrices);
         drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 15, 16777215);
         super.render(matrices, mouseX, mouseY, delta);
+
+        if (SpeedRunIGTInfoScreen.UPDATE_STATUS == SpeedRunIGTInfoScreen.UpdateStatus.OUTDATED) {
+            drawCenteredText(matrices, this.textRenderer, new TranslatableText("speedrunigt.message.update_found"), this.width / 2,  this.height - 48, 16777215);
+        }
 
         Optional<Element> e = this.hoveredElement(mouseX, mouseY);
         if (e.isPresent()) {

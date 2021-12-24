@@ -59,5 +59,6 @@
   "speedrunigt.controls.stop_timer": "Stop Timer (for 'Custom' Category)",
   "speedrunigt.message.update.unknown": "Failed to get latest version of information.",
   "speedrunigt.message.update.updated": "You are using the latest version.",
-  "speedrunigt.message.update.outdated": "A new version has been found."
+  "speedrunigt.message.update.outdated": "A new version has been found.",
+  "speedrunigt.message.update_found": "A new version of SpeedRunIGT has been found! Check the 'SpeedRunIGT Info'"
 }
