@@ -9,6 +9,7 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.RunCategory;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Mouse;
 import net.minecraft.client.RunArgs;
 import net.minecraft.client.font.*;
 import net.minecraft.client.gui.screen.CreditsScreen;
@@ -69,6 +70,8 @@ public abstract class MinecraftClientMixin {
     @Shadow @Final private ReloadableResourceManager resourceManager;
 
     @Shadow public abstract Profiler getProfiler();
+
+    @Shadow @Final public Mouse mouse;
 
     @Inject(at = @At("HEAD"), method = "startIntegratedServer")
     public void onCreate(String name, String displayName, LevelInfo levelInfo, CallbackInfo ci) {
@@ -132,7 +135,7 @@ public abstract class MinecraftClientMixin {
         InGameTimer timer = InGameTimer.getInstance();
 
         if (worldRenderer != null && world != null && world.getDimension().getType() == currentDimension && !isPaused() && isWindowFocused()
-                && timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld) {
+                && timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld && this.mouse.isCursorLocked()) {
             int chunks = worldRenderer.getCompletedChunkCount();
             int entities = worldRenderer.regularEntityCount - (options.perspective > 0 ? 0 : 1);
 
