@@ -40,7 +40,7 @@ public class SpeedRunIGT implements ClientModInitializer {
     static {
         MAIN_PATH.toFile().mkdirs();
         TIMER_PATH.toFile().mkdirs();
-        MAIN_PATH.toFile().mkdirs();
+        FONT_PATH.toFile().mkdirs();
     }
 
     public static KeyBinding timerResetKeyBinding;
