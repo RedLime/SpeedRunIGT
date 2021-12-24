@@ -23,15 +23,14 @@ import java.util.Locale;
 public class SpeedRunIGTInfoScreen extends Screen {
 
 
-    private enum UpdateStatus { NONE, UNKNOWN, UPDATED, OUTDATED }
-    private static UpdateStatus UPDATE_STATUS = UpdateStatus.NONE;
-    private static String UPDATE_URL = "";
-    private static String UPDATE_VERSION = "";
+    enum UpdateStatus { NONE, UNKNOWN, UPDATED, OUTDATED }
+    static UpdateStatus UPDATE_STATUS = UpdateStatus.NONE;
+    static String UPDATE_URL = "";
+    static String UPDATE_VERSION = "";
 
     private final Screen parent;
 
     private ButtonWidget update;
-    private ButtonWidget changeLog;
 
     public SpeedRunIGTInfoScreen(Screen parent) {
         super(new TranslatableText("speedrunigt.title"));
@@ -84,7 +83,7 @@ public class SpeedRunIGTInfoScreen extends Screen {
 
 
 
-    private void checkUpdate() {
+    static void checkUpdate() {
         if (UPDATE_STATUS != UpdateStatus.NONE) {
             return;
         }
@@ -113,7 +112,6 @@ public class SpeedRunIGTInfoScreen extends Screen {
                                     UPDATE_STATUS = UpdateStatus.OUTDATED;
                                     UPDATE_URL = assetData.get("browser_download_url").getAsString();
                                     UPDATE_VERSION = assetData.get("name").getAsString().split("\\+")[0].split("-")[1];
-                                    System.out.println("dsascca");
                                     break;
                                 }
                             }
