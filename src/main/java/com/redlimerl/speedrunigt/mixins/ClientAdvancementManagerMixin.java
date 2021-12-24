@@ -62,14 +62,15 @@ public abstract class ClientAdvancementManagerMixin {
     public void onComplete(AdvancementUpdateS2CPacket packet, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
+        System.out.println(getCompleteAdvancementsCount());
         //All Advancements
         if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategory.ALL_ADVANCEMENTS) {
-            if (getCompleteAdvancementsCount() >= 80) InGameTimer.complete();
+            if (getCompleteAdvancementsCount() >= 66) InGameTimer.complete();
         }
 
         //Half%
         if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategory.HALF) {
-            if (getCompleteAdvancementsCount() >= 40) InGameTimer.complete();
+            if (getCompleteAdvancementsCount() >= 33) InGameTimer.complete();
         }
     }
 
