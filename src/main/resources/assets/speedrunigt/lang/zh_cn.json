@@ -1,12 +1,13 @@
 {
-  "speedrunigt.title": "IGT计时器",
+  "speedrunigt.title": "SpeedRunIGT",
   "speedrunigt.title.options": "计时器设置",
   "speedrunigt.title.font": "字体...",
+  "speedrunigt.title.background": "背景...",
   "speedrunigt.menu.open_github_repo": "打开Github仓库",
   "speedrunigt.menu.open_support_page": "赞助MOD作者!(汉化支持by凌慕轻语)",
   "speedrunigt.menu.download_update": "下载最新版本MOD",
   "speedrunigt.menu.latest_change_log": "检查更新",
-  "speedrunigt.option.check_info": "IGT计时器信息",
+  "speedrunigt.option.check_info": "SpeedRunIGT信息",
   "speedrunigt.option.timer_position": "计时器显示选项",
   "speedrunigt.option.timer_position.description": "§e单击一个位置来改变计时器的位置。",
   "speedrunigt.option.timer_position.description.move": "你可以通过按§eCtrl + 箭头键§f来微调位置。",
@@ -27,6 +28,8 @@
   "speedrunigt.option.timer_position.color_green": "%s 绿",
   "speedrunigt.option.timer_position.font.open_folder": "打开字体文件夹",
   "speedrunigt.option.timer_position.font.description": "字体添加指南",
+  "speedrunigt.option.timer_position.background_opacity": "背景透明度",
+  "speedrunigt.option.timer_position.background_padding": "%s 背景邊距",
   "speedrunigt.option.hide": "隐藏",
   "speedrunigt.option.show": "显示",
   "speedrunigt.option.more": "更多",
@@ -60,5 +63,5 @@
   "speedrunigt.message.update.unknown": "获取最新版本失败",
   "speedrunigt.message.update.updated": "您使用的是最新版本。",
   "speedrunigt.message.update.outdated": "已找到新版本。",
-  "speedrunigt.message.update_found": "IGT计时器有新版啦！"
+  "speedrunigt.message.update_found": "SpeedRunIGT有新版啦！"
 }
