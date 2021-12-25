@@ -113,6 +113,7 @@ public class SpeedRunCategoryScreen extends Screen {
                     super.onPress();
                     SpeedRunOptions.setOption(SpeedRunOptions.TIMER_CATEGORY, this.category);
                     InGameTimer.getInstance().setCategory(this.category);
+                    InGameTimer.getInstance().setUncompleted();
                 }
 
                 @Override

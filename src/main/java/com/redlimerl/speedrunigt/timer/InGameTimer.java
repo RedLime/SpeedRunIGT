@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.timer;
 
+import com.google.gson.Gson;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.crypt.Crypto;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
@@ -27,6 +28,8 @@ public class InGameTimer {
 
     @NotNull
     private static InGameTimer INSTANCE = new InGameTimer();
+    @NotNull
+    private static InGameTimer COMPLETED_INSTANCE = new InGameTimer();
 
     public static InGameTimer getInstance() { return INSTANCE; }
     public static String currentWorldName = "";
@@ -47,6 +50,8 @@ public class InGameTimer {
 
     private RunCategory category = RunCategory.ANY;
     private final boolean isResettable;
+    private boolean isCompleted = false;
+    private int completeCount = 0;
 
     //Timer time
     private long startTime = 0;
@@ -117,12 +122,15 @@ public class InGameTimer {
      * End the Timer, Trigger when Complete Ender Dragon
      */
     public static void complete() {
-        InGameTimer timer = INSTANCE;
-        if (timer.getStatus() == TimerStatus.COMPLETED) return;
+        COMPLETED_INSTANCE = new Gson().fromJson(new Gson().toJson(INSTANCE), InGameTimer.class);
+        InGameTimer timer = COMPLETED_INSTANCE;
+        INSTANCE.isCompleted = true;
+
+        if (timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
         timer.endTime = System.currentTimeMillis();
         timer.endIGTTime = timer.endTime - timer.leastTickTime;
 
-        timer.setStatus(TimerStatus.COMPLETED);
+        timer.setStatus(TimerStatus.COMPLETED_LEGACY);
         timer.pauseLog.append("Result > IGT ").append(timeToStringFormat(timer.getInGameTime()))
                 .append(", R-RTA ").append(timeToStringFormat(timer.getRealTimeAttack()))
                 .append(", RTA ").append(timeToStringFormat(timer.getRealTimeAttack(false)))
@@ -141,8 +149,8 @@ public class InGameTimer {
 
         new Thread(() -> {
             try {
-                FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(currentWorldName).toFile(), "igt_timer.log"), logInfo + timer.firstInput + "\r\n" + timer.pauseLog, Charsets.UTF_8);
-                FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(currentWorldName).toFile(), "igt_freeze.log"), logInfo + timer.freezeLog, Charsets.UTF_8);
+                FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(currentWorldName).toFile(), "igt_timer" + (timer.completeCount == 0 ? "" : "_"+timer.completeCount) + ".log"), logInfo + timer.firstInput + "\r\n" + timer.pauseLog, Charsets.UTF_8);
+                FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(currentWorldName).toFile(), "igt_freeze" + (timer.completeCount == 0 ? "" : "_"+timer.completeCount) + ".log"), logInfo + timer.freezeLog, Charsets.UTF_8);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -150,7 +158,7 @@ public class InGameTimer {
 
         for (Consumer<InGameTimer> onCompleteConsumer : onCompleteConsumers) {
             try {
-                onCompleteConsumer.accept(INSTANCE);
+                onCompleteConsumer.accept(timer);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -158,7 +166,7 @@ public class InGameTimer {
     }
 
     public static void leave() {
-        if (INSTANCE.getStatus() == TimerStatus.COMPLETED) return;
+        if (INSTANCE.isCompleted) return;
 
         INSTANCE.leaveTime = System.currentTimeMillis();
         INSTANCE.setPause(true, TimerStatus.IDLE);
@@ -213,8 +221,13 @@ public class InGameTimer {
     }
 
     public void setStatus(@NotNull TimerStatus status) {
-        if (this.getStatus() == TimerStatus.COMPLETED && status != TimerStatus.NONE) return;
+        if (this.getStatus() == TimerStatus.COMPLETED_LEGACY && status != TimerStatus.NONE) return;
         this.status = status;
+    }
+
+    public void setUncompleted() {
+        this.isCompleted = false;
+        this.completeCount++;
     }
 
     public boolean isStarted() {
@@ -226,11 +239,11 @@ public class InGameTimer {
     }
 
     public boolean isPlaying() {
-        return !this.isPaused() && this.getStatus() != TimerStatus.COMPLETED;
+        return !this.isPaused() && this.getStatus() != TimerStatus.COMPLETED_LEGACY;
     }
 
     private long getEndTime() {
-        return this.getStatus() == TimerStatus.COMPLETED ? this.endTime : System.currentTimeMillis();
+        return this.getStatus() == TimerStatus.COMPLETED_LEGACY ? this.endTime : System.currentTimeMillis();
     }
 
     public long getStartTime() {
@@ -242,12 +255,14 @@ public class InGameTimer {
     }
 
     public long getRealTimeAttack(boolean withRebased) {
-        return this.getStatus() == TimerStatus.NONE ? 0 : this.getEndTime() - this.getStartTime() + (withRebased ? rebaseRealTime : 0) - this.excludedTime;
+        return this.isCompleted ? COMPLETED_INSTANCE.getRealTimeAttack(withRebased) : this.getStatus() == TimerStatus.NONE ? 0 : this.getEndTime() - this.getStartTime() + (withRebased ? rebaseRealTime : 0) - this.excludedTime;
     }
 
     public long getInGameTime() { return getInGameTime(true); }
 
     public long getInGameTime(boolean smooth) {
+        if (this.isCompleted) return COMPLETED_INSTANCE.getInGameTime(smooth);
+
         long ms = System.currentTimeMillis();
         return !isStarted() ? 0 :
                 (this.getTicks() * 50L) // Tick Based
@@ -274,7 +289,7 @@ public class InGameTimer {
 
 
     public void tick() {
-        if (this.getStatus() == TimerStatus.COMPLETED) return;
+        if (this.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
 
         if (isPlaying()) {
             this.activateTicks++;
@@ -314,7 +329,7 @@ public class InGameTimer {
 
     public void setPause(boolean isPause) { this.setPause(isPause, TimerStatus.PAUSED); }
     public void setPause(boolean toPause, TimerStatus toStatus) {
-        if (this.getStatus() == TimerStatus.COMPLETED) return;
+        if (this.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
 
         if (toPause) {
             if (this.getStatus().getPause() <= toStatus.getPause()) {

@@ -7,6 +7,7 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.TimerCustomizeScreen;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.RunCategory;
+import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
@@ -189,6 +190,7 @@ public abstract class MinecraftClientMixin {
                                     (identifierX) -> new TextRenderer(MinecraftClient.getInstance().fontManager.textureManager, new FontStorage(MinecraftClient.getInstance().fontManager.textureManager, identifierX)))
                             .setFonts(listEntry.getValue());
                 }
+                TimerDrawer.fontHeightMap.clear();
             }
         });
     }
