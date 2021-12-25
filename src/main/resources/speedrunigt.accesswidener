@@ -3,3 +3,4 @@ accessible    field    net/minecraft/client/render/WorldRenderer    regularEntit
 accessible    field    net/minecraft/client/MinecraftClient    fontManager    Lnet/minecraft/client/font/FontManager;
 accessible    field    net/minecraft/client/font/FontManager    fontStorages    Ljava/util/Map;
 accessible    field    net/minecraft/client/font/FontManager    textureManager    Lnet/minecraft/client/texture/TextureManager;
+accessible    method    net/minecraft/client/font/FontStorage    getRenderableGlyph    (I)Lnet/minecraft/client/font/RenderableGlyph;

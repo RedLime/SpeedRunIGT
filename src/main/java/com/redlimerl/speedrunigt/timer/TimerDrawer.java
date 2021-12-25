@@ -4,14 +4,19 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecimals;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.RenderableGlyph;
+import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.hud.BackgroundHelper;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.util.Identifier;
 
+import java.util.HashMap;
+
 public class TimerDrawer {
 
-    public static Identifier DEFAULT_FONT = new Identifier("default");
+    public static final HashMap<String, Float> fontHeightMap = new HashMap<>();
 
     private final boolean translateZ;
     private final MinecraftClient client = MinecraftClient.getInstance();
@@ -27,6 +32,10 @@ public class TimerDrawer {
     private float rtaScale;
     private Integer rtaColor;
     private TimerDecoration rtaDecoration;
+
+    private int igtPadding;
+    private int rtaPadding;
+    private float bgOpacity;
 
     private boolean simply;
     private boolean toggle;
@@ -46,6 +55,9 @@ public class TimerDrawer {
                 SpeedRunOptions.getOption(SpeedRunOptions.TIMER_RTA_SCALE),
                 SpeedRunOptions.getOption(SpeedRunOptions.TIMER_RTA_COLOR),
                 SpeedRunOptions.getOption(SpeedRunOptions.TIMER_RTA_DECO),
+                SpeedRunOptions.getOption(SpeedRunOptions.IGT_BACKGROUND_PADDING),
+                SpeedRunOptions.getOption(SpeedRunOptions.RTA_BACKGROUND_PADDING),
+                SpeedRunOptions.getOption(SpeedRunOptions.BACKGROUND_OPACITY),
                 SpeedRunOptions.getOption(SpeedRunOptions.DISPLAY_TIME_ONLY),
                 SpeedRunOptions.getOption(SpeedRunOptions.TOGGLE_TIMER),
                 SpeedRunOptions.getOption(SpeedRunOptions.LOCK_TIMER_POSITION),
@@ -56,6 +68,7 @@ public class TimerDrawer {
     public TimerDrawer(boolean translateZ,
                        float igtXPos, float igtYPos, float igtScale, Integer igtColor, TimerDecoration igtDecoration,
                        float rtaXPos, float rtaYPos, float rtaScale, Integer rtaColor, TimerDecoration rtaDecoration,
+                       int igtPadding, int rtaPadding, float bgOpacity,
                        boolean simply, boolean toggle, boolean isLocked, TimerDecimals timerDecimals, Identifier timerFont) {
         this.translateZ = translateZ;
         this.igtXPos = igtXPos;
@@ -68,6 +81,9 @@ public class TimerDrawer {
         this.rtaScale = rtaScale;
         this.rtaColor = rtaColor;
         this.rtaDecoration = rtaDecoration;
+        this.igtPadding = igtPadding;
+        this.rtaPadding = rtaPadding;
+        this.bgOpacity = bgOpacity;
         this.simply = simply;
         this.toggle = toggle;
         this.isLocked = isLocked;
@@ -195,6 +211,30 @@ public class TimerDrawer {
         this.timerFont = timerFont;
     }
 
+    public int getIGTPadding() {
+        return igtPadding;
+    }
+
+    public void setIGTPadding(int igtPadding) {
+        this.igtPadding = igtPadding;
+    }
+
+    public int getRTAPadding() {
+        return rtaPadding;
+    }
+
+    public void setRTAPadding(int rtaPadding) {
+        this.rtaPadding = rtaPadding;
+    }
+
+    public float getBGOpacity() {
+        return bgOpacity;
+    }
+
+    public void setBGOpacity(float bgOpacity) {
+        this.bgOpacity = bgOpacity;
+    }
+
 
     private String getTimeFormat(long time) {
         if (!InGameTimer.getInstance().isPlaying() && translateZ) {
@@ -235,22 +275,45 @@ public class TimerDrawer {
 
         client.getProfiler().swap("font");
         //폰트 조정
-        if (getTimerFont() != DEFAULT_FONT && client.fontManager.fontStorages.containsKey(getTimerFont())) {
+        float fontHeight = 8;
+        if (getTimerFont() != MinecraftClient.DEFAULT_FONT_ID && client.fontManager.fontStorages.containsKey(getTimerFont())) {
             rtaText.setStyle(rtaText.getStyle().withFont(getTimerFont()));
             igtText.setStyle(igtText.getStyle().withFont(getTimerFont()));
+            fontHeight = fontHeightMap.computeIfAbsent(getTimerFont().toString(), key -> {
+                RenderableGlyph glyph = client.fontManager.fontStorages.get(getTimerFont()).getRenderableGlyph('I');
+                return glyph.getHeight() / glyph.getOversample();
+            });
         }
 
         //초기 값 조정
         client.getProfiler().swap("init");
         TimerElement igtTimerElement = new TimerElement();
         TimerElement rtaTimerElement = new TimerElement();
-        rtaTimerElement.init(rtaXPos, rtaYPos, rtaScale, rtaText, rtaColor, rtaDecoration);
-        igtTimerElement.init(igtXPos, igtYPos, igtScale, igtText, igtColor, igtDecoration);
+        rtaTimerElement.init(rtaXPos, rtaYPos, rtaScale, rtaText, rtaColor, rtaDecoration, fontHeight);
+        igtTimerElement.init(igtXPos, igtYPos, igtScale, igtText, igtColor, igtDecoration, fontHeight);
 
+        MatrixStack matrixStack = new MatrixStack();
+
+        //배경 렌더
+        client.getProfiler().swap("background");
+        if (bgOpacity > 0.01f) {
+            Position rtaMin = new Position(rtaTimerElement.getPosition().getX() - rtaPadding, rtaTimerElement.getPosition().getY() - rtaPadding);
+            Position rtaMax = new Position(rtaMin.getX() + rtaTimerElement.getScaledTextWidth() + ((rtaPadding - 1) + rtaPadding), rtaMin.getY() + rtaTimerElement.getScaledTextHeight() + ((rtaPadding - 1) + rtaPadding));
+            Position igtMin = new Position(igtTimerElement.getPosition().getX() - igtPadding, igtTimerElement.getPosition().getY() - igtPadding);
+            Position igtMax = new Position(igtMin.getX() + igtTimerElement.getScaledTextWidth() + ((igtPadding - 1) + igtPadding), igtMin.getY() + igtTimerElement.getScaledTextHeight() + ((igtPadding - 1) + igtPadding));
+            int opacity = BackgroundHelper.ColorMixer.getArgb((int) (bgOpacity * 255), 0, 0, 0);
+            if (rtaMin.getX() < igtMax.getX() && rtaMin.getY() < igtMax.getY() &&
+                    igtMin.getX() < rtaMax.getX() && igtMin.getY() < rtaMax.getY()) {
+                DrawableHelper.fill(matrixStack, Math.min(rtaMin.getX(), igtMin.getX()), Math.min(rtaMin.getY(), igtMin.getY()),
+                        Math.max(rtaMax.getX(), igtMax.getX()), Math.max(rtaMax.getY(), igtMax.getY()), opacity);
+            } else {
+                if (rtaScale != 0) DrawableHelper.fill(matrixStack, rtaMin.getX(), rtaMin.getY(), rtaMax.getX(), rtaMax.getY(), opacity);
+                if (igtScale != 0) DrawableHelper.fill(matrixStack, igtMin.getX(), igtMin.getY(), igtMax.getX(), igtMax.getY(), opacity);
+            }
+        }
 
         //렌더
         client.getProfiler().swap("draw");
-        MatrixStack matrixStack = new MatrixStack();
         if (igtScale != 0) igtTimerElement.draw(matrixStack, translateZ);
         if (rtaScale != 0) rtaTimerElement.draw(matrixStack, translateZ);
 
