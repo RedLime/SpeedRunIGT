@@ -46,7 +46,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             timer.updateFirstInput();
         }
         
-        if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED) return;
+        if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
 
         //HIGH%
         if (timer.getCategory() == RunCategory.HIGH && this.getY() >= 420) {

@@ -20,7 +20,7 @@ public class ClientWorldMixin {
     public void disconnect(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() != TimerStatus.NONE) {
-            if (timer.getStatus() == TimerStatus.COMPLETED) {
+            if (timer.getStatus() == TimerStatus.COMPLETED_LEGACY) {
                 InGameTimer.end();
             } else {
                 InGameTimer.leave();
