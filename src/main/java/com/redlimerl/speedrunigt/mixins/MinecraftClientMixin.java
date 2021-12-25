@@ -137,7 +137,6 @@ public abstract class MinecraftClientMixin {
 
             if (chunks + entities > 0) {
                 if (!(SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) && !timer.isStarted())) {
-                    System.out.println("aaaaaaaa");
                     timer.setPause(false);
                 } else {
                     timer.updateFirstRendered();
