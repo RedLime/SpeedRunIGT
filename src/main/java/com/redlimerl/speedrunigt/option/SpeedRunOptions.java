@@ -2,8 +2,8 @@ package com.redlimerl.speedrunigt.option;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.RunCategory;
-import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
 import net.minecraft.text.Text;
@@ -140,7 +140,7 @@ public class SpeedRunOptions {
         }
     };
 
-    public static final OptionArgument<Identifier> TIMER_TEXT_FONT = new OptionArgument<Identifier>(new Identifier(SpeedRunIGT.MOD_ID, "timer_text_font"), TimerDrawer.DEFAULT_FONT) {
+    public static final OptionArgument<Identifier> TIMER_TEXT_FONT = new OptionArgument<Identifier>(new Identifier(SpeedRunIGT.MOD_ID, "timer_text_font"), MinecraftClient.DEFAULT_TEXT_RENDERER_ID) {
         @Override
         public Identifier valueFromString(String string) {
             return Identifier.tryParse(string);
@@ -318,6 +318,42 @@ public class SpeedRunOptions {
         @Override
         public String valueToString(TimerDecoration value) {
             return value.name();
+        }
+    };
+
+    public static final OptionArgument<Integer> RTA_BACKGROUND_PADDING = new OptionArgument<Integer>(new Identifier(SpeedRunIGT.MOD_ID, "rta_bg_padding"), 3) {
+        @Override
+        public Integer valueFromString(String string) {
+            return Integer.parseInt(string);
+        }
+
+        @Override
+        public String valueToString(Integer value) {
+            return String.valueOf(value);
+        }
+    };
+
+    public static final OptionArgument<Integer> IGT_BACKGROUND_PADDING = new OptionArgument<Integer>(new Identifier(SpeedRunIGT.MOD_ID, "igt_bg_padding"), 3) {
+        @Override
+        public Integer valueFromString(String string) {
+            return Integer.parseInt(string);
+        }
+
+        @Override
+        public String valueToString(Integer value) {
+            return String.valueOf(value);
+        }
+    };
+
+    public static final OptionArgument<Float> BACKGROUND_OPACITY = new OptionArgument<Float>(new Identifier(SpeedRunIGT.MOD_ID, "bgf_opacity"), 0f) {
+        @Override
+        public Float valueFromString(String string) {
+            return Float.parseFloat(string);
+        }
+
+        @Override
+        public String valueToString(Float value) {
+            return String.valueOf(value);
         }
     };
 }

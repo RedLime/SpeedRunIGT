@@ -4,3 +4,5 @@ accessible    method    net/minecraft/client/render/WorldRenderer    getComplete
 accessible    field    net/minecraft/client/MinecraftClient    fontManager    Lnet/minecraft/client/font/FontManager;
 accessible    field    net/minecraft/client/font/FontManager    textRenderers    Ljava/util/Map;
 accessible    field    net/minecraft/client/font/FontManager    textureManager    Lnet/minecraft/client/texture/TextureManager;
+accessible    field    net/minecraft/client/font/TextRenderer    fontStorage    Lnet/minecraft/client/font/FontStorage;
+accessible    method    net/minecraft/client/font/FontStorage    getRenderableGlyph    (C)Lnet/minecraft/client/font/RenderableGlyph;

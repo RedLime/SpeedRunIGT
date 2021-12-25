@@ -18,16 +18,18 @@ public class TimerElement {
     private String text;
     private Integer color;
     private TimerDecoration decoration;
+    private float fontHeight = 8;
 
     public TimerElement(TextRenderer textRenderer) {
         this.textRenderer = textRenderer;
     }
 
-    public void init(float xPos, float yPos, float scale, String text, Integer color, TimerDecoration decoration) {
+    public void init(float xPos, float yPos, float scale, String text, Integer color, TimerDecoration decoration, float fontHeight) {
         this.scale = scale;
         this.text = text;
         this.color = color;
         this.decoration = decoration;
+        this.fontHeight = fontHeight;
         int scaledWindowWidth = client.window.getScaledWidth();
         int scaledWindowHeight = client.window.getScaledHeight();
 
@@ -47,7 +49,7 @@ public class TimerElement {
         }
         //세로 화면 밖으로 나갈 시 재조정
         if (getScaledTextHeight() + this.position.getY() > scaledWindowHeight) {
-            this.scaledPosition.setY(this.scaledPosition.getY() - MathHelper.floor((getScaledTextHeight() - 1) / scale));
+            this.scaledPosition.setY(this.scaledPosition.getY() - MathHelper.floor(getScaledTextHeight() / scale));
         }
     }
 
@@ -75,12 +77,15 @@ public class TimerElement {
         textRenderer.draw(text, (float)x, (float)y, color);
     }
 
+    public Position getPosition() {
+        return position;
+    }
 
-    private int getScaledTextWidth() {
+    public int getScaledTextWidth() {
         return Math.round(textWidth * scale);
     }
 
-    private int getScaledTextHeight() {
-        return Math.round(9 * scale);
+    public int getScaledTextHeight() {
+        return Math.round(fontHeight * scale);
     }
 }

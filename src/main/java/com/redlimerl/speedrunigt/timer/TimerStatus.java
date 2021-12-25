@@ -31,7 +31,7 @@ public enum TimerStatus {
      * When the player kills the ender dragon and sees the credit screen.
      * This status doesn't change until the player creates a new world.
      */
-    COMPLETED("Completed the category", 1),
+    COMPLETED_LEGACY("Completed the category", 1),
 
     /**
      * When the player leaves the world for some reason.
