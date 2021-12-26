@@ -1,4 +1,5 @@
 # SpeedRun IGT
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/S6S77MX01)
 
 ## What is this mod?
 Simply, the **Timer** Mod for Minecraft Speedrun 
@@ -48,7 +49,7 @@ Simply, the **Timer** Mod for Minecraft Speedrun
 
 ## Support
 Discord : RedLime#0817\
-can I donate for u : [Sure why not](https://www.patreon.com/join/redlimerl/checkout)
+can I donate for u : [here is my ko-fi](https://ko-fi.com/redlimerl)
 
 ## Images
 ![](https://i.imgur.com/5xC9IQi.png)
