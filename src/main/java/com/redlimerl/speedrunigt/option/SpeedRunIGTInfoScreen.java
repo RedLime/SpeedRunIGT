@@ -46,7 +46,7 @@ public class SpeedRunIGTInfoScreen extends Screen {
         addButton(new ButtonWidget(width / 2 + 5, height - 104, 150, 20, I18n.translate("speedrunigt.menu.latest_change_log"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://github.com/RedLime/SpeedRunIGT/releases/latest")));
 
         addButton(new ButtonWidget(width / 2 - 155, height - 80, 150, 20, I18n.translate("speedrunigt.menu.open_github_repo"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://github.com/RedLime/SpeedRunIGT/")));
-        addButton(new ButtonWidget(width / 2 + 5, height - 80, 150, 20, I18n.translate("speedrunigt.menu.open_support_page"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://www.patreon.com/join/redlimerl/checkout")));
+        addButton(new ButtonWidget(width / 2 + 5, height - 80, 150, 20, I18n.translate("speedrunigt.menu.open_support_page"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://ko-fi.com/redlimerl")));
         addButton(new ButtonWidget(width / 2 - 100, height - 40, 200, 20, ScreenTexts.BACK, (ButtonWidget button) -> minecraft.openScreen(parent)));
     }
 
