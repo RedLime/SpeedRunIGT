@@ -83,6 +83,7 @@ public abstract class MinecraftClientMixin {
             InGameTimer.end();
             currentDimension = null;
             SpeedRunIGT.debug("Exception in timer load, can't load the timer.");
+            e.printStackTrace();
         }
     }
 
@@ -194,6 +195,7 @@ public abstract class MinecraftClientMixin {
                     TimerDrawer.fontHeightMap.clear();
                 } catch (Throwable e) {
                     SpeedRunIGT.debug("Error! failed import timer fonts!");
+                    e.printStackTrace();
                 }
             }
         });
