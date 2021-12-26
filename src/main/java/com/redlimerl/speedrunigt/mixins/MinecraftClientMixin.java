@@ -7,24 +7,30 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.RunCategory;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.MouseInput;
 import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.options.GameOptions;
 import net.minecraft.client.render.WorldRenderer;
+import net.minecraft.client.world.ChunkAssemblyHelper;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.registry.RegistryTracker;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.gen.GeneratorOptions;
+import net.minecraft.server.integrated.IntegratedServer;
+import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.level.LevelInfo;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.Iterator;
 
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin {
@@ -32,6 +38,8 @@ public abstract class MinecraftClientMixin {
     @Shadow public abstract boolean isInSingleplayer();
 
     @Shadow @Final public GameOptions options;
+    private float previousX=0;
+    private float previousY=0;
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     @Shadow public abstract boolean isPaused();
@@ -42,33 +50,45 @@ public abstract class MinecraftClientMixin {
 
     @Shadow @Nullable public ClientWorld world;
 
-    @Shadow public abstract boolean isWindowFocused();
 
-    @Inject(at = @At("HEAD"), method = "method_29607(Ljava/lang/String;Lnet/minecraft/world/level/LevelInfo;Lnet/minecraft/util/registry/RegistryTracker$Modifiable;Lnet/minecraft/world/gen/GeneratorOptions;)V")
-    public void onCreate(String worldName, LevelInfo levelInfo, RegistryTracker.Modifiable registryTracker, GeneratorOptions generatorOptions, CallbackInfo ci) {
+    @Shadow private IntegratedServer server;
+
+    @Shadow public boolean focused;
+
+    @Shadow public MouseInput mouse;
+    /**
+     * @author Void_X_Walker
+     * @reason Backported to 1.8, merged the 1.16 methods: startIntegratedServer and method_29607 and used levelInfo == null as a distinction
+     */
+    @Inject(at = @At("HEAD"), method = "startGame")
+    public void onCreate(String worldName, String string, LevelInfo levelInfo, CallbackInfo ci) {
         InGameTimer.start();
         currentDimension = null;
         InGameTimer.currentWorldName = worldName;
-    }
-
-    @Inject(at = @At("HEAD"), method = "startIntegratedServer(Ljava/lang/String;)V")
-    public void onWorldOpen(String worldName, CallbackInfo ci) {
-        boolean loaded = InGameTimer.load(worldName);
-        if (!loaded) InGameTimer.end();
-        else {
-            InGameTimer.currentWorldName = worldName;
+        if(levelInfo==null){
+            boolean loaded = InGameTimer.load(worldName);
+            if (!loaded) InGameTimer.end();
+            else {
+                InGameTimer.currentWorldName = worldName;
+            }
+            currentDimension = null;
         }
-        currentDimension = null;
+
     }
 
-    private static DimensionType currentDimension = null;
 
-    @Inject(at = @At("HEAD"), method = "joinWorld")
-    public void onJoin(ClientWorld targetWorld, CallbackInfo ci) {
-        if (!isInSingleplayer()) return;
+
+    private static Dimension currentDimension = null;
+    /**
+     * @author Void_X_Walker
+     * @reason Backported to 1.8
+     */
+    @Inject(at = @At("HEAD"), method = "connect(Lnet/minecraft/client/world/ClientWorld;Ljava/lang/String;)V")
+    public void onJoin(ClientWorld targetWorld, String loadingMessage, CallbackInfo ci) {
+        if (!isInSingleplayer()||targetWorld==null) return;
         InGameTimer timer = InGameTimer.getInstance();
 
-        currentDimension = targetWorld.getDimension();
+        currentDimension = targetWorld.dimension;
         InGameTimer.checkingWorld = true;
 
         if (timer.getStatus() != TimerStatus.NONE && timer.getStatus() != TimerStatus.LEAVE) {
@@ -76,54 +96,126 @@ public abstract class MinecraftClientMixin {
         }
 
         //Enter Nether
-        if (timer.getCategory() == RunCategory.ENTER_NETHER && targetWorld.getDimensionRegistryKey() == DimensionType.THE_NETHER_REGISTRY_KEY) {
+        if (timer.getCategory() == RunCategory.ENTER_NETHER && targetWorld.dimension.isNether()) {
             InGameTimer.complete();
         }
 
         //Enter End
-        if (timer.getCategory() == RunCategory.ENTER_END && targetWorld.getDimensionRegistryKey() == DimensionType.THE_END_REGISTRY_KEY) {
+        if (timer.getCategory() == RunCategory.ENTER_END && !targetWorld.dimension.hasGround()) {
             InGameTimer.complete();
         }
     }
+    /**
+     * @author Void_X_Walker
+     * @reason Backported to 1.8, moved the custom keybinds here so there is no need for fabric api
+     */
+    @Redirect(method="runGameLoop",at=@At(value="INVOKE",target = "Lnet/minecraft/client/MinecraftClient;isInSingleplayer()Z"))
+    private boolean renderMixin(MinecraftClient instance) {
+        if(Keyboard.isKeyDown(22)){//U
+            InGameTimer timer = InGameTimer.getInstance();
+            if (timer.getCategory() == RunCategory.CUSTOM && timer.isResettable()) {
+                InGameTimer.reset();
+            }
+        }
+        if(Keyboard.isKeyDown(23)){//I
+            InGameTimer timer = InGameTimer.getInstance();
+            if (timer.getCategory() == RunCategory.CUSTOM && timer.isStarted()) {
+                InGameTimer.complete();
+            }
 
-    @ModifyVariable(method = "render(Z)V", at = @At(value = "STORE"), ordinal = 1)
-    private boolean renderMixin(boolean paused) {
+        }
         InGameTimer timer = InGameTimer.getInstance();
-
+        boolean paused = this.isInSingleplayer() && this.currentScreen != null && this.currentScreen.shouldPauseGame() && !this.server.isPublished();
         if (timer.getStatus() == TimerStatus.RUNNING && paused) {
             timer.setPause(true, TimerStatus.PAUSED);
         } else if (timer.getStatus() == TimerStatus.PAUSED && !paused) {
             timer.setPause(false);
         }
 
-        return paused;
+        return this.isInSingleplayer();
     }
+    /**
+     * @author Void_X_Walker
+     * @reason Backported to 1.8, merged Inject and ModifyVariable, created a custom getCompletedChunkCount method with an access Widener
+     */
 
-
-    @Inject(method = "render", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/client/toast/ToastManager;draw(Lnet/minecraft/client/util/math/MatrixStack;)V", shift = At.Shift.AFTER))
+    @Inject(method = "runGameLoop", at = @At(value = "INVOKE",
+            target ="Lnet/minecraft/client/render/GameRenderer;render(FJ)V", shift = At.Shift.AFTER))
     private void drawTimer(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
+        if (worldRenderer != null && world != null){
 
-        if (worldRenderer != null && world != null && world.getDimension() == currentDimension && !isPaused() && isWindowFocused()
-                && (timer.getStatus() == TimerStatus.IDLE || timer.getStatus() == TimerStatus.LEAVE) && InGameTimer.checkingWorld) {
-            int chunks = worldRenderer.getCompletedChunkCount();
-            int entities = worldRenderer.regularEntityCount - (options.perspective > 0 ? 0 : 1);
-
-            if (chunks + entities > 0) {
-                if (!(SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) && !timer.isStarted())) {
-                    timer.setPause(false);
-                } else {
-                    timer.updateFirstRendered();
+            if (worldRenderer != null && world != null && world.dimension.getName().equals(currentDimension.getName()) && !isPaused()
+                    && (timer.getStatus() == TimerStatus.IDLE || timer.getStatus() == TimerStatus.LEAVE) && InGameTimer.checkingWorld) {
+                int chunks = getCompletedChunkCount();
+                int entities = worldRenderer.field_4426 - (options.perspective > 0 ? 0 : 1);
+                if (chunks + entities > 0) {
+                    if (!(SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) && !timer.isStarted())) {
+                        timer.setPause(false);
+                    } else {
+                        timer.updateFirstRendered();
+                    }
                 }
             }
         }
 
+
         SpeedRunIGT.DEBUG_DATA = timer.getStatus().name();
+
         if (!this.options.hudHidden && this.world != null && timer.getStatus() != TimerStatus.NONE
                 && (!this.isPaused() || this.currentScreen instanceof CreditsScreen || this.currentScreen instanceof GameMenuScreen || !SpeedRunOptions.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS))
                 && !(this.currentScreen instanceof TimerCustomizeScreen)) {
+
             SpeedRunIGT.TIMER_DRAWER.draw();
+        }
+    }
+    private int getCompletedChunkCount(){
+        int j = 0;
+        Iterator iterator = worldRenderer.visibleChunks.iterator();
+
+        while(iterator.hasNext()) {
+            WorldRenderer.ChunkInfo chunkInfo = (WorldRenderer.ChunkInfo)iterator.next();
+            ChunkAssemblyHelper chunkAssemblyHelper = chunkInfo.field_4468.field_4762;
+            if (chunkAssemblyHelper != ChunkAssemblyHelper.UNSUPPORTED && !chunkAssemblyHelper.method_3798()) {
+                ++j;
+            }
+        }
+        return j;
+    }
+    /**
+     * @author Void_X_Walker
+     * @reason Backported to 1.8, Moved the mouse stuff from MouseMixin and redid it
+     */
+    @Redirect(method="tick",at=@At(value="INVOKE",target = "Lorg/lwjgl/input/Mouse;getEventButtonState()Z"))
+    public boolean getClicked(){
+        if(Mouse.getEventButtonState()){
+            unlock();
+        }
+       return Mouse.getEventButtonState();
+    }
+    @Redirect(method="tick",at=@At(value="INVOKE",target = "Lorg/lwjgl/input/Mouse;getEventDWheel()I"))
+    public int getScrolled(){
+        if(Mouse.getEventDWheel()!=0){
+            unlock();
+        }
+        return Mouse.getEventDWheel();
+    }
+   @Inject(method="tick",at=@At(value = "HEAD"))
+   public void getMoved(CallbackInfo ci){
+        if(Mouse.getX()!=previousX||Mouse.getY()!=previousY){
+            unlock();
+        }
+       previousX=Mouse.getX();
+        previousY=Mouse.getY();
+   }
+    private void unlock() {
+        @NotNull
+        InGameTimer timer = InGameTimer.getInstance();
+        if ((timer.getStatus() == TimerStatus.IDLE || timer.getStatus() == TimerStatus.LEAVE)  &&this.focused&& !MinecraftClient.getInstance().isPaused() && InGameTimer.checkingWorld) {
+            timer.setPause(false);
+        }
+        if (this.focused&&!MinecraftClient.getInstance().isPaused()) {
+            timer.updateFirstInput();
         }
     }
 }

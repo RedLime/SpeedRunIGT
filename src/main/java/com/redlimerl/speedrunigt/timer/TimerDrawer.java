@@ -4,11 +4,13 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecimals;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.MutableText;
 import net.minecraft.util.Identifier;
-
+/**
+ * @author Void_X_Walker
+ * @reason Backported to 1.8
+ */
 public class TimerDrawer {
 
     public static Identifier DEFAULT_FONT = new Identifier("default");
@@ -217,41 +219,38 @@ public class TimerDrawer {
         }
     }
 
-    public MutableText getIGTText() {
-        return new LiteralText(this.simply ? "" : "IGT: ").append(new LiteralText(getTimeFormat(InGameTimer.getInstance().getInGameTime())));
+    public String getIGTText() {
+        return new LiteralText(this.simply ? "" : "IGT: ").append(new LiteralText(getTimeFormat(InGameTimer.getInstance().getInGameTime()))).asFormattedString();
     }
 
-    public MutableText getRTAText() {
-        return new LiteralText(this.simply ? "" : "RTA: ").append(new LiteralText(getTimeFormat(InGameTimer.getInstance().getRealTimeAttack())));
+    public String getRTAText() {
+        return new LiteralText(this.simply ? "" : "RTA: ").append(new LiteralText(getTimeFormat(InGameTimer.getInstance().getRealTimeAttack()))).asFormattedString();
     }
 
     public void draw() {
         if (!toggle) return;
 
-        client.getProfiler().push("timer");
+        client.profiler.push("timer");
 
-        MutableText igtText = getIGTText();
-        MutableText rtaText = getRTAText();
+        String igtText = getIGTText();
+        String rtaText = getRTAText();
 
-        //폰트 조정
-        if (getTimerFont() != DEFAULT_FONT && client.fontManager.fontStorages.containsKey(getTimerFont())) {
-            rtaText.setStyle(rtaText.getStyle().withFont(getTimerFont()));
-            igtText.setStyle(igtText.getStyle().withFont(getTimerFont()));
-        }
+        TextRenderer targetFont = client.textRenderer;
 
-        TimerElement igtTimerElement = new TimerElement();
-        TimerElement rtaTimerElement = new TimerElement();
+
+
+        TimerElement igtTimerElement = new TimerElement(targetFont);
+        TimerElement rtaTimerElement = new TimerElement(targetFont);
 
         //초기 값 조정
         rtaTimerElement.init(rtaXPos, rtaYPos, rtaScale, rtaText, rtaColor, rtaDecoration);
         igtTimerElement.init(igtXPos, igtYPos, igtScale, igtText, igtColor, igtDecoration);
 
         //렌더
-        MatrixStack matrixStack = new MatrixStack();
-        if (igtScale != 0) igtTimerElement.draw(matrixStack, translateZ);
-        if (rtaScale != 0) rtaTimerElement.draw(matrixStack, translateZ);
+        if (igtScale != 0) igtTimerElement.draw(translateZ);
+        if (rtaScale != 0) rtaTimerElement.draw(translateZ);
 
-        client.getProfiler().pop();
+        client.profiler.pop();
     }
 
 

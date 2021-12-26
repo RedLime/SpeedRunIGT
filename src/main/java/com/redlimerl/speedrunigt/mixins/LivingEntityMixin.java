@@ -20,11 +20,16 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Shadow protected boolean dead;
 
-    public LivingEntityMixin(EntityType<?> type, World world) {
-        super(type, world);
-    }
 
-    @Inject(at = @At("HEAD"), method = "onDeath")
+    public LivingEntityMixin(World world) {
+        super(world);
+    }
+    /**
+     * @author Void_X_Walker
+     * @reason Backported to 1.8
+     */
+
+    @Inject(at = @At("HEAD"), method = "onKilled")
     public void onDeath(DamageSource source, CallbackInfo ci) {
         @NotNull InGameTimer timer = InGameTimer.getInstance();
 
@@ -32,10 +37,10 @@ public abstract class LivingEntityMixin extends Entity {
 
         //Kill All Bosses
         if (timer.getCategory() == RunCategory.KILL_ALL_BOSSES) {
-            if (this.getType() == EntityType.WITHER) {
+            if (this.getEntity().getEntityId() == 64) {//Wither
                 timer.updateMoreData(1, 1);
             }
-            if (this.getType() == EntityType.ELDER_GUARDIAN) {
+            if (this.getEntity().getEntityId() == 4) { //Elder Guardian
                 timer.updateMoreData(2, 1);
             }
             if (timer.getMoreData(0) == 1 && timer.getMoreData(1) == 1 && timer.getMoreData(2) == 1)
@@ -44,13 +49,13 @@ public abstract class LivingEntityMixin extends Entity {
         }
 
         //Kill Wither
-        if (timer.getCategory() == RunCategory.KILL_WITHER && this.getType() == EntityType.WITHER) {
+        if (timer.getCategory() == RunCategory.KILL_WITHER && this.getEntity().getEntityId() == 64) {
             InGameTimer.complete();
             return;
         }
 
         //Kill Elder Guardian
-        if (timer.getCategory() == RunCategory.KILL_ELDER_GUARDIAN && this.getType() == EntityType.ELDER_GUARDIAN) {
+        if (timer.getCategory() == RunCategory.KILL_ELDER_GUARDIAN && this.getEntity().getEntityId() == 4) {
             InGameTimer.complete();
         }
     }

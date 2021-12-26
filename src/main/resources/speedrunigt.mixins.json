@@ -5,15 +5,14 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [],
   "client": [
-    "ClientAdvancementManagerMixin",
-    "ClientPlayerEntityMixin",
     "ClientWorldMixin",
     "CreditsScreenMixin",
     "KeyBindingMixin",
     "LivingEntityMixin",
     "MinecraftClientMixin",
-    "MouseMixin",
-    "OptionsScreenMixin"
+    "SettingsScreenMixin",
+    "ClientPlayerEntityMixin",
+    "StatHandlerMixin"
   ],
   "accessWidener": "speedrunigt.accesswidener",
   "injectors": {

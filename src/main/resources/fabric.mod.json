@@ -6,6 +6,7 @@
   "name": "SpeedrunIGT",
   "description": "Displays the timer with RTA, IGT in Minecraft",
   "authors": [
+    "Void_X_Walker",
     "RedLime"
   ],
   "contact": {
@@ -28,8 +29,7 @@
   "accessWidener": "speedrunigt.accesswidener",
 
   "depends": {
-    "fabricloader": ">=0.11.3",
-    "minecraft": "1.16.1"
+    "fabricloader": ">=0.11.1"
   },
 
   "breaks": {

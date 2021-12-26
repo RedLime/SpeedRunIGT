@@ -17,19 +17,18 @@ loom {
 }
 
 repositories {
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
+	maven {
+		name = "legacy-fabric"
+		url = "https://maven.legacyfabric.net"
+	}
 }
 
-configurations {
-	modIncludeImplementation
-
-	include.extendsFrom modIncludeImplementation
-	modImplementation.extendsFrom modIncludeImplementation
+minecraft {
+	intermediaryUrl = {
+		return "https://maven.legacyfabric.net/net/fabricmc/intermediary/" + it + "/intermediary-" + it + "-v2.jar";
+	}
 }
+
 
 dependencies {
 	// To change the versions see the gradle.properties file
@@ -39,9 +38,7 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	//modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	modIncludeImplementation(fabricApi.module("fabric-api-base", project.fabric_version))
-	modIncludeImplementation(fabricApi.module("fabric-resource-loader-v0", project.fabric_version))
-	modIncludeImplementation(fabricApi.module("fabric-key-binding-api-v1", project.fabric_version))
+
 
 	// PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
 	// You may need to force-disable transitiveness on them.

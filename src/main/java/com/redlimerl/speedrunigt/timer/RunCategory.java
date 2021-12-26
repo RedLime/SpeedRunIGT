@@ -1,39 +1,42 @@
 package com.redlimerl.speedrunigt.timer;
 
+import com.redlimerl.speedrunigt.SpeedRunIGT;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 
 import java.util.Locale;
-
+/**
+ * @author Void_X_Walker
+ * @reason Backported to 1.8, redid almost everything because 1.8 screens and buttons work completely different
+ */
 public enum RunCategory {
-    ANY("mc#Any_Glitchless"),
-    CUSTOM("mc#"),
-    HIGH("mcce#High"),
-    KILL_ALL_BOSSES("mcce#Kill_Bosses"),
-    KILL_WITHER("mcce#Kill_Bosses"),
-    KILL_ELDER_GUARDIAN("mcce#Kill_Bosses"),
-    ALL_ADVANCEMENTS("mc#All_Advancements"),
-    HALF("mcce#Half"),
-    HOW_DID_WE_GET_HERE("mcce#How_Did_We_Get_Here"),
-    HERO_OF_VILLAGE("mcce#Hero_of_the_Village"),
-    ARBALISTIC("mcce#Arbalistic"),
-    ENTER_NETHER("mcce#Enter_Nether"),
-    ENTER_END("mcce#Etner_Edn"),
-    ALL_SWORDS("mcce#All_Swords"),
-    ALL_MINERALS("mcce#All_Minerals"),
-    FULL_IA_15_LVL("mcce#Full_Iron_Armor_and_15_Levels"),
-    ALL_WORKSTATIONS("mcce#All_Workstations"),
-    FULL_INV("mcce#Full_Inventory");
+    ANY("mc#Any_Glitchless","Any%"),
+    CUSTOM("mc#","Custom (for Co-op, etc)"),
+    HIGH("mcce#High","High%"),
+    KILL_ALL_BOSSES("mcce#Kill_Bosses","Kill All Bosses"),
+    KILL_WITHER("mcce#Kill_Bosses","Kill Wither"),
+    KILL_ELDER_GUARDIAN("mcce#Kill_Bosses","Kill Elder Guardian"),
+    ALL_ACHIEVEMENTS("mc#All_Achievements","All Achievements"),
+    HALF("mcce#Half","Half%"),
+    ENTER_NETHER("mcce#Enter_Nether","Enter Nether"),
+    ENTER_END("mcce#Etner_Edn","Ender End"),
+    ALL_SWORDS("mcce#All_Swords","All Swords"),
+    ALL_MINERALS("mcce#All_Minerals","All Minerals"),
+    FULL_IA_15_LVL("mcce#Full_Iron_Armor_and_15_Levels","Full IA, 15 LVL"),
+    FULL_INV("mcce#Full_Inventory","Full Inventory");
 
     String code;
-    RunCategory(String code) {
+    String alternative;
+    RunCategory(String code, String alternative) {
         this.code = code;
+        this.alternative=alternative;
     }
 
     public String getCode() {
         return code;
     }
 
-    public TranslatableText getText() {
-        return new TranslatableText("speedrunigt.option.timer_category." + this.name().toLowerCase(Locale.ROOT));
+    public Text getText() {
+        return SpeedRunIGT.translate("speedrunigt.option.timer_category." + this.name().toLowerCase(Locale.ROOT),this.alternative);
     }
 }

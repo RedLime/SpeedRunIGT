@@ -4,7 +4,6 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.crypt.Crypto;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.SharedConstants;
 import net.minecraft.util.math.MathHelper;
 import org.apache.commons.compress.utils.Charsets;
 import org.apache.commons.io.FileUtils;
@@ -18,7 +17,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.function.Consumer;
-
+/**
+ * @author Void_X_Walker
+ * @reason Backported to 1.8
+ */
 /**
  * In-game Timer class.
  * {@link TimerStatus}
@@ -92,6 +94,7 @@ public class InGameTimer {
         INSTANCE.setPause(false);
     }
 
+
     /**
      * End the Timer, Trigger when player leave
      */
@@ -130,7 +133,7 @@ public class InGameTimer {
                 .append(", Rebased IGT Time: ").append(timeToStringFormat(timer.rebaseIGTime));
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy.MM.dd HH:mm:ss");
-        String logInfo = "MC Version : " + SharedConstants.getGameVersion().getName() + "\r\n"
+        String logInfo = "MC Version : " + "1.8.9" + "\r\n"
                 + "Timer Version : " + (FabricLoader.getInstance().getModContainer(SpeedRunIGT.MOD_ID).isPresent() ? FabricLoader.getInstance().getModContainer(SpeedRunIGT.MOD_ID).get().getMetadata().getVersion().getFriendlyString() : "Unknown") + "\r\n"
                 + "Run Date : " + simpleDateFormat.format(new Date()) + "\r\n"
                 + "====================\r\n";

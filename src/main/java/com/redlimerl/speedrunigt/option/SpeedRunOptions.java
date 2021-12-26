@@ -5,7 +5,7 @@ import com.redlimerl.speedrunigt.timer.RunCategory;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.AbstractButtonWidget;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -18,7 +18,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Function;
-
+/**
+ * @author Void_X_Walker
+ * @reason Backported to 1.8
+ */
 public class SpeedRunOptions {
 
     private static boolean isInit = false;
@@ -73,9 +76,9 @@ public class SpeedRunOptions {
         }
     }
 
-    static ArrayList<Function<Screen, AbstractButtonWidget>> buttons = new ArrayList<>();
-    static HashMap<Function<Screen, AbstractButtonWidget>, List<Text>> tooltips = new HashMap<>();
-    public static void addOptionButton(Function<Screen, AbstractButtonWidget> consumer, Text... texts) {
+    static ArrayList<Function<Screen, ButtonWidget>> buttons = new ArrayList<>();
+    static HashMap<Function<Screen, ButtonWidget>, List<Text>> tooltips = new HashMap<>();
+    public static void addOptionButton(Function<Screen, ButtonWidget> consumer, Text... texts) {
         buttons.add(consumer);
         tooltips.put(consumer, Arrays.asList(texts));
     }
@@ -143,7 +146,7 @@ public class SpeedRunOptions {
     public static final OptionArgument<Identifier> TIMER_TEXT_FONT = new OptionArgument<Identifier>(new Identifier(SpeedRunIGT.MOD_ID, "timer_text_font"), TimerDrawer.DEFAULT_FONT) {
         @Override
         public Identifier valueFromString(String string) {
-            return Identifier.tryParse(string);
+            return new Identifier(string);
         }
 
         @Override
@@ -260,7 +263,7 @@ public class SpeedRunOptions {
         }
     };
 
-    public static final OptionArgument<Integer> TIMER_IGT_COLOR = new OptionArgument<Integer>(new Identifier(SpeedRunIGT.MOD_ID, "timer_igt_color"), Formatting.YELLOW.getColorValue()) {
+    public static final OptionArgument<Integer> TIMER_IGT_COLOR = new OptionArgument<Integer>(new Identifier(SpeedRunIGT.MOD_ID, "timer_igt_color"), Formatting.YELLOW.getColorIndex()) {
         @Override
         public Integer valueFromString(String string) {
             return Integer.parseInt(string);
@@ -272,7 +275,7 @@ public class SpeedRunOptions {
         }
     };
 
-    public static final OptionArgument<Integer> TIMER_RTA_COLOR = new OptionArgument<Integer>(new Identifier(SpeedRunIGT.MOD_ID, "timer_rta_color"), Formatting.AQUA.getColorValue()) {
+    public static final OptionArgument<Integer> TIMER_RTA_COLOR = new OptionArgument<Integer>(new Identifier(SpeedRunIGT.MOD_ID, "timer_rta_color"), Formatting.AQUA.getColorIndex()) {
         @Override
         public Integer valueFromString(String string) {
             return Integer.parseInt(string);
