@@ -1,4 +1,5 @@
 # SpeedRun IGT
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/S6S77MX01)
 
 ## What is this mod?
 Simply, the **Timer** Mod for Minecraft Speedrun 
@@ -13,18 +14,16 @@ Simply, the **Timer** Mod for Minecraft Speedrun
 
 ## Downloads
 - [Release Page](https://github.com/RedLime/SpeedRunIGT/releases)
-- [curseforge](https://www.curseforge.com/minecraft/mc-mods/speedrunigt)
-- [modrinth](https://modrinth.com/mod/speedrunigt/)
 
 ## Support Versions
 \*: No longer support new feature update (Legacy) 
 - 1.16.1
 - 1.17.1 
-- 1.16.5 \* [2.12]
-- 1.18.1 \* [2.12]
+- 1.16.5 \* [Last ver. 2.14]
+- 1.18.1 \* [Last ver. 2.14]
 - 1.15.2
 - 1.14.4
-- 20w14∞ \* [2.12]
+- 20w14∞ \* [Last ver. 2.14]
 - ~~1.8.9~~ (working on)
 - ~~1.7.10~~ (working on)
 
@@ -40,7 +39,7 @@ Simply, the **Timer** Mod for Minecraft Speedrun
 - Where is timer config file? (for multi-instances)
   - `Minecraft Instance Folder`/config/speedrunigt/option.txt
 - How to add custom font in timer?
-  - check out guide [video with description](https://www.youtube.com/watch?v=XthpWa39r5o)
+  - check out guide [video with description](https://youtu.be/agBbiTQWj78)
 - License?
   - [Here](https://github.com/RedLime/SpeedRunIGT/blob/1.16.1/LICENSE)
 
@@ -50,7 +49,7 @@ Simply, the **Timer** Mod for Minecraft Speedrun
 
 ## Support
 Discord : RedLime#0817\
-can I donate for u : [Sure why not](https://www.patreon.com/join/redlimerl/checkout)
+can I donate for u : [here is my ko-fi](https://ko-fi.com/redlimerl)
 
 ## Images
 ![](https://i.imgur.com/5xC9IQi.png)

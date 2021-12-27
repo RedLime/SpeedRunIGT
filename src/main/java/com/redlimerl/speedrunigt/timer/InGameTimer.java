@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.crypt.Crypto;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
-import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.SharedConstants;
 import net.minecraft.util.math.MathHelper;
 import org.apache.commons.compress.utils.Charsets;
 import org.apache.commons.io.FileUtils;
@@ -18,10 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.function.Consumer;
-/**
- * @author Void_X_Walker
- * @reason Backported to 1.8
- */
+
 /**
  * In-game Timer class.
  * {@link TimerStatus}
@@ -33,11 +30,11 @@ public class InGameTimer {
     private static InGameTimer INSTANCE = new InGameTimer();
     @NotNull
     private static InGameTimer COMPLETED_INSTANCE = new InGameTimer();
+
+    @NotNull
     public static InGameTimer getInstance() { return INSTANCE; }
     public static String currentWorldName = "";
     public static boolean checkingWorld = true;
-    private boolean isCompleted = false;
-    private int completeCount = 0;
 
     private static final ArrayList<Consumer<InGameTimer>> onCompleteConsumers = new ArrayList<>();
 
@@ -54,6 +51,8 @@ public class InGameTimer {
 
     private RunCategory category = RunCategory.ANY;
     private final boolean isResettable;
+    private boolean isCompleted = false;
+    private int completeCount = 0;
 
     //Timer time
     private long startTime = 0;
@@ -61,12 +60,13 @@ public class InGameTimer {
     private long endIGTTime = 0;
     private long rebaseIGTime = 0;
     private long rebaseRealTime = 0;
+    private long excludedTime = 0; //for AA
     private long activateTicks = 0;
     private long leastTickTime = 0;
     private long leastStartTime = 0;
-    private long excludedTime = 0;
 
     private long leaveTime = 0;
+
     //Logs
     private String firstInput = "";
     private final StringBuilder pauseLog = new StringBuilder();
@@ -100,7 +100,6 @@ public class InGameTimer {
         INSTANCE.setPause(false);
     }
 
-
     /**
      * End the Timer, Trigger when player leave
      */
@@ -128,11 +127,11 @@ public class InGameTimer {
         InGameTimer timer = COMPLETED_INSTANCE;
         INSTANCE.isCompleted = true;
 
-        if (timer.getStatus() == TimerStatus.COMPLETED) return;
+        if (timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
         timer.endTime = System.currentTimeMillis();
         timer.endIGTTime = timer.endTime - timer.leastTickTime;
 
-        timer.setStatus(TimerStatus.COMPLETED);
+        timer.setStatus(TimerStatus.COMPLETED_LEGACY);
         timer.pauseLog.append("Result > IGT ").append(timeToStringFormat(timer.getInGameTime()))
                 .append(", R-RTA ").append(timeToStringFormat(timer.getRealTimeAttack()))
                 .append(", RTA ").append(timeToStringFormat(timer.getRealTimeAttack(false)))
@@ -140,10 +139,11 @@ public class InGameTimer {
                 .append(", Total Ticks: ").append(timer.loggerTicks)
                 .append(", Rebased RTA Time: ").append(timeToStringFormat(timer.rebaseRealTime))
                 .append(", Rebased IGT Time: ").append(timeToStringFormat(timer.rebaseIGTime));
-        if (timer.category == RunCategory.ALL_ACHIEVEMENTS)
+        if (timer.category == RunCategory.ALL_ADVANCEMENTS)
             timer.pauseLog.append(", Excluded RTA Time: ").append(timeToStringFormat(timer.excludedTime));
+
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy.MM.dd HH:mm:ss");
-        String logInfo = "MC Version : " + "1.8.9" + "\r\n"
+        String logInfo = "MC Version : " + SharedConstants.getGameVersion().getName() + "\r\n"
                 + "Timer Version : " + SpeedRunIGT.MOD_VERSION + "\r\n"
                 + "Run Date : " + simpleDateFormat.format(new Date()) + "\r\n"
                 + "====================\r\n";
@@ -167,7 +167,7 @@ public class InGameTimer {
     }
 
     public static void leave() {
-        if (INSTANCE.getStatus() == TimerStatus.COMPLETED) return;
+        if (INSTANCE.isCompleted) return;
 
         INSTANCE.leaveTime = System.currentTimeMillis();
         INSTANCE.setPause(true, TimerStatus.IDLE);
@@ -180,10 +180,7 @@ public class InGameTimer {
             e.printStackTrace();
         }
     }
-    public void setUncompleted() {
-        this.isCompleted = false;
-        this.completeCount++;
-    }
+
     public static boolean load(String name) {
         File file = new File(SpeedRunIGT.TIMER_PATH.toFile(), name+".igt");
         if (file.exists()) {
@@ -225,8 +222,13 @@ public class InGameTimer {
     }
 
     public void setStatus(@NotNull TimerStatus status) {
-        if (this.getStatus() == TimerStatus.COMPLETED && status != TimerStatus.NONE) return;
+        if (this.getStatus() == TimerStatus.COMPLETED_LEGACY && status != TimerStatus.NONE) return;
         this.status = status;
+    }
+
+    public void setUncompleted() {
+        this.isCompleted = false;
+        this.completeCount++;
     }
 
     public boolean isStarted() {
@@ -238,11 +240,11 @@ public class InGameTimer {
     }
 
     public boolean isPlaying() {
-        return !this.isPaused() && this.getStatus() != TimerStatus.COMPLETED;
+        return !this.isPaused() && this.getStatus() != TimerStatus.COMPLETED_LEGACY;
     }
 
     private long getEndTime() {
-        return this.getStatus() == TimerStatus.COMPLETED ? this.endTime : System.currentTimeMillis();
+        return this.getStatus() == TimerStatus.COMPLETED_LEGACY ? this.endTime : System.currentTimeMillis();
     }
 
     public long getStartTime() {
@@ -261,6 +263,7 @@ public class InGameTimer {
 
     public long getInGameTime(boolean smooth) {
         if (this.isCompleted) return COMPLETED_INSTANCE.getInGameTime(smooth);
+
         long ms = System.currentTimeMillis();
         return !isStarted() ? 0 :
                 (this.getTicks() * 50L) // Tick Based
@@ -287,7 +290,7 @@ public class InGameTimer {
 
 
     public void tick() {
-        if (this.getStatus() == TimerStatus.COMPLETED) return;
+        if (this.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
 
         if (isPlaying()) {
             this.activateTicks++;
@@ -327,7 +330,7 @@ public class InGameTimer {
 
     public void setPause(boolean isPause) { this.setPause(isPause, TimerStatus.PAUSED); }
     public void setPause(boolean toPause, TimerStatus toStatus) {
-        if (this.getStatus() == TimerStatus.COMPLETED) return;
+        if (this.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
 
         if (toPause) {
             if (this.getStatus().getPause() <= toStatus.getPause()) {
@@ -341,8 +344,8 @@ public class InGameTimer {
             if (this.isStarted()) {
                 if (isPaused()) {
                     long nowTime = getRealTimeAttack();
-                    pauseLog.append(timeToStringFormat(nowTime)).append(" RTA E, ").append(timeToStringFormat(nowTime - loggerPausedTime)).append(" Length (").append(leaveTime != 0 ? TimerStatus.LEAVE.getMessage() : getStatus().getMessage()).append(")\r\n");
-                    if (category == RunCategory.ALL_ACHIEVEMENTS&& leaveTime != 0) excludedTime = System.currentTimeMillis() - leaveTime;
+                    pauseLog.append(timeToStringFormat(nowTime)).append(" RTA E, ").append(timeToStringFormat(nowTime - loggerPausedTime)).append(" Length (").append(leaveTime != 0 ? TimerStatus.LEAVE_LEGACY.getMessage() : getStatus().getMessage()).append(")\r\n");
+                    if (category == RunCategory.ALL_ADVANCEMENTS && leaveTime != 0) excludedTime = System.currentTimeMillis() - leaveTime;
                     leaveTime = 0;
                 }
                 if (this.getStatus() == TimerStatus.IDLE && loggerTicks != 0) {
