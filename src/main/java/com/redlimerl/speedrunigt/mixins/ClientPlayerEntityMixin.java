@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.RunCategory;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
@@ -13,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.Vec3d;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -27,7 +29,10 @@ import java.util.stream.Collectors;
 @Mixin(ClientPlayerEntity.class)
 public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
 
-/**
+    @Shadow public abstract boolean isSneaking();
+    @Shadow @Final
+    protected MinecraftClient client;
+    /**
  * @author Void_X_Walker
  * @reason Backported to 1.8, removed non 1.8 categories
  */
@@ -40,7 +45,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     private void onMove(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
-        if (timer.getStatus() == TimerStatus.IDLE && (this.velocityX != 0 || this.velocityZ != 0 || this.jumping)) {
+        if (timer.getStatus() == TimerStatus.IDLE && (this.velocityX != 0 || this.velocityZ != 0 || this.jumping||this.isSneaking())) {
             timer.setPause(false);
         }
         if (this.velocityX != 0 || this.velocityZ != 0 || this.jumping) {
@@ -110,7 +115,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
     @Inject(at = @At("HEAD"), method = "tick")
     public void updateNausea(CallbackInfo ci) {
-       if( this.hasStatusEffect(StatusEffect.NAUSEA) && this.getEffectInstance(StatusEffect.NAUSEA).getDuration() > 60){
+       if( this.hasStatusEffect(StatusEffect.NAUSEA) && this.getEffectInstance(StatusEffect.NAUSEA).getDuration() > 60&& client.isInSingleplayer()){
             InGameTimer.checkingWorld = false;
             InGameTimer.getInstance().setPause(true, TimerStatus.IDLE);
         }

@@ -202,6 +202,7 @@ public class TimerDrawer {
         if (!InGameTimer.getInstance().isPlaying() && translateZ) {
             return InGameTimer.timeToStringFormat(time);
         }
+        String millsString = String.format("%03d", time % 1000).substring(0, timerDecimals.getNumber());
         int seconds = ((int) (time / 1000)) % 60;
         int minutes = ((int) (time / 1000)) / 60;
         if (minutes > 59) {
@@ -210,27 +211,27 @@ public class TimerDrawer {
             if (timerDecimals == TimerDecimals.NONE) {
                 return String.format("%d:%02d:%02d", hours, minutes, seconds);
             }
-            return String.format("%d:%02d:%02d.%0" + timerDecimals.getNumber() + ".0f", hours, minutes, seconds, time % Math.pow(10, timerDecimals.getNumber()));
+            return String.format("%d:%02d:%02d.%s", hours, minutes, seconds, millsString);
         } else {
             if (timerDecimals == TimerDecimals.NONE) {
                 return String.format("%02d:%02d", minutes, seconds);
             }
-            return String.format("%02d:%02d.%0" + timerDecimals.getNumber() + ".0f", minutes, seconds, time % Math.pow(10, timerDecimals.getNumber()));
+            return String.format("%02d:%02d.%s", minutes, seconds, millsString);
         }
     }
 
     public String getIGTText() {
-        return new LiteralText(this.simply ? "" : "IGT: ").append(new LiteralText(getTimeFormat(InGameTimer.getInstance().getInGameTime()))).asFormattedString();
+        return new LiteralText((this.simply ? "" : "IGT: ") + getTimeFormat(InGameTimer.getInstance().getInGameTime())).asString();
     }
 
     public String getRTAText() {
-        return new LiteralText(this.simply ? "" : "RTA: ").append(new LiteralText(getTimeFormat(InGameTimer.getInstance().getRealTimeAttack()))).asFormattedString();
+        return new LiteralText((this.simply ? "" : "RTA: ") + getTimeFormat(InGameTimer.getInstance().getRealTimeAttack())).asString();
     }
 
     public void draw() {
         if (!toggle) return;
 
-        client.profiler.push("timer");
+        client.profiler.push("create");
 
         String igtText = getIGTText();
         String rtaText = getRTAText();

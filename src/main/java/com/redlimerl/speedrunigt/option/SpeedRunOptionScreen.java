@@ -6,6 +6,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 
 import java.util.HashMap;
 import java.util.List;
@@ -89,6 +90,10 @@ private final String title = "Timer Options";
         else if(button.id==904){
                 SpeedRunOptions.setOption(SpeedRunOptions.WAITING_FIRST_INPUT, !SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT));
                 button.message=(SpeedRunIGT.translate("speedrunigt.option.waiting_first_input","Start at First Input").getString() + " : " + (SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) ? ScreenTexts.ON : ScreenTexts.OFF));
+        }
+        else if(button.id==905){
+                SpeedRunOptions.setOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS, !SpeedRunOptions.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS));
+                button.message=SpeedRunIGT.translate("speedrunigt.option.hide_timer_in_debugs","Hide Timer in Debugs").append(" : ").append(SpeedRunOptions.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) ? ScreenTexts.ON : ScreenTexts.OFF).asString();
         }
 
 

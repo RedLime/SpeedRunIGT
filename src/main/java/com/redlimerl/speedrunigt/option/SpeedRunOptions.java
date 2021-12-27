@@ -109,7 +109,17 @@ public class SpeedRunOptions {
             return value.toString();
         }
     };
+    public static final OptionArgument<Boolean> HIDE_TIMER_IN_DEBUGS = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "hide_timer_in_debugs"), false) {
+        @Override
+        public Boolean valueFromString(String string) {
+            return Objects.equals(string, "true");
+        }
 
+        @Override
+        public String valueToString(Boolean value) {
+            return value.toString();
+        }
+    };
     public enum TimerDecimals { NONE(0), ONE(1), TWO(2), THREE(3);
         private final int number;
         TimerDecimals(int number) {

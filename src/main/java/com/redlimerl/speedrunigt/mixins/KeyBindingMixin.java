@@ -26,7 +26,7 @@ public class KeyBindingMixin {
     @Inject(method = "setKeyPressed", at = @At("TAIL"))
     private static void onPress(int keyCode, boolean pressed, CallbackInfo ci) {
         KeyBinding keyBinding =KEY_MAP.get(keyCode);
-        if(keyBinding!=null){
+        if(keyBinding!=null&& pressed){
             InGameTimer timer = InGameTimer.getInstance();
             if (keyBinding == MinecraftClient.getInstance().options.keySprint // Sprint
                     || Objects.equals(keyBinding.getCategory(), "key.categories.inventory")

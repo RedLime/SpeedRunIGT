@@ -24,7 +24,7 @@ public class SpeedRunIGT implements ClientModInitializer {
     public static final TimerDrawer TIMER_DRAWER = new TimerDrawer(true);
 
     public static String DEBUG_DATA = "";
-
+    public static String MOD_VERSION;
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     public static final Path MAIN_PATH = FabricLoader.getInstance().getGameDir().resolve(MOD_ID);
     public static final Path WORLDS_PATH = FabricLoader.getInstance().getGameDir().resolve("saves");
@@ -36,6 +36,8 @@ public class SpeedRunIGT implements ClientModInitializer {
 
 
     public void onInitializeClient() {
+        MOD_VERSION = (FabricLoader.getInstance().getModContainer(SpeedRunIGT.MOD_ID).isPresent()
+                ? FabricLoader.getInstance().getModContainer(SpeedRunIGT.MOD_ID).get().getMetadata().getVersion().getFriendlyString() : "Unknown+Unknown");
         SpeedRunOptions.addOptionButton(screen ->
                 new ButtonWidget(900,0, 0, 150, 20,
                         SpeedRunIGT.translate("speedrunigt.option.timer_position","Timer Display Options").getString())
@@ -50,6 +52,7 @@ public class SpeedRunIGT implements ClientModInitializer {
                         new ButtonWidget(904,0, 0, 150, 20,
                                 SpeedRunIGT.translate("speedrunigt.option.waiting_first_input","Start at First Input").getString() + " : " + (SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) ? ScreenTexts.ON : ScreenTexts.OFF))
                 , SpeedRunIGT.translate("speedrunigt.option.waiting_first_input.description","Change the timer's starting point from\nthe world load to the player's first input\n(movement, inventory, etc.).\nThis option is for categories that start on first input."));
+        SpeedRunOptions.addOptionButton(screen -> new ButtonWidget(904,0, 0, 150, 20, new TranslatableText("speedrunigt.option.hide_timer_in_debugs").append(" : ").append(SpeedRunOptions.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) ? ScreenTexts.ON : ScreenTexts.OFF).asString()));
         SpeedRunOptions.init();
 
 

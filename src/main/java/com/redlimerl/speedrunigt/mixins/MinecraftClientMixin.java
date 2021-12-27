@@ -66,10 +66,14 @@ public abstract class MinecraftClientMixin {
         currentDimension = null;
         InGameTimer.currentWorldName = worldName;
         if(levelInfo==null){
-            boolean loaded = InGameTimer.load(worldName);
-            if (!loaded) InGameTimer.end();
-            else {
-                InGameTimer.currentWorldName = worldName;
+            try {
+                boolean loaded = InGameTimer.load(worldName);
+                if (!loaded) InGameTimer.end();
+                else {
+                    InGameTimer.currentWorldName = worldName;
+                }
+            } catch (Exception e) {
+                InGameTimer.end();
             }
             currentDimension = null;
         }
@@ -91,7 +95,7 @@ public abstract class MinecraftClientMixin {
         currentDimension = targetWorld.dimension;
         InGameTimer.checkingWorld = true;
 
-        if (timer.getStatus() != TimerStatus.NONE && timer.getStatus() != TimerStatus.LEAVE) {
+        if (timer.getStatus() != TimerStatus.NONE) {
             timer.setPause(true, TimerStatus.IDLE);
         }
 
@@ -143,10 +147,10 @@ public abstract class MinecraftClientMixin {
             target ="Lnet/minecraft/client/render/GameRenderer;render(FJ)V", shift = At.Shift.AFTER))
     private void drawTimer(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
-        if (worldRenderer != null && world != null){
 
             if (worldRenderer != null && world != null && world.dimension.getName().equals(currentDimension.getName()) && !isPaused()
-                    && (timer.getStatus() == TimerStatus.IDLE || timer.getStatus() == TimerStatus.LEAVE) && InGameTimer.checkingWorld) {
+                    && !(!this.isPaused() && SpeedRunOptions.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) && this.options.debugEnabled)
+                    && (timer.getStatus() == TimerStatus.IDLE ) && InGameTimer.checkingWorld) {
                 int chunks = getCompletedChunkCount();
                 int entities = worldRenderer.field_4426 - (options.perspective > 0 ? 0 : 1);
                 if (chunks + entities > 0) {
@@ -156,7 +160,6 @@ public abstract class MinecraftClientMixin {
                         timer.updateFirstRendered();
                     }
                 }
-            }
         }
 
 
@@ -186,13 +189,7 @@ public abstract class MinecraftClientMixin {
      * @author Void_X_Walker
      * @reason Backported to 1.8, Moved the mouse stuff from MouseMixin and redid it
      */
-    @Redirect(method="tick",at=@At(value="INVOKE",target = "Lorg/lwjgl/input/Mouse;getEventButtonState()Z"))
-    public boolean getClicked(){
-        if(Mouse.getEventButtonState()){
-            unlock();
-        }
-       return Mouse.getEventButtonState();
-    }
+
     @Redirect(method="tick",at=@At(value="INVOKE",target = "Lorg/lwjgl/input/Mouse;getEventDWheel()I"))
     public int getScrolled(){
         if(Mouse.getEventDWheel()!=0){
@@ -211,7 +208,7 @@ public abstract class MinecraftClientMixin {
     private void unlock() {
         @NotNull
         InGameTimer timer = InGameTimer.getInstance();
-        if ((timer.getStatus() == TimerStatus.IDLE || timer.getStatus() == TimerStatus.LEAVE)  &&this.focused&& !MinecraftClient.getInstance().isPaused() && InGameTimer.checkingWorld) {
+        if ((timer.getStatus() == TimerStatus.IDLE )  &&this.focused&& !MinecraftClient.getInstance().isPaused() && InGameTimer.checkingWorld) {
             timer.setPause(false);
         }
         if (this.focused&&!MinecraftClient.getInstance().isPaused()) {

@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.timer;
 
+import com.google.gson.Gson;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.crypt.Crypto;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
@@ -30,10 +31,13 @@ public class InGameTimer {
 
     @NotNull
     private static InGameTimer INSTANCE = new InGameTimer();
-
+    @NotNull
+    private static InGameTimer COMPLETED_INSTANCE = new InGameTimer();
     public static InGameTimer getInstance() { return INSTANCE; }
     public static String currentWorldName = "";
     public static boolean checkingWorld = true;
+    private boolean isCompleted = false;
+    private int completeCount = 0;
 
     private static final ArrayList<Consumer<InGameTimer>> onCompleteConsumers = new ArrayList<>();
 
@@ -60,7 +64,9 @@ public class InGameTimer {
     private long activateTicks = 0;
     private long leastTickTime = 0;
     private long leastStartTime = 0;
+    private long excludedTime = 0;
 
+    private long leaveTime = 0;
     //Logs
     private String firstInput = "";
     private final StringBuilder pauseLog = new StringBuilder();
@@ -118,7 +124,10 @@ public class InGameTimer {
      * End the Timer, Trigger when Complete Ender Dragon
      */
     public static void complete() {
-        InGameTimer timer = INSTANCE;
+        COMPLETED_INSTANCE = new Gson().fromJson(new Gson().toJson(INSTANCE), InGameTimer.class);
+        InGameTimer timer = COMPLETED_INSTANCE;
+        INSTANCE.isCompleted = true;
+
         if (timer.getStatus() == TimerStatus.COMPLETED) return;
         timer.endTime = System.currentTimeMillis();
         timer.endIGTTime = timer.endTime - timer.leastTickTime;
@@ -131,17 +140,18 @@ public class InGameTimer {
                 .append(", Total Ticks: ").append(timer.loggerTicks)
                 .append(", Rebased RTA Time: ").append(timeToStringFormat(timer.rebaseRealTime))
                 .append(", Rebased IGT Time: ").append(timeToStringFormat(timer.rebaseIGTime));
-
+        if (timer.category == RunCategory.ALL_ACHIEVEMENTS)
+            timer.pauseLog.append(", Excluded RTA Time: ").append(timeToStringFormat(timer.excludedTime));
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy.MM.dd HH:mm:ss");
         String logInfo = "MC Version : " + "1.8.9" + "\r\n"
-                + "Timer Version : " + (FabricLoader.getInstance().getModContainer(SpeedRunIGT.MOD_ID).isPresent() ? FabricLoader.getInstance().getModContainer(SpeedRunIGT.MOD_ID).get().getMetadata().getVersion().getFriendlyString() : "Unknown") + "\r\n"
+                + "Timer Version : " + SpeedRunIGT.MOD_VERSION + "\r\n"
                 + "Run Date : " + simpleDateFormat.format(new Date()) + "\r\n"
                 + "====================\r\n";
 
         new Thread(() -> {
             try {
-                FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(currentWorldName).toFile(), "igt_timer.log"), logInfo + timer.firstInput + "\r\n" + timer.pauseLog, Charsets.UTF_8);
-                FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(currentWorldName).toFile(), "igt_freeze.log"), logInfo + timer.freezeLog, Charsets.UTF_8);
+                FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(currentWorldName).toFile(), "igt_timer" + (timer.completeCount == 0 ? "" : "_"+timer.completeCount) + ".log"), logInfo + timer.firstInput + "\r\n" + timer.pauseLog, Charsets.UTF_8);
+                FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(currentWorldName).toFile(), "igt_freeze" + (timer.completeCount == 0 ? "" : "_"+timer.completeCount) + ".log"), logInfo + timer.freezeLog, Charsets.UTF_8);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -149,7 +159,7 @@ public class InGameTimer {
 
         for (Consumer<InGameTimer> onCompleteConsumer : onCompleteConsumers) {
             try {
-                onCompleteConsumer.accept(INSTANCE);
+                onCompleteConsumer.accept(timer);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -159,7 +169,8 @@ public class InGameTimer {
     public static void leave() {
         if (INSTANCE.getStatus() == TimerStatus.COMPLETED) return;
 
-        INSTANCE.setPause(true, TimerStatus.LEAVE);
+        INSTANCE.leaveTime = System.currentTimeMillis();
+        INSTANCE.setPause(true, TimerStatus.IDLE);
 
         String data = SpeedRunIGT.GSON.toJson(INSTANCE);
         String timerData = Crypto.encrypt(data, "faRQOs2GK5j863eP");
@@ -169,7 +180,10 @@ public class InGameTimer {
             e.printStackTrace();
         }
     }
-
+    public void setUncompleted() {
+        this.isCompleted = false;
+        this.completeCount++;
+    }
     public static boolean load(String name) {
         File file = new File(SpeedRunIGT.TIMER_PATH.toFile(), name+".igt");
         if (file.exists()) {
@@ -220,7 +234,7 @@ public class InGameTimer {
     }
 
     public boolean isPaused() {
-        return this.getStatus() == TimerStatus.PAUSED || this.getStatus() == TimerStatus.IDLE || this.getStatus() == TimerStatus.LEAVE;
+        return this.getStatus() == TimerStatus.PAUSED || this.getStatus() == TimerStatus.IDLE;
     }
 
     public boolean isPlaying() {
@@ -240,12 +254,13 @@ public class InGameTimer {
     }
 
     public long getRealTimeAttack(boolean withRebased) {
-        return this.getStatus() == TimerStatus.NONE ? 0 : this.getEndTime() - this.getStartTime() + (withRebased ? rebaseRealTime : 0);
+        return this.isCompleted ? COMPLETED_INSTANCE.getRealTimeAttack(withRebased) : this.getStatus() == TimerStatus.NONE ? 0 : this.getEndTime() - this.getStartTime() + (withRebased ? rebaseRealTime : 0) - this.excludedTime;
     }
 
     public long getInGameTime() { return getInGameTime(true); }
 
     public long getInGameTime(boolean smooth) {
+        if (this.isCompleted) return COMPLETED_INSTANCE.getInGameTime(smooth);
         long ms = System.currentTimeMillis();
         return !isStarted() ? 0 :
                 (this.getTicks() * 50L) // Tick Based
@@ -326,7 +341,9 @@ public class InGameTimer {
             if (this.isStarted()) {
                 if (isPaused()) {
                     long nowTime = getRealTimeAttack();
-                    pauseLog.append(timeToStringFormat(nowTime)).append(" RTA E, ").append(timeToStringFormat(nowTime - loggerPausedTime)).append(" Length (").append(getStatus().getMessage()).append(")\r\n");
+                    pauseLog.append(timeToStringFormat(nowTime)).append(" RTA E, ").append(timeToStringFormat(nowTime - loggerPausedTime)).append(" Length (").append(leaveTime != 0 ? TimerStatus.LEAVE.getMessage() : getStatus().getMessage()).append(")\r\n");
+                    if (category == RunCategory.ALL_ACHIEVEMENTS&& leaveTime != 0) excludedTime = System.currentTimeMillis() - leaveTime;
+                    leaveTime = 0;
                 }
                 if (this.getStatus() == TimerStatus.IDLE && loggerTicks != 0) {
                     leastStartTime = System.currentTimeMillis();

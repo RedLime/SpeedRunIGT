@@ -6,6 +6,7 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.version.ColorMixer;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.PagedEntryListWidget;
@@ -40,7 +41,13 @@ private final String title = SpeedRunIGT.translate("speedrunigt.option.timer_pos
         super();
         this.parent = parent;
     }
-
+    @Override
+    public void resize(MinecraftClient client, int width, int height) {
+        normalOptions.clear();
+        igtOptions.clear();
+        rtaOptions.clear();
+        super.resize(client, width, height);
+    }
     @Override
     public void init() {
 
