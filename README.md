@@ -45,8 +45,8 @@ Simply, the **Timer** Mod for Minecraft Speedrun
 
 ## Available Languages
 - English
-- Chinese (简体中文)
 - Korean (한국어)
+- Chinese (简体中文)
 
 ## Support
 Discord : RedLime#0817\
