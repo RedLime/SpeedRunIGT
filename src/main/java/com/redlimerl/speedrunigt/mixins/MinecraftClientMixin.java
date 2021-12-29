@@ -137,7 +137,13 @@ public abstract class MinecraftClientMixin {
         if (worldRenderer != null && world != null && world.getDimension().getType() == currentDimension && !isPaused() && isWindowFocused()
                 && timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld && this.mouse.isCursorLocked()) {
             int chunks = worldRenderer.getCompletedChunkCount();
-            int entities = worldRenderer.regularEntityCount - (options.perspective > 0 ? 0 : 1);
+            int entities;
+            try {
+                entities = worldRenderer.regularEntityCount;
+            } catch (IllegalAccessError error) {
+                entities = Integer.parseInt(worldRenderer.getEntitiesDebugString().split("/")[0].replaceAll("E: ", ""));
+            }
+            entities -= (options.perspective > 0 ? 0 : 1);
 
             if (chunks + entities > 0) {
                 if (!(SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) && !timer.isStarted())) {
