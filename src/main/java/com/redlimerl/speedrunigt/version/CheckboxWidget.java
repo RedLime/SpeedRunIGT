@@ -1,17 +1,13 @@
 package com.redlimerl.speedrunigt.version;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import com.redlimerl.speedrunigt.timer.RunCategory;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-
-import javax.swing.*;
 /**
  * @author Void_X_Walker
  * @reason Added a checkbox
@@ -56,7 +52,7 @@ public class CheckboxWidget extends ButtonWidget {
         drawTexture(this.x, this.y, this.hovered ? 20.0F : 0.0F, this.checked ? 20.0F : 0.0F, 20, this.height, 64, 64);
         this.renderBg(minecraftClient, mouseX, mouseY);
         if (this.field_24253) {
-            drawCenteredString(textRenderer, this.message, this.x + 24, this.y + (this.height - 8) / 2, 14737632 | MathHelper.ceil(1.0F * 255.0F) << 24);
+            drawCenteredString(textRenderer, this.message, this.x + 24, this.y + (this.height - 8) / 2, 14737632 | 255 << 24);
         }
 
     }

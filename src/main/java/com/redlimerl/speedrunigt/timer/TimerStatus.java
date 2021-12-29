@@ -6,6 +6,7 @@ package com.redlimerl.speedrunigt.timer;
 public enum TimerStatus {
     /**
      * Nothing, When the player is in the world select menu.
+     * But, It's different to {@link TimerStatus#LEAVE}
      */
     NONE("", -1),
 
@@ -37,7 +38,7 @@ public enum TimerStatus {
      * When the player leaves the world for some reason.
      * If join the same world again, it will change to {@link TimerStatus#RUNNING}.
      */
-    LEAVE_LEGACY("Leave the world by player", 1);
+    LEAVE("Leave the world by player", 1);
 
     private final String message;
     private final int pause;

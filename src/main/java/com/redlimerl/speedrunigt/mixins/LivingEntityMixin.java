@@ -7,6 +7,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.mob.GuardianEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
@@ -37,10 +38,10 @@ public abstract class LivingEntityMixin extends Entity {
 
         //Kill All Bosses
         if (timer.getCategory() == RunCategory.KILL_ALL_BOSSES) {
-            if (this.getEntity().getEntityId() == 64) {//Wither
+            if (EntityType.getIdByEntity(this.getEntity()) == 64) {//Wither
                 timer.updateMoreData(1, 1);
             }
-            if (this.getEntity().getEntityId() == 4) { //Elder Guardian
+            if (EntityType.getIdByEntity(this.getEntity()) == 68 && this.getEntity() instanceof GuardianEntity && ((GuardianEntity) this.getEntity()).isElder()) { //Elder Guardian
                 timer.updateMoreData(2, 1);
             }
             if (timer.getMoreData(0) == 1 && timer.getMoreData(1) == 1 && timer.getMoreData(2) == 1)
@@ -49,13 +50,13 @@ public abstract class LivingEntityMixin extends Entity {
         }
 
         //Kill Wither
-        if (timer.getCategory() == RunCategory.KILL_WITHER && this.getEntity().getEntityId() == 64) {
+        if (timer.getCategory() == RunCategory.KILL_WITHER && EntityType.getIdByEntity(this.getEntity()) == 64) {
             InGameTimer.complete();
             return;
         }
 
         //Kill Elder Guardian
-        if (timer.getCategory() == RunCategory.KILL_ELDER_GUARDIAN && this.getEntity().getEntityId() == 4) {
+        if (timer.getCategory() == RunCategory.KILL_ELDER_GUARDIAN && EntityType.getIdByEntity(this.getEntity()) == 68 && this.getEntity() instanceof GuardianEntity && ((GuardianEntity) this.getEntity()).isElder()) {
             InGameTimer.complete();
         }
     }

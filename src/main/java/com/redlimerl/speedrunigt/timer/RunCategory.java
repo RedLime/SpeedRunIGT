@@ -2,7 +2,6 @@ package com.redlimerl.speedrunigt.timer;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 
 import java.util.Locale;
 /**

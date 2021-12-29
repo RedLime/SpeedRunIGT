@@ -1,6 +1,5 @@
 package com.redlimerl.speedrunigt.option;
 
-import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
@@ -13,11 +12,10 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-
 import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.gui.widget.ListWidget;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
+
 import java.util.*;
 import java.util.stream.Collectors;
 /**
@@ -29,7 +27,7 @@ public class SpeedRunCategoryScreen extends Screen {
     private final Screen parent;
     public static Map<Integer,RunCategory> map= new HashMap<>();
     private CategorySelectionListWidget listWidget;
-    protected String title = "timer category options";
+    protected String title = "Timer Category Options";
     public SpeedRunCategoryScreen(Screen parent) {
         this.parent = parent;
     }
@@ -70,11 +68,10 @@ public class SpeedRunCategoryScreen extends Screen {
     }
     @Environment(EnvType.CLIENT)
     class CategorySelectionListWidget extends ListWidget {
-        List<CategoryEntry> entries = Lists.newArrayList();
+        List<CategoryEntry> entries;
         public CategorySelectionListWidget(MinecraftClient minecraft) {
             super(minecraft, SpeedRunCategoryScreen.this.width, SpeedRunCategoryScreen.this.height, 32, SpeedRunCategoryScreen.this.height - 55, 24);
-            entries.clear();
-           entries=Arrays.stream(RunCategory.values()).map(CategoryEntry::new).collect(Collectors.toList());
+            entries = Arrays.stream(RunCategory.values()).map(CategoryEntry::new).collect(Collectors.toList());
         }
 
         @Override
@@ -179,7 +176,7 @@ public class SpeedRunCategoryScreen extends Screen {
                     this.drawTexture(this.x, this.y, 0, 46 + i * 20, this.width / 2, this.height);
                     this.drawTexture(this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
                     this.renderBg(minecraftClient, mouseX, mouseY);
-                    this.drawWithShadow(textRenderer, this.message, this.x + 24, this.y + (this.height - 8) / 2, 14737632 | MathHelper.ceil(1.0F * 255.0F) << 24);
+                    this.drawWithShadow(textRenderer, this.message, this.x + 24, this.y + (this.height - 8) / 2, 14737632 | 255 << 24);
                 }
             }
         }

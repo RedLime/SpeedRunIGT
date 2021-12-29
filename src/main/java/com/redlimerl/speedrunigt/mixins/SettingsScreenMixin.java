@@ -22,7 +22,7 @@ public class SettingsScreenMixin extends Screen {
     @Inject(method = "init", at = @At("TAIL"))
     private void onInit(CallbackInfo ci) {
 
-        this.buttons.add(new ButtonWidget(7797,this.width / 2 - 180, this.height / 6 - 12, 20, 20,null));
+        this.buttons.add(new ButtonWidget(7797,this.width / 2 - 180, this.height / 6 - 12, 20, 20,"T"));
     }
     @Inject(method = "buttonClicked", at = @At("TAIL"))
     public void buttonClicked(ButtonWidget button, CallbackInfo ci){
