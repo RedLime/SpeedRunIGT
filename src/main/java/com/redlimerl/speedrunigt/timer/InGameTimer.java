@@ -124,8 +124,9 @@ public class InGameTimer {
      */
     public static void complete() {
         COMPLETED_INSTANCE = new Gson().fromJson(new Gson().toJson(INSTANCE), InGameTimer.class);
-        InGameTimer timer = COMPLETED_INSTANCE;
+        COMPLETED_INSTANCE.isCompleted = false;
         INSTANCE.isCompleted = true;
+        InGameTimer timer = COMPLETED_INSTANCE;
 
         if (timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
         timer.endTime = System.currentTimeMillis();
@@ -256,13 +257,13 @@ public class InGameTimer {
     }
 
     public long getRealTimeAttack(boolean withRebased) {
-        return this.isCompleted ? COMPLETED_INSTANCE.getRealTimeAttack(withRebased) : this.getStatus() == TimerStatus.NONE ? 0 : this.getEndTime() - this.getStartTime() + (withRebased ? rebaseRealTime : 0) - this.excludedTime;
+        return this.isCompleted && this != COMPLETED_INSTANCE ? COMPLETED_INSTANCE.getRealTimeAttack(withRebased) : this.getStatus() == TimerStatus.NONE ? 0 : this.getEndTime() - this.getStartTime() + (withRebased ? rebaseRealTime : 0) - this.excludedTime;
     }
 
     public long getInGameTime() { return getInGameTime(true); }
 
     public long getInGameTime(boolean smooth) {
-        if (this.isCompleted) return COMPLETED_INSTANCE.getInGameTime(smooth);
+        if (this.isCompleted && this != COMPLETED_INSTANCE) return COMPLETED_INSTANCE.getInGameTime(smooth);
 
         long ms = System.currentTimeMillis();
         return !isStarted() ? 0 :
