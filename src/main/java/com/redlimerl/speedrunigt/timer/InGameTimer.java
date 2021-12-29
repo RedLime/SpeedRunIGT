@@ -94,6 +94,7 @@ public class InGameTimer {
      * Start the Timer, Trigger when player to join(created) the world
      */
     public static void reset() {
+        if (INSTANCE.isCompleted || INSTANCE.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
         INSTANCE = new InGameTimer(false);
         INSTANCE.category = RunCategory.CUSTOM;
         INSTANCE.setPause(true, TimerStatus.IDLE);
