@@ -45,6 +45,7 @@ Simply, the **Timer** Mod for Minecraft Speedrun
 
 ## Available Languages
 - English
+- Chinese (简体中文)
 - Korean (한국어)
 
 ## Support
