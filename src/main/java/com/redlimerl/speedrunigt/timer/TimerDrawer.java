@@ -232,7 +232,6 @@ public class TimerDrawer {
         if (!toggle) return;
 
         client.profiler.push("create");
-
         String igtText = getIGTText();
         String rtaText = getRTAText();
 
@@ -243,10 +242,12 @@ public class TimerDrawer {
         TimerElement igtTimerElement = new TimerElement(targetFont);
         TimerElement rtaTimerElement = new TimerElement(targetFont);
 
+        client.profiler.swap("init");
         //초기 값 조정
         rtaTimerElement.init(rtaXPos, rtaYPos, rtaScale, rtaText, rtaColor, rtaDecoration);
         igtTimerElement.init(igtXPos, igtYPos, igtScale, igtText, igtColor, igtDecoration);
 
+        client.profiler.swap("render");
         //렌더
         if (igtScale != 0) igtTimerElement.draw(translateZ);
         if (rtaScale != 0) rtaTimerElement.draw(translateZ);

@@ -30,6 +30,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     @Shadow public abstract boolean isSneaking();
     @Shadow protected MinecraftClient client;
 
+    @Shadow public float timeInPortal;
+
     /**
      * @author Void_X_Walker
      * @reason Backported to 1.8, removed non 1.8 categories
@@ -123,7 +125,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
     @Inject(at = @At("HEAD"), method = "tick")
     public void updateNausea(CallbackInfo ci) {
-       if(this.hasStatusEffect(StatusEffect.NAUSEA) && this.getEffectInstance(StatusEffect.NAUSEA).getDuration() > 60 && client.isInSingleplayer()){
+       if(this.changingDimension && this.timeInPortal == 1 && client.isInSingleplayer()){
             InGameTimer.checkingWorld = false;
             InGameTimer.getInstance().setPause(true, TimerStatus.IDLE);
         }

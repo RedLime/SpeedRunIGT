@@ -16,6 +16,7 @@ import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.world.ChunkAssemblyHelper;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.server.integrated.IntegratedServer;
+import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.level.LevelInfo;
 import org.jetbrains.annotations.NotNull;
@@ -56,6 +57,8 @@ public abstract class MinecraftClientMixin {
     @Shadow public boolean focused;
 
     @Shadow public MouseInput mouse;
+    @Shadow @Final public Profiler profiler;
+
     /**
      * @author Void_X_Walker
      * @reason Backported to 1.8, merged the 1.16 methods: startIntegratedServer and method_29607 and used levelInfo == null as a distinction
@@ -149,8 +152,7 @@ public abstract class MinecraftClientMixin {
         InGameTimer timer = InGameTimer.getInstance();
 
             if (worldRenderer != null && world != null && world.dimension.getName().equals(currentDimension.getName()) && !isPaused()
-                    && !(!this.isPaused() && SpeedRunOptions.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) && this.options.debugEnabled)
-                    && (timer.getStatus() == TimerStatus.IDLE ) && InGameTimer.checkingWorld) {
+                    && (timer.getStatus() == TimerStatus.IDLE ) && InGameTimer.checkingWorld && Mouse.isGrabbed()) {
                 int chunks = getCompletedChunkCount();
                 int entities = worldRenderer.field_1891 - (options.perspective > 0 ? 0 : 1);
                 if (chunks + entities > 0) {
@@ -167,8 +169,9 @@ public abstract class MinecraftClientMixin {
 
         if (!this.options.hudHidden && this.world != null && timer.getStatus() != TimerStatus.NONE
                 && (!this.isPaused() || this.currentScreen instanceof CreditsScreen || this.currentScreen instanceof GameMenuScreen || !SpeedRunOptions.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS))
+                && !(!this.isPaused() && SpeedRunOptions.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) && this.options.debugEnabled)
                 && !(this.currentScreen instanceof TimerCustomizeScreen)) {
-
+            this.profiler.swap("timer");
             SpeedRunIGT.TIMER_DRAWER.draw();
         }
     }
@@ -206,10 +209,10 @@ public abstract class MinecraftClientMixin {
     private void unlock() {
         @NotNull
         InGameTimer timer = InGameTimer.getInstance();
-        if ((timer.getStatus() == TimerStatus.IDLE )  &&this.focused&& !MinecraftClient.getInstance().isPaused() && InGameTimer.checkingWorld) {
+        if ((timer.getStatus() == TimerStatus.IDLE )  &&this.focused&& !MinecraftClient.getInstance().isPaused() && InGameTimer.checkingWorld && Mouse.isGrabbed()) {
             timer.setPause(false);
         }
-        if (this.focused&&!MinecraftClient.getInstance().isPaused()) {
+        if (this.focused&&!MinecraftClient.getInstance().isPaused() && Mouse.isGrabbed()) {
             timer.updateFirstInput();
         }
     }
