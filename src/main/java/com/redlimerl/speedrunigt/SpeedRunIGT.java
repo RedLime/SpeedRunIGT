@@ -103,3 +103,4 @@ public class SpeedRunIGT implements ClientModInitializer {
         System.out.println(obj);
     }
 }
+//Void was here :)
