@@ -27,19 +27,19 @@ Simply, the **Timer** Mod for Minecraft Speedrun
 - Launch Minecraft
 
 ## Support Versions
-Legacy: No longer support new feature update
+Legacy: No longer support new feature update [Last version is 2.14](https://github.com/RedLime/SpeedRunIGT/releases/tag/2.15.3)
 
 LF: Versions that should use [Legacy Fabric](https://github.com/Legacy-Fabric)
 - 1.16.1
 - 1.17.1 
-- 1.16.5 (Legacy) [Last ver. 2.14]
-- 1.18.1 (Legacy) [Last ver. 2.14]
 - 1.15.2
 - 1.14.4
-- 20w14∞ (Legacy) [Last ver. 2.14]
-- 1.12.2 (Legacy / LF) [Last ver. 2.14]
-- 1.8.9 (Legacy / LF) [Last ver. 2.14]
-- 1.7.10 (Legacy / LF) [Last ver. 2.14]
+- 1.16.5 (Legacy) 
+- 1.18.1 (Legacy)
+- 20w14∞ (Legacy)
+- 1.12.2 (Legacy / LF)
+- 1.8.9 (Legacy / LF)
+- 1.7.10 (Legacy / LF)
 
 ## FaQ
 - Is allowed in *[Speedrun.com](https://speedrun.com/mc)* run verification?
