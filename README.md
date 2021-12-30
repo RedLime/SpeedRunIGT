@@ -15,17 +15,21 @@ Simply, the **Timer** Mod for Minecraft Speedrun
 ## Downloads
 - [Release Page](https://github.com/RedLime/SpeedRunIGT/releases)
 
+## Require
+- Fabric loader 0.12.2 version or above.
+
 ## Support Versions
-\*: No longer support new feature update (Legacy) 
+Legacy: No longer support new feature update
 - 1.16.1
 - 1.17.1 
-- 1.16.5 \* [Last ver. 2.14]
-- 1.18.1 \* [Last ver. 2.14]
+- 1.16.5 (Legacy) [Last ver. 2.14]
+- 1.18.1 (Legacy) [Last ver. 2.14]
 - 1.15.2
 - 1.14.4
-- 20w14∞ \* [Last ver. 2.14]
-- ~~1.8.9~~ (working on)
-- ~~1.7.10~~ (working on)
+- 20w14∞ (Legacy) [Last ver. 2.14]
+- ~~1.12.2~~ (will be Legacy lol) (working on)
+- ~~1.8.9~~ (working on + almost)
+- ~~1.7.10~~ (working on + almost)
 
 ## FaQ
 - Is allowed in *[Speedrun.com](https://speedrun.com/mc)* run verification?
