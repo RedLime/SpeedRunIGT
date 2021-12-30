@@ -1,4 +1,4 @@
-# SpeedRun IGT
+# SpeedRunIGT
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/S6S77MX01)
 
 ## What is this mod?
