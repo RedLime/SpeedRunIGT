@@ -10,16 +10,26 @@ Simply, the **Timer** Mod for Minecraft Speedrun
   - Support Many Categories!
 - Free Timer Position Adjustment 
 - Custom font in timer
-- For third party mods API ([API Document](https://github.com/RedLime/SpeedRunIGT/wiki/SpeedRunIGT-API-Document))
 
 ## Downloads
 - [Release Page](https://github.com/RedLime/SpeedRunIGT/releases)
 
-## Require
-- Fabric loader 0.12.2 version or above.
+## How to install & use
+> If you are using 1.14+
+- Install [Fabric Loader](https://fabricmc.net/use/installer/) (0.12.2 version or above)
+- Download `.jar` file to the version you are using in release page.
+- Put the `.jar` file in the *`Minecraft instance folder`/mods* folder.
+- Launch Minecraft
+> If you are using Pre-1.14
+- Install [Legacy Fabric Loader (direct link)](https://jitpack.io/com/github/Legacy-Fabric/fabric-installer/-SNAPSHOT/fabric-installer--SNAPSHOT.jar) (0.12.2 version or above)
+- Download `.jar` file to the version you are using in release page.
+- Put the `.jar` file in the *`Minecraft instance folder`/mods* folder.
+- Launch Minecraft
 
 ## Support Versions
 Legacy: No longer support new feature update
+
+LF: Versions that should use [Legacy Fabric](https://github.com/Legacy-Fabric)
 - 1.16.1
 - 1.17.1 
 - 1.16.5 (Legacy) [Last ver. 2.14]
@@ -27,13 +37,13 @@ Legacy: No longer support new feature update
 - 1.15.2
 - 1.14.4
 - 20w14∞ (Legacy) [Last ver. 2.14]
-- ~~1.12.2~~ (will be Legacy lol) (working on)
-- ~~1.8.9~~ (working on + almost)
-- ~~1.7.10~~ (working on + almost)
+- 1.12.2 (Legacy / LF) [Last ver. 2.14]
+- 1.8.9 (Legacy / LF) [Last ver. 2.14]
+- 1.7.10 (Legacy / LF) [Last ver. 2.14]
 
 ## FaQ
 - Is allowed in *[Speedrun.com](https://speedrun.com/mc)* run verification?
-  - **YES!**.
+  - **YES!** but Pre 1.14 versions not allowed yet.
 - Is support Multi-Instances?
   - Yes!
 - Is there any way to display them separately in OBS?
@@ -55,6 +65,11 @@ Legacy: No longer support new feature update
 ## Support
 Discord : RedLime#0817\
 can I donate for u : [here is my ko-fi](https://ko-fi.com/redlimerl)
+
+## Contributors
+- [Void_X_Walker](https://github.com/VoidXWalker) - Porting 1.8.9 [[Support]](https://ko-fi.com/voidxwalker)
+- [xiaolin](https://github.com/liuzhengjin) - Add Chinese language
+- [Gregor0410](https://github.com/Gregor0410) - English texts grammar correction
 
 ## Images
 ![](https://i.imgur.com/5xC9IQi.png)
