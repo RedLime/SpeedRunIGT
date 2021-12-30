@@ -202,7 +202,7 @@ public abstract class MinecraftClientMixin {
         if (timer.getStatus() == TimerStatus.IDLE && this.focused && !MinecraftClient.getInstance().isPaused() && InGameTimer.checkingWorld && Mouse.isGrabbed()) {
             timer.setPause(false);
         }
-        if (this.focused&&!MinecraftClient.getInstance().isPaused()) {
+        if (this.focused&&!MinecraftClient.getInstance().isPaused() && Mouse.isGrabbed()) {
             timer.updateFirstInput();
         }
     }
