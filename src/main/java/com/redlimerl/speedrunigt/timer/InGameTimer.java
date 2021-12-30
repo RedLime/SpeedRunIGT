@@ -124,12 +124,11 @@ public class InGameTimer {
      * End the Timer, Trigger when Complete Ender Dragon
      */
     public static void complete() {
-        COMPLETED_INSTANCE = new Gson().fromJson(new Gson().toJson(INSTANCE), InGameTimer.class);
-        COMPLETED_INSTANCE.isCompleted = false;
+        if (INSTANCE.isCompleted) return;
+        COMPLETED_INSTANCE = new Gson().fromJson(new Gson().toJson(INSTANCE) + "", InGameTimer.class);
         INSTANCE.isCompleted = true;
         InGameTimer timer = COMPLETED_INSTANCE;
 
-        if (timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
         timer.endTime = System.currentTimeMillis();
         timer.endIGTTime = timer.endTime - timer.leastTickTime;
 
