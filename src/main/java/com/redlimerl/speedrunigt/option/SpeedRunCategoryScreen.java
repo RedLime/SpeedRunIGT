@@ -1,6 +1,5 @@
 package com.redlimerl.speedrunigt.option;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.RunCategory;
@@ -8,24 +7,30 @@ import com.redlimerl.speedrunigt.version.CheckboxWidget;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.class_1803;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.gui.widget.ListWidget;
+import net.minecraft.client.render.Tessellator;
 import net.minecraft.util.Identifier;
+import org.lwjgl.opengl.GL11;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
 /**
  * @author Void_X_Walker
  * @reason Backported to 1.8, redid almost everything because 1.8 screens and buttons work completely different
  */
+@SuppressWarnings("unchecked")
 public class SpeedRunCategoryScreen extends Screen {
 
     private final Screen parent;
-    public static Map<Integer,RunCategory> map= new HashMap<>();
     private CategorySelectionListWidget listWidget;
     protected String title = "Timer Category Options";
     public SpeedRunCategoryScreen(Screen parent) {
@@ -50,7 +55,6 @@ public class SpeedRunCategoryScreen extends Screen {
     }
     public void handleMouse() {
         super.handleMouse();
-        this.listWidget.handleMouse();
     }
 
     @Override
@@ -95,7 +99,7 @@ public class SpeedRunCategoryScreen extends Screen {
         }
 
         @Override
-        protected void renderEntry(int index, int x, int y, int rowHeight, int mouseX, int mouseY) {
+        protected void method_1055(int index, int x, int y, int rowHeight, Tessellator tessellator, int mouseX, int mouseY) {
             this.entries.get(index).checkBox.x = x + 34;
             this.entries.get(index).checkBox.y = y;
             this.entries.get(index).checkBox.render(MinecraftClient.getInstance(),mouseX, mouseY);
@@ -109,33 +113,27 @@ public class SpeedRunCategoryScreen extends Screen {
 
 
         @Environment(EnvType.CLIENT)
-        public class CategoryEntry implements EntryListWidget.Entry {
+        public class CategoryEntry implements class_1803 {
 
-            private final ArrayList<ButtonWidget> children = new ArrayList<>();
             private final CategoryCheckBoxWidget checkBox;
             public CategoryEntry(RunCategory category) {
                 this.checkBox = new CategoryCheckBoxWidget(category);
-                children.add(checkBox);
             }
 
             @Override
-            public void updatePosition(int index, int x, int y) {
-
-            }
-
-            public void render(int index, int x,int y,  int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered) {
-                this.checkBox.x = x + 34;
-                this.checkBox.y = y;
-                this.checkBox.render(MinecraftClient.getInstance(),mouseX, mouseY);
+            public void method_6700(int i, int j, int k, int l, int m, Tessellator tessellator, int n, int o, boolean bl) {
+                this.checkBox.x = j + 34;
+                this.checkBox.y = k;
+                this.checkBox.render(MinecraftClient.getInstance(),n, o);
             }
 
             @Override
-            public boolean mouseClicked(int index, int mouseX, int mouseY, int button, int x, int y) {
+            public boolean method_6699(int i, int j, int k, int l, int m, int n) {
                 return false;
             }
 
             @Override
-            public void mouseReleased(int index, int mouseX, int mouseY, int button, int x, int y) {
+            public void method_6701(int i, int j, int k, int l, int m, int n) {
 
             }
 
@@ -166,12 +164,9 @@ public class SpeedRunCategoryScreen extends Screen {
                 public void render(MinecraftClient client,int mouseX, int mouseY) {
                     MinecraftClient minecraftClient = MinecraftClient.getInstance();
                     minecraftClient.getTextureManager().bindTexture( new Identifier("textures/gui/widgets.png"));
-                    GlStateManager.enableDepthTest();
                     TextRenderer textRenderer = minecraftClient.textRenderer;
-                    GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    GlStateManager.enableBlend();
-                    GlStateManager.blendFuncSeparate(770, 771, 1, 0);
-                    GlStateManager.blendFunc(770, 771);
+                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                    GL11.glBlendFunc(770, 771);
                     int i = this.isChecked()?2:1;
                     this.drawTexture(this.x, this.y, 0, 46 + i * 20, this.width / 2, this.height);
                     this.drawTexture(this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);

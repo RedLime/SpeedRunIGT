@@ -3,12 +3,12 @@ package com.redlimerl.speedrunigt.option;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
+import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,6 +17,7 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
+@SuppressWarnings("unchecked")
 public class SpeedRunIGTInfoScreen extends Screen {
 
     enum UpdateStatus { NONE, UNKNOWN, UPDATED, OUTDATED }
@@ -64,10 +65,10 @@ public class SpeedRunIGTInfoScreen extends Screen {
     @Override
     public void render(int mouseX, int mouseY, float delta) {
         this.renderBackground();
-        GlStateManager.pushMatrix();
-        GlStateManager.scalef(1.5F, 1.5F, 1.5F);
+        GL11.glPushMatrix();
+        GL11.glScalef(1.5F, 1.5F, 1.5F);
         drawCenteredString(this.textRenderer, "SpeedRunIGT", this.width / 3, 15, 16777215);
-        GlStateManager.popMatrix();
+        GL11.glPopMatrix();
         drawCenteredString(this.textRenderer, "Made by RedLime", this.width / 2, 50, 16777215);
         drawCenteredString(this.textRenderer, "Discord : RedLime#0817", this.width / 2, 62, 16777215);
         drawCenteredString(this.textRenderer, "Version : "+ SpeedRunIGT.MOD_VERSION.split("\\+")[0], this.width / 2, 78, 16777215);

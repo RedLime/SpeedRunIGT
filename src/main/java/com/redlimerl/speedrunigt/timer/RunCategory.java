@@ -14,7 +14,6 @@ public enum RunCategory {
     HIGH("mcce#High","High%"),
     KILL_ALL_BOSSES("mcce#Kill_Bosses","Kill All Bosses"),
     KILL_WITHER("mcce#Kill_Bosses","Kill Wither"),
-    KILL_ELDER_GUARDIAN("mcce#Kill_Bosses","Kill Elder Guardian"),
     ALL_ACHIEVEMENTS("mc#All_Achievements","All Achievements"),
     HALF("mcce#Half","Half%"),
     ENTER_NETHER("mcce#Enter_Nether","Enter Nether"),

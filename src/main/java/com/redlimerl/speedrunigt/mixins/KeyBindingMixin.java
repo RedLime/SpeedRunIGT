@@ -18,14 +18,14 @@ import java.util.Objects;
 public class KeyBindingMixin {
 
 
-    @Shadow @Final private static IntObjectStorage<KeyBinding> KEY_MAP;
+    @Shadow @Final private static IntObjectStorage KEY_MAP;
     /**
      * @author Void_X_Walker
      * @reason Backported to 1.8, redid custom keybinds
      */
     @Inject(method = "setKeyPressed", at = @At("TAIL"))
     private static void onPress(int keyCode, boolean pressed, CallbackInfo ci) {
-        KeyBinding keyBinding =KEY_MAP.get(keyCode);
+        KeyBinding keyBinding = (KeyBinding) KEY_MAP.get(keyCode);
         if(keyBinding!=null&& pressed){
             InGameTimer timer = InGameTimer.getInstance();
             if (keyBinding == MinecraftClient.getInstance().options.keySprint // Sprint

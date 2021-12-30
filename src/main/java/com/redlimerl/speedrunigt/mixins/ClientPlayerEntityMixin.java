@@ -8,11 +8,9 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.util.DyeColor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -29,6 +27,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
     @Shadow public abstract boolean isSneaking();
     @Shadow protected MinecraftClient client;
+
+    @Shadow public float timeInPortal;
 
     /**
      * @author Void_X_Walker
@@ -101,7 +101,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             ) {
                 for (int i = 0; i < this.inventory.main.length; i++) {
                     ItemStack item = this.inventory.main[i];
-                    if (item != null && !item.isEmpty() && item.getItem().equals(Items.DYE) && DyeColor.getById(item.getMeta()) == DyeColor.BLUE) {
+                    if (item != null && !item.isEmpty() && item.getItem().equals(Items.DYE) && item.getMeta() == 4) {
                         InGameTimer.complete();
                     }
                 }
@@ -121,9 +121,9 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         }
     }
 
-    @Inject(at = @At("HEAD"), method = "tick")
+    @Inject(at = @At("HEAD"), method = "tickMovement")
     public void updateNausea(CallbackInfo ci) {
-       if(this.hasStatusEffect(StatusEffect.NAUSEA) && this.getEffectInstance(StatusEffect.NAUSEA).getDuration() > 60 && client.isInSingleplayer()){
+       if(this.changingDimension && this.timeInPortal == 1 && client.isInSingleplayer()){
             InGameTimer.checkingWorld = false;
             InGameTimer.getInstance().setPause(true, TimerStatus.IDLE);
         }

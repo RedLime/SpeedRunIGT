@@ -1,13 +1,13 @@
 package com.redlimerl.speedrunigt.version;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
+import org.lwjgl.opengl.GL11;
+
 /**
  * @author Void_X_Walker
  * @reason Added a checkbox
@@ -43,12 +43,9 @@ public class CheckboxWidget extends ButtonWidget {
     public void render( MinecraftClient client,int mouseX, int mouseY) {
         MinecraftClient minecraftClient = MinecraftClient.getInstance();
         minecraftClient.getTextureManager().bindTexture(TEXTURE);
-        GlStateManager.enableDepthTest();
         TextRenderer textRenderer = minecraftClient.textRenderer;
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GlStateManager.enableBlend();
-        GlStateManager.blendFuncSeparate(770, 771, 1, 0);
-        GlStateManager.blendFunc(770, 771);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GL11.glBlendFunc(770, 771);
         drawTexture(this.x, this.y, this.hovered ? 20.0F : 0.0F, this.checked ? 20.0F : 0.0F, 20, this.height, 64, 64);
         this.renderBg(minecraftClient, mouseX, mouseY);
         if (this.field_24253) {

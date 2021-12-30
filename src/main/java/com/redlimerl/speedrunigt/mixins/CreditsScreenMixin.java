@@ -23,7 +23,7 @@ public class CreditsScreenMixin {
             }
             if (timer.getCategory() == RunCategory.KILL_ALL_BOSSES) {
                 timer.updateMoreData(0, 1);
-                if (timer.getMoreData(0) == 1 && timer.getMoreData(1) == 1 && timer.getMoreData(2) == 1)
+                if (timer.getMoreData(0) == 1 && timer.getMoreData(1) == 1)
                     InGameTimer.complete();
             }
         }

@@ -6,11 +6,9 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.version.ColorMixer;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
-import net.minecraft.client.MinecraftClient;
+import com.redlimerl.speedrunigt.version.SliderWidget;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.PagedEntryListWidget;
-import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.MathHelper;
@@ -21,6 +19,7 @@ import java.util.Locale;
  * @author Void_X_Walker
  * @reason Backported to 1.8, redid almost everything because 1.8 screens and buttons work completely different
  */
+@SuppressWarnings("unchecked")
 public class TimerCustomizeScreen extends Screen {
 
     private final TimerDrawer drawer = new TimerDrawer(false);
@@ -41,17 +40,9 @@ private final String title = SpeedRunIGT.translate("speedrunigt.option.timer_pos
         super();
         this.parent = parent;
     }
-    @Override
-    public void resize(MinecraftClient client, int width, int height) {
-        normalOptions.clear();
-        igtOptions.clear();
-        rtaOptions.clear();
-        super.resize(client, width, height);
-    }
+
     @Override
     public void init() {
-
-
         initNormal();
         initIGTButtons();
         initRTAButtons();
@@ -64,7 +55,7 @@ private final String title = SpeedRunIGT.translate("speedrunigt.option.timer_pos
         buttons.add(igtButton);
 
         this.rtaButton =new ButtonWidget(5003,width / 2 + 31, height / 2 - 48, 58, 20, new LiteralText("RTA...").getString());
-        this.buttons.add(rtaButton);
+        buttons.add(rtaButton);
 
 
         buttons.add(new ButtonWidget(5005,width / 2 - 89, height / 2 + 62, 58, 20, SpeedRunIGT.translate("speedrunigt.option.hide","Hide").getString()));
@@ -248,8 +239,8 @@ private final String title = SpeedRunIGT.translate("speedrunigt.option.timer_pos
     public void mouseClicked(int mouseX, int mouseY, int button) {
 
         boolean isButtonClick = false;
-        for (ButtonWidget widget : this.buttons) {
-            if (widget.isMouseOver(this.client, mouseX, mouseY)) {
+        for (Object widget : this.buttons) {
+            if (((ButtonWidget) widget).isMouseOver(this.client, mouseX, mouseY)) {
                 isButtonClick = true;
             }
         }
@@ -305,8 +296,6 @@ private final String title = SpeedRunIGT.translate("speedrunigt.option.timer_pos
                 } else {
                     drawCenteredString( this.textRenderer,
                             SpeedRunIGT.translate("speedrunigt.option.timer_position.description","§eClick on a position to change the timer position.").getString(), this.width / 2, this.height / 2 - 80, 16777215);
-                    //drawCenteredString( this.textRenderer,
-                    //        SpeedRunIGT.translate("speedrunigt.option.timer_position.description.move","You can finely adjust the position by pressing §eCtrl + arrow key.").getString(), this.width / 2, this.height / 2 - 69, 16777215);
                 }
             }
 
@@ -330,112 +319,56 @@ private final String title = SpeedRunIGT.translate("speedrunigt.option.timer_pos
     }
 
     public void initIGTButtons() {
-        ButtonWidget b =new SliderWidget(new PagedEntryListWidget.Listener() {
-            @Override
-            public void setBooleanValue(int id, boolean value) {
-
-            }
-
-            @Override
-            public void setFloatValue(int id, float value) {
-                int color = drawer.getIGTColor();
-                drawer.setIGTColor(
-                        ColorMixer.getArgb(
-                                ColorMixer.getAlpha(color),
-                                (int) (value ),
-                                ColorMixer.getGreen(color),
-                                ColorMixer.getBlue(color)
-                        )
-                );
-                changed = true;
-            }
-
-            @Override
-            public void setStringValue(int id, String text) {
-
-            }
-        }, 5010, width / 2 - 147, height / 2 - 16, SpeedRunIGT.translate("speedrunigt.option.timer_position.igt.color_red", "IGT Red").append(" : ").append(String.valueOf(ColorMixer.getRed(drawer.getIGTColor()))).getString(), 0F, 255F, ColorMixer.getRed(drawer.getIGTColor()),
-                (i, string, sliderValue) -> SpeedRunIGT.translate("speedrunigt.option.igt.timer_position.color_red", "IGT Red").append(" : ").append(String.valueOf(ColorMixer.getRed(drawer.getIGTColor()))).getString());
+        ButtonWidget b = new SliderWidget((value) -> {
+            int color = drawer.getIGTColor();
+            drawer.setIGTColor(
+                    ColorMixer.getArgb(
+                            ColorMixer.getAlpha(color),
+                            value.intValue(),
+                            ColorMixer.getGreen(color),
+                            ColorMixer.getBlue(color)
+                    )
+            );
+            changed = true;
+        },5010, width / 2 - 147, height / 2 - 16, () -> SpeedRunIGT.translate("speedrunigt.option.timer_position.igt.color_red", "IGT Red").append(" : ").append(String.valueOf(ColorMixer.getRed(drawer.getIGTColor()))).getString(), 0F, 255F, ColorMixer.getRed(drawer.getIGTColor()));
         igtOptions.add(b);
         buttons.add(b);
 
-        ButtonWidget b2 =new SliderWidget(new PagedEntryListWidget.Listener() {
-            @Override
-            public void setBooleanValue(int id, boolean value) {
-
-            }
-
-            @Override
-            public void setFloatValue(int id, float value) {
-                int color = drawer.getIGTColor();
-                drawer.setIGTColor(
-                        ColorMixer.getArgb(
-                                ColorMixer.getAlpha(color),
-                                ColorMixer.getRed(color),
-                                (int) (value),
-                                ColorMixer.getBlue(color)
-                        )
-                );
-                changed = true;
-            }
-
-            @Override
-            public void setStringValue(int id, String text) {
-
-            }
-        },5011,width / 2 - 147, height / 2 +6,  SpeedRunIGT.translate("speedrunigt.option.timer_position.igt.color_green", "IGT Green").append(" : ").append(String.valueOf(ColorMixer.getGreen(drawer.getIGTColor()))).getString(),0F, 255F, ColorMixer.getGreen(drawer.getIGTColor()),
-                (i, string, sliderValue) -> SpeedRunIGT.translate("speedrunigt.option.timer_position.igt.color_green", "IGT Green").append(" : ").append(String.valueOf(ColorMixer.getGreen(drawer.getIGTColor()))).getString());
+        ButtonWidget b2 = new SliderWidget((value) -> {
+            int color = drawer.getIGTColor();
+            drawer.setIGTColor(
+                    ColorMixer.getArgb(
+                            ColorMixer.getAlpha(color),
+                            ColorMixer.getRed(color),
+                            value.intValue(),
+                            ColorMixer.getBlue(color)
+                    )
+            );
+            changed = true;
+        },5011,width / 2 - 147, height / 2 +6, () -> SpeedRunIGT.translate("speedrunigt.option.timer_position.igt.color_green", "IGT Green").append(" : ").append(String.valueOf(ColorMixer.getGreen(drawer.getIGTColor()))).getString(),0F, 255F, ColorMixer.getGreen(drawer.getIGTColor()));
         igtOptions.add(b2);
         buttons.add(b2);
 
-        ButtonWidget b3 =new SliderWidget(new PagedEntryListWidget.Listener() {
-            @Override
-            public void setBooleanValue(int id, boolean value) {
-
-            }
-
-            @Override
-            public void setFloatValue(int id, float value) {
-                int color = drawer.getIGTColor();
-                drawer.setIGTColor(
-                        ColorMixer.getArgb(
-                                ColorMixer.getAlpha(color),
-                                ColorMixer.getRed(color),
-                                ColorMixer.getGreen(color),
-                                (int) (value)
-                        )
-                );
-                changed = true;
-            }
-
-            @Override
-            public void setStringValue(int id, String text) {
-
-            }
-        },5012,width / 2 - 147, height / 2 +28,SpeedRunIGT.translate("speedrunigt.option.timer_position.igt.color_blue", "IGT Blue").append(" : ").append(String.valueOf(ColorMixer.getBlue(drawer.getIGTColor()))).getString(),0F, 255F, ColorMixer.getBlue(drawer.getIGTColor()),
-                (i, string, sliderValue) -> SpeedRunIGT.translate("speedrunigt.option.timer_position.igt.color_blue", "IGT Blue").append(" : ").append(String.valueOf(ColorMixer.getBlue(drawer.getIGTColor()))).getString());
+        ButtonWidget b3 =new SliderWidget(value -> {
+            int color = drawer.getIGTColor();
+            drawer.setIGTColor(
+                    ColorMixer.getArgb(
+                            ColorMixer.getAlpha(color),
+                            ColorMixer.getRed(color),
+                            ColorMixer.getGreen(color),
+                            value.intValue()
+                    )
+            );
+            changed = true;
+        },5012,width / 2 - 147, height / 2 +28, () -> SpeedRunIGT.translate("speedrunigt.option.timer_position.igt.color_blue", "IGT Blue").append(" : ").append(String.valueOf(ColorMixer.getBlue(drawer.getIGTColor()))).getString(),0F, 255F, ColorMixer.getBlue(drawer.getIGTColor()));
         igtOptions.add(b3);
         buttons.add(b3);
 
 
-        ButtonWidget b4 =new SliderWidget(new PagedEntryListWidget.Listener() {
-            @Override
-            public void setBooleanValue(int id, boolean value) {
-
-            }
-
-            @Override
-            public void setFloatValue(int id, float value) {
-                drawer.setIGTScale(Math.round((value/100) * 3f * 20f)/20f);
-                changed = true;
-            }
-
-            @Override
-            public void setStringValue(int id, String text) {
-
-            }
-        },5013,width / 2 + 6, height / 2 - 16, SpeedRunIGT.translate("speedrunigt.option.timer_position.igt.scale","IGT Timer Scale").append(" : ").append(((int) (drawer.getIGTScale() * 100)) + "%").getString(),0F, 300F, drawer.getIGTScale() * 100F,
-                (i, string, sliderValue) -> SpeedRunIGT.translate("speedrunigt.option.timer_position.igt.scale", "IGT Timer Scale").append(" : ").append(((int) (drawer.getIGTScale() * 100)) + "%").getString());
+        ButtonWidget b4 =new SliderWidget(value -> {
+            drawer.setIGTScale(Math.round((value/100) * 3f * 20f)/20f);
+            changed = true;
+        },5013,width / 2 + 6, height / 2 - 16, () -> SpeedRunIGT.translate("speedrunigt.option.timer_position.igt.scale","IGT Timer Scale").append(" : ").append(((int) (drawer.getIGTScale() * 100)) + "%").getString(),0F, 300F, drawer.getIGTScale() * 100F);
         igtOptions.add(b4);
         buttons.add(b4);
         ButtonWidget b5 =new ButtonWidget(5014,width / 2 + 6, height / 2 + 6, 150, 20, SpeedRunIGT.translate("speedrunigt.option.timer_position.igt.text_decorate", "IGT Text Style").append(" : ").append(SpeedRunIGT.translate("speedrunigt.option.timer_position.text_decorate." + drawer.getIGTDecoration().name().toLowerCase(Locale.ROOT),drawer.getIGTDecoration().name().toLowerCase(Locale.ROOT))).getString());
@@ -445,112 +378,56 @@ private final String title = SpeedRunIGT.translate("speedrunigt.option.timer_pos
     }
 
     public void initRTAButtons() {
-        ButtonWidget b =new SliderWidget(new PagedEntryListWidget.Listener() {
-            @Override
-            public void setBooleanValue(int id, boolean value) {
-
-            }
-
-            @Override
-            public void setFloatValue(int id, float value) {
-                int color = drawer.getRTAColor();
-                drawer.setRTAColor(
-                        ColorMixer.getArgb(
-                                ColorMixer.getAlpha(color),
-                                (int) (value ),
-                                ColorMixer.getGreen(color),
-                                ColorMixer.getBlue(color)
-                        )
-                );
-                changed = true;
-            }
-
-            @Override
-            public void setStringValue(int id, String text) {
-
-            }
-        }, 5010, width / 2 - 147, height / 2 - 16, SpeedRunIGT.translate("speedrunigt.option.timer_position.rta.color_red", "RTA Red").append(" : ").append(String.valueOf(ColorMixer.getRed(drawer.getRTAColor()))).getString(), 0F, 255F, ColorMixer.getRed(drawer.getRTAColor()),
-                (i, string, sliderValue) -> SpeedRunIGT.translate("speedrunigt.option.rta.timer_position.color_red", "RTA Red").append(" : ").append(String.valueOf(ColorMixer.getRed(drawer.getRTAColor()))).getString());
+        ButtonWidget b =new SliderWidget(value -> {
+            int color = drawer.getRTAColor();
+            drawer.setRTAColor(
+                    ColorMixer.getArgb(
+                            ColorMixer.getAlpha(color),
+                            value.intValue(),
+                            ColorMixer.getGreen(color),
+                            ColorMixer.getBlue(color)
+                    )
+            );
+            changed = true;
+        }, 5010, width / 2 - 147, height / 2 - 16, () -> SpeedRunIGT.translate("speedrunigt.option.timer_position.rta.color_red", "RTA Red").append(" : ").append(String.valueOf(ColorMixer.getRed(drawer.getRTAColor()))).getString(), 0F, 255F, ColorMixer.getRed(drawer.getRTAColor()));
         rtaOptions.add(b);
         buttons.add(b);
 
-        ButtonWidget b2 =new SliderWidget(new PagedEntryListWidget.Listener() {
-            @Override
-            public void setBooleanValue(int id, boolean value) {
-
-            }
-
-            @Override
-            public void setFloatValue(int id, float value) {
-                int color = drawer.getRTAColor();
-                drawer.setRTAColor(
-                        ColorMixer.getArgb(
-                                ColorMixer.getAlpha(color),
-                                ColorMixer.getRed(color),
-                                (int) (value),
-                                ColorMixer.getBlue(color)
-                        )
-                );
-                changed = true;
-            }
-
-            @Override
-            public void setStringValue(int id, String text) {
-
-            }
-        },5011,width / 2 - 147, height / 2 +6,  SpeedRunIGT.translate("speedrunigt.option.timer_position.rta.color_green", "RTA Green").append(" : ").append(String.valueOf(ColorMixer.getGreen(drawer.getRTAColor()))).getString(),0F, 255F, ColorMixer.getGreen(drawer.getRTAColor()),
-                (i, string, sliderValue) -> SpeedRunIGT.translate("speedrunigt.option.timer_position.rta.color_green", "RTA Green").append(" : ").append(String.valueOf(ColorMixer.getGreen(drawer.getRTAColor()))).getString());
+        ButtonWidget b2 =new SliderWidget(value -> {
+            int color = drawer.getRTAColor();
+            drawer.setRTAColor(
+                    ColorMixer.getArgb(
+                            ColorMixer.getAlpha(color),
+                            ColorMixer.getRed(color),
+                            value.intValue(),
+                            ColorMixer.getBlue(color)
+                    )
+            );
+            changed = true;
+        },5011,width / 2 - 147, height / 2 +6, () -> SpeedRunIGT.translate("speedrunigt.option.timer_position.rta.color_green", "RTA Green").append(" : ").append(String.valueOf(ColorMixer.getGreen(drawer.getRTAColor()))).getString(),0F, 255F, ColorMixer.getGreen(drawer.getRTAColor()));
         rtaOptions.add(b2);
         buttons.add(b2);
 
-        ButtonWidget b3 =new SliderWidget(new PagedEntryListWidget.Listener() {
-            @Override
-            public void setBooleanValue(int id, boolean value) {
-
-            }
-
-            @Override
-            public void setFloatValue(int id, float value) {
-                int color = drawer.getRTAColor();
-                drawer.setRTAColor(
-                        ColorMixer.getArgb(
-                                ColorMixer.getAlpha(color),
-                                ColorMixer.getRed(color),
-                                ColorMixer.getGreen(color),
-                                (int) (value)
-                        )
-                );
-                changed = true;
-            }
-
-            @Override
-            public void setStringValue(int id, String text) {
-
-            }
-        },5012,width / 2 - 147, height / 2 +28,SpeedRunIGT.translate("speedrunigt.option.timer_position.rta.color_blue", "RTA Blue").append(" : ").append(String.valueOf(ColorMixer.getBlue(drawer.getRTAColor()))).getString(),0F, 255F, ColorMixer.getBlue(drawer.getRTAColor()),
-                (i, string, sliderValue) -> SpeedRunIGT.translate("speedrunigt.option.timer_position.rta.color_blue", "RTA Blue").append(" : ").append(String.valueOf(ColorMixer.getBlue(drawer.getRTAColor()))).getString());
+        ButtonWidget b3 =new SliderWidget(value -> {
+            int color = drawer.getRTAColor();
+            drawer.setRTAColor(
+                    ColorMixer.getArgb(
+                            ColorMixer.getAlpha(color),
+                            ColorMixer.getRed(color),
+                            ColorMixer.getGreen(color),
+                            value.intValue()
+                    )
+            );
+            changed = true;
+        },5012,width / 2 - 147, height / 2 +28, () -> SpeedRunIGT.translate("speedrunigt.option.timer_position.rta.color_blue", "RTA Blue").append(" : ").append(String.valueOf(ColorMixer.getBlue(drawer.getRTAColor()))).getString(),0F, 255F, ColorMixer.getBlue(drawer.getRTAColor()));
         rtaOptions.add(b3);
         buttons.add(b3);
 
 
-        ButtonWidget b4 =new SliderWidget(new PagedEntryListWidget.Listener() {
-            @Override
-            public void setBooleanValue(int id, boolean value) {
-
-            }
-
-            @Override
-            public void setFloatValue(int id, float value) {
-                drawer.setRTAScale(Math.round((value/100) * 3f * 20f)/20f);
-                changed = true;
-            }
-
-            @Override
-            public void setStringValue(int id, String text) {
-
-            }
-        },5013,width / 2 + 6, height / 2 - 16, SpeedRunIGT.translate("speedrunigt.option.timer_position.rta.scale","RTA Timer Scale").append(" : ").append(((int) (drawer.getRTAScale() * 100)) + "%").getString(),0F, 300F, drawer.getRTAScale() * 100F,
-                (i, string, sliderValue) -> SpeedRunIGT.translate("speedrunigt.option.timer_position.rta.scale", "RTA Timer Scale").append(" : ").append(((int) (drawer.getRTAScale() * 100)) + "%").getString());
+        ButtonWidget b4 =new SliderWidget(value -> {
+            drawer.setRTAScale(Math.round((value/100) * 3f * 20f)/20f);
+            changed = true;
+        },5013,width / 2 + 6, height / 2 - 16, () -> SpeedRunIGT.translate("speedrunigt.option.timer_position.rta.scale","RTA Timer Scale").append(" : ").append(((int) (drawer.getRTAScale() * 100)) + "%").getString(),0F, 300F, drawer.getRTAScale() * 100F);
         rtaOptions.add(b4);
         buttons.add(b4);
         ButtonWidget b5 =new ButtonWidget(5014,width / 2 + 6, height / 2 + 6, 150, 20, SpeedRunIGT.translate("speedrunigt.option.timer_position.rta.text_decorate", "RTA Text Style").append(" : ").append(SpeedRunIGT.translate("speedrunigt.option.timer_position.text_decorate." + drawer.getIGTDecoration().name().toLowerCase(Locale.ROOT),drawer.getRTADecoration().name().toLowerCase(Locale.ROOT))).getString());

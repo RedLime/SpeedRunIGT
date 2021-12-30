@@ -13,9 +13,9 @@ import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.options.GameOptions;
 import net.minecraft.client.render.WorldRenderer;
-import net.minecraft.client.world.ChunkAssemblyHelper;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.server.integrated.IntegratedServer;
+import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.level.LevelInfo;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +55,8 @@ public abstract class MinecraftClientMixin {
 
     @Shadow public boolean focused;
 
-    @Shadow public MouseInput mouse;
+    @Shadow @Final public Profiler profiler;
+
     /**
      * @author Void_X_Walker
      * @reason Backported to 1.8, merged the 1.16 methods: startIntegratedServer and method_29607 and used levelInfo == null as a distinction
@@ -100,7 +101,7 @@ public abstract class MinecraftClientMixin {
         }
 
         //Enter Nether
-        if (timer.getCategory() == RunCategory.ENTER_NETHER && targetWorld.dimension.isNether()) {
+        if (timer.getCategory() == RunCategory.ENTER_NETHER && targetWorld.dimension.isNether) {
             InGameTimer.complete();
         }
 
@@ -144,12 +145,11 @@ public abstract class MinecraftClientMixin {
      */
 
     @Inject(method = "runGameLoop", at = @At(value = "INVOKE",
-            target ="Lnet/minecraft/client/render/GameRenderer;render(FJ)V", shift = At.Shift.AFTER))
+            target ="Lnet/minecraft/client/render/GameRenderer;method_1331(F)V", shift = At.Shift.AFTER))
     private void drawTimer(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
             if (worldRenderer != null && world != null && world.dimension.getName().equals(currentDimension.getName()) && !isPaused()
-                    && !(!this.isPaused() && SpeedRunOptions.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) && this.options.debugEnabled)
                     && (timer.getStatus() == TimerStatus.IDLE ) && InGameTimer.checkingWorld) {
                 int chunks = getCompletedChunkCount();
                 int entities = worldRenderer.field_1891 - (options.perspective > 0 ? 0 : 1);
@@ -167,21 +167,14 @@ public abstract class MinecraftClientMixin {
 
         if (!this.options.hudHidden && this.world != null && timer.getStatus() != TimerStatus.NONE
                 && (!this.isPaused() || this.currentScreen instanceof CreditsScreen || this.currentScreen instanceof GameMenuScreen || !SpeedRunOptions.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS))
+                && !(!this.isPaused() && SpeedRunOptions.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) && this.options.debugEnabled)
                 && !(this.currentScreen instanceof TimerCustomizeScreen)) {
-
+            this.profiler.swap("timer");
             SpeedRunIGT.TIMER_DRAWER.draw();
         }
     }
     private int getCompletedChunkCount(){
-        int j = 0;
-
-        for (WorldRenderer.ChunkInfo chunkInfo : worldRenderer.visibleChunks) {
-            ChunkAssemblyHelper chunkAssemblyHelper = chunkInfo.field_10830.field_11070;
-            if (chunkAssemblyHelper != ChunkAssemblyHelper.UNSUPPORTED && !chunkAssemblyHelper.method_10142()) {
-                ++j;
-            }
-        }
-        return j;
+        return worldRenderer.field_1896;
     }
     /**
      * @author Void_X_Walker
