@@ -143,7 +143,7 @@ public class InGameTimer {
         if (timer.category == RunCategory.ALL_ACHIEVEMENTS)
             timer.pauseLog.append(", Excluded RTA Time: ").append(timeToStringFormat(timer.excludedTime));
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy.MM.dd HH:mm:ss");
-        String logInfo = "MC Version : " + "1.8.9" + "\r\n"
+        String logInfo = "MC Version : " + SpeedRunIGT.MOD_VERSION.split("\\+")[1] + "\r\n"
                 + "Timer Version : " + SpeedRunIGT.MOD_VERSION + "\r\n"
                 + "Run Date : " + simpleDateFormat.format(new Date()) + "\r\n"
                 + "====================\r\n";

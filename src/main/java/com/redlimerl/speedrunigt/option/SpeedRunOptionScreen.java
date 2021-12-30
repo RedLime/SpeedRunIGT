@@ -59,6 +59,8 @@ private final String title = "Timer Options";
                 prevButton.active = false;
             }
         }
+
+        SpeedRunIGTInfoScreen.checkUpdate();
     }
 
     protected void buttonClicked(ButtonWidget button) {
@@ -91,11 +93,12 @@ private final String title = "Timer Options";
                 button.message=(SpeedRunIGT.translate("speedrunigt.option.waiting_first_input","Start at First Input").getString() + " : " + (SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) ? ScreenTexts.ON : ScreenTexts.OFF));
         }
         else if(button.id==905){
-                SpeedRunOptions.setOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS, !SpeedRunOptions.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS));
-                button.message=(SpeedRunIGT.translate("speedrunigt.option.hide_timer_in_debugs","Hide Timer in Debugs").getString() + " : " + (SpeedRunOptions.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) ? ScreenTexts.ON : ScreenTexts.OFF));
+            SpeedRunOptions.setOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS, !SpeedRunOptions.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS));
+            button.message=(SpeedRunIGT.translate("speedrunigt.option.hide_timer_in_debugs","Hide Timer in Debugs").getString() + " : " + (SpeedRunOptions.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) ? ScreenTexts.ON : ScreenTexts.OFF));
         }
-
-
+        else if(button.id==906){
+            MinecraftClient.getInstance().openScreen(new SpeedRunIGTInfoScreen(this));
+        }
     }
 
     @Override
@@ -104,5 +107,8 @@ private final String title = "Timer Options";
         this.drawCenteredString(this.textRenderer, this.title, this.width / 2, 15, 16777215);
         super.render(mouseX, mouseY, delta);
 
+        if (SpeedRunIGTInfoScreen.UPDATE_STATUS == SpeedRunIGTInfoScreen.UpdateStatus.OUTDATED) {
+            this.drawCenteredString(this.textRenderer, SpeedRunIGT.translate("speedrunigt.message.update_found", "A new version of SpeedRunIGT has been found! Check the 'SpeedRunIGT Info'").getString(), this.width / 2,  this.height - 48, 16777215);
+        }
     }
 }

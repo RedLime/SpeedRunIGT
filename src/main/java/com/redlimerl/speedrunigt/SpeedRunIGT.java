@@ -47,6 +47,10 @@ public class SpeedRunIGT implements ClientModInitializer {
                 new ButtonWidget(901,0, 0, 150, 20,
                         SpeedRunIGT.translate("speedrunigt.option.timer_category","Timer Category").getString())
         );
+        SpeedRunOptions.addOptionButton(screen ->
+                new ButtonWidget(906,0, 0, 150, 20,
+                        SpeedRunIGT.translate("speedrunigt.option.check_info","SpeedRunIGT Info").getString())
+        );
         SpeedRunOptions.addOptionButton(screen -> new ButtonWidget(902,0, 0, 150, 20, SpeedRunIGT.translate("speedrunigt.option.timer_position.toggle_timer","Toggle Timer").getString() + " : " + (TIMER_DRAWER.isToggle() ? ScreenTexts.ON : ScreenTexts.OFF)));
         SpeedRunOptions.addOptionButton(screen -> new ButtonWidget(903,0, 0, 150, 20, SpeedRunIGT.translate("speedrunigt.option.hide_timer_in_options","Hide Timer in Options").getString() + " : " + (SpeedRunOptions.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS) ? ScreenTexts.ON : ScreenTexts.OFF)));
         SpeedRunOptions.addOptionButton(screen ->
