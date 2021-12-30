@@ -61,7 +61,7 @@ public abstract class MinecraftClientMixin {
 
     /**
      * @author Void_X_Walker
-     * @reason Backported to 1.8, merged the 1.16 methods: startIntegratedServer and method_29607 and used levelInfo == null as a distinction
+     * @reason Backported to 1.8, merged the 1.16 methods: startIntegratedServer and method_29607 and used levelInfo == null as a distinction e
      */
     @Inject(at = @At("HEAD"), method = "startGame")
     public void onCreate(String worldName, String string, LevelInfo levelInfo, CallbackInfo ci) {
