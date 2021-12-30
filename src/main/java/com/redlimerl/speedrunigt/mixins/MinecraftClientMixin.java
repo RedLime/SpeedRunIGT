@@ -150,7 +150,7 @@ public abstract class MinecraftClientMixin {
         InGameTimer timer = InGameTimer.getInstance();
 
             if (worldRenderer != null && world != null && world.dimension.getName().equals(currentDimension.getName()) && !isPaused()
-                    && (timer.getStatus() == TimerStatus.IDLE ) && InGameTimer.checkingWorld) {
+                    && (timer.getStatus() == TimerStatus.IDLE ) && InGameTimer.checkingWorld && Mouse.isGrabbed()) {
                 int chunks = getCompletedChunkCount();
                 int entities = worldRenderer.field_1891 - (options.perspective > 0 ? 0 : 1);
                 if (chunks + entities > 0) {
@@ -199,7 +199,7 @@ public abstract class MinecraftClientMixin {
     private void unlock() {
         @NotNull
         InGameTimer timer = InGameTimer.getInstance();
-        if ((timer.getStatus() == TimerStatus.IDLE )  &&this.focused&& !MinecraftClient.getInstance().isPaused() && InGameTimer.checkingWorld) {
+        if (timer.getStatus() == TimerStatus.IDLE && this.focused && !MinecraftClient.getInstance().isPaused() && InGameTimer.checkingWorld && Mouse.isGrabbed()) {
             timer.setPause(false);
         }
         if (this.focused&&!MinecraftClient.getInstance().isPaused()) {
