@@ -102,8 +102,7 @@ public class SpeedRunIGTInfoScreen extends Screen {
                 } else {
                     for (JsonElement element : jsonElement.getAsJsonArray()) {
                         JsonObject versionData = element.getAsJsonObject();
-                        String target = versionData.get("tag_name").getAsString().split("\\+")[0];
-                        if (compareVersion(SpeedRunIGT.MOD_VERSION.split("\\+")[0], target) <= 0 && !versionData.get("prerelease").getAsBoolean()) {
+                        if (!versionData.get("prerelease").getAsBoolean()) {
                             for (JsonElement asset : versionData.get("assets").getAsJsonArray()) {
                                 JsonObject assetData = asset.getAsJsonObject();
                                 String versionName = assetData.get("name").getAsString();
