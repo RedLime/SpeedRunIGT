@@ -46,10 +46,12 @@ public class TimerElement {
         //가로 화면 밖으로 나갈 시 재조정
         if (getScaledTextWidth() + this.position.getX() > scaledWindowWidth) {
             this.scaledPosition.setX(this.scaledPosition.getX() - Math.round((getScaledTextWidth() - 1) / scale));
+            this.position.setX(this.position.getX() - getScaledTextWidth());
         }
         //세로 화면 밖으로 나갈 시 재조정
         if (getScaledTextHeight() + this.position.getY() > scaledWindowHeight) {
             this.scaledPosition.setY(this.scaledPosition.getY() - MathHelper.floor(getScaledTextHeight() / scale));
+            this.position.setY(this.position.getY() - getScaledTextWidth());
         }
     }
 
