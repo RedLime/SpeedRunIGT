@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.mixins.access.*;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.TimerCustomizeScreen;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
@@ -138,8 +139,9 @@ public abstract class MinecraftClientMixin {
 
         if (worldRenderer != null && world != null && world.getDimension().getType() == currentDimension && !isPaused() && isWindowFocused()
                 && timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld && this.mouse.isCursorLocked()) {
-            int chunks = worldRenderer.getCompletedChunkCount();
-            int entities = worldRenderer.regularEntityCount - (options.perspective > 0 ? 0 : 1);
+            WorldRendererAccessor worldRendererAccessor = (WorldRendererAccessor) worldRenderer;
+            int chunks = worldRendererAccessor.invokeCompletedChunkCount();
+            int entities = worldRendererAccessor.getRegularEntityCount() - (options.perspective > 0 ? 0 : 1);
 
             if (chunks + entities > 0) {
                 if (!(SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) && !timer.isStarted())) {
@@ -192,8 +194,9 @@ public abstract class MinecraftClientMixin {
             protected void apply(Map<Identifier, List<Font>> loader, ResourceManager manager, Profiler profiler) {
                 try {
                     for (Map.Entry<Identifier, List<Font>> listEntry : loader.entrySet()) {
-                        MinecraftClient.getInstance().fontManager.textRenderers.computeIfAbsent(listEntry.getKey(),
-                                        (identifierX) -> new TextRenderer(MinecraftClient.getInstance().fontManager.textureManager, new FontStorage(MinecraftClient.getInstance().fontManager.textureManager, identifierX)))
+                        FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) MinecraftClient.getInstance()).getFontManager();
+                        fontManager.getTextRenderers().computeIfAbsent(listEntry.getKey(),
+                                        (identifierX) -> new TextRenderer(fontManager.getTextureManager(), new FontStorage(fontManager.getTextureManager(), identifierX)))
                                 .setFonts(listEntry.getValue());
                     }
                     TimerDrawer.fontHeightMap.clear();

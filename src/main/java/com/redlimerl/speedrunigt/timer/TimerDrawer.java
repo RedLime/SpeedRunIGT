@@ -1,5 +1,9 @@
 package com.redlimerl.speedrunigt.timer;
 
+import com.redlimerl.speedrunigt.mixins.access.FontManagerAccessor;
+import com.redlimerl.speedrunigt.mixins.access.FontStorageAccessor;
+import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
+import com.redlimerl.speedrunigt.mixins.access.TextRendererAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecimals;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
@@ -276,11 +280,12 @@ public class TimerDrawer {
         //폰트 조정
         float fontHeight = 8;
         TextRenderer targetFont = client.textRenderer;
-        if (getTimerFont() != MinecraftClient.DEFAULT_TEXT_RENDERER_ID && client.fontManager.textRenderers.containsKey(getTimerFont())) {
-            targetFont = client.fontManager.textRenderers.get(getTimerFont());
-            TextRenderer finalTargetFont = targetFont;
+        FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) MinecraftClient.getInstance()).getFontManager();
+        if (getTimerFont() != MinecraftClient.DEFAULT_TEXT_RENDERER_ID && fontManager.getTextRenderers().containsKey(getTimerFont())) {
+            targetFont = fontManager.getTextRenderers().get(getTimerFont());
+            FontStorageAccessor fontStorage = (FontStorageAccessor) ((TextRendererAccessor) targetFont).getFontStorage();
             fontHeight = fontHeightMap.computeIfAbsent(getTimerFont().toString(), key -> {
-                RenderableGlyph glyph = finalTargetFont.fontStorage.getRenderableGlyph('I');
+                RenderableGlyph glyph = fontStorage.invokeRenderableGlyph('I');
                 return glyph.getHeight() / glyph.getOversample();
             });
         }

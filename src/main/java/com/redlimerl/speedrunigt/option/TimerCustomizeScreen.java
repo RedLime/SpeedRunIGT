@@ -1,6 +1,8 @@
 package com.redlimerl.speedrunigt.option;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.mixins.access.FontManagerAccessor;
+import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecimals;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
@@ -92,11 +94,12 @@ public class TimerCustomizeScreen extends Screen {
     @Override
     protected void init() {
         if (minecraft != null) {
-            if (!minecraft.fontManager.textRenderers.containsKey(drawer.getTimerFont())) {
+            FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) minecraft).getFontManager();
+            if (!fontManager.getTextRenderers().containsKey(drawer.getTimerFont())) {
                 availableFonts.add(drawer.getTimerFont());
             }
 
-            availableFonts.addAll(minecraft.fontManager.textRenderers.keySet());
+            availableFonts.addAll(fontManager.getTextRenderers().keySet());
         }
 
         initNormal();
@@ -247,16 +250,17 @@ public class TimerCustomizeScreen extends Screen {
                 }
             }
 
-            if (!fontButton.active) {
+            if (!fontButton.active && minecraft != null) {
                 int c = fontPage * 3;
+                FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) minecraft).getFontManager();
                 for (int i = 0; i < fontSelectButtons.size(); i++) {
                     if (c + i < availableFonts.size()) {
                         Identifier fontIdentifier = availableFonts.get(c + i);
                         LiteralText text = new LiteralText(fontIdentifier.getPath());
                         TextRenderer targetFont = this.font;
 
-                        if (minecraft != null && minecraft.fontManager.textRenderers.containsKey(fontIdentifier)) {
-                            targetFont = minecraft.fontManager.textRenderers.get(fontIdentifier);
+                        if (minecraft != null && fontManager.getTextRenderers().containsKey(fontIdentifier)) {
+                            targetFont = fontManager.getTextRenderers().get(fontIdentifier);
                         } else {
                             text.append(new LiteralText(" (Unavailable)")).formatted(Formatting.RED);
                         }
