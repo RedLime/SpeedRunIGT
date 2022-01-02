@@ -1,6 +1,9 @@
 package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.mixins.access.FontManagerAccessor;
+import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
+import com.redlimerl.speedrunigt.mixins.access.WorldRendererAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.TimerCustomizeScreen;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
@@ -134,7 +137,7 @@ public abstract class MinecraftClientMixin {
         if (worldRenderer != null && world != null && world.getDimension() == currentDimension && !isPaused() && isWindowFocused()
                 && timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld) {
             int chunks = worldRenderer.getCompletedChunkCount();
-            int entities = worldRenderer.regularEntityCount - (options.getPerspective().isFirstPerson() ? 0 : 1);
+            int entities = ((WorldRendererAccessor) worldRenderer).getRegularEntityCount() - (options.getPerspective().isFirstPerson() ? 0 : 1);
 
             if (chunks + entities > 0) {
                 if (!(SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) && !timer.isStarted())) {
@@ -186,10 +189,11 @@ public abstract class MinecraftClientMixin {
             @Override
             protected void apply(Map<Identifier, List<Font>> loader, ResourceManager manager, Profiler profiler) {
                 try {
+                    FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) MinecraftClient.getInstance()).getFontManager();
                     for (Map.Entry<Identifier, List<Font>> listEntry : loader.entrySet()) {
-                        FontStorage fontStorage = new FontStorage(MinecraftClient.getInstance().fontManager.textureManager, listEntry.getKey());
+                        FontStorage fontStorage = new FontStorage(fontManager.getTextureManager(), listEntry.getKey());
                         fontStorage.setFonts(listEntry.getValue());
-                        MinecraftClient.getInstance().fontManager.fontStorages.put(listEntry.getKey(), fontStorage);
+                        fontManager.getFontStorages().put(listEntry.getKey(), fontStorage);
                     }
                     TimerDrawer.fontHeightMap.clear();
                 } catch (Throwable e) {

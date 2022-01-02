@@ -3,7 +3,8 @@
   "minVersion": "0.8",
   "package": "com.redlimerl.speedrunigt.mixins",
   "compatibilityLevel": "JAVA_16",
-  "mixins": [],
+  "mixins": [
+  ],
   "client": [
     "ClientAdvancementManagerMixin",
     "ClientPlayerEntityMixin",
@@ -13,9 +14,12 @@
     "LivingEntityMixin",
     "MinecraftClientMixin",
     "MouseMixin",
-    "OptionsScreenMixin"
+    "OptionsScreenMixin",
+    "access.MinecraftClientAccessor",
+    "access.FontManagerAccessor",
+    "access.FontStorageAccessor",
+    "access.WorldRendererAccessor"
   ],
-  "accessWidener": "speedrunigt.accesswidener",
   "injectors": {
     "defaultRequire": 1
   }
