@@ -1,6 +1,8 @@
 package com.redlimerl.speedrunigt.option;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.mixins.access.FontManagerAccessor;
+import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecimals;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
@@ -91,11 +93,12 @@ public class TimerCustomizeScreen extends Screen {
     @Override
     protected void init() {
         if (client != null) {
-            if (!client.fontManager.fontStorages.containsKey(drawer.getTimerFont())) {
+            FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) client).getFontManager();
+            if (!fontManager.getFontStorages().containsKey(drawer.getTimerFont())) {
                 availableFonts.add(drawer.getTimerFont());
             }
 
-            availableFonts.addAll(client.fontManager.fontStorages.keySet());
+            availableFonts.addAll(fontManager.getFontStorages().keySet());
         }
 
         initNormal();
@@ -246,14 +249,15 @@ public class TimerCustomizeScreen extends Screen {
                 }
             }
 
-            if (!fontButton.active) {
+            if (!fontButton.active && client != null) {
                 int c = fontPage * 3;
+                FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) client).getFontManager();
                 for (int i = 0; i < fontSelectButtons.size(); i++) {
                     if (c + i < availableFonts.size()) {
                         Identifier fontIdentifier = availableFonts.get(c + i);
                         LiteralText text = new LiteralText(fontIdentifier.getPath());
 
-                        if (client != null && client.fontManager.fontStorages.containsKey(fontIdentifier)) {
+                        if (client != null && fontManager.getFontStorages().containsKey(fontIdentifier)) {
                             text.setStyle(text.getStyle().withFont(fontIdentifier));
                         } else {
                             text.append(new LiteralText(" (Unavailable)")).formatted(Formatting.RED);
