@@ -13,9 +13,13 @@
     "LivingEntityMixin",
     "MinecraftClientMixin",
     "MouseMixin",
-    "OptionsScreenMixin"
+    "OptionsScreenMixin",
+    "access.FontManagerAccessor",
+    "access.FontStorageAccessor",
+    "access.MinecraftClientAccessor",
+    "access.TextRendererAccessor",
+    "access.WorldRendererAccessor"
   ],
-  "accessWidener": "speedrunigt.accesswidener",
   "injectors": {
     "defaultRequire": 1
   }
