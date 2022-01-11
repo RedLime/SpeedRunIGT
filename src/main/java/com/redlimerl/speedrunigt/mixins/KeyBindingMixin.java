@@ -28,7 +28,6 @@ public class KeyBindingMixin {
         KeyBinding keyBinding = keyToBindings.get(key);
         if (keyBinding != null && pressed) {
             if (keyBinding == MinecraftClient.getInstance().options.keyAdvancements // Advancement
-                    || keyBinding == MinecraftClient.getInstance().options.keySprint // Sprint
                     || Objects.equals(keyBinding.getCategory(), "key.categories.inventory")
                     || Objects.equals(keyBinding.getCategory(), "key.categories.gameplay")) {
                 if (timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld) {
