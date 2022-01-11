@@ -44,13 +44,9 @@ public class FontUtils {
             ArrayList<Font> fontArrayList = new ArrayList<>();
 
             if (configFile != null && configFile.exists()) {
-                JsonObject configure = new JsonParser().parse(FileUtils.readFileToString(configFile, StandardCharsets.UTF_8)).getAsJsonObject();
+                FontConfigure fontConfigure = FontConfigure.fromJson(FileUtils.readFileToString(configFile, StandardCharsets.UTF_8));
                 fontArrayList.add(new TrueTypeFont(byteBuffer, sTBTTFontinfo,
-                        configure.has("size") ? configure.get("size").getAsFloat() : 11f,
-                        configure.has("oversample") ? configure.get("oversample").getAsFloat() : 6f,
-                        configure.has("shift") && configure.get("shift").isJsonArray() && configure.get("shift").getAsJsonArray().size() >= 1 ? configure.get("shift").getAsJsonArray().get(0).getAsFloat() : 0f,
-                        configure.has("shift") && configure.get("shift").isJsonArray() && configure.get("shift").getAsJsonArray().size() >= 2 ? configure.get("shift").getAsJsonArray().get(1).getAsFloat() : 0f,
-                        configure.has("skip") ? configure.get("skip").getAsString() : ""));
+                        fontConfigure.size, fontConfigure.oversample, fontConfigure.shift[0], fontConfigure.shift[1], fontConfigure.skip));
             } else {
                 fontArrayList.add(new TrueTypeFont(byteBuffer, sTBTTFontinfo, 11f, 6f, 0, 0, ""));
             }
