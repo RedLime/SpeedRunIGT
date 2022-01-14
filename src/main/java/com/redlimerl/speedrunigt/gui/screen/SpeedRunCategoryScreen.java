@@ -1,6 +1,7 @@
-package com.redlimerl.speedrunigt.option;
+package com.redlimerl.speedrunigt.gui.screen;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.RunCategory;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
