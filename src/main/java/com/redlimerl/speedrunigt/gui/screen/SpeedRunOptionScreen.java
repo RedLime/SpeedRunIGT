@@ -1,7 +1,7 @@
 package com.redlimerl.speedrunigt.gui.screen;
 
-import com.redlimerl.speedrunigt.version.ScreenTexts;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
+import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
