@@ -1,7 +1,5 @@
 package com.redlimerl.speedrunigt.utils;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import net.minecraft.client.font.BlankFont;
 import net.minecraft.client.font.Font;
