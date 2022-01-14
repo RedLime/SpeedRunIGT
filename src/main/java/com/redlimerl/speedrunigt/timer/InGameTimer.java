@@ -66,7 +66,7 @@ public class InGameTimer {
     private long leastStartTime = 0;
 
     private long leaveTime = 0;
-    private int pauseCount = 0;
+    private int pauseCount = 1;
 
     //Logs
     private String firstInput = "";
