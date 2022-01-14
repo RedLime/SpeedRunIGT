@@ -38,12 +38,12 @@ LF: Versions that should use [Legacy Fabric](https://github.com/Legacy-Fabric)
 - 1.18.1 (Legacy)
 - 20w14∞ (Legacy)
 - 1.12.2 (Legacy / LF)
-- 1.8.9 (Legacy / LF)
-- 1.7.10 (Legacy / LF)
+- 1.8.9 (LF)
+- 1.7.10 (LF)
 
 ## FaQ
 - Is allowed in *[Speedrun.com](https://speedrun.com/mc)* run verification?
-  - **YES!** but Pre 1.14 versions not allowed yet.
+  - **YES!**
 - Is support Multi-Instances?
   - Yes!
 - Is there any way to display them separately in OBS?
