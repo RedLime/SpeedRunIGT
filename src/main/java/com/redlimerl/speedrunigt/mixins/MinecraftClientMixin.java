@@ -25,6 +25,7 @@ import net.minecraft.resource.ReloadableResourceManager;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.SinglePreparationResourceReloadListener;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.registry.RegistryTracker;
 import net.minecraft.world.dimension.DimensionType;
@@ -34,11 +35,11 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.io.File;
 import java.util.Arrays;
@@ -207,5 +208,11 @@ public abstract class MinecraftClientMixin {
                 }
             }
         });
+    }
+
+    // Crash safety
+    @Inject(method = "addDetailsToCrashReport", at = @At("HEAD"))
+    public void onCrash(CrashReport report, CallbackInfoReturnable<CrashReport> cir) {
+        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) InGameTimer.leave();
     }
 }

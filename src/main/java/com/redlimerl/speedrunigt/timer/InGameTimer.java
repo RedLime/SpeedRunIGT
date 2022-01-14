@@ -66,6 +66,7 @@ public class InGameTimer {
     private long leastStartTime = 0;
 
     private long leaveTime = 0;
+    private int pauseCount = 0;
 
     //Logs
     private String firstInput = "";
@@ -171,6 +172,7 @@ public class InGameTimer {
         if (INSTANCE.isCompleted) return;
 
         INSTANCE.leaveTime = System.currentTimeMillis();
+        INSTANCE.pauseCount = 0;
         INSTANCE.setPause(true, TimerStatus.IDLE);
 
         String data = SpeedRunIGT.GSON.toJson(INSTANCE);
@@ -180,6 +182,7 @@ public class InGameTimer {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        end();
     }
 
     public static boolean load(String name) {
@@ -230,6 +233,10 @@ public class InGameTimer {
     public void setUncompleted() {
         this.isCompleted = false;
         this.completeCount++;
+    }
+
+    public int getPauseCount() {
+        return pauseCount;
     }
 
     public boolean isStarted() {
@@ -337,7 +344,8 @@ public class InGameTimer {
             if (this.getStatus().getPause() <= toStatus.getPause()) {
                 if (this.getStatus().getPause() < 1 && this.isStarted()) {
                     loggerPausedTime = getRealTimeAttack();
-                    pauseLog.append(timeToStringFormat(getInGameTime())).append(" IGT, ").append(timeToStringFormat(loggerPausedTime)).append(" RTA S, ");
+                    pauseCount++;
+                    pauseLog.append("#").append(pauseCount).append(") ").append(timeToStringFormat(getInGameTime(false))).append(" IGT, ").append(timeToStringFormat(loggerPausedTime)).append(" RTA S, ");
                 }
                 this.setStatus(toStatus);
             }

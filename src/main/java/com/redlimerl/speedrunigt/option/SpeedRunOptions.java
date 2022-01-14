@@ -14,7 +14,6 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Function;
@@ -23,7 +22,8 @@ public class SpeedRunOptions {
 
     private static boolean isInit = false;
 
-    private static final Path configPath = FabricLoader.getInstance().getConfigDir().resolve(SpeedRunIGT.MOD_ID);
+    private static final Path oldConfigPath = FabricLoader.getInstance().getConfigDir().resolve(SpeedRunIGT.MOD_ID);
+    private static final Path configPath = SpeedRunIGT.getMainPath().resolve("options.txt");
 
     private static final HashMap<Identifier, String> options = new HashMap<>();
 
@@ -41,9 +41,13 @@ public class SpeedRunOptions {
         if (isInit) return;
 
         try {
-            Files.createDirectories(configPath);
+            if (new File(oldConfigPath.toFile(), "options.txt").exists() && !configPath.toFile().exists()) {
+                File optionFile = new File(oldConfigPath.toFile(), "options.txt");
+                FileUtils.copyFile(optionFile, configPath.toFile());
+                FileUtils.deleteQuietly(optionFile);
+            }
 
-            File optionFile = new File(configPath.toFile(), "options.txt");
+            File optionFile = configPath.toFile();
             if (optionFile.exists()) {
                 String optionData = FileUtils.readFileToString(optionFile, StandardCharsets.UTF_8);
 
@@ -62,9 +66,7 @@ public class SpeedRunOptions {
 
     private static void save() {
         try {
-            Files.createDirectories(configPath);
-
-            File config = new File(configPath.toFile(), "options.txt");
+            File config = configPath.toFile();
             StringBuilder stringBuilder = new StringBuilder();
             options.forEach((key, value) -> stringBuilder.append(key.toString()).append(":").append(value).append("\n"));
             FileUtils.writeStringToFile(config, stringBuilder.length() == 0 ? "" : stringBuilder.substring(0, stringBuilder.length()-1), StandardCharsets.UTF_8);

@@ -4,6 +4,8 @@
   "package": "com.redlimerl.speedrunigt.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "screen.DownloadingTerrainScreenMixin",
+    "screen.GameMenuScreenMixin"
   ],
   "client": [
     "ClientAdvancementManagerMixin",
@@ -15,9 +17,9 @@
     "MinecraftClientMixin",
     "MouseMixin",
     "OptionsScreenMixin",
-    "access.MinecraftClientAccessor",
     "access.FontManagerAccessor",
     "access.FontStorageAccessor",
+    "access.MinecraftClientAccessor",
     "access.WorldRendererAccessor"
   ],
   "injectors": {

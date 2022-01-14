@@ -32,12 +32,17 @@ public class SpeedRunIGT implements ClientModInitializer {
     public static String MOD_VERSION;
 
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    public static final Path MAIN_PATH = FabricLoader.getInstance().getGameDir().resolve(MOD_ID);
     public static final Path WORLDS_PATH = FabricLoader.getInstance().getGameDir().resolve("saves");
-    public static final Path TIMER_PATH = MAIN_PATH.resolve("worlds");
-    public static final Path FONT_PATH = MAIN_PATH.resolve("fonts");
+    public static final Path TIMER_PATH = getMainPath().resolve("worlds");
+    public static final Path FONT_PATH = getMainPath().resolve("fonts");
+
+    public static Path getMainPath() {
+        return FabricLoader.getInstance().getGameDir().resolve(MOD_ID);
+    }
+
+
     static {
-        MAIN_PATH.toFile().mkdirs();
+        getMainPath().toFile().mkdirs();
         TIMER_PATH.toFile().mkdirs();
         FONT_PATH.toFile().mkdirs();
     }
