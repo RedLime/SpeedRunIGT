@@ -75,8 +75,8 @@ public class SpeedRunOptions {
         }
     }
 
-    static ArrayList<Function<Screen, AbstractButtonWidget>> buttons = new ArrayList<>();
-    static HashMap<Function<Screen, AbstractButtonWidget>, List<Text>> tooltips = new HashMap<>();
+    public static ArrayList<Function<Screen, AbstractButtonWidget>> buttons = new ArrayList<>();
+    public static HashMap<Function<Screen, AbstractButtonWidget>, List<Text>> tooltips = new HashMap<>();
     public static void addOptionButton(Function<Screen, AbstractButtonWidget> consumer, Text... texts) {
         buttons.add(consumer);
         tooltips.put(consumer, Arrays.asList(texts));
