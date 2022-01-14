@@ -2,10 +2,10 @@ package com.redlimerl.speedrunigt;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.redlimerl.speedrunigt.option.SpeedRunCategoryScreen;
-import com.redlimerl.speedrunigt.option.SpeedRunIGTInfoScreen;
+import com.redlimerl.speedrunigt.gui.screen.SpeedRunCategoryScreen;
+import com.redlimerl.speedrunigt.gui.screen.SpeedRunIGTInfoScreen;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
-import com.redlimerl.speedrunigt.option.TimerCustomizeScreen;
+import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.fabricmc.api.ClientModInitializer;
@@ -33,12 +33,17 @@ public class SpeedRunIGT implements ClientModInitializer {
     public static String MOD_VERSION;
 
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    public static final Path MAIN_PATH = FabricLoader.getInstance().getGameDir().resolve(MOD_ID);
     public static final Path WORLDS_PATH = FabricLoader.getInstance().getGameDir().resolve("saves");
-    public static final Path TIMER_PATH = MAIN_PATH.resolve("worlds");
-    public static final Path FONT_PATH = MAIN_PATH.resolve("fonts");
+    public static final Path TIMER_PATH = getMainPath().resolve("worlds");
+    public static final Path FONT_PATH = getMainPath().resolve("fonts");
+
+    public static Path getMainPath() {
+        return FabricLoader.getInstance().getGameDir().resolve(MOD_ID);
+    }
+
+
     static {
-        MAIN_PATH.toFile().mkdirs();
+        getMainPath().toFile().mkdirs();
         TIMER_PATH.toFile().mkdirs();
         FONT_PATH.toFile().mkdirs();
     }

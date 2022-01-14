@@ -1,4 +1,4 @@
-package com.redlimerl.speedrunigt.mixins;
+package com.redlimerl.speedrunigt.mixins.screen;
 
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.RunCategory;
