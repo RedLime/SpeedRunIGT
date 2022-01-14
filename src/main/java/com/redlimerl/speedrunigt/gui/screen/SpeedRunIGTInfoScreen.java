@@ -1,4 +1,4 @@
-package com.redlimerl.speedrunigt.option;
+package com.redlimerl.speedrunigt.gui.screen;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

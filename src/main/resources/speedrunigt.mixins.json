@@ -4,20 +4,22 @@
   "package": "com.redlimerl.speedrunigt.mixins",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "screen.DownloadingTerrainScreenMixin",
+    "screen.GameMenuScreenMixin"
   ],
   "client": [
     "ClientAdvancementManagerMixin",
     "ClientPlayerEntityMixin",
     "ClientWorldMixin",
-    "CreditsScreenMixin",
+    "screen.CreditsScreenMixin",
     "KeyBindingMixin",
     "LivingEntityMixin",
     "MinecraftClientMixin",
     "MouseMixin",
-    "OptionsScreenMixin",
-    "access.MinecraftClientAccessor",
+    "screen.OptionsScreenMixin",
     "access.FontManagerAccessor",
     "access.FontStorageAccessor",
+    "access.MinecraftClientAccessor",
     "access.WorldRendererAccessor"
   ],
   "injectors": {

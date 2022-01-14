@@ -1,7 +1,7 @@
-package com.redlimerl.speedrunigt.mixins;
+package com.redlimerl.speedrunigt.mixins.screen;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
-import com.redlimerl.speedrunigt.option.SpeedRunOptionScreen;
+import com.redlimerl.speedrunigt.gui.screen.SpeedRunOptionScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.OptionsScreen;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;

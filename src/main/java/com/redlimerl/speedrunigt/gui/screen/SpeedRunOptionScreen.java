@@ -1,5 +1,6 @@
-package com.redlimerl.speedrunigt.option;
+package com.redlimerl.speedrunigt.gui.screen;
 
+import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
