@@ -51,7 +51,7 @@ LF: Versions that should use [Legacy Fabric](https://github.com/Legacy-Fabric)
   - Unfortunately, because this is a mod, it's hard to work on another window or widget.
   - If someone can do it, please make a Pull Request.
 - Where is timer config file? (for multi-instances)
-  - `Minecraft Instance Folder`/config/speedrunigt/option.txt
+  - `Minecraft Instance Folder`/speedrunigt/options.txt
 - How to add custom font in timer?
   - check out guide [video with description](https://youtu.be/agBbiTQWj78)
 - License?
