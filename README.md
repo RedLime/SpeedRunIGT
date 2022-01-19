@@ -12,6 +12,7 @@ Simply, the **Timer** Mod for Minecraft Speedrun
 - Custom font in timer
 
 ## Downloads
+- [Download Page](https://redlime.github.io/SpeedRunIGT/)
 - [Release Page](https://github.com/RedLime/SpeedRunIGT/releases)
 
 ## How to install & use
