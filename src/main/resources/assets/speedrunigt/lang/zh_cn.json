@@ -58,10 +58,18 @@
   "speedrunigt.option.hide_timer_in_debugs": "在调试中隐藏计时器",
   "speedrunigt.option.waiting_first_input": "从第一次输入开始",
   "speedrunigt.option.waiting_first_input.description": "改变计时器的起始点\n世界加载到玩家的第一次输入中\n(移动、打开背包等).\n此选项用于从第一次输入开始的类别。",
+  "speedrunigt.option.split_notification": "分行通知",
+  "speedrunigt.option.split_notification.none": "没有任何",
+  "speedrunigt.option.split_notification.toast": "弹出",
+  "speedrunigt.option.split_notification.message": "聊天",
   "speedrunigt.controls.start_timer": "重置计时器",
   "speedrunigt.controls.stop_timer": "停止计时",
   "speedrunigt.message.update.unknown": "获取最新版本失败",
   "speedrunigt.message.update.updated": "您使用的是最新版本。",
   "speedrunigt.message.update.outdated": "已找到新版本。",
-  "speedrunigt.message.update_found": "SpeedRunIGT有新版啦！"
+  "speedrunigt.message.update_found": "SpeedRunIGT有新版啦！",
+  "speedrunigt.message.click_delete_button_again": "如果再次按下此按钮，它将被删除。",
+  "speedrunigt.split.title": "个人最好成绩",
+  "speedrunigt.split.filter": "筛选",
+  "speedrunigt.split.run_end": "运行结束"
 }

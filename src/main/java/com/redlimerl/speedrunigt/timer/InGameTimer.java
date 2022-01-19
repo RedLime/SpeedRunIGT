@@ -50,6 +50,7 @@ public class InGameTimer {
     }
 
     private RunCategory category = RunCategory.ANY;
+    private TimerSplit timerSplit = null;
     private final boolean isResettable;
     private boolean isCompleted = false;
     private int completeCount = 0;
@@ -87,7 +88,8 @@ public class InGameTimer {
      */
     public static void start() {
         INSTANCE = new InGameTimer();
-        INSTANCE.category = SpeedRunOptions.getOption(SpeedRunOptions.TIMER_CATEGORY);
+        INSTANCE.timerSplit = new TimerSplit(SpeedRunIGT.LATEST_PLAYED_SEED, SpeedRunIGT.LATEST_IS_SSG);
+        INSTANCE.setCategory(SpeedRunOptions.getOption(SpeedRunOptions.TIMER_CATEGORY));
         INSTANCE.setPause(true, TimerStatus.IDLE);
     }
 
@@ -96,8 +98,12 @@ public class InGameTimer {
      */
     public static void reset() {
         if (INSTANCE.isCompleted || INSTANCE.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
+        TimerSplit timerSplit = INSTANCE.getTimerSplit();
+        timerSplit.getSplitTimeline().clear();
+
         INSTANCE = new InGameTimer(false);
-        INSTANCE.category = RunCategory.CUSTOM;
+        INSTANCE.timerSplit = timerSplit;
+        INSTANCE.setCategory(RunCategory.CUSTOM);
         INSTANCE.setPause(true, TimerStatus.IDLE);
         INSTANCE.setPause(false);
     }
@@ -166,6 +172,12 @@ public class InGameTimer {
                 e.printStackTrace();
             }
         }
+
+        //MinecraftClient client = MinecraftClient.getInstance();
+        //if (client.isInSingleplayer() && client.interactionManager != null
+        //        && client.interactionManager.getCurrentGameMode() == GameMode.SURVIVAL) {
+            timer.getTimerSplit().tryUpdateSplit(TimerSplit.SplitType.COMPLETE, timer.getInGameTime());
+        //}
     }
 
     public static void leave() {
@@ -205,8 +217,14 @@ public class InGameTimer {
         return category;
     }
 
+    public TimerSplit getTimerSplit() {
+        return timerSplit;
+    }
+
     public void setCategory(RunCategory category) {
         this.category = category;
+        this.timerSplit.getSplitTimeline().clear();
+        this.timerSplit.setRunCategory(category);
     }
 
     public long getTicks() {

@@ -2,6 +2,7 @@ package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.RunCategory;
+import com.redlimerl.speedrunigt.timer.TimerSplit;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementManager;
@@ -53,6 +54,26 @@ public abstract class ClientAdvancementManagerMixin {
             //Arbalistic
             if (timer.getCategory() == RunCategory.ARBALISTIC && Objects.equals(advancement.getId().toString(), new Identifier("adventure/arbalistic").toString())) {
                 InGameTimer.complete();
+            }
+
+
+            //Timer Split
+            if (timer.getCategory() == RunCategory.ANY) {
+                if (Objects.equals(advancement.getId().toString(), new Identifier("story/enter_the_nether").toString())) {
+                    timer.getTimerSplit().tryUpdateSplit(TimerSplit.SplitType.ENTER_NETHER, timer.getInGameTime());
+                }
+                else if (Objects.equals(advancement.getId().toString(), new Identifier("story/enter_the_end").toString())) {
+                    timer.getTimerSplit().tryUpdateSplit(TimerSplit.SplitType.ENTER_END, timer.getInGameTime());
+                }
+                else if (Objects.equals(advancement.getId().toString(), new Identifier("story/follow_ender_eye").toString())) {
+                    timer.getTimerSplit().tryUpdateSplit(TimerSplit.SplitType.ENTER_STRONG_HOLD, timer.getInGameTime());
+                }
+                else if (Objects.equals(advancement.getId().toString(), new Identifier("nether/find_fortress").toString())) {
+                    timer.getTimerSplit().tryUpdateSplit(TimerSplit.SplitType.ENTER_FORTRESS, timer.getInGameTime());
+                }
+                else if (Objects.equals(advancement.getId().toString(), new Identifier("nether/find_bastion").toString())) {
+                    timer.getTimerSplit().tryUpdateSplit(TimerSplit.SplitType.ENTER_BASTION, timer.getInGameTime());
+                }
             }
         }
         return entry.getValue();

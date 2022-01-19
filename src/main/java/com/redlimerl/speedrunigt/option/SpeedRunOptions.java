@@ -358,4 +358,17 @@ public class SpeedRunOptions {
             return String.valueOf(value);
         }
     };
+
+    public enum SplitDisplayType { NONE, MESSAGE, TOAST }
+    public static final OptionArgument<SplitDisplayType> SPLIT_DISPLAY_TYPE = new OptionArgument<SplitDisplayType>(new Identifier(SpeedRunIGT.MOD_ID, "split_display_type"), SplitDisplayType.NONE) {
+        @Override
+        public SplitDisplayType valueFromString(String string) {
+            return SplitDisplayType.valueOf(string);
+        }
+
+        @Override
+        public String valueToString(SplitDisplayType value) {
+            return value.name();
+        }
+    };
 }
