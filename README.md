@@ -72,6 +72,8 @@ can I donate for u : [here is my ko-fi](https://ko-fi.com/redlimerl)
 - [xiaolin](https://github.com/liuzhengjin) - Add Chinese language
 - [Gregor0410](https://github.com/Gregor0410) - English texts grammar correction
 
+## For devs
+- [API Docs](https://github.com/RedLime/SpeedRunIGT/wiki/SpeedRunIGT-API-Document)
 ## Images
 ![](https://i.imgur.com/5xC9IQi.png)
 ![](https://i.imgur.com/tN1IN2b.png)
