@@ -34,7 +34,7 @@
 		</ul>
 	</div>
 	<div class="image">
-		<img style="image-rendering: pixelated;" src="https://raw.githubusercontent.com/RedLime/SpeedRunIGT/1.16.1/src/main/resources/assets/speedrunigt/icon.png" alt="" />
+		<img style="image-rendering: pixelated; width: 100%" src="https://raw.githubusercontent.com/RedLime/SpeedRunIGT/1.16.1/src/main/resources/assets/speedrunigt/icon.png" alt="" />
 	</div>
 </header>
 
@@ -255,7 +255,8 @@
 				return false;
 			});
 
-            converter = new showdown.Converter().makeHtml(version.body);
+			const log = version.body.split('\n').filter(line => !line.startsWith('### ')).join('\n');
+            const converter = new showdown.Converter().makeHtml(log);
 
             Swal.fire({
                 title: version.tag_name + " (" + version.name.split(' -')[0] + ")",
