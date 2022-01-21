@@ -63,5 +63,9 @@
   "speedrunigt.message.update.unknown": "최근 버전 정보를 불러오는데 실패했습니다.",
   "speedrunigt.message.update.updated": "최신 버전을 사용하고 있습니다.",
   "speedrunigt.message.update.outdated": "새로운 버전이 발견되었습니다.",
-  "speedrunigt.message.update_found": "SpeedRunIGT의 새로운 버전이 발견되었습니다. 'SpeedRunIGT 정보'에서 확인하세요."
+  "speedrunigt.message.update_found": "SpeedRunIGT의 새로운 버전이 발견되었습니다. 'SpeedRunIGT 정보'에서 확인하세요.",
+  "speedrunigt.font.apply_and_save": "적용 및 저장",
+  "speedrunigt.font.size": "크기",
+  "speedrunigt.font.oversample": "오버샘플링",
+  "speedrunigt.font.oversample.description": "일반 클릭: ±0.1 조정 / Shift 클릭: ±1.0 조정"
 }
