@@ -88,7 +88,7 @@ public class InGameTimer {
      */
     public static void start() {
         INSTANCE = new InGameTimer();
-        INSTANCE.timerSplit = new TimerSplit(SpeedRunIGT.LATEST_PLAYED_SEED, SpeedRunIGT.LATEST_IS_SSG);
+        INSTANCE.timerSplit = new TimerSplit(SpeedRunIGT.LATEST_PLAYED_SEED, RunType.getRunType(SpeedRunIGT.LATEST_IS_SSG, SpeedRunIGT.LATEST_IS_FSG));
         INSTANCE.setCategory(SpeedRunOptions.getOption(SpeedRunOptions.TIMER_CATEGORY));
         INSTANCE.setPause(true, TimerStatus.IDLE);
     }

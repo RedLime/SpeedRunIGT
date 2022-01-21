@@ -34,6 +34,7 @@ public class SpeedRunIGT implements ClientModInitializer {
     public static String MOD_VERSION;
     public static Long LATEST_PLAYED_SEED = 0L;
     public static boolean LATEST_IS_SSG = false;
+    public static boolean LATEST_IS_FSG = false;
 
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     public static final Path WORLDS_PATH = FabricLoader.getInstance().getGameDir().resolve("saves");

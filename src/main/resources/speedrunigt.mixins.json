@@ -3,7 +3,9 @@
   "minVersion": "0.8",
   "package": "com.redlimerl.speedrunigt.mixins",
   "compatibilityLevel": "JAVA_8",
-  "mixins": [],
+  "mixins": [
+    "screen.CreateWorldScreenMixin"
+  ],
   "client": [
     "ClientAdvancementManagerMixin",
     "ClientPlayerEntityMixin",

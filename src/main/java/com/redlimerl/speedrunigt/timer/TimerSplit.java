@@ -65,14 +65,14 @@ public class TimerSplit {
     }
 
     private final long seed;
-    private final boolean isSetSeed;
+    private final RunType runType;
     private RunCategory runCategory;
     private final LinkedHashMap<SplitType, Long> splitTimeline = new LinkedHashMap<>();
 
 
-    public TimerSplit(long seed, boolean isSetSeed) {
+    public TimerSplit(long seed, RunType runType) {
         this.seed = seed;
-        this.isSetSeed = isSetSeed;
+        this.runType = runType;
     }
 
     public LinkedHashMap<SplitType, Long> getSplitTimeline() {
@@ -103,12 +103,12 @@ public class TimerSplit {
         return seed;
     }
 
-    public boolean isSetSeed() {
-        return isSetSeed;
+    public RunType getRunType() {
+        return runType;
     }
 
     public String getIdentifyString() {
-        return (isSetSeed() ? getSeed() : "-") + ":" + getRunCategory().name() + ":" + SharedConstants.getGameVersion().getName();
+        return (getRunType() == RunType.SSG ? getSeed() : getRunType().name()) + ":" + getRunCategory().name() + ":" + SharedConstants.getGameVersion().getName();
     }
 
     public String getTimelineString() {
@@ -149,7 +149,7 @@ public class TimerSplit {
         }
 
         String timeString = "Time: " + InGameTimer.timeToStringFormat(igt) + (bestTime == 0L ? "" : " " + ((bestTime >= igt ? "§a[-" : "§c[+") + InGameTimer.timeToStringFormat(Math.abs(bestTime - igt)) + "]"));
-        String titleString = splitType == SplitType.COMPLETE ? (SharedConstants.getGameVersion().getName() + " " + getRunCategory().getText().getString() + " " + (isSetSeed() ? "SSG" : "RSG")) : I18n.translate(splitType.titleKey);
+        String titleString = splitType == SplitType.COMPLETE ? (SharedConstants.getGameVersion().getName() + " " + getRunCategory().getText().getString() + " " + getRunType().name()) : I18n.translate(splitType.titleKey);
         if (splitDisplayType == SplitDisplayType.MESSAGE) {
             client.player.sendMessage(new LiteralText("§f§l▶ §e" + titleString), false);
             client.player.sendMessage(new LiteralText("§f§l▶ §f- " + timeString), false);

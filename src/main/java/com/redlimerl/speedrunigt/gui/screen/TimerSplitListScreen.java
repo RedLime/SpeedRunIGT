@@ -3,6 +3,7 @@ package com.redlimerl.speedrunigt.gui.screen;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.RunCategory;
+import com.redlimerl.speedrunigt.timer.RunType;
 import com.redlimerl.speedrunigt.timer.TimerSplit;
 import com.redlimerl.speedrunigt.timer.TimerSplit.SplitType;
 import net.minecraft.client.gui.Element;
@@ -28,18 +29,15 @@ public class TimerSplitListScreen extends Screen {
 
     private final Screen parent;
     private TimerSplitListWidget listWidget;
-    private enum Filter {
-        ALL("gui.all"), RSG("RSG"), SSG("SSG");
-        private final String translate;
-        Filter(String translate) {
-            this.translate = translate;
-        }
-    }
-    private Filter filter = Filter.ALL;
+    private RunType filter = null;
 
     public TimerSplitListScreen(Screen parent) {
         super(new TranslatableText("speedrunigt.split.title"));
         this.parent = parent;
+    }
+
+    private MutableText getFilterText() {
+        return filter == null ? new TranslatableText("gui.all") : new LiteralText(filter.name());
     }
 
     @Override
@@ -47,11 +45,15 @@ public class TimerSplitListScreen extends Screen {
         this.listWidget = new TimerSplitListWidget();
         addChild(listWidget);
 
-        addButton(new ButtonWidget(10, 6, 80, 20, new TranslatableText("speedrunigt.split.filter").append(" : ").append(new TranslatableText(filter.translate)), (ButtonWidget button) -> {
-            int order = filter.ordinal();
-            filter = Filter.values()[(++order) % Filter.values().length];
+        addButton(new ButtonWidget(10, 6, 80, 20, new TranslatableText("speedrunigt.split.filter").append(" : ").append(this.getFilterText()), (ButtonWidget button) -> {
+            int order = filter == null ? -1 : filter.ordinal();
+            if (order + 1 == RunType.values().length) {
+                filter = null;
+            } else {
+                filter = RunType.values()[(++order) % RunType.values().length];
+            }
             this.listWidget.applyFilter(filter);
-            button.setMessage(new TranslatableText("speedrunigt.split.filter").append(" : ").append(new TranslatableText(filter.translate)));
+            button.setMessage(new TranslatableText("speedrunigt.split.filter").append(" : ").append(this.getFilterText()));
         }));
 
         addButton(new ButtonWidget(width/2 - 153, height - 32, 150, 20, new TranslatableText("speedrunigt.option.split_notification").append(" : ").append(new TranslatableText("speedrunigt.option.split_notification." + SpeedRunOptions.getOption(SpeedRunOptions.SPLIT_DISPLAY_TYPE).name().toLowerCase(Locale.ROOT))), (ButtonWidget button) -> {
@@ -85,13 +87,15 @@ public class TimerSplitListScreen extends Screen {
             this.applyFilter(TimerSplitListScreen.this.filter);
         }
 
-        void applyFilter(Filter filter) {
-            if (filter == Filter.RSG) {
-                this.replaceEntries(TimerSplit.SPLIT_DATA.entrySet().stream().filter(entry -> Objects.equals(entry.getKey().split(":")[0], "-")).map(entry -> new TimerSplitEntry(entry.getKey(), entry.getValue())).collect(Collectors.toList()));
-            } else if (filter == Filter.SSG) {
-                this.replaceEntries(TimerSplit.SPLIT_DATA.entrySet().stream().filter(entry -> !Objects.equals(entry.getKey().split(":")[0], "-")).map(entry -> new TimerSplitEntry(entry.getKey(), entry.getValue())).collect(Collectors.toList()));
-            } else {
+        void applyFilter(RunType filter) {
+            if (filter == null) {
                 this.replaceEntries(TimerSplit.SPLIT_DATA.entrySet().stream().map(entry -> new TimerSplitEntry(entry.getKey(), entry.getValue())).collect(Collectors.toList()));
+            } else if (filter == RunType.RSG) {
+                this.replaceEntries(TimerSplit.SPLIT_DATA.entrySet().stream().filter(entry -> Objects.equals(entry.getKey().split(":")[0], RunType.RSG.name())).map(entry -> new TimerSplitEntry(entry.getKey(), entry.getValue())).collect(Collectors.toList()));
+            } else if (filter == RunType.FSG) {
+                this.replaceEntries(TimerSplit.SPLIT_DATA.entrySet().stream().filter(entry -> Objects.equals(entry.getKey().split(":")[0], RunType.FSG.name())).map(entry -> new TimerSplitEntry(entry.getKey(), entry.getValue())).collect(Collectors.toList()));
+            } else if (filter == RunType.SSG) {
+                this.replaceEntries(TimerSplit.SPLIT_DATA.entrySet().stream().filter(entry -> !(Objects.equals(entry.getKey().split(":")[0], RunType.RSG.name()) || Objects.equals(entry.getKey().split(":")[0], RunType.FSG.name()))).map(entry -> new TimerSplitEntry(entry.getKey(), entry.getValue())).collect(Collectors.toList()));
             }
             setScrollAmount(0);
         }
@@ -120,7 +124,7 @@ public class TimerSplitListScreen extends Screen {
                 this.timeKeyInfo = new LiteralText(
                         timeKey.split(":")[2]
                         + " - " + RunCategory.valueOf(timeKey.split(":")[1]).getText().getString()
-                        + " / " + (Objects.equals(timeKey.split(":")[0], "-") ? "RSG" : ("Seed: " + timeKey.split(":")[0]))
+                        + " / " + (Objects.equals(timeKey.split(":")[0], "-") ? timeKey.split(":")[0] : ("Seed: " + timeKey.split(":")[0]))
                 ).formatted(Formatting.GRAY);
                 for (String tv : timeValue.split(",")) {
                     SplitType splitType = SplitType.valueOf(tv.split("\\|")[0]);

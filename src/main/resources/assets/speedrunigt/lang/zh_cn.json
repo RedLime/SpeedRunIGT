@@ -69,6 +69,8 @@
   "speedrunigt.message.update.outdated": "已找到新版本。",
   "speedrunigt.message.update_found": "SpeedRunIGT有新版啦！",
   "speedrunigt.message.click_delete_button_again": "如果再次按下此按钮，它将被删除。",
+  "speedrunigt.message.is_fsg": "这是FSG种子吗？",
+  "speedrunigt.message.is_fsg.description": "如果您使用的是 FSG 种子，请将其打开。",
   "speedrunigt.split.title": "个人最好成绩",
   "speedrunigt.split.filter": "筛选",
   "speedrunigt.split.run_end": "运行结束"
