@@ -168,6 +168,7 @@ public abstract class MinecraftClientMixin {
         this.resourceManager.registerReloader(new SinglePreparationResourceReloader<Map<Identifier, List<Font>>>() {
             @Override
             protected Map<Identifier, List<Font>> prepare(ResourceManager manager, Profiler profiler) {
+                SpeedRunIGT.FONT_MAPS.clear();
                 try {
                     HashMap<Identifier, List<Font>> map = new HashMap<>();
 
