@@ -7,7 +7,6 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecimals;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.BackgroundHelper.ColorMixer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
@@ -24,6 +23,7 @@ import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Objects;
 
 public class TimerCustomizeScreen extends Screen {
 
@@ -43,6 +43,7 @@ public class TimerCustomizeScreen extends Screen {
     private ButtonWidget fontButton;
     private ButtonWidget backgroundButton;
     private ButtonWidget saveButton;
+    private ButtonWidget fontConfigButton;
 
     private int fontPage = 0;
     private final ArrayList<Identifier> availableFonts = new ArrayList<>();
@@ -51,17 +52,6 @@ public class TimerCustomizeScreen extends Screen {
     public TimerCustomizeScreen(Screen parent) {
         super(new TranslatableText("speedrunigt.option.timer_position"));
         this.parent = parent;
-    }
-
-    @Override
-    public void resize(MinecraftClient client, int width, int height) {
-        normalOptions.clear();
-        igtOptions.clear();
-        rtaOptions.clear();
-        fontOptions.clear();
-        availableFonts.clear();
-        fontSelectButtons.clear();
-        super.resize(client, width, height);
     }
 
     private int currentTab = 0;
@@ -89,10 +79,20 @@ public class TimerCustomizeScreen extends Screen {
         for (AbstractButtonWidget backgroundOption : backgroundOptions) {
             backgroundOption.visible = tab == 4;
         }
+
+        fontConfigButton.visible = tab == 3 && Objects.equals(drawer.getTimerFont().getNamespace(), SpeedRunIGT.MOD_ID);
     }
 
     @Override
     protected void init() {
+        normalOptions.clear();
+        igtOptions.clear();
+        rtaOptions.clear();
+        fontOptions.clear();
+        availableFonts.clear();
+        fontSelectButtons.clear();
+        backgroundOptions.clear();
+
         if (client != null) {
             FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) client).getFontManager();
             if (!fontManager.getFontStorages().containsKey(drawer.getTimerFont())) {
@@ -185,6 +185,8 @@ public class TimerCustomizeScreen extends Screen {
         addButton(new ButtonWidget(width / 2 + 31, height / 2 + 62, 58, 20, ScreenTexts.CANCEL, (ButtonWidget button) -> {
             if (client != null) client.openScreen(parent);
         }));
+
+        fontConfigButton.visible = false;
 
         openTab(0);
     }
@@ -520,6 +522,7 @@ public class TimerCustomizeScreen extends Screen {
                         for (ButtonWidget fontSelectButton : fontSelectButtons) fontSelectButton.active = true;
                         drawer.setTimerFont(availableFonts.get(c));
                         button.active = false;
+                        openFontPage();
                         changed = true;
                     }
                 }))
@@ -531,6 +534,7 @@ public class TimerCustomizeScreen extends Screen {
                         for (ButtonWidget fontSelectButton : fontSelectButtons) fontSelectButton.active = true;
                         drawer.setTimerFont(availableFonts.get(c));
                         button.active = false;
+                        openFontPage();
                         changed = true;
                     }
                 }))
@@ -542,6 +546,7 @@ public class TimerCustomizeScreen extends Screen {
                         for (ButtonWidget fontSelectButton : fontSelectButtons) fontSelectButton.active = true;
                         drawer.setTimerFont(availableFonts.get(c));
                         button.active = false;
+                        openFontPage();
                         changed = true;
                     }
                 }))
@@ -555,6 +560,9 @@ public class TimerCustomizeScreen extends Screen {
         fontOptions.addAll(fontSelectButtons);
 
 
+        fontConfigButton = addButton(new ButtonWidget(width / 2 + 88, 0, 50, 20, new LiteralText("Config"), (ButtonWidget button) -> {
+            if (client != null) client.openScreen(new FontConfigScreen(this, drawer.getTimerFont()));
+        } ));
         fontOptions.add(addButton(new ButtonWidget(width / 2 - 154, height / 2 - 80, 150, 20, new TranslatableText("speedrunigt.option.timer_position.font.open_folder"), (ButtonWidget button) -> Util.getOperatingSystem().open(SpeedRunIGT.FONT_PATH.toFile()))));
         fontOptions.add(addButton(new ButtonWidget(width / 2 + 4, height / 2 - 80, 150, 20, new TranslatableText("speedrunigt.option.timer_position.font.description"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://youtu.be/agBbiTQWj78"))));
         openFontPage();
@@ -565,15 +573,20 @@ public class TimerCustomizeScreen extends Screen {
         fontOptions.get(1).active = fontPage != Math.max((availableFonts.size() - 1) / 3, 0);
 
         int c = fontPage * 3;
+        int available = 0;
         for (int i = 0; i < fontSelectButtons.size(); i++) {
             ButtonWidget button = fontSelectButtons.get(i);
             if (c + i < availableFonts.size()) {
                 button.active = !availableFonts.get(c + i).toString().equals(drawer.getTimerFont().toString());
+                if (!button.active && Objects.equals(drawer.getTimerFont().getNamespace(), SpeedRunIGT.MOD_ID)) available = button.y;
                 button.visible = true;
             } else {
                 button.visible = false;
             }
         }
+
+        fontConfigButton.visible = currentTab == 3 && available != 0;
+        fontConfigButton.y = available;
     }
 
     public void initBackgroundButtons() {

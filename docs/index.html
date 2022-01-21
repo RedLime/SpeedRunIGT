@@ -231,9 +231,13 @@
 
 			$('#download-version-mod').html("");
 			if (targetVersions && targetVersions.length) {
-				targetVersions.sort((a, b) => b.tag_name.localeCompare(a.tag_name, undefined, { numeric: true, sensitivity: 'base' })).forEach(version => {
+				targetVersions.sort((a, b) => {
+                    const aVersion = a.assets.find(asset => asset.name.split('+')[1].replace('.jar', '') == selectVal).name.split('+')[0].split('-')[1];
+                    const bVersion = b.assets.find(asset => asset.name.split('+')[1].replace('.jar', '') == selectVal).name.split('+')[0].split('-')[1];
+                    return bVersion.localeCompare(aVersion, undefined, { numeric: true, sensitivity: 'base' })
+                }).forEach(version => {
 					const targetAsset = version.assets.find(asset => asset.name.split('+')[1].replace('.jar', '') == selectVal);
-					const option = $(`<option value='${targetAsset.browser_download_url}'>${version.tag_name} (${version.name.split(' -')[0]})</option>`);
+					const option = $(`<option value='${targetAsset.browser_download_url}'>${targetAsset.name.split('+')[0].split('-')[1]}</option>`);
 					$('#download-version-mod').append(option);
 				});
 				$('#download-button').removeClass('disabled');

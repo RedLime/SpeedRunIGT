@@ -7,6 +7,7 @@ import com.redlimerl.speedrunigt.gui.screen.SpeedRunIGTInfoScreen;
 import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
+import com.redlimerl.speedrunigt.utils.FontIdentifier;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.loader.api.FabricLoader;
@@ -20,6 +21,7 @@ import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 import java.nio.file.Path;
+import java.util.HashMap;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class SpeedRunIGT implements ClientModInitializer {
@@ -30,6 +32,7 @@ public class SpeedRunIGT implements ClientModInitializer {
 
     public static String DEBUG_DATA = "";
     public static String MOD_VERSION;
+    public static HashMap<Identifier, FontIdentifier> FONT_MAPS = new HashMap<>();
 
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     public static final Path WORLDS_PATH = FabricLoader.getInstance().getGameDir().resolve("saves");
