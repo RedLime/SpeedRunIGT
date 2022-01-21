@@ -1,7 +1,5 @@
 package com.redlimerl.speedrunigt.utils;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.mojang.blaze3d.platform.TextureUtil;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import net.minecraft.client.font.BlankFont;
@@ -36,13 +34,14 @@ public class FontUtils {
             Identifier fontIdentifier = new Identifier(SpeedRunIGT.MOD_ID, file.getName().toLowerCase(Locale.ROOT).replace(".ttf", "").replaceAll(" ", "_").replaceAll("[^a-z0-9/._-]", ""));
             ArrayList<Font> fontArrayList = new ArrayList<>();
 
+            FontConfigure fontConfigure;
             if (configFile != null && configFile.exists()) {
-                FontConfigure fontConfigure = FontConfigure.fromJson(FileUtils.readFileToString(configFile, StandardCharsets.UTF_8));
-                fontArrayList.add(new TrueTypeFont(TrueTypeFont.getSTBTTFontInfo(byteBuffer),
-                        fontConfigure.size, fontConfigure.oversample, fontConfigure.shift[0], fontConfigure.shift[1], fontConfigure.skip));
+                fontConfigure = FontConfigure.fromJson(FileUtils.readFileToString(configFile, StandardCharsets.UTF_8));
             } else {
-                fontArrayList.add(new TrueTypeFont(TrueTypeFont.getSTBTTFontInfo(byteBuffer), 11f, 6f, 0, 0, ""));
+                fontConfigure = FontConfigure.create();
             }
+            fontArrayList.add(new TrueTypeFont(TrueTypeFont.getSTBTTFontInfo(byteBuffer), fontConfigure.size, fontConfigure.oversample, fontConfigure.shift[0], fontConfigure.shift[1], fontConfigure.skip));
+            SpeedRunIGT.FONT_MAPS.put(fontIdentifier, new FontIdentifier(file, fontIdentifier, fontConfigure));
 
             fontArrayList.add(new BlankFont());
 

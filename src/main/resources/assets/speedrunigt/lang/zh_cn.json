@@ -63,5 +63,9 @@
   "speedrunigt.message.update.unknown": "获取最新版本失败",
   "speedrunigt.message.update.updated": "您使用的是最新版本。",
   "speedrunigt.message.update.outdated": "已找到新版本。",
-  "speedrunigt.message.update_found": "SpeedRunIGT有新版啦！"
+  "speedrunigt.message.update_found": "SpeedRunIGT有新版啦！",
+  "speedrunigt.font.apply_and_save": "应用并保存",
+  "speedrunigt.font.size": "尺寸",
+  "speedrunigt.font.oversample": "过采样",
+  "speedrunigt.font.oversample.description": "正常咔嗒声：±0.1 调整 / 移位咔嗒声：±1.0 调整"
 }

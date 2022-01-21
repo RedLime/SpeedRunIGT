@@ -63,5 +63,9 @@
   "speedrunigt.message.update.unknown": "Failed to get latest version of information.",
   "speedrunigt.message.update.updated": "You are using the latest version.",
   "speedrunigt.message.update.outdated": "A new version has been found.",
-  "speedrunigt.message.update_found": "A new version of SpeedRunIGT has been found! Check the 'SpeedRunIGT Info'"
+  "speedrunigt.message.update_found": "A new version of SpeedRunIGT has been found! Check the 'SpeedRunIGT Info'",
+  "speedrunigt.font.apply_and_save": "Apply & Save",
+  "speedrunigt.font.size": "Size",
+  "speedrunigt.font.oversample": "Oversampling",
+  "speedrunigt.font.oversample.description": "Click with, Normal: ±0.1 / Press Shift: ±1.0"
 }
