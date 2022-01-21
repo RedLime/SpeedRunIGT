@@ -28,6 +28,8 @@ Simply, the **Timer** Mod for Minecraft Speedrun
 - Launch Minecraft
 
 ## Support Versions
+- [Differences each versions](https://github.com/RedLime/SpeedRunIGT/blob/1.16.1/Differences_each_versions.md)
+
 Legacy: No longer support new feature update [Last version is 2.14](https://github.com/RedLime/SpeedRunIGT/releases/tag/2.15.3)
 
 LF: Versions that should use [Legacy Fabric](https://github.com/Legacy-Fabric)
