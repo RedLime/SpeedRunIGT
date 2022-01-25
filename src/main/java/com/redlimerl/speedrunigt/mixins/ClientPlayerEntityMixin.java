@@ -118,6 +118,13 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                 InGameTimer.complete();
             }
         }
+
+        //Stack of Lime Wool
+        if (timer.getCategory() == RunCategory.STACK_OF_LIME_WOOL) {
+            for (ItemStack itemStack : this.inventory.main) {
+                if (itemStack != null && itemStack.getItem() == Items.LIME_WOOL && itemStack.getCount() == 64) InGameTimer.complete();
+            }
+        }
     }
 
     @Inject(at = @At("HEAD"), method = "tick")
