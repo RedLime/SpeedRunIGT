@@ -88,7 +88,11 @@ public class SpeedRunOptions {
     public static final OptionArgument<RunCategory> TIMER_CATEGORY = new OptionArgument<RunCategory>(new Identifier(SpeedRunIGT.MOD_ID, "timer_category"), RunCategory.ANY) {
         @Override
         public RunCategory valueFromString(String string) {
-            return RunCategory.valueOf(string);
+            try {
+                return RunCategory.valueOf(string);
+            } catch (IllegalArgumentException exception) {
+                return RunCategory.ANY;
+            }
         }
 
         @Override
