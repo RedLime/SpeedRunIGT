@@ -182,6 +182,7 @@
 
 		var versionInfo = null;
 		const mcVersions = [];
+		let searchParams = new URLSearchParams(window.location.search);
 
 		//$("#download-loading").hide();
 		$("#download-list").hide();
@@ -207,6 +208,11 @@
 				});
 
 				$("#download-list").show();
+				if (searchParams.has('mcversion') && mcVersions.includes(searchParams.get('mcversion'))) {
+					let param = searchParams.get('mcversion');
+					$('#download-version-mc').val(param).change();
+					$('html,body').animate({scrollTop: $('#one').offset().top});
+				}
 				refreshModVersions();
 			} else {
 				$("#download-not-found").show();
