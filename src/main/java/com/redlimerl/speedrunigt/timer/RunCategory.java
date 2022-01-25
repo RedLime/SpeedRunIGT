@@ -13,6 +13,7 @@ public enum RunCategory {
     KILL_ELDER_GUARDIAN("mcce#Kill_Bosses"),
     ALL_ADVANCEMENTS("mc#All_Advancements"),
     HALF("mcce#Half"),
+    POGLOOT_QUATER("pogloot_ce#Quater"),
     HOW_DID_WE_GET_HERE("mcce#How_Did_We_Get_Here"),
     HERO_OF_VILLAGE("mcce#Hero_of_the_Village"),
     ARBALISTIC("mcce#Arbalistic"),
@@ -22,7 +23,8 @@ public enum RunCategory {
     ALL_MINERALS("mcce#All_Minerals"),
     FULL_IA_15_LVL("mcce#Full_Iron_Armor_and_15_Levels"),
     ALL_WORKSTATIONS("mcce#All_Workstations"),
-    FULL_INV("mcce#Full_Inventory");
+    FULL_INV("mcce#Full_Inventory"),
+    STACK_OF_LIME_WOOL("mcce#Stack_of_Lime_Wool");
 
     String code;
     RunCategory(String code) {

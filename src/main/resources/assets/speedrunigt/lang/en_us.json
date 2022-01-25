@@ -54,6 +54,8 @@
   "speedrunigt.option.timer_category.all_workstations": "All Workstations",
   "speedrunigt.option.timer_category.full_inv": "Full Inventory",
   "speedrunigt.option.timer_category.custom": "Custom (for Co-op, etc)",
+  "speedrunigt.option.timer_category.stack_of_lime_wool": "Stack of Lime Wool",
+  "speedrunigt.option.timer_category.pogloot_quater": "Quater (Pogloot)",
   "speedrunigt.option.hide_timer_in_options": "Hide Timer in Options",
   "speedrunigt.option.hide_timer_in_debugs": "Hide Timer in Debugs",
   "speedrunigt.option.waiting_first_input": "Start at First Input",

@@ -71,6 +71,11 @@ public abstract class ClientAdvancementManagerMixin {
         if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategory.HALF) {
             if (getCompleteAdvancementsCount() >= 40) InGameTimer.complete();
         }
+
+        //(PogLoot) Quater
+        if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategory.POGLOOT_QUATER) {
+            if (getCompleteAdvancementsCount() >= 20) InGameTimer.complete();
+        }
     }
 
     private int getCompleteAdvancementsCount() {
