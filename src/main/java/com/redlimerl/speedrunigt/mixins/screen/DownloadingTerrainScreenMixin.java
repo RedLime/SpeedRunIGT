@@ -18,7 +18,7 @@ public abstract class DownloadingTerrainScreenMixin extends Screen {
 
     @ModifyArg(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/DownloadingTerrainScreen;drawCenteredText(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/text/Text;III)V"), index = 2)
     public Text onRender(Text string) {
-        if (InGameTimer.getInstance().isPaused()) {
+        if (InGameTimer.getInstance().isPaused() && InGameTimer.getInstance().isStarted()) {
             return new LiteralText(string.getString() + " (#" + InGameTimer.getInstance().getPauseCount() + ")");
         } else {
             return string;
