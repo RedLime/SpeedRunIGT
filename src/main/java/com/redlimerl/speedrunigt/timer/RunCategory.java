@@ -22,7 +22,8 @@ public enum RunCategory {
     ALL_MINERALS("mcce#All_Minerals"),
     FULL_IA_15_LVL("mcce#Full_Iron_Armor_and_15_Levels"),
     ALL_WORKSTATIONS("mcce#All_Workstations"),
-    FULL_INV("mcce#Full_Inventory");
+    FULL_INV("mcce#Full_Inventory"),
+    STACK_OF_LIME_WOOL("mcce#Stack_of_Lime_Wool");
 
     String code;
     RunCategory(String code) {
