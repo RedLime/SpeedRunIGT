@@ -5,172 +5,201 @@
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 -->
 <html>
+
 <head>
 	<title>SpeedRunIGT for MCSR</title>
-	<link rel="shortcut icon" type="image/x-icon" href="https://raw.githubusercontent.com/RedLime/SpeedRunIGT/1.16.1/src/main/resources/assets/speedrunigt/icon.png">
+	<link rel="shortcut icon" type="image/x-icon"
+		href="https://raw.githubusercontent.com/RedLime/SpeedRunIGT/1.16.1/src/main/resources/assets/speedrunigt/icon.png">
 	<meta charset="utf-8">
 	<meta name="author" content="RedLime">
 	<meta name="description" content="Powerful Minecraft Speedrun Timer Fabric Mod">
-	<meta property="og:image" content="https://raw.githubusercontent.com/RedLime/SpeedRunIGT/1.16.1/src/main/resources/assets/speedrunigt/icon.png">
+	<meta property="og:image"
+		content="https://raw.githubusercontent.com/RedLime/SpeedRunIGT/1.16.1/src/main/resources/assets/speedrunigt/icon.png">
 	<meta property="og:description" content="Powerful Minecraft Speedrun Timer Fabric Mod">
 	<meta property="og:title" content="SpeedRunIGT for MCSR">
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 	<link rel="stylesheet" href="assets/css/main.css" />
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
-	<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	<noscript>
+		<link rel="stylesheet" href="assets/css/noscript.css" />
+	</noscript>
 </head>
+
 <body class="is-preload">
 
-<!-- Header -->
-<header id="header">
-	<div class="content">
-		<h1><a>SpeedRunIGT</a></h1>
-		<p>Powerful Minecraft Speedrun Timer Mod<br />
-			with Fabric Loader, by RedLime<br /></p>
-		<ul class="actions">
-			<li><a href="#one" class="button primary icon solid fa-download scrolly">Download</a></li>
-			<li><a target="_blank" href="https://github.com/RedLime/SpeedRunIGT" class="button icon solid fa-code">Source code</a></li>
-		</ul>
-	</div>
-	<div class="image">
-		<img style="image-rendering: pixelated; width: 100%" src="https://raw.githubusercontent.com/RedLime/SpeedRunIGT/1.16.1/src/main/resources/assets/speedrunigt/icon.png" alt="" />
-	</div>
-</header>
-
-<!-- One -->
-<section id="one" class="wrapper style2 special">
-	<div id="download-loading">
-		<header class="major">
-			<h2>Finding SpeedRunIGT versions...</h2>
-		</header>
-		<ul class="icons major">
-			<li><span class="icon solid fa-sync"><span class="label">Processing</span></span></li>
-		</ul>
-	</div>
-	<div id="download-not-found">
-		<header class="major">
-			<h2>Couldn't find version of SpeedRunIGT. :(</h2>
-		</header>
-		<ul class="icons major">
-			<li><span class="icon solid fa-exclamation-triangle"><span class="label">Error</span></span></li>
-		</ul>
-	</div>
-	<div id="download-list" class="inner">
-		<header class="major">
-			<h2>Download SpeedRunIGT</h2>
-		</header>
+	<!-- Header -->
+	<header id="header">
 		<div class="content">
-			<div class="actions">
-				<label>Minecraft Version</label>
-				<select id="download-version-mc" style="width: 25%; margin: 0 auto">
-				</select>
-			</div>
-			<br>
-			<div class="actions">
-				<label>Mod Version</label>
-				<select id="download-version-mod" style="width: 25%; margin: 0 auto">
-				</select>
-			</div>
-			<br>
-			<a id="download-button" class="button primary icon solid fa-download" onclick="downloadMod()">Download</a>
-			<br>
-			<br>
-			<a id="changelog-button" class="button icon solid as fa-clipboard-list" onclick="showChangeLog()">ChangeLog</a>
-			<a class="button icon solid as fa-donate" href="https://ko-fi.com/redlimerl" target="_blank">Donate</a>
-			<a class="button icon solid as fs-code-branch" href="https://github.com/RedLime/SpeedRunIGT/blob/1.16.1/Differences_each_versions.md" target="_blank">Differences</a>
+			<h1><a>SpeedRunIGT</a></h1>
+			<p>Powerful Minecraft Speedrun Timer Mod<br />
+				with Fabric Loader, by RedLime<br /></p>
+			<ul class="actions">
+				<li><a href="#one" class="button primary icon solid fa-download scrolly">Download</a></li>
+				<li><a target="_blank" href="https://github.com/RedLime/SpeedRunIGT"
+						class="button icon solid fa-code">Source code</a></li>
+			</ul>
 		</div>
-	</div>
-</section>
-
-<!-- Two -->
-<section id="two" class="wrapper">
-	<div class="inner alt">
-		<section class="spotlight">
-			<div class="image"><img loading="lazy" class='clickable-img' src="https://i.imgur.com/TrlRRa7.png" alt="" /></div>
-			<div class="content">
-				<h3>Auto Start, Stop, Pause the timer</h3>
-				<p>No need to press hotkeys to start or end a run every time. (but if you want, you can!) The timer starts and stops automatically.</p>
-			</div>
-		</section>
-		<section class="spotlight">
-			<div class="image"><img loading="lazy" class='clickable-img' src="https://i.imgur.com/HQnGHv9.png" alt="" /></div>
-			<div class="content">
-				<h3>Customize Timer</h3>
-				<p>Timer position, size, and color, these are all customizable.</p>
-			</div>
-		</section>
-		<section class="spotlight">
-			<div class="image"><img loading="lazy" class='clickable-img' src="https://i.imgur.com/kAaZRFe.png" alt="" /></div>
-			<div class="content">
-				<h3>Support Many Category</h3>
-				<p>It supports many categories, and if don't find the category you want, you can use the Custom Category to reset and start the timer with a hotkey.</p>
-			</div>
-		</section>
-		<section class="spotlight">
-			<div class="image"><img loading="lazy" class='clickable-img' src="https://i.imgur.com/WAIHvpT.png" alt="" /></div>
-			<div class="content">
-				<h3>Many Timer Options</h3>
-				<p>You can set when the timer starts, when the timer is displayed or something.</p>
-			</div>
-		</section>
-		<section class="spotlight">
-			<div class="image"><img loading="lazy" class='clickable-img' src="https://i.imgur.com/er50rAJ.png" alt="" /></div>
-			<div class="content">
-				<h3>Support Custom Font by TTF</h3>
-				<p>You can apply a font to timer by TTF(TrueType Font)</p>
-			</div>
-		</section>
-	</div>
-</section>
-
-<!-- Three -->
-<section id="three" class="wrapper style2 special">
-	<header class="major">
-		<h2>Users timer customization</h2>
-	</header>
-	<div class="box alt" style="margin: 0 10vw">
-		<div class="row gtr-uniform">
-			<div class="col-12"></div>
-			<div class="col-4"><span class="image fit"><img loading="lazy" class='clickable-img' src="https://i.imgur.com/8tyrTwQ.png" alt="" />Default</span></div>
-			<div class="col-4"><span class="image fit"><img loading="lazy" class='clickable-img' src="https://i.imgur.com/VXReaQO.png" alt="" />by Outcast</span></div>
-			<div class="col-4"><span class="image fit"><img loading="lazy" class='clickable-img' src="https://i.imgur.com/3LKI3SH.png" alt="" />by dwoh</span></div>
-			<div class="col-4"><span class="image fit"><img loading="lazy" class='clickable-img' src="https://i.imgur.com/WK8LqDU.png" alt="" />by Felix</span></div>
-			<div class="col-4"><span class="image fit"><img loading="lazy" class='clickable-img' src="https://i.imgur.com/ab5pmnr.png" alt="" />by mollyyxy</span></div>
-			<div class="col-4"><span class="image fit"><img loading="lazy" class='clickable-img' src="https://i.imgur.com/nhf4p6H.png" alt="" />by Erikfzf</span></div>
+		<div class="image">
+			<img style="image-rendering: pixelated; width: 100%"
+				src="https://raw.githubusercontent.com/RedLime/SpeedRunIGT/1.16.1/src/main/resources/assets/speedrunigt/icon.png"
+				alt="" />
 		</div>
-	</div>
-</section>
-
-<!-- Three -->
-<section id="four" class="wrapper style1 special">
-	<header class="major">
-		<h2>Did you have any feedback or report?</h2>
-		<p>Please create an issue on Github. I'll take care of it!</p>
 	</header>
-	<ul class="actions special">
-		<li><a href="https://github.com/RedLime/SpeedRunIGT/issues" target="_blank" class="button">Issues</a></li>
-	</ul>
-</section>
+
+	<!-- One -->
+	<section id="one" class="wrapper style2 special">
+		<div id="download-loading">
+			<header class="major">
+				<h2>Finding SpeedRunIGT versions...</h2>
+			</header>
+			<ul class="icons major">
+				<li><span class="icon solid fa-sync"><span class="label">Processing</span></span></li>
+			</ul>
+		</div>
+		<div id="download-not-found">
+			<header class="major">
+				<h2>Couldn't find version of SpeedRunIGT. :(</h2>
+			</header>
+			<ul class="icons major">
+				<li><span class="icon solid fa-exclamation-triangle"><span class="label">Error</span></span></li>
+			</ul>
+		</div>
+		<div id="download-list" class="inner">
+			<header class="major">
+				<h2>Download SpeedRunIGT</h2>
+			</header>
+			<div class="content">
+				<div class="actions">
+					<label>Minecraft Version</label>
+					<select id="download-version-mc" style="width: 25%; margin: 0 auto">
+					</select>
+				</div>
+				<br>
+				<div class="actions">
+					<label>Mod Version</label>
+					<select id="download-version-mod" style="width: 25%; margin: 0 auto">
+					</select>
+				</div>
+				<br>
+				<a id="download-button" class="button primary icon solid fa-download"
+					onclick="downloadMod()">Download</a>
+				<br>
+				<br>
+				<a id="changelog-button" class="button icon solid as fa-clipboard-list"
+					onclick="showChangeLog()">ChangeLog</a>
+				<a class="button icon solid as fa-donate" href="https://ko-fi.com/redlimerl" target="_blank">Donate</a>
+				<a class="button icon solid as fs-code-branch"
+					href="https://github.com/RedLime/SpeedRunIGT/blob/1.16.1/Differences_each_versions.md"
+					target="_blank">Differences</a>
+			</div>
+		</div>
+	</section>
+
+	<!-- Two -->
+	<section id="two" class="wrapper">
+		<div class="inner alt">
+			<section class="spotlight">
+				<div class="image"><img loading="lazy" class='clickable-img' src="https://i.imgur.com/TrlRRa7.png"
+						alt="" /></div>
+				<div class="content">
+					<h3>Auto Start, Stop, Pause the timer</h3>
+					<p>No need to press hotkeys to start or end a run every time. (but if you want, you can!) The timer
+						starts and stops automatically.</p>
+				</div>
+			</section>
+			<section class="spotlight">
+				<div class="image"><img loading="lazy" class='clickable-img' src="https://i.imgur.com/HQnGHv9.png"
+						alt="" /></div>
+				<div class="content">
+					<h3>Customize Timer</h3>
+					<p>Timer position, size, and color, these are all customizable.</p>
+				</div>
+			</section>
+			<section class="spotlight">
+				<div class="image"><img loading="lazy" class='clickable-img' src="https://i.imgur.com/kAaZRFe.png"
+						alt="" /></div>
+				<div class="content">
+					<h3>Support Many Category</h3>
+					<p>It supports many categories, and if don't find the category you want, you can use the Custom
+						Category to reset and start the timer with a hotkey.</p>
+				</div>
+			</section>
+			<section class="spotlight">
+				<div class="image"><img loading="lazy" class='clickable-img' src="https://i.imgur.com/WAIHvpT.png"
+						alt="" /></div>
+				<div class="content">
+					<h3>Many Timer Options</h3>
+					<p>You can set when the timer starts, when the timer is displayed or something.</p>
+				</div>
+			</section>
+			<section class="spotlight">
+				<div class="image"><img loading="lazy" class='clickable-img' src="https://i.imgur.com/er50rAJ.png"
+						alt="" /></div>
+				<div class="content">
+					<h3>Support Custom Font by TTF</h3>
+					<p>You can apply a font to timer by TTF(TrueType Font)</p>
+				</div>
+			</section>
+		</div>
+	</section>
+
+	<!-- Three -->
+	<section id="three" class="wrapper style2 special">
+		<header class="major">
+			<h2>Users timer customization</h2>
+		</header>
+		<div class="box alt" style="margin: 0 10vw">
+			<div class="row gtr-uniform">
+				<div class="col-12"></div>
+				<div class="col-4"><span class="image fit"><img loading="lazy" class='clickable-img'
+							src="https://i.imgur.com/8tyrTwQ.png" alt="" />Default</span></div>
+				<div class="col-4"><span class="image fit"><img loading="lazy" class='clickable-img'
+							src="https://i.imgur.com/VXReaQO.png" alt="" />by Outcast</span></div>
+				<div class="col-4"><span class="image fit"><img loading="lazy" class='clickable-img'
+							src="https://i.imgur.com/3LKI3SH.png" alt="" />by dwoh</span></div>
+				<div class="col-4"><span class="image fit"><img loading="lazy" class='clickable-img'
+							src="https://i.imgur.com/WK8LqDU.png" alt="" />by Felix</span></div>
+				<div class="col-4"><span class="image fit"><img loading="lazy" class='clickable-img'
+							src="https://i.imgur.com/ab5pmnr.png" alt="" />by mollyyxy</span></div>
+				<div class="col-4"><span class="image fit"><img loading="lazy" class='clickable-img'
+							src="https://i.imgur.com/nhf4p6H.png" alt="" />by Erikfzf</span></div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Three -->
+	<section id="four" class="wrapper style1 special">
+		<header class="major">
+			<h2>Did you have any feedback or report?</h2>
+			<p>Please create an issue on Github. I'll take care of it!</p>
+		</header>
+		<ul class="actions special">
+			<li><a href="https://github.com/RedLime/SpeedRunIGT/issues" target="_blank" class="button">Issues</a></li>
+		</ul>
+	</section>
 
 
-<!-- Footer -->
-<footer id="footer">
-	<ul class="icons">
-		<li><a href="https://www.youtube.com/channel/UCxZDE9A8qewsM9BWNWj9nVg" target="_blank" class="icon brands fa-youtube"><span class="label">Youtube</span></a></li>
-		<li><a href="https://twitter.com/RedLimeRL" target="_blank" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-		<li><a href="https://github.com/RedLime" target="_blank" class="icon brands fa-github"><span class="label">Github</span></a></li>
-	</ul>
-	<p class="copyright">&copy; 2022 RedLime. Credits: <a href="http://html5up.net">HTML5 UP</a></p>
-</footer>
+	<!-- Footer -->
+	<footer id="footer">
+		<ul class="icons">
+			<li><a href="https://www.youtube.com/channel/UCxZDE9A8qewsM9BWNWj9nVg" target="_blank"
+					class="icon brands fa-youtube"><span class="label">Youtube</span></a></li>
+			<li><a href="https://twitter.com/RedLimeRL" target="_blank" class="icon brands fa-twitter"><span
+						class="label">Twitter</span></a></li>
+			<li><a href="https://github.com/RedLime" target="_blank" class="icon brands fa-github"><span
+						class="label">Github</span></a></li>
+		</ul>
+		<p class="copyright">&copy; 2022 RedLime. Credits: <a href="http://html5up.net">HTML5 UP</a></p>
+	</footer>
 
-<!-- Scripts -->
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/jquery.scrolly.min.js"></script>
-<script src="assets/js/browser.min.js"></script>
-<script src="assets/js/breakpoints.min.js"></script>
-<script src="assets/js/util.js"></script>
-<script src="assets/js/main.js"></script>
+	<!-- Scripts -->
+	<script src="assets/js/jquery.min.js"></script>
+	<script src="assets/js/jquery.scrolly.min.js"></script>
+	<script src="assets/js/browser.min.js"></script>
+	<script src="assets/js/breakpoints.min.js"></script>
+	<script src="assets/js/util.js"></script>
+	<script src="assets/js/main.js"></script>
 
 </body>
 <style>
@@ -180,127 +209,125 @@
 </style>
 <script>
 
-		var versionInfo = null;
-		const mcVersions = [];
-		let searchParams = new URLSearchParams(window.location.search);
+	let versionInfo = null;
+	const mcVersions = [];
+	let availableModAssets = [];
+	let searchParams = new URLSearchParams(window.location.search);
 
-		//$("#download-loading").hide();
-		$("#download-list").hide();
-		$("#download-not-found").hide();
+	//$("#download-loading").hide();
+	$("#download-list").hide();
+	$("#download-not-found").hide();
 
-		$.getJSON('https://api.github.com/repos/RedLime/SpeedRunIGT/releases', (data, status, xhr) => {
-			$("#download-loading").hide();
-			if (status && status === 'success') {
-				versionInfo = data.filter(version => !version.prerelease);
+	$.getJSON('https://api.github.com/repos/RedLime/SpeedRunIGT/releases', (data, status, xhr) => {
+		$("#download-loading").hide();
+		if (status && status === 'success') {
+			versionInfo = data.filter(version => !version.prerelease);
 
-				versionInfo.forEach(element => {
-					element.assets.forEach(asset => {
-						const versionName = asset.name.split('+')[1].replace('.jar', '');
-						if (!mcVersions.includes(versionName)) mcVersions.push(versionName);
-					});
+			versionInfo.forEach(element => {
+				element.assets.forEach(asset => {
+					const versionName = asset.name.split('+')[1].replace('.jar', '');
+					if (!mcVersions.includes(versionName)) mcVersions.push(versionName);
 				});
+			});
 
-				mcVersions.sort((a, b) => {
-					return (b == '1.16.1') - (a == '1.16.1') || (b == '1.17.1') - (a == '1.17.1') || a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
-				}).forEach(element => {
-					const option = $(`<option value='${element}'>${element}</option>`);
-					$('#download-version-mc').append(option);
-				});
+			mcVersions.sort((a, b) => {
+				return (b == '1.16.1') - (a == '1.16.1') || (b == '1.17.1') - (a == '1.17.1') || a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
+			}).forEach(element => {
+				const option = $(`<option value='${element}'>${element}</option>`);
+				$('#download-version-mc').append(option);
+			});
 
-				$("#download-list").show();
-				if (searchParams.has('mcversion') && mcVersions.includes(searchParams.get('mcversion'))) {
-					let param = searchParams.get('mcversion');
-					$('#download-version-mc').val(param).change();
-					$('html,body').animate({scrollTop: $('#one').offset().top});
-				}
-				refreshModVersions();
-			} else {
-				$("#download-not-found").show();
+			$("#download-list").show();
+			if (searchParams.has('mcversion') && mcVersions.includes(searchParams.get('mcversion'))) {
+				let param = searchParams.get('mcversion');
+				$('#download-version-mc').val(param).change();
+				$('html,body').animate({ scrollTop: $('#one').offset().top });
 			}
-		}).catch(e => {
-			$("#download-loading").hide();
-			$("#download-not-found").show();
-		});
-
-		$('#download-version-mc').on('change', function () {
 			refreshModVersions();
-		});
+		} else {
+			$("#download-not-found").show();
+		}
+	}).catch(e => {
+		$("#download-loading").hide();
+		$("#download-not-found").show();
+	});
 
-		$('#download-version-mod').on('change', function () {
-			$('#download-count').text("");
-			const selectVal = $("#download-version-mod option:selected").val();
-			const version = versionInfo.forEach(version => {
-				if (version.prerelease) return false;
-				for (const asset of version.assets) {
-					if (asset.browser_download_url == selectVal) {
-						$('#download-button').text(`Downloads (${asset.download_count})`);
-					}
-				}
-				return false;
-			});
-		});
+	$('#download-version-mc').on('change', function () {
+		refreshModVersions();
+	});
 
-		const refreshModVersions = () => {
-			const selectVal = $("#download-version-mc option:selected").val();
-			const targetVersions = versionInfo.filter(version => {
-				if (version.prerelease) return false;
-				for (const asset of version.assets) {
-					if (asset.name.split('+')[1].replace('.jar', '') == selectVal) return true;
-				}
-				return false;
-			});
-
-			$('#download-version-mod').html("");
-			if (targetVersions && targetVersions.length) {
-				targetVersions.sort((a, b) => {
-                    const aVersion = a.assets.find(asset => asset.name.split('+')[1].replace('.jar', '') == selectVal).name.split('+')[0].split('-')[1];
-                    const bVersion = b.assets.find(asset => asset.name.split('+')[1].replace('.jar', '') == selectVal).name.split('+')[0].split('-')[1];
-                    return bVersion.localeCompare(aVersion, undefined, { numeric: true, sensitivity: 'base' })
-                }).forEach(version => {
-					const targetAsset = version.assets.find(asset => asset.name.split('+')[1].replace('.jar', '') == selectVal);
-					const option = $(`<option value='${targetAsset.browser_download_url}'>${targetAsset.name.split('+')[0].split('-')[1]}</option>`);
-					$('#download-version-mod').append(option);
-					$('#download-version-mod').change();
-				});
-				$('#download-button').removeClass('disabled');
-			} else {
-				$('#download-button').addClass('disabled');
+	$('#download-version-mod').on('change', function () {
+		$('#download-count').text("");
+		const selectVal = $("#download-version-mod option:selected").val();
+		availableModAssets.forEach(asset => {
+			if (asset.browser_download_url == selectVal) {
+				$('#download-button').text(`Downloads (${asset.download_count})`);
 			}
-		}
+		});
+	});
 
-		const downloadMod = () => {
-			const selectVal = $("#download-version-mod option:selected").val();
-			if (selectVal) window.open(selectVal, '_blank');
-		}
-
-		const showChangeLog = () => {
-			const selectVal = $("#download-version-mod option:selected").val();
-
-			const version = versionInfo.find(version => {
-				if (version.prerelease) return false;
+	const refreshModVersions = () => {
+		availableModAssets = [];
+		const selectVal = $("#download-version-mc option:selected").val();
+		versionInfo.forEach(version => {
+			if (!version.prerelease) {
 				for (const asset of version.assets) {
-					if (asset.browser_download_url == selectVal) return true;
+					if (asset.name.split('+')[1].replace('.jar', '') == selectVal) availableModAssets.push(asset);
 				}
-				return false;
+			}
+		});
+
+		$('#download-version-mod').html("");
+		if (availableModAssets.length) {
+			availableModAssets.sort((a, b) => {
+				const aVersion = a.name.split('+')[0].split('-')[1];
+				const bVersion = b.name.split('+')[0].split('-')[1];
+				return bVersion.localeCompare(aVersion, undefined, { numeric: true, sensitivity: 'base' })
+			}).forEach(asset => {
+				const option = $(`<option value='${asset.browser_download_url}'>${asset.name.split('+')[0].split('-')[1]}</option>`);
+				$('#download-version-mod').append(option);
+				$('#download-version-mod').change();
 			});
-
-			const log = version.body.split('\n').filter(line => !line.startsWith('### ')).join('\n');
-            const converter = new showdown.Converter().makeHtml(log);
-
-            Swal.fire({
-                title: version.tag_name + " (" + version.name.split(' -')[0] + ")",
-                html: converter
-            });
+			$('#download-button').removeClass('disabled');
+		} else {
+			$('#download-button').addClass('disabled');
 		}
+	}
 
-		$('.clickable-img').click((e) => {
-			Swal.fire({
-				imageUrl: $(e.target).attr("src"),
-				imageAlt: 'image',
-				width: window.innerWidth * 0.7,
-				imageWidth: window.innerWidth * 0.65
-			});
-		})
+	const downloadMod = () => {
+		const selectVal = $("#download-version-mod option:selected").val();
+		if (selectVal) window.open(selectVal, '_blank');
+	}
 
-	</script>
+	const showChangeLog = () => {
+		const selectVal = $("#download-version-mod option:selected").val();
+
+		const version = versionInfo.find(version => {
+			if (version.prerelease) return false;
+			for (const asset of version.assets) {
+				if (asset.browser_download_url == selectVal) return true;
+			}
+			return false;
+		});
+
+		const log = version.body.split('\n').filter(line => !line.startsWith('### ')).join('\n');
+		const converter = new showdown.Converter().makeHtml(log);
+
+		Swal.fire({
+			title: version.tag_name + " (" + version.name.split(' -')[0] + ")",
+			html: converter
+		});
+	}
+
+	$('.clickable-img').click((e) => {
+		Swal.fire({
+			imageUrl: $(e.target).attr("src"),
+			imageAlt: 'image',
+			width: window.innerWidth * 0.7,
+			imageWidth: window.innerWidth * 0.65
+		});
+	})
+
+</script>
+
 </html>
