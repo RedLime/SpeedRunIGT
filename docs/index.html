@@ -174,10 +174,10 @@
 
 </body>
 <style>
-		.clickable-img {
-			cursor: pointer;
-		}
-	</style>
+	.clickable-img {
+		cursor: pointer;
+	}
+</style>
 <script>
 
 		var versionInfo = null;
@@ -226,6 +226,20 @@
 			refreshModVersions();
 		});
 
+		$('#download-version-mod').on('change', function () {
+			$('#download-count').text("");
+			const selectVal = $("#download-version-mod option:selected").val();
+			const version = versionInfo.forEach(version => {
+				if (version.prerelease) return false;
+				for (const asset of version.assets) {
+					if (asset.browser_download_url == selectVal) {
+						$('#download-button').text(`Downloads (${asset.download_count})`);
+					}
+				}
+				return false;
+			});
+		});
+
 		const refreshModVersions = () => {
 			const selectVal = $("#download-version-mc option:selected").val();
 			const targetVersions = versionInfo.filter(version => {
@@ -246,6 +260,7 @@
 					const targetAsset = version.assets.find(asset => asset.name.split('+')[1].replace('.jar', '') == selectVal);
 					const option = $(`<option value='${targetAsset.browser_download_url}'>${targetAsset.name.split('+')[0].split('-')[1]}</option>`);
 					$('#download-version-mod').append(option);
+					$('#download-version-mod').change();
 				});
 				$('#download-button').removeClass('disabled');
 			} else {
