@@ -20,7 +20,7 @@ public class GameMenuScreenMixin extends Screen {
             slice = @Slice(from = @At("HEAD"), to = @At("TAIL")),
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/GameMenuScreen;drawCenteredString(Lnet/minecraft/client/font/TextRenderer;Ljava/lang/String;III)V"), index = 1)
     public String onRender(String string) {
-        if (InGameTimer.getInstance().isPaused()) {
+        if (InGameTimer.getInstance().isPaused() && InGameTimer.getInstance().isStarted()) {
             return string + " (#" + InGameTimer.getInstance().getPauseCount() + ")";
         } else {
             return string;
