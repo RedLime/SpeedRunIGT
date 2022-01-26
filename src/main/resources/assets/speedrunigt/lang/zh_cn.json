@@ -69,5 +69,5 @@
   "speedrunigt.font.apply_and_save": "应用并保存",
   "speedrunigt.font.size": "尺寸",
   "speedrunigt.font.oversample": "过采样",
-  "speedrunigt.font.oversample.description": "正常咔嗒声：±0.1 调整 / 移位咔嗒声：±1.0 调整"
+  "speedrunigt.font.oversample.description": "点击，默认：±0.1 / 按下Shift：±1.0"
 }
