@@ -71,7 +71,7 @@ can I donate for u : [here is my ko-fi](https://ko-fi.com/redlimerl)
 
 ## Contributors
 - [Void_X_Walker](https://github.com/VoidXWalker) - Porting 1.8.9 [[Support]](https://ko-fi.com/voidxwalker)
-- [xiaolin](https://github.com/liuzhengjin) - Add Chinese language
+- [xiaolin](https://github.com/liuzhengjin), [Crsuh2er0](https://github.com/Crsuh2er0) - Support Chinese language
 - [Gregor0410](https://github.com/Gregor0410) - English texts grammar correction
 
 ## For devs
