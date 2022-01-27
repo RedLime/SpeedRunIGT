@@ -10,4 +10,7 @@ public interface MinecraftClientAccessor {
 
     @Accessor("fontManager")
     FontManager getFontManager();
+
+    @Accessor("attackCooldown")
+    int getAttackCooldown();
 }

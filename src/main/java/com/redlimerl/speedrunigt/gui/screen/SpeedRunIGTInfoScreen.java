@@ -26,7 +26,7 @@ public class SpeedRunIGTInfoScreen extends Screen {
     enum UpdateStatus { NONE, UNKNOWN, UPDATED, OUTDATED }
     static UpdateStatus UPDATE_STATUS = UpdateStatus.NONE;
     static String UPDATE_URL = "";
-    static String UPDATE_VERSION = "";
+    static String UPDATE_VERSION = "0.0";
 
     private final Screen parent;
 
@@ -106,12 +106,14 @@ public class SpeedRunIGTInfoScreen extends Screen {
                             for (JsonElement asset : versionData.get("assets").getAsJsonArray()) {
                                 JsonObject assetData = asset.getAsJsonObject();
                                 String versionName = assetData.get("name").getAsString();
-                                if (versionName.endsWith(SpeedRunIGT.MOD_VERSION.split("\\+")[1] + ".jar") &&
-                                        compareVersion(versionName.split("\\+")[0].split("-")[1], SpeedRunIGT.MOD_VERSION.split("\\+")[0]) > 0) {
+                                String targetVersionName = versionName.split("\\+")[0].split("-")[1];
+                                String currentVersionName = SpeedRunIGT.MOD_VERSION.split("\\+")[0];
+                                String currentMCVersionName = SpeedRunIGT.MOD_VERSION.split("\\+")[1];
+                                if (versionName.endsWith(currentMCVersionName + ".jar") &&
+                                        compareVersion(targetVersionName, currentVersionName) > 0 && compareVersion(targetVersionName, UPDATE_VERSION) > 0) {
                                     UPDATE_STATUS = UpdateStatus.OUTDATED;
                                     UPDATE_URL = assetData.get("browser_download_url").getAsString();
                                     UPDATE_VERSION = assetData.get("name").getAsString().split("\\+")[0].split("-")[1];
-                                    break;
                                 }
                             }
                         }

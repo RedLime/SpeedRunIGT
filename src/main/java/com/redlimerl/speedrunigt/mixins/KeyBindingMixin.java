@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.RunCategory;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
@@ -18,7 +19,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Mixin(KeyBinding.class)
-public class KeyBindingMixin {
+public abstract class KeyBindingMixin {
 
     @Shadow @Final private static Map<InputUtil.Key, KeyBinding> keyToBindings;
 
@@ -29,7 +30,7 @@ public class KeyBindingMixin {
         if (keyBinding != null && pressed) {
             if (keyBinding == MinecraftClient.getInstance().options.keyAdvancements // Advancement
                     || Objects.equals(keyBinding.getCategory(), "key.categories.inventory")
-                    || Objects.equals(keyBinding.getCategory(), "key.categories.gameplay")) {
+                    || (((MinecraftClientAccessor) MinecraftClient.getInstance()).getAttackCooldown() != 10000 && Objects.equals(keyBinding.getCategory(), "key.categories.gameplay"))) {
                 if (timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld) {
                     timer.setPause(false);
                 }

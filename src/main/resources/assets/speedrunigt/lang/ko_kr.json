@@ -54,6 +54,8 @@
   "speedrunigt.option.timer_category.all_workstations": "모든 주민 직업대",
   "speedrunigt.option.timer_category.full_inv": "인벤토리 꽉 채우기",
   "speedrunigt.option.timer_category.custom": "커스텀 (Co-op 등 전용)",
+  "speedrunigt.option.timer_category.stack_of_lime_wool": "연두색 양털 64개 수집",
+  "speedrunigt.option.timer_category.pogloot_quater": "쿼터 (Pogloot)",
   "speedrunigt.option.hide_timer_in_options": "설정에서 타이머 숨기기",
   "speedrunigt.option.hide_timer_in_debugs": "디버그에서 타이머 숨기기",
   "speedrunigt.option.waiting_first_input": "첫 입력 때 시작",
