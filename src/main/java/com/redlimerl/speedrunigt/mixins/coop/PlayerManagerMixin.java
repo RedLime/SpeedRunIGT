@@ -1,6 +1,5 @@
 package com.redlimerl.speedrunigt.mixins.coop;
 
-import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerPacketHandler;
 import net.minecraft.network.ClientConnection;

@@ -1,7 +1,6 @@
 package com.redlimerl.speedrunigt.mixins.coop;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerPacketHandler;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
