@@ -18,6 +18,8 @@ import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
 
 import java.nio.file.Path;
@@ -107,8 +109,10 @@ public class SpeedRunIGT implements ClientModInitializer {
         ));
     }
 
+    private static final Logger LOGGER = LogManager.getLogger("SpeedRunIGT");
     public static void debug(Object obj) {
-        System.out.println(obj);
+        if (FabricLoader.getInstance().isDevelopmentEnvironment()) LOGGER.info(obj);
     }
+    public static void error(Object obj) { LOGGER.error(obj); }
 }
 //Void was here :)

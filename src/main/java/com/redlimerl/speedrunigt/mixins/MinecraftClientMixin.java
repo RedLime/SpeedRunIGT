@@ -89,7 +89,7 @@ public abstract class MinecraftClientMixin {
         } catch (Exception e) {
             InGameTimer.end();
             currentDimension = null;
-            SpeedRunIGT.debug("Exception in timer load, can't load the timer.");
+            SpeedRunIGT.error("Exception in timer load, can't load the timer.");
             e.printStackTrace();
         }
     }
@@ -98,25 +98,25 @@ public abstract class MinecraftClientMixin {
 
     @Inject(at = @At("HEAD"), method = "joinWorld")
     public void onJoin(ClientWorld targetWorld, CallbackInfo ci) {
-        if (!isInSingleplayer()) return;
         InGameTimer timer = InGameTimer.getInstance();
+        if (timer.getStatus() == TimerStatus.NONE) return;
 
         currentDimension = targetWorld.getDimension();
         InGameTimer.checkingWorld = true;
 
-        if (timer.getStatus() != TimerStatus.NONE) {
-            timer.setPause(true, TimerStatus.IDLE);
-        }
-
         //Enter Nether
         if (timer.getCategory() == RunCategory.ENTER_NETHER && targetWorld.getDimensionRegistryKey() == DimensionType.THE_NETHER_REGISTRY_KEY) {
             InGameTimer.complete();
+            return;
         }
 
         //Enter End
         if (timer.getCategory() == RunCategory.ENTER_END && targetWorld.getDimensionRegistryKey() == DimensionType.THE_END_REGISTRY_KEY) {
             InGameTimer.complete();
+            return;
         }
+
+        timer.setPause(true, TimerStatus.IDLE);
     }
 
     @ModifyVariable(method = "render(Z)V", at = @At(value = "STORE"), ordinal = 1)
@@ -204,7 +204,7 @@ public abstract class MinecraftClientMixin {
                     }
                     TimerDrawer.fontHeightMap.clear();
                 } catch (Throwable e) {
-                    SpeedRunIGT.debug("Error! failed import timer fonts!");
+                    SpeedRunIGT.error("Error! failed import timer fonts!");
                     e.printStackTrace();
                 }
             }
