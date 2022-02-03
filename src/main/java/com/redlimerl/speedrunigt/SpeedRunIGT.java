@@ -12,16 +12,20 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ConfirmScreen;
 import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 
@@ -30,7 +34,7 @@ public class SpeedRunIGT implements ClientModInitializer {
 
     public static final String MOD_ID = "speedrunigt";
     public static final Identifier BUTTON_ICON_TEXTURE = new Identifier(MOD_ID, "textures/gui/buttons.png");
-    public static final TimerDrawer TIMER_DRAWER = new TimerDrawer(true);
+    public static TimerDrawer TIMER_DRAWER = new TimerDrawer(true);
 
     public static String DEBUG_DATA = "";
     public static String MOD_VERSION;
@@ -71,6 +75,41 @@ public class SpeedRunIGT implements ClientModInitializer {
                 new ButtonWidget(0, 0, 150, 20,
                         new TranslatableText("speedrunigt.option.check_info"), (ButtonWidget button) -> MinecraftClient.getInstance().openScreen(new SpeedRunIGTInfoScreen(screen)))
         );
+        SpeedRunOptions.addOptionButton(screen -> new ButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.reload"), (ButtonWidget button) -> MinecraftClient.getInstance().openScreen(new ConfirmScreen(boolean1 -> {
+            if (boolean1) {
+                SpeedRunOptions.reload();
+            }
+            MinecraftClient.getInstance().openScreen(screen);
+        }, new TranslatableText("speedrunigt.message.reload_options"), LiteralText.EMPTY))));
+        SpeedRunOptions.addOptionButton(screen ->
+                new ButtonWidget(0, 0, 150, 20,
+                        new TranslatableText("speedrunigt.option.delete_timer_cache"),
+                        (ButtonWidget button) -> {
+                            SpeedRunOptions.setUseGlobalConfig(!SpeedRunOptions.isUsingGlobalConfig());
+                            MinecraftClient.getInstance().openScreen(new ConfirmScreen(boolean1 -> {
+                                if (boolean1) {
+                                    try {
+                                        FileUtils.cleanDirectory(TIMER_PATH.toFile());
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                MinecraftClient.getInstance().openScreen(screen);
+                            }, new TranslatableText("speedrunigt.option.delete_timer_cache"), new TranslatableText("speedrunigt.message.delete_timer_cache")));
+                        }));
+        SpeedRunOptions.addOptionButton(screen ->
+                        new ButtonWidget(0, 0, 150, 20,
+                                new TranslatableText("speedrunigt.option.global_options").append(" : ").append(SpeedRunOptions.isUsingGlobalConfig() ? ScreenTexts.ON : ScreenTexts.OFF),
+                                (ButtonWidget button) -> {
+                                    SpeedRunOptions.setUseGlobalConfig(!SpeedRunOptions.isUsingGlobalConfig());
+                                    MinecraftClient.getInstance().openScreen(new ConfirmScreen(boolean1 -> {
+                                        if (boolean1) {
+                                            SpeedRunOptions.reload();
+                                        }
+                                        MinecraftClient.getInstance().openScreen(screen);
+                                    }, new TranslatableText("speedrunigt.message.reload_options"), LiteralText.EMPTY));
+                                })
+                , () -> new TranslatableText("speedrunigt.option.global_options.description", SpeedRunOptions.getConfigPath().toString()));
         SpeedRunOptions.addOptionButton(screen -> new ButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.timer_position.toggle_timer").append(" : ").append(TIMER_DRAWER.isToggle() ? ScreenTexts.ON : ScreenTexts.OFF), (ButtonWidget button) -> {
             TIMER_DRAWER.setToggle(!TIMER_DRAWER.isToggle());
             SpeedRunOptions.setOption(SpeedRunOptions.TOGGLE_TIMER, TIMER_DRAWER.isToggle());
@@ -91,7 +130,26 @@ public class SpeedRunIGT implements ClientModInitializer {
                     SpeedRunOptions.setOption(SpeedRunOptions.WAITING_FIRST_INPUT, !SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT));
                     button.setMessage(new TranslatableText("speedrunigt.option.waiting_first_input").append(" : ").append(SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) ? ScreenTexts.ON : ScreenTexts.OFF));
                 })
-        , new TranslatableText("speedrunigt.option.waiting_first_input.description"));
+        , () -> new TranslatableText("speedrunigt.option.waiting_first_input.description"));
+        SpeedRunOptions.addOptionButton(screen ->
+                        new ButtonWidget(0, 0, 150, 20,
+                                new TranslatableText("speedrunigt.option.auto_toggle_coop").append(" : ").append(SpeedRunOptions.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE) ? ScreenTexts.ON : ScreenTexts.OFF),
+                                (ButtonWidget button) -> {
+                                    SpeedRunOptions.setOption(SpeedRunOptions.AUTOMATIC_COOP_MODE, !SpeedRunOptions.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE));
+                                    button.setMessage(new TranslatableText("speedrunigt.option.auto_toggle_coop").append(" : ").append(SpeedRunOptions.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE) ? ScreenTexts.ON : ScreenTexts.OFF));
+                                })
+                , () -> new TranslatableText("speedrunigt.option.auto_toggle_coop.description"));
+        SpeedRunOptions.addOptionButton(screen ->
+                        new ButtonWidget(0, 0, 150, 20,
+                                new TranslatableText("speedrunigt.option.start_old_worlds").append(" : ").append(SpeedRunOptions.getOption(SpeedRunOptions.TIMER_START_GENERATED_WORLD) ? ScreenTexts.ON : ScreenTexts.OFF),
+                                (ButtonWidget button) -> {
+                                    SpeedRunOptions.setOption(SpeedRunOptions.TIMER_START_GENERATED_WORLD, !SpeedRunOptions.getOption(SpeedRunOptions.TIMER_START_GENERATED_WORLD));
+                                    button.setMessage(new TranslatableText("speedrunigt.option.start_old_worlds").append(" : ").append(SpeedRunOptions.getOption(SpeedRunOptions.TIMER_START_GENERATED_WORLD) ? ScreenTexts.ON : ScreenTexts.OFF));
+                                })
+                , () -> new TranslatableText("speedrunigt.option.start_old_worlds.description"));
+        if (Math.random() < 0.1) {
+            SpeedRunOptions.addOptionButton(screen -> new ButtonWidget(0, 0, 150, 20, new LiteralText("amongus"), (ButtonWidget button) -> {}));
+        }
         SpeedRunOptions.init();
 
         timerResetKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(

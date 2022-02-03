@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.timer;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.PacketByteBuf;
@@ -27,6 +28,7 @@ public class TimerPacketHandler {
     }
 
     public static void sendInitC2S(long time, RunCategory category) {
+        if (!SpeedRunOptions.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) return;
         PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
         passedData.writeLong(time);
         passedData.writeEnumConstant(category);
@@ -55,6 +57,7 @@ public class TimerPacketHandler {
     }
 
     public static void receiveInitS2C(PacketByteBuf buffer) {
+        if (!SpeedRunOptions.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) return;
         long startTime = buffer.readLong();
         RunCategory category = buffer.readEnumConstant(RunCategory.class);
 
@@ -77,6 +80,7 @@ public class TimerPacketHandler {
     Timer complete packets
      */
     public static void sendCompleteC2S(InGameTimer timer) {
+        if (!SpeedRunOptions.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) return;
         PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
         passedData.writeLong(timer.endTime);
 
@@ -102,6 +106,7 @@ public class TimerPacketHandler {
     }
 
     public static void receiveCompleteS2C(PacketByteBuf buffer) {
+        if (!SpeedRunOptions.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) return;
         long endTime = buffer.readLong();
         client.execute(() -> InGameTimer.complete(endTime));
         SpeedRunIGT.debug("hello client complete: " + endTime);

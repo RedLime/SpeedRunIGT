@@ -2,6 +2,7 @@ package com.redlimerl.speedrunigt.option;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.RunCategory;
+import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -17,13 +18,37 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class SpeedRunOptions {
 
     private static boolean isInit = false;
 
     private static final Path oldConfigPath = FabricLoader.getInstance().getConfigDir().resolve(SpeedRunIGT.MOD_ID);
-    private static final Path configPath = SpeedRunIGT.getMainPath().resolve("options.txt");
+    public static final Path configPath = SpeedRunIGT.getMainPath().resolve("options.txt");
+    public static final Path globalConfigPath;
+    private static final Path useGlobalPath = SpeedRunIGT.getMainPath().resolve(".useglobaloption");
+    static {
+        File globalDir = new File(System.getProperty("user.home").replace("\\", "/"), SpeedRunIGT.MOD_ID);
+        if (!globalDir.exists() && !globalDir.mkdirs()) {
+            System.out.println("Failed make global config path");
+        }
+        globalConfigPath = globalDir.toPath().resolve("options.txt");
+    }
+    public static Path getConfigPath() {
+        return isUsingGlobalConfig() ? globalConfigPath : configPath;
+    }
+    public static boolean isUsingGlobalConfig() {
+        return useGlobalPath.toFile().exists();
+    }
+    public static void setUseGlobalConfig(boolean b) {
+        try {
+            if (b) FileUtils.writeStringToFile(useGlobalPath.toFile(), "", StandardCharsets.UTF_8);
+            else FileUtils.deleteQuietly(useGlobalPath.toFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private static final HashMap<Identifier, String> options = new HashMap<>();
 
@@ -41,13 +66,16 @@ public class SpeedRunOptions {
         if (isInit) return;
 
         try {
-            if (new File(oldConfigPath.toFile(), "options.txt").exists() && !configPath.toFile().exists()) {
-                File optionFile = new File(oldConfigPath.toFile(), "options.txt");
-                FileUtils.copyFile(optionFile, configPath.toFile());
-                FileUtils.deleteQuietly(optionFile);
+            options.clear();
+
+            File optionFile = getConfigPath().toFile();
+
+            if (new File(oldConfigPath.toFile(), "options.txt").exists() && !optionFile.exists()) {
+                File oldOptionFile = new File(oldConfigPath.toFile(), "options.txt");
+                FileUtils.copyFile(oldOptionFile, optionFile);
+                FileUtils.deleteQuietly(oldOptionFile);
             }
 
-            File optionFile = configPath.toFile();
             if (optionFile.exists()) {
                 String optionData = FileUtils.readFileToString(optionFile, StandardCharsets.UTF_8);
 
@@ -66,7 +94,7 @@ public class SpeedRunOptions {
 
     private static void save() {
         try {
-            File config = configPath.toFile();
+            File config = getConfigPath().toFile();
             StringBuilder stringBuilder = new StringBuilder();
             options.forEach((key, value) -> stringBuilder.append(key.toString()).append(":").append(value).append("\n"));
             FileUtils.writeStringToFile(config, stringBuilder.length() == 0 ? "" : stringBuilder.substring(0, stringBuilder.length()-1), StandardCharsets.UTF_8);
@@ -75,11 +103,20 @@ public class SpeedRunOptions {
         }
     }
 
+    public static void reload() {
+        isInit = false;
+        init();
+        SpeedRunIGT.TIMER_DRAWER = new TimerDrawer(false);
+    }
+
     public static ArrayList<Function<Screen, AbstractButtonWidget>> buttons = new ArrayList<>();
-    public static HashMap<Function<Screen, AbstractButtonWidget>, List<Text>> tooltips = new HashMap<>();
-    public static void addOptionButton(Function<Screen, AbstractButtonWidget> consumer, Text... texts) {
+    public static HashMap<Function<Screen, AbstractButtonWidget>, Supplier<Text>> tooltips = new HashMap<>();
+    public static void addOptionButton(Function<Screen, AbstractButtonWidget> consumer) {
+        addOptionButton(consumer, () -> null);
+    }
+    public static void addOptionButton(Function<Screen, AbstractButtonWidget> consumer, Supplier<Text> texts) {
         buttons.add(consumer);
-        tooltips.put(consumer, Arrays.asList(texts));
+        tooltips.put(consumer, texts);
     }
 
 
@@ -206,7 +243,31 @@ public class SpeedRunOptions {
         }
     };
 
-    public static final OptionArgument<Float> TIMER_RTA_POSITION_X = new OptionArgument<Float>(new Identifier(SpeedRunIGT.MOD_ID, "timer_rta_pos_x"), 0.017f) {
+    public static final OptionArgument<Boolean> AUTOMATIC_COOP_MODE = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "auto_coop_toggle"), true) {
+        @Override
+        public Boolean valueFromString(String string) {
+            return Objects.equals(string, "true");
+        }
+
+        @Override
+        public String valueToString(Boolean value) {
+            return value.toString();
+        }
+    };
+
+    public static final OptionArgument<Boolean> TIMER_START_GENERATED_WORLD = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "start_generated_world"), false) {
+        @Override
+        public Boolean valueFromString(String string) {
+            return Objects.equals(string, "true");
+        }
+
+        @Override
+        public String valueToString(Boolean value) {
+            return value.toString();
+        }
+    };
+
+    public static final OptionArgument<Float> TIMER_RTA_POSITION_X = new OptionArgument<Float>(new Identifier(SpeedRunIGT.MOD_ID, "timer_rta_pos_x"), 0.983f) {
         @Override
         public Float valueFromString(String string) {
             return Float.parseFloat(string);
@@ -230,7 +291,7 @@ public class SpeedRunOptions {
         }
     };
 
-    public static final OptionArgument<Float> TIMER_IGT_POSITION_X = new OptionArgument<Float>(new Identifier(SpeedRunIGT.MOD_ID, "timer_igt_pos_x"), 0.017f) {
+    public static final OptionArgument<Float> TIMER_IGT_POSITION_X = new OptionArgument<Float>(new Identifier(SpeedRunIGT.MOD_ID, "timer_igt_pos_x"), 0.983f) {
         @Override
         public Float valueFromString(String string) {
             return Float.parseFloat(string);

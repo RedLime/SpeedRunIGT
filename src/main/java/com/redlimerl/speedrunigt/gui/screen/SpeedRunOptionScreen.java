@@ -33,7 +33,7 @@ public class SpeedRunOptionScreen extends Screen {
         this.parent = parent;
     }
 
-    static HashMap<Element, List<Text>> tooltips = new HashMap<>();
+    static HashMap<Element, Text> tooltips = new HashMap<>();
     @Override
     protected void init() {
         super.init();
@@ -41,7 +41,7 @@ public class SpeedRunOptionScreen extends Screen {
         int buttonCount = 0;
         for (Function<Screen, AbstractButtonWidget> function : SpeedRunOptions.buttons.subList(page*12, Math.min(SpeedRunOptions.buttons.size(), (page + 1) * 12))) {
             AbstractButtonWidget button = function.apply(this);
-            tooltips.put(button, SpeedRunOptions.tooltips.get(function));
+            tooltips.put(button, SpeedRunOptions.tooltips.get(function).get());
 
             button.x = width / 2 - 155 + buttonCount % 2 * 160;
             button.y = height / 6 - 12 + 24 * (buttonCount / 2);
@@ -94,10 +94,10 @@ public class SpeedRunOptionScreen extends Screen {
             if (!tooltips.containsKey(e.get())) return;
 
             ArrayList<Text> tts = new ArrayList<>();
-            for (Text text : tooltips.get(e.get())) {
-                for (String s : text.getString().split("\n")) {
-                    tts.add(new LiteralText(s));
-                }
+            Text text = tooltips.get(e.get());
+            if (text == null) return;
+            for (String s : text.getString().split("\n")) {
+                tts.add(new LiteralText(s));
             }
             if (!tts.isEmpty()) this.renderTooltip(matrices, tts, mouseX, mouseY);
         }

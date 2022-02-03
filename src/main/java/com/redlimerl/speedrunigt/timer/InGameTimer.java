@@ -211,6 +211,10 @@ public class InGameTimer {
             } catch (Exception e) {
                 return false;
             }
+        } else if (SpeedRunOptions.getOption(SpeedRunOptions.TIMER_START_GENERATED_WORLD)) {
+            InGameTimer.start();
+            InGameTimer.currentWorldName = name;
+            return true;
         }
         return false;
     }
