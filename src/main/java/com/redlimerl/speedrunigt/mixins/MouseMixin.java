@@ -29,6 +29,8 @@ public abstract class MouseMixin {
     private void unlock() {
         @NotNull
         InGameTimer timer = InGameTimer.getInstance();
+        if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
+
         if (timer.getStatus() == TimerStatus.IDLE && this.isCursorLocked() && !MinecraftClient.getInstance().isPaused() && InGameTimer.checkingWorld) {
             timer.setPause(false);
         }

@@ -39,14 +39,14 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     private void onMove(MovementType movementType, Vec3d vec3d, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
+        if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
+
         if (timer.getStatus() == TimerStatus.IDLE && (vec3d.x != 0 || vec3d.z != 0 || this.jumping || this.isSneaking())) {
             timer.setPause(false);
         }
         if (vec3d.x != 0 || vec3d.z != 0 || this.jumping) {
             timer.updateFirstInput();
         }
-        
-        if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
 
         //HIGH%
         if (timer.getCategory() == RunCategory.HIGH && this.getY() >= 420) {

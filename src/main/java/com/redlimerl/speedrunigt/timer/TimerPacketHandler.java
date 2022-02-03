@@ -59,11 +59,13 @@ public class TimerPacketHandler {
         RunCategory category = buffer.readEnumConstant(RunCategory.class);
 
         client.execute(() -> {
-            InGameTimer.start();
+            if (InGameTimer.getInstance().startTime != startTime) {
+                InGameTimer.start();
+                InGameTimer.getInstance().startTime = startTime;
+                InGameTimer.getInstance().setCategory(category);
+            }
             InGameTimer.getInstance().isCoop = true;
             InGameTimer.getInstance().isServerIntegrated = MinecraftClient.getInstance().isIntegratedServerRunning();
-            InGameTimer.getInstance().startTime = startTime;
-            InGameTimer.getInstance().setCategory(category);
             InGameTimer.getInstance().setPause(false);
         });
 

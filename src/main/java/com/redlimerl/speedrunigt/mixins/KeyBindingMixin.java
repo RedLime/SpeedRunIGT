@@ -27,6 +27,7 @@ public abstract class KeyBindingMixin {
     private static void onPress(InputUtil.Key key, boolean pressed, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
         KeyBinding keyBinding = keyToBindings.get(key);
+        if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
         if (keyBinding != null && pressed) {
             if (keyBinding == MinecraftClient.getInstance().options.keyAdvancements // Advancement
                     || Objects.equals(keyBinding.getCategory(), "key.categories.inventory")
