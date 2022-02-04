@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -185,7 +186,7 @@ public class InGameTimer {
     }
 
     public static void leave() {
-        if (INSTANCE.isCompleted) return;
+        if (INSTANCE.isCompleted || !INSTANCE.isServerIntegrated) return;
 
         INSTANCE.leaveTime = System.currentTimeMillis();
         INSTANCE.pauseCount = 0;
@@ -194,7 +195,8 @@ public class InGameTimer {
         String data = SpeedRunIGT.GSON.toJson(INSTANCE);
         String timerData = Crypto.encrypt(data, "faRQOs2GK5j863eP");
         try {
-            FileUtils.writeStringToFile(new File(SpeedRunIGT.TIMER_PATH.toFile(), currentWorldName+".igt"), timerData, Charsets.UTF_8);
+            File worldDir = MinecraftClient.getInstance().getLevelStorage().getSavesDirectory().resolve(currentWorldName).toFile();
+            if (worldDir.exists()) FileUtils.writeStringToFile(new File(worldDir, "timer.igt"), timerData, Charsets.UTF_8);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -202,7 +204,8 @@ public class InGameTimer {
     }
 
     public static boolean load(String name) {
-        File file = new File(SpeedRunIGT.TIMER_PATH.toFile(), name+".igt");
+        Path worldPath = MinecraftClient.getInstance().getLevelStorage().getSavesDirectory().resolve(name);
+        File file = new File(worldPath.toFile(), "timer.igt");
         if (file.exists()) {
             try {
                 String data = Crypto.decrypt(FileUtils.readFileToString(file, StandardCharsets.UTF_8), "faRQOs2GK5j863eP");

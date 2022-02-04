@@ -25,6 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -42,7 +43,6 @@ public class SpeedRunIGT implements ClientModInitializer {
 
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     public static final Path WORLDS_PATH = FabricLoader.getInstance().getGameDir().resolve("saves");
-    public static final Path TIMER_PATH = getMainPath().resolve("worlds");
     public static final Path FONT_PATH = getMainPath().resolve("fonts");
 
     public static Path getMainPath() {
@@ -52,8 +52,17 @@ public class SpeedRunIGT implements ClientModInitializer {
 
     static {
         getMainPath().toFile().mkdirs();
-        TIMER_PATH.toFile().mkdirs();
         FONT_PATH.toFile().mkdirs();
+
+        //Delete all old timer data
+        File oldWorlds = getMainPath().resolve("worlds").toFile();
+        if (oldWorlds.exists()) {
+            try {
+                FileUtils.deleteDirectory(oldWorlds);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static KeyBinding timerResetKeyBinding;
@@ -81,22 +90,6 @@ public class SpeedRunIGT implements ClientModInitializer {
             }
             MinecraftClient.getInstance().openScreen(screen);
         }, new TranslatableText("speedrunigt.message.reload_options"), LiteralText.EMPTY))));
-        SpeedRunOptions.addOptionButton(screen ->
-                new ButtonWidget(0, 0, 150, 20,
-                        new TranslatableText("speedrunigt.option.delete_timer_cache"),
-                        (ButtonWidget button) -> {
-                            SpeedRunOptions.setUseGlobalConfig(!SpeedRunOptions.isUsingGlobalConfig());
-                            MinecraftClient.getInstance().openScreen(new ConfirmScreen(boolean1 -> {
-                                if (boolean1) {
-                                    try {
-                                        FileUtils.cleanDirectory(TIMER_PATH.toFile());
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                MinecraftClient.getInstance().openScreen(screen);
-                            }, new TranslatableText("speedrunigt.option.delete_timer_cache"), new TranslatableText("speedrunigt.message.delete_timer_cache")));
-                        }));
         SpeedRunOptions.addOptionButton(screen ->
                         new ButtonWidget(0, 0, 150, 20,
                                 new TranslatableText("speedrunigt.option.global_options").append(" : ").append(SpeedRunOptions.isUsingGlobalConfig() ? ScreenTexts.ON : ScreenTexts.OFF),
