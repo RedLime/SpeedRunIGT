@@ -42,6 +42,7 @@ LF: Versions that should use [Legacy Fabric](https://github.com/Legacy-Fabric)
 - 20w14∞ (Legacy)
 - 1.12.2 (Legacy / LF)
 - 1.8.9 (LF)
+- 1.8.0 (Legacy / LF)
 - 1.7.10 (LF)
 
 ## FaQ
