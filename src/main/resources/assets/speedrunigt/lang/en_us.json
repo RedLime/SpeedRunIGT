@@ -68,6 +68,8 @@
   "speedrunigt.option.global_options.description": "If enable this option,\nwill be save the timer settings to a global folder.\notherwise, save to instance folder.\nCurrent Path: %s",
   "speedrunigt.option.delete_timer_cache": "Delete All Timer Caches",
   "speedrunigt.option.reload": "Reload Options",
+  "speedrunigt.option.limitless_reset": "Timer Limitless Reset",
+  "speedrunigt.option.limitless_reset.description": "When using a custom category timer, whether the timer can be reset only once(Off) or limitless(On).",
   "speedrunigt.controls.start_timer": "Restart Timer (for 'Custom' Category)",
   "speedrunigt.controls.stop_timer": "Stop Timer (for 'Custom' Category)",
   "speedrunigt.message.update.unknown": "Failed to get latest version of information.",

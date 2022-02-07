@@ -407,6 +407,6 @@ public class InGameTimer {
     }
 
     public boolean isResettable() {
-        return isResettable;
+        return isResettable || SpeedRunOptions.getOption(SpeedRunOptions.TIMER_LIMITLESS_RESET);
     }
 }

@@ -140,6 +140,14 @@ public class SpeedRunIGT implements ClientModInitializer {
                                     button.setMessage(new TranslatableText("speedrunigt.option.start_old_worlds").append(" : ").append(SpeedRunOptions.getOption(SpeedRunOptions.TIMER_START_GENERATED_WORLD) ? ScreenTexts.ON : ScreenTexts.OFF));
                                 })
                 , () -> new TranslatableText("speedrunigt.option.start_old_worlds.description"));
+        SpeedRunOptions.addOptionButton(screen ->
+                        new ButtonWidget(0, 0, 150, 20,
+                                new TranslatableText("speedrunigt.option.limitless_reset").append(" : ").append(SpeedRunOptions.getOption(SpeedRunOptions.TIMER_LIMITLESS_RESET) ? ScreenTexts.ON : ScreenTexts.OFF),
+                                (ButtonWidget button) -> {
+                                    SpeedRunOptions.setOption(SpeedRunOptions.TIMER_LIMITLESS_RESET, !SpeedRunOptions.getOption(SpeedRunOptions.TIMER_LIMITLESS_RESET));
+                                    button.setMessage(new TranslatableText("speedrunigt.option.limitless_reset").append(" : ").append(SpeedRunOptions.getOption(SpeedRunOptions.TIMER_LIMITLESS_RESET) ? ScreenTexts.ON : ScreenTexts.OFF));
+                                })
+                , () -> new TranslatableText("speedrunigt.option.limitless_reset.description"));
         if (Math.random() < 0.1) {
             SpeedRunOptions.addOptionButton(screen -> new ButtonWidget(0, 0, 150, 20, new LiteralText("amongus"), (ButtonWidget button) -> {}));
         }
