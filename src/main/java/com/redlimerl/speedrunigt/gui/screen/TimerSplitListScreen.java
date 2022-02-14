@@ -200,9 +200,10 @@ public class TimerSplitListScreen extends Screen {
                 ArrayList<MutableText> tooltip = new ArrayList<>();
                 if (this.deleteButton.isMouseOver(mouseX, mouseY) && !Objects.equals(this.deleteButton.getMessage().getString(), I18n.translate("selectWorld.delete"))) {
                     tooltip.add(new TranslatableText("speedrunigt.message.click_delete_button_again"));
+                    TimerSplitListWidget.this.tooltip = tooltip;
                 } else if (isMouseOver(mouseX, mouseY)) {
                     tooltip.add(titleText.shallowCopy().formatted(Formatting.YELLOW));
-                    tooltip.add(new LiteralText(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date(time))).formatted(Formatting.GRAY));
+                    tooltip.add(new LiteralText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(time))).formatted(Formatting.GRAY));
                     if (split.getRunType() != RunType.SET_SEED && split.getRunType() != RunType.SAVED_WORLD)
                         tooltip.add(new LiteralText(I18n.translate("commands.seed.success", split.getSeed())).formatted(Formatting.GRAY));
                     tooltip.add(new LiteralText(""));
