@@ -32,6 +32,10 @@ public class ServerPlayNetworkHandlerMixin {
             if (Objects.equals(customPacket.getChannel().getPath(), TimerPacketHandler.PACKET_TIMER_COMPLETE_ID.getPath())) {
                 TimerPacketHandler.receiveCompleteC2S(this.server, customPacket.getData());
             }
+
+            if (Objects.equals(customPacket.getChannel().getPath(), TimerPacketHandler.PACKET_TIMER_SPLIT_ID.getPath())) {
+                TimerPacketHandler.receiveSplitC2S(this.server, customPacket.getData());
+            }
         }
     }
 }

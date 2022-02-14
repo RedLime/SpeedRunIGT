@@ -51,8 +51,6 @@ import java.util.stream.Collectors;
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin {
 
-    @Shadow public abstract boolean isInSingleplayer();
-
     @Shadow @Final public GameOptions options;
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
@@ -72,6 +70,7 @@ public abstract class MinecraftClientMixin {
 
     @Inject(at = @At("HEAD"), method = "method_29607(Ljava/lang/String;Lnet/minecraft/world/level/LevelInfo;Lnet/minecraft/util/registry/RegistryTracker$Modifiable;Lnet/minecraft/world/gen/GeneratorOptions;)V")
     public void onCreate(String worldName, LevelInfo levelInfo, RegistryTracker.Modifiable registryTracker, GeneratorOptions generatorOptions, CallbackInfo ci) {
+        SpeedRunIGT.LATEST_PLAYED_SEED = generatorOptions.getSeed();
         InGameTimer.start();
         currentDimension = null;
         InGameTimer.currentWorldName = worldName;

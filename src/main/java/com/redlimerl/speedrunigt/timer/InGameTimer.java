@@ -8,6 +8,7 @@ import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.GameMode;
 import org.apache.commons.compress.utils.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
@@ -53,6 +54,7 @@ public class InGameTimer {
     }
 
     private RunCategory category = RunCategory.ANY;
+    private TimerSplit timerSplit = null;
     private final boolean isResettable;
     private boolean isCompleted = false;
     boolean isServerIntegrated = true;
@@ -92,7 +94,8 @@ public class InGameTimer {
      */
     public static void start() {
         INSTANCE = new InGameTimer();
-        INSTANCE.category = SpeedRunOptions.getOption(SpeedRunOptions.TIMER_CATEGORY);
+        INSTANCE.createNewTimerSplit(new TimerSplit(SpeedRunIGT.LATEST_PLAYED_SEED, RunType.getRunType(SpeedRunIGT.LATEST_IS_SSG, SpeedRunIGT.LATEST_IS_FSG)));
+        INSTANCE.setCategory(SpeedRunOptions.getOption(SpeedRunOptions.TIMER_CATEGORY));
         INSTANCE.setPause(true, TimerStatus.IDLE);
     }
 
@@ -101,8 +104,11 @@ public class InGameTimer {
      */
     public static void reset() {
         if (INSTANCE.isCompleted || INSTANCE.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
+        TimerSplit oldTimerSplit = INSTANCE.getTimerSplit();
+
         INSTANCE = new InGameTimer(false);
-        INSTANCE.category = RunCategory.CUSTOM;
+        INSTANCE.createNewTimerSplit(new TimerSplit(oldTimerSplit.getSeed(), oldTimerSplit.getRunType()));
+        INSTANCE.setCategory(RunCategory.CUSTOM);
         INSTANCE.setPause(true, TimerStatus.IDLE);
         INSTANCE.setPause(false);
         TimerPacketHandler.sendInitC2S(INSTANCE);
@@ -146,6 +152,12 @@ public class InGameTimer {
         timer.endTime = endTime;
         timer.endIGTTime = timer.endTime - timer.leastTickTime;
         timer.setStatus(TimerStatus.COMPLETED_LEGACY);
+
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client.interactionManager != null && client.interactionManager.getCurrentGameMode() == GameMode.SURVIVAL) {
+            timer.getTimerSplit().tryUpdateSplit(TimerSplit.SplitType.COMPLETE, timer.getInGameTime());
+            timer.getTimerSplit().completeSplit(timer.isCoop());
+        }
 
         if (timer.isCoop) TimerPacketHandler.sendCompleteC2S(timer);
 
@@ -217,6 +229,7 @@ public class InGameTimer {
         } else if (SpeedRunOptions.getOption(SpeedRunOptions.TIMER_START_GENERATED_WORLD)) {
             InGameTimer.start();
             InGameTimer.currentWorldName = name;
+            INSTANCE.createNewTimerSplit(new TimerSplit(name, RunType.SAVED_WORLD));
             return true;
         }
         return false;
@@ -228,8 +241,20 @@ public class InGameTimer {
         return category;
     }
 
+    public TimerSplit getTimerSplit() {
+        return timerSplit;
+    }
+
+    public void createNewTimerSplit(TimerSplit timerSplit) {
+        this.timerSplit = timerSplit;
+    }
+
     public void setCategory(RunCategory category) {
         this.category = category;
+        if (this.timerSplit != null) {
+            this.timerSplit.getSplitTimeline().clear();
+            this.timerSplit.setRunCategory(category);
+        }
     }
 
     public boolean isCoop() {

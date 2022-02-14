@@ -5,8 +5,10 @@ import com.google.gson.GsonBuilder;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunCategoryScreen;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunIGTInfoScreen;
 import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
+import com.redlimerl.speedrunigt.gui.screen.TimerSplitListScreen;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
+import com.redlimerl.speedrunigt.timer.TimerSplit;
 import com.redlimerl.speedrunigt.utils.FontIdentifier;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -40,6 +42,9 @@ public class SpeedRunIGT implements ClientModInitializer {
     public static String DEBUG_DATA = "";
     public static String MOD_VERSION;
     public static HashMap<Identifier, FontIdentifier> FONT_MAPS = new HashMap<>();
+    public static Long LATEST_PLAYED_SEED = 0L;
+    public static boolean LATEST_IS_SSG = false;
+    public static boolean LATEST_IS_FSG = false;
 
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     public static final Path WORLDS_PATH = FabricLoader.getInstance().getGameDir().resolve("saves");
@@ -80,6 +85,9 @@ public class SpeedRunIGT implements ClientModInitializer {
                 new ButtonWidget(0, 0, 150, 20,
                         new TranslatableText("speedrunigt.option.timer_category"), (ButtonWidget button) -> MinecraftClient.getInstance().openScreen(new SpeedRunCategoryScreen(screen)))
         );
+        SpeedRunOptions.addOptionButton(screen ->
+                new ButtonWidget(0, 0, 150, 20,
+                        new TranslatableText("speedrunigt.split.title"), (ButtonWidget button) -> MinecraftClient.getInstance().openScreen(new TimerSplitListScreen(screen))));
         SpeedRunOptions.addOptionButton(screen ->
                 new ButtonWidget(0, 0, 150, 20,
                         new TranslatableText("speedrunigt.option.check_info"), (ButtonWidget button) -> MinecraftClient.getInstance().openScreen(new SpeedRunIGTInfoScreen(screen)))
@@ -166,6 +174,8 @@ public class SpeedRunIGT implements ClientModInitializer {
                 GLFW.GLFW_KEY_I,
                 "speedrunigt.title.options"
         ));
+
+        TimerSplit.load();
     }
 
     private static final Logger LOGGER = LogManager.getLogger("SpeedRunIGT");

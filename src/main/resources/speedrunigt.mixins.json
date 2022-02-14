@@ -21,9 +21,11 @@
     "network.ClientPlayNetworkHandlerMixin",
     "network.CustomPayloadC2SPacketAccessor",
     "network.ServerPlayNetworkHandlerMixin",
+    "screen.CreateWorldScreenMixin",
     "screen.CreditsScreenMixin",
     "screen.DownloadingTerrainScreenMixin",
     "screen.GameMenuScreenMixin",
+    "screen.MoreOptionsDialogMixin",
     "screen.OptionsScreenMixin"
   ],
   "injectors": {
