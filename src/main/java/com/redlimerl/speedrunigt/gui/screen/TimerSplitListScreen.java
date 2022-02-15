@@ -46,7 +46,7 @@ public class TimerSplitListScreen extends Screen {
         this.listWidget = new TimerSplitListWidget();
         addChild(listWidget);
 
-        addButton(new ButtonWidget(10, 6, 120, 20, new TranslatableText("speedrunigt.split.filter").append(" : ").append(this.getFilterText()), (ButtonWidget button) -> {
+        addButton(new ButtonWidget(10, 6, 120, 20, new TranslatableText("speedrunigt.option.show").append(" : ").append(this.getFilterText()), (ButtonWidget button) -> {
             int order = filter == null ? -1 : filter.ordinal();
             if (order + 1 == RunType.values().length) {
                 filter = null;
@@ -54,7 +54,7 @@ public class TimerSplitListScreen extends Screen {
                 filter = RunType.values()[(++order) % RunType.values().length];
             }
             this.listWidget.applyFilter(filter, runOrder);
-            button.setMessage(new TranslatableText("speedrunigt.split.filter").append(" : ").append(this.getFilterText()));
+            button.setMessage(new TranslatableText("speedrunigt.option.show").append(" : ").append(this.getFilterText()));
         }));
 
         addButton(new ButtonWidget(134, 6, 120, 20, new TranslatableText("speedrunigt.split.order").append(" : ").append(this.runOrder.getText()), (ButtonWidget button) -> {

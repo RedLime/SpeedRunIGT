@@ -84,7 +84,7 @@ public class TimerSplit {
     private long timestamp = System.currentTimeMillis();
     private long resultTime = 0;
     private RunCategory runCategory;
-    private final String version = SharedConstants.getGameVersion().getName();
+    private String version = "unknown";
     private final LinkedHashMap<SplitType, Long> splitTimeline = new LinkedHashMap<>();
 
 
@@ -106,6 +106,9 @@ public class TimerSplit {
     }
 
     public void completeSplit(boolean isCoop) {
+        if (getRunCategory() == RunCategory.CUSTOM) return;
+
+        version = SharedConstants.getGameVersion().getName();
         timestamp = System.currentTimeMillis();
         coop = isCoop;
         SPLIT_DATA.add(this);
