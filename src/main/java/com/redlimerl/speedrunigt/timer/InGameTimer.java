@@ -285,7 +285,7 @@ public class InGameTimer {
     public void setUncompleted() {
         this.isCompleted = false;
         this.completeCount++;
-        TimerPacketHandler.sendInitC2S(this);
+        sendTimerStartPacket();
     }
 
     public boolean isCompleted() {
@@ -421,11 +421,7 @@ public class InGameTimer {
             } else {
                 startTime = System.currentTimeMillis();
                 if (loggerTicks != 0) leastStartTime = startTime;
-
-                MinecraftServer server = MinecraftClient.getInstance().getServer();
-                if (server != null && server.getCurrentPlayerCount() > 1) {
-                    TimerPacketHandler.sendInitC2S(this);
-                }
+                sendTimerStartPacket();
             }
             this.setStatus(TimerStatus.RUNNING);
         }
@@ -433,5 +429,12 @@ public class InGameTimer {
 
     public boolean isResettable() {
         return isResettable || SpeedRunOptions.getOption(SpeedRunOptions.TIMER_LIMITLESS_RESET);
+    }
+
+    private void sendTimerStartPacket() {
+        MinecraftServer server = MinecraftClient.getInstance().getServer();
+        if (server != null && server.getCurrentPlayerCount() > 1) {
+            TimerPacketHandler.sendInitC2S(this);
+        }
     }
 }

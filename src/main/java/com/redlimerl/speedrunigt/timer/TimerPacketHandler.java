@@ -26,7 +26,8 @@ public class TimerPacketHandler {
     Timer init packets
      */
     public static void sendInitC2S(InGameTimer timer) {
-        sendInitC2S(timer.startTime, timer.getCategory(), timer.getTimerSplit().getSeed(), timer.getTimerSplit().getRunType());
+        if (timer.getTimerSplit() != null)
+            sendInitC2S(timer.startTime, timer.getCategory(), timer.getTimerSplit().getSeed(), timer.getTimerSplit().getRunType());
     }
 
     public static void sendInitC2S(long time, RunCategory category, String seed, RunType runType) {
