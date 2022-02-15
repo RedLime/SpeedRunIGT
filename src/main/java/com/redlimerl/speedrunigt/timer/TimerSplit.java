@@ -166,6 +166,8 @@ public class TimerSplit {
     }
     @SuppressWarnings("unused")
     public void tryUpdateSplit(SplitType splitType, Long igt, boolean sendPacket) {
+        if (getSplitTimeline().containsKey(splitType)) return;
+
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player == null) return;
         SplitDisplayType splitDisplayType = SpeedRunOptions.getOption(SpeedRunOptions.SPLIT_DISPLAY_TYPE);
