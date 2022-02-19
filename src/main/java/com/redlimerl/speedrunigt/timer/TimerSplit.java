@@ -88,12 +88,13 @@ public class TimerSplit {
     private final LinkedHashMap<SplitType, Long> splitTimeline = new LinkedHashMap<>();
 
 
-    public TimerSplit(long seed, RunType runType) {
-        this(String.valueOf(seed), runType);
+    public TimerSplit(long seed, RunType runType, RunCategory runCategory) {
+        this(String.valueOf(seed), runType, runCategory);
     }
-    public TimerSplit(String seed, RunType runType) {
+    public TimerSplit(String seed, RunType runType, RunCategory runCategory) {
         this.seed = seed;
         this.runType = runType;
+        this.runCategory = runCategory;
     }
 
     public LinkedHashMap<SplitType, Long> getSplitTimeline() {

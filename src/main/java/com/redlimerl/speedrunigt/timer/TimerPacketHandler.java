@@ -83,7 +83,7 @@ public class TimerPacketHandler {
                     InGameTimer.start();
                     InGameTimer.getInstance().startTime = startTime;
                     InGameTimer.getInstance().setCategory(category);
-                    InGameTimer.getInstance().createNewTimerSplit(new TimerSplit(seed, runType));
+                    InGameTimer.getInstance().createNewTimerSplit(new TimerSplit(seed, runType, category));
                 }
                 InGameTimer.getInstance().isCoop = true;
                 InGameTimer.getInstance().isServerIntegrated = MinecraftClient.getInstance().isIntegratedServerRunning();

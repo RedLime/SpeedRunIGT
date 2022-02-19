@@ -94,8 +94,8 @@ public class InGameTimer {
      */
     public static void start() {
         INSTANCE = new InGameTimer();
-        INSTANCE.createNewTimerSplit(new TimerSplit(SpeedRunIGT.LATEST_PLAYED_SEED, RunType.getRunType(SpeedRunIGT.LATEST_IS_SSG, SpeedRunIGT.LATEST_IS_FSG)));
         INSTANCE.setCategory(SpeedRunOptions.getOption(SpeedRunOptions.TIMER_CATEGORY));
+        INSTANCE.createNewTimerSplit(new TimerSplit(SpeedRunIGT.LATEST_PLAYED_SEED, RunType.getRunType(SpeedRunIGT.LATEST_IS_SSG, SpeedRunIGT.LATEST_IS_FSG), INSTANCE.getCategory()));
         INSTANCE.setPause(true, TimerStatus.IDLE);
     }
 
@@ -107,7 +107,7 @@ public class InGameTimer {
         TimerSplit oldTimerSplit = INSTANCE.getTimerSplit();
 
         INSTANCE = new InGameTimer(false);
-        INSTANCE.createNewTimerSplit(new TimerSplit(oldTimerSplit.getSeed(), oldTimerSplit.getRunType()));
+        INSTANCE.createNewTimerSplit(new TimerSplit(oldTimerSplit.getSeed(), oldTimerSplit.getRunType(), oldTimerSplit.getRunCategory()));
         INSTANCE.setCategory(RunCategory.CUSTOM);
         INSTANCE.setPause(true, TimerStatus.IDLE);
         INSTANCE.setPause(false);
@@ -229,7 +229,6 @@ public class InGameTimer {
         } else if (SpeedRunOptions.getOption(SpeedRunOptions.TIMER_START_GENERATED_WORLD)) {
             InGameTimer.start();
             InGameTimer.currentWorldName = name;
-            INSTANCE.createNewTimerSplit(new TimerSplit(name, RunType.SAVED_WORLD));
             return true;
         }
         return false;
