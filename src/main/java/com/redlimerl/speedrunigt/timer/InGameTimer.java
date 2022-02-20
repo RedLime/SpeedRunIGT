@@ -288,7 +288,7 @@ public class InGameTimer {
     }
 
     public boolean isCompleted() {
-        return isCompleted;
+        return this.isCompleted && this.getStatus() != TimerStatus.COMPLETED_LEGACY;
     }
 
     public int getPauseCount() {

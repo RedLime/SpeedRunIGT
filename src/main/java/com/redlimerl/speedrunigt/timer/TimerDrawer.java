@@ -240,7 +240,7 @@ public class TimerDrawer {
 
 
     private String getTimeFormat(long time) {
-        if (!InGameTimer.getInstance().isPlaying() && translateZ) {
+        if (InGameTimer.getInstance().isCompleted() && translateZ) {
             return InGameTimer.timeToStringFormat(time);
         }
         String millsString = String.format("%03d", time % 1000).substring(0, timerDecimals.getNumber());
