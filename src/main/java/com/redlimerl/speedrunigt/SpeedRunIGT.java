@@ -10,8 +10,9 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.timer.TimerSplit;
 import com.redlimerl.speedrunigt.utils.FontIdentifier;
+import com.redlimerl.speedrunigt.utils.KeyBindingRegistry;
+import com.redlimerl.speedrunigt.utils.TranslateHelper;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ConfirmScreen;
@@ -36,7 +37,6 @@ import java.util.HashMap;
 public class SpeedRunIGT implements ClientModInitializer {
 
     public static final String MOD_ID = "speedrunigt";
-    public static final Identifier BUTTON_ICON_TEXTURE = new Identifier(MOD_ID, "textures/gui/buttons.png");
     public static TimerDrawer TIMER_DRAWER = new TimerDrawer(true);
 
     public static String DEBUG_DATA = "";
@@ -161,14 +161,14 @@ public class SpeedRunIGT implements ClientModInitializer {
         }
         SpeedRunOptions.init();
 
-        timerResetKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        timerResetKeyBinding = KeyBindingRegistry.registerKeyBinding(new KeyBinding(
                 "speedrunigt.controls.start_timer",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_U,
                 "speedrunigt.title.options"
         ));
 
-        timerStopKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        timerStopKeyBinding = KeyBindingRegistry.registerKeyBinding(new KeyBinding(
                 "speedrunigt.controls.stop_timer",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_I,
@@ -176,6 +176,12 @@ public class SpeedRunIGT implements ClientModInitializer {
         ));
 
         TimerSplit.load();
+
+        try {
+            TranslateHelper.init();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
     private static final Logger LOGGER = LogManager.getLogger("SpeedRunIGT");

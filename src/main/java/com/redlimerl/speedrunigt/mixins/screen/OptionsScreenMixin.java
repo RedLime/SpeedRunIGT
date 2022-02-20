@@ -1,12 +1,13 @@
 package com.redlimerl.speedrunigt.mixins.screen;
 
-import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunOptionScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.options.OptionsScreen;
-import net.minecraft.client.gui.widget.TexturedButtonWidget;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -14,6 +15,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(OptionsScreen.class)
 public class OptionsScreenMixin extends Screen {
+    private static final Identifier ENDER_PEARL = new Identifier("textures/item/ender_pearl.png");
+    private static final Identifier ENDER_EYE = new Identifier("textures/item/ender_eye.png");
+
+    private ButtonWidget timerButton;
 
     protected OptionsScreenMixin(Text title) {
         super(title);
@@ -21,11 +26,19 @@ public class OptionsScreenMixin extends Screen {
 
     @Inject(method = "init", at = @At("TAIL"))
     private void onInit(CallbackInfo ci) {
-
-        this.addButton(new TexturedButtonWidget(this.width / 2 - 180, this.height / 6 - 12, 20, 20, 0, 0, 20, SpeedRunIGT.BUTTON_ICON_TEXTURE, 32, 64, (buttonWidget) -> {
+        timerButton = new ButtonWidget(this.width / 2 - 180, this.height / 6 - 12, 20, 20, new LiteralText(""), (buttonWidget) -> {
             if (this.client != null) {
                 this.client.openScreen(new SpeedRunOptionScreen(this));
             }
-        }, new TranslatableText("speedrunigt.title")));
+        });
+        this.addButton(timerButton);
+    }
+
+    @Inject(method = "render", at = @At("TAIL"))
+    private void renderEnderPearl(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+        if (this.client != null) {
+            this.client.getTextureManager().bindTexture(timerButton.isHovered() ? ENDER_EYE : ENDER_PEARL);
+            drawTexture(matrices, timerButton.x + 2, timerButton.y + 2, 0.0F, 0.0F, 16, 16, 16, 16);
+        }
     }
 }

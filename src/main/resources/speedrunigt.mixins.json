@@ -3,7 +3,8 @@
   "minVersion": "0.8",
   "package": "com.redlimerl.speedrunigt.mixins",
   "compatibilityLevel": "JAVA_8",
-  "mixins": [],
+  "mixins": [
+  ],
   "client": [
     "ClientAdvancementManagerMixin",
     "ClientPlayerEntityMixin",
@@ -26,7 +27,11 @@
     "screen.DownloadingTerrainScreenMixin",
     "screen.GameMenuScreenMixin",
     "screen.MoreOptionsDialogMixin",
-    "screen.OptionsScreenMixin"
+    "screen.OptionsScreenMixin",
+    "keybinding.GameOptionsMixin",
+    "keybinding.KeyBindingAccessor",
+    "translate.I18nMixin",
+    "translate.TranslatableTextMixin"
   ],
   "injectors": {
     "defaultRequire": 1
