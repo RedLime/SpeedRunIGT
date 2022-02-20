@@ -29,12 +29,11 @@ public class TranslateHelper {
 
         for (String langFileName : getLangFileNames()) {
             if (langFileName.isEmpty()) continue;
-            LANGUAGE_MAPS.put(langFileName.replace(".json", ""),
-                    SpeedRunIGT.GSON.fromJson(getResource("/lang/"+langFileName), type));
-        }
-
-        for (String key : LANGUAGE_MAPS.keySet()) {
-            if (!LANGUAGE_KEYS.contains(key)) LANGUAGE_KEYS.add(key);
+            Map<String, String> translations = SpeedRunIGT.GSON.fromJson(getResource("/lang/"+langFileName), type);
+            for (String key : translations.keySet()) {
+                if (!LANGUAGE_KEYS.contains(key)) LANGUAGE_KEYS.add(key);
+            }
+            LANGUAGE_MAPS.put(langFileName.replace(".json", ""), translations);
         }
     }
 
