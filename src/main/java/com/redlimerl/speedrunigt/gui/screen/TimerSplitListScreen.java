@@ -1,9 +1,10 @@
 package com.redlimerl.speedrunigt.gui.screen;
 
 import com.redlimerl.speedrunigt.timer.InGameTimer;
-import com.redlimerl.speedrunigt.timer.RunType;
-import com.redlimerl.speedrunigt.timer.TimerSplit;
-import com.redlimerl.speedrunigt.timer.TimerSplit.SplitType;
+import com.redlimerl.speedrunigt.timer.TimerRecord;
+import com.redlimerl.speedrunigt.timer.running.RunSplitType;
+import com.redlimerl.speedrunigt.timer.running.RunSplitTypes;
+import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
@@ -98,8 +99,8 @@ public class TimerSplitListScreen extends Screen {
         }
 
         void applyFilter(RunType filter, RunOrder runOrder) {
-            ArrayList<TimerSplit> splitList = new ArrayList<>();
-            for (TimerSplit split : TimerSplit.SPLIT_DATA) {
+            ArrayList<TimerRecord> splitList = new ArrayList<>();
+            for (TimerRecord split : TimerRecord.SPLIT_DATA) {
                 if (filter == null || split.getRunType() == filter) splitList.add(split);
             }
             splitList.sort((o1, o2) -> {
@@ -147,22 +148,23 @@ public class TimerSplitListScreen extends Screen {
             private final ArrayList<MutableText> timelineTextList = new ArrayList<>();
             private final ButtonWidget deleteButton;
             private final long time;
-            private final TimerSplit split;
+            private final TimerRecord split;
             private final long entryCreatedTime = System.currentTimeMillis();
 
-            private TimerSplitEntry(TimerSplit split) {
+            private TimerSplitEntry(TimerRecord split) {
                 this.split = split;
                 this.time = split.getTimestamp();
                 this.titleText = new LiteralText(String.format("%s - %s %s%s",
                         split.getVersion(), (split.isCoop() ? "Co-op " : "") + split.getRunCategory().getText().getString(), split.getRunType().getContext(),
                         (split.getRunType() == RunType.SET_SEED || split.getRunType() == RunType.SAVED_WORLD) ? (" [" + split.getSeed() + "]") : ""))
                         .formatted(Formatting.GRAY);
-                for (Map.Entry<SplitType, Long> splitPoint : split.getSplitTimeline().entrySet()) {
+                for (Map.Entry<String, Long> splitPoint : split.getSplitTimeline().entrySet()) {
+                    RunSplitType splitType = RunSplitType.getSplitType(splitPoint.getKey());
                     String time = InGameTimer.timeToStringFormat(splitPoint.getValue());
-                    if (splitPoint.getKey() == SplitType.COMPLETE) {
+                    if (splitType == RunSplitTypes.COMPLETE) {
                         resultTimeText = new LiteralText("§a" + I18n.translate("speedrunigt.split.run_end") + ": §f" + time);
                     } else {
-                        timelineTextList.add(new LiteralText("§b" + I18n.translate(splitPoint.getKey().getTitleKey()) + ": §f" + time));
+                        timelineTextList.add(new LiteralText("§b" + I18n.translate(splitType.getTranslateKey()) + ": §f" + time));
                     }
                 }
                 this.deleteButton = new ButtonWidget(0, 0, 40, 20, new TranslatableText("selectWorld.delete"), buttonWidget -> {

@@ -1,9 +1,8 @@
 package com.redlimerl.speedrunigt.mixins;
 
-import com.redlimerl.speedrunigt.timer.InGameTimer;
-import com.redlimerl.speedrunigt.timer.RunCategory;
-import com.redlimerl.speedrunigt.timer.TimerSplit;
-import com.redlimerl.speedrunigt.timer.TimerStatus;
+import com.redlimerl.speedrunigt.timer.*;
+import com.redlimerl.speedrunigt.timer.running.RunCategories;
+import com.redlimerl.speedrunigt.timer.running.RunSplitTypes;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementManager;
 import net.minecraft.advancement.AdvancementProgress;
@@ -42,37 +41,37 @@ public abstract class ClientAdvancementManagerMixin {
         if (advancementProgress.isDone() && timer.getStatus() != TimerStatus.NONE) {
 
             //How Did We Get Here
-            if (timer.getCategory() == RunCategory.HOW_DID_WE_GET_HERE && Objects.equals(advancement.getId().toString(), new Identifier("nether/all_effects").toString())) {
+            if (timer.getCategory() == RunCategories.HOW_DID_WE_GET_HERE && Objects.equals(advancement.getId().toString(), new Identifier("nether/all_effects").toString())) {
                 InGameTimer.complete();
             }
 
             //Hero of Village
-            if (timer.getCategory() == RunCategory.HERO_OF_VILLAGE && Objects.equals(advancement.getId().toString(), new Identifier("adventure/hero_of_the_village").toString())) {
+            if (timer.getCategory() == RunCategories.HERO_OF_VILLAGE && Objects.equals(advancement.getId().toString(), new Identifier("adventure/hero_of_the_village").toString())) {
                 InGameTimer.complete();
             }
 
             //Arbalistic
-            if (timer.getCategory() == RunCategory.ARBALISTIC && Objects.equals(advancement.getId().toString(), new Identifier("adventure/arbalistic").toString())) {
+            if (timer.getCategory() == RunCategories.ARBALISTIC && Objects.equals(advancement.getId().toString(), new Identifier("adventure/arbalistic").toString())) {
                 InGameTimer.complete();
             }
 
 
             //Timer Split
-            if (timer.getCategory() == RunCategory.ANY) {
+            if (timer.getCategory() == RunCategories.ANY) {
                 if (Objects.equals(advancement.getId().toString(), new Identifier("story/enter_the_nether").toString())) {
-                    timer.getTimerSplit().tryUpdateSplit(TimerSplit.SplitType.ENTER_NETHER, timer.getInGameTime());
+                    timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_NETHER, timer.getInGameTime());
                 }
                 else if (Objects.equals(advancement.getId().toString(), new Identifier("story/enter_the_end").toString())) {
-                    timer.getTimerSplit().tryUpdateSplit(TimerSplit.SplitType.ENTER_END, timer.getInGameTime());
+                    timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_END, timer.getInGameTime());
                 }
                 else if (Objects.equals(advancement.getId().toString(), new Identifier("story/follow_ender_eye").toString())) {
-                    timer.getTimerSplit().tryUpdateSplit(TimerSplit.SplitType.ENTER_STRONG_HOLD, timer.getInGameTime());
+                    timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_STRONG_HOLD, timer.getInGameTime());
                 }
                 else if (Objects.equals(advancement.getId().toString(), new Identifier("nether/find_fortress").toString())) {
-                    timer.getTimerSplit().tryUpdateSplit(TimerSplit.SplitType.ENTER_FORTRESS, timer.getInGameTime());
+                    timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_FORTRESS, timer.getInGameTime());
                 }
                 else if (Objects.equals(advancement.getId().toString(), new Identifier("nether/find_bastion").toString())) {
-                    timer.getTimerSplit().tryUpdateSplit(TimerSplit.SplitType.ENTER_BASTION, timer.getInGameTime());
+                    timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_BASTION, timer.getInGameTime());
                 }
             }
         }
@@ -84,17 +83,17 @@ public abstract class ClientAdvancementManagerMixin {
         InGameTimer timer = InGameTimer.getInstance();
 
         //All Advancements
-        if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategory.ALL_ADVANCEMENTS) {
+        if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategories.ALL_ADVANCEMENTS) {
             if (getCompleteAdvancementsCount() >= 80) InGameTimer.complete();
         }
 
         //Half%
-        if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategory.HALF) {
+        if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategories.HALF) {
             if (getCompleteAdvancementsCount() >= 40) InGameTimer.complete();
         }
 
         //(PogLoot) Quater
-        if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategory.POGLOOT_QUATER) {
+        if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategories.POGLOOT_QUATER) {
             if (getCompleteAdvancementsCount() >= 20) InGameTimer.complete();
         }
     }

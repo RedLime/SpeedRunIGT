@@ -3,7 +3,7 @@ package com.redlimerl.speedrunigt.mixins;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
-import com.redlimerl.speedrunigt.timer.RunCategory;
+import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.KeyBinding;
@@ -38,12 +38,12 @@ public abstract class KeyBindingMixin {
                 timer.updateFirstInput();
             }
             if (keyBinding == SpeedRunIGT.timerResetKeyBinding) {
-                if (timer.getCategory() == RunCategory.CUSTOM && timer.isResettable()) {
+                if (timer.getCategory() == RunCategories.CUSTOM && timer.isResettable()) {
                     InGameTimer.reset();
                 }
             }
             if (keyBinding == SpeedRunIGT.timerStopKeyBinding) {
-                if (timer.getCategory() == RunCategory.CUSTOM && timer.isStarted()) {
+                if (timer.getCategory() == RunCategories.CUSTOM && timer.isStarted()) {
                     InGameTimer.complete();
                 }
             }

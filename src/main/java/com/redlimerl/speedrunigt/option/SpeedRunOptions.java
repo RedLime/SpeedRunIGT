@@ -1,7 +1,8 @@
 package com.redlimerl.speedrunigt.option;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
-import com.redlimerl.speedrunigt.timer.RunCategory;
+import com.redlimerl.speedrunigt.timer.running.RunCategories;
+import com.redlimerl.speedrunigt.timer.running.RunCategory;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -9,19 +10,15 @@ import net.minecraft.util.Identifier;
 import java.util.Objects;
 
 public class SpeedRunOptions {
-    public static final OptionArgument<RunCategory> TIMER_CATEGORY = new OptionArgument<RunCategory>(new Identifier(SpeedRunIGT.MOD_ID, "timer_category"), RunCategory.ANY) {
+    public static final OptionArgument<RunCategory> TIMER_CATEGORY = new OptionArgument<RunCategory>(new Identifier(SpeedRunIGT.MOD_ID, "timer_category_v7"), RunCategories.ANY) {
         @Override
         public RunCategory valueFromString(String string) {
-            try {
-                return RunCategory.valueOf(string);
-            } catch (IllegalArgumentException exception) {
-                return RunCategory.ANY;
-            }
+            return RunCategory.getCategory(string);
         }
 
         @Override
         public String valueToString(RunCategory value) {
-            return value.name();
+            return value.getID();
         }
     };
 

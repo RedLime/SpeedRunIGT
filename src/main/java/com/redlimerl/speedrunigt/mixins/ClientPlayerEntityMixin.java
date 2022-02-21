@@ -2,7 +2,7 @@ package com.redlimerl.speedrunigt.mixins;
 
 import com.mojang.authlib.GameProfile;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
-import com.redlimerl.speedrunigt.timer.RunCategory;
+import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -49,20 +49,20 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         }
 
         //HIGH%
-        if (timer.getCategory() == RunCategory.HIGH && this.getY() >= 420) {
+        if (timer.getCategory() == RunCategories.HIGH && this.getY() >= 420) {
             InGameTimer.complete();
             return;
         }
 
         //Full Inventory
-        if (timer.getCategory() == RunCategory.FULL_INV) {
+        if (timer.getCategory() == RunCategories.FULL_INV) {
             if (this.inventory.main.stream().filter(itemStack -> itemStack != null && itemStack != ItemStack.EMPTY).map(ItemStack::getItem).distinct().toArray().length == 36)
                 InGameTimer.complete();
             return;
         }
 
         //All Workstations
-        if (timer.getCategory() == RunCategory.ALL_WORKSTATIONS) {
+        if (timer.getCategory() == RunCategories.ALL_WORKSTATIONS) {
             List<Item> items = this.inventory.main.stream().map(ItemStack::getItem).collect(Collectors.toList());
             if (items.contains(Items.BLAST_FURNACE) &&
                     items.contains(Items.SMOKER) &&
@@ -82,7 +82,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         }
 
         //All Swords
-        if (timer.getCategory() == RunCategory.ALL_SWORDS) {
+        if (timer.getCategory() == RunCategories.ALL_SWORDS) {
             List<Item> items = this.inventory.main.stream().map(ItemStack::getItem).collect(Collectors.toList());
             if (items.contains(Items.STONE_SWORD) &&
                     items.contains(Items.DIAMOND_SWORD) &&
@@ -95,7 +95,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         }
 
         //All Minerals
-        if (timer.getCategory() == RunCategory.ALL_MINERALS) {
+        if (timer.getCategory() == RunCategories.ALL_MINERALS) {
             List<Item> items = this.inventory.main.stream().map(ItemStack::getItem).collect(Collectors.toList());
             if (items.contains(Items.COAL) &&
                     items.contains(Items.IRON_INGOT) &&
@@ -111,7 +111,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         }
 
         //Iron Armors & lvl 15
-        if (timer.getCategory() == RunCategory.FULL_IA_15_LVL) {
+        if (timer.getCategory() == RunCategories.FULL_IA_15_LVL) {
             List<Item> items = this.inventory.armor.stream().map(ItemStack::getItem).collect(Collectors.toList());
             if (items.contains(Items.IRON_HELMET) &&
                     items.contains(Items.IRON_CHESTPLATE) &&
@@ -122,7 +122,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         }
 
         //Stack of Lime Wool
-        if (timer.getCategory() == RunCategory.STACK_OF_LIME_WOOL) {
+        if (timer.getCategory() == RunCategories.STACK_OF_LIME_WOOL) {
             for (ItemStack itemStack : this.inventory.main) {
                 if (itemStack != null && itemStack.getItem() == Items.LIME_WOOL && itemStack.getCount() == 64) InGameTimer.complete();
             }

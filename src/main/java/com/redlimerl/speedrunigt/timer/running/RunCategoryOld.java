@@ -1,10 +1,10 @@
-package com.redlimerl.speedrunigt.timer;
+package com.redlimerl.speedrunigt.timer.running;
 
 import net.minecraft.text.TranslatableText;
 
 import java.util.Locale;
 
-public enum RunCategory {
+public enum RunCategoryOld {
     ANY("mc#Any_Glitchless"),
     CUSTOM("mc#"),
     HIGH("mcce#High"),
@@ -27,7 +27,7 @@ public enum RunCategory {
     STACK_OF_LIME_WOOL("mcce#Stack_of_Lime_Wool");
 
     String code;
-    RunCategory(String code) {
+    RunCategoryOld(String code) {
         this.code = code;
     }
 

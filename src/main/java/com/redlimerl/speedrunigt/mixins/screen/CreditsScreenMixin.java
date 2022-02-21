@@ -1,7 +1,7 @@
 package com.redlimerl.speedrunigt.mixins.screen;
 
 import com.redlimerl.speedrunigt.timer.InGameTimer;
-import com.redlimerl.speedrunigt.timer.RunCategory;
+import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import net.minecraft.client.gui.screen.CreditsScreen;
 import org.jetbrains.annotations.NotNull;
@@ -18,10 +18,10 @@ public class CreditsScreenMixin {
         @NotNull
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() != TimerStatus.NONE) {
-            if (timer.getCategory() == RunCategory.ANY) {
+            if (timer.getCategory() == RunCategories.ANY) {
                 InGameTimer.complete();
             }
-            if (timer.getCategory() == RunCategory.KILL_ALL_BOSSES) {
+            if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {
                 timer.updateMoreData(0, 1);
                 if (timer.getMoreData(0) == 1 && timer.getMoreData(1) == 1 && timer.getMoreData(2) == 1)
                     InGameTimer.complete();

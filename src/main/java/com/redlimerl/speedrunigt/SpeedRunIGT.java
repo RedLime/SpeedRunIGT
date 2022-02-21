@@ -4,10 +4,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.api.SpeedRunIGTApi;
+import com.redlimerl.speedrunigt.impl.CategoryRegistryImpl;
 import com.redlimerl.speedrunigt.impl.OptionButtonsImpl;
+import com.redlimerl.speedrunigt.impl.SplitTypeRegistryImpl;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
+import com.redlimerl.speedrunigt.timer.running.RunCategory;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
-import com.redlimerl.speedrunigt.timer.TimerSplit;
+import com.redlimerl.speedrunigt.timer.TimerRecord;
+import com.redlimerl.speedrunigt.timer.running.RunSplitType;
 import com.redlimerl.speedrunigt.utils.FontIdentifier;
 import com.redlimerl.speedrunigt.utils.KeyBindingRegistry;
 import com.redlimerl.speedrunigt.utils.TranslateHelper;
@@ -25,7 +29,7 @@ import org.lwjgl.glfw.GLFW;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashMap;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -75,27 +79,63 @@ public class SpeedRunIGT implements ClientModInitializer {
         MOD_VERSION = (FabricLoader.getInstance().getModContainer(SpeedRunIGT.MOD_ID).isPresent()
                         ? FabricLoader.getInstance().getModContainer(SpeedRunIGT.MOD_ID).get().getMetadata().getVersion().getFriendlyString() : "Unknown+Unknown");
 
-        //init option buttons
+        // init default option buttons
         SpeedRunOption.addOptionButtonFactories(new OptionButtonsImpl().createOptionButtons().toArray(new OptionButtonFactory[0]));
+        // init default categories
+        new CategoryRegistryImpl().registerCategories().forEach(RunCategory::registerCategory);
+        // init default split types
+        new SplitTypeRegistryImpl().registerSplitTypes().forEach(RunSplitType::registrySplitType);
 
+
+        // Registry API's
         for (EntrypointContainer<SpeedRunIGTApi> entryPoint : FabricLoader.getInstance().getEntrypointContainers("speedrunigt", SpeedRunIGTApi.class)) {
             SpeedRunIGTApi api = entryPoint.getEntrypoint();
 
+            // Registry single option button
             OptionButtonFactory singleFactory = api.createOptionButton();
             if (singleFactory != null) SpeedRunOption.addOptionButtonFactories(singleFactory);
 
-            SpeedRunOption.addOptionButtonFactories(api.createOptionButtons().toArray(new OptionButtonFactory[0]));
+            // Registry multiple option buttons
+            Collection<OptionButtonFactory> multipleFactory = api.createOptionButtons();
+            if (multipleFactory != null) SpeedRunOption.addOptionButtonFactories(multipleFactory.toArray(new OptionButtonFactory[0]));
+
+            // Registry single category
+            RunCategory singleCategory = api.registerCategory();
+            if (singleCategory != null) RunCategory.registerCategory(singleCategory);
+
+            // Registry multiple categories
+            Collection<RunCategory> multipleCategories = api.registerCategories();
+            if (multipleCategories != null) new CategoryRegistryImpl().registerCategories().forEach(RunCategory::registerCategory);
+
+            // Registry single split type
+            RunSplitType runSplitType = api.registerSplitType();
+            if (runSplitType != null) RunSplitType.registrySplitType(runSplitType);
+
+            // Registry multiple split types
+            Collection<RunSplitType> runSplitTypes = api.registerSplitTypes();
+            if (runSplitTypes != null) new SplitTypeRegistryImpl().registerSplitTypes().forEach(RunSplitType::registrySplitType);
         }
 
+        // Options initialize
         SpeedRunOption.init();
 
+        // Records initialize
+        TimerRecord.load();
+
+        // Translate initialize
+        try {
+            TranslateHelper.init();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+
+        // Key Bindings initialize
         timerResetKeyBinding = KeyBindingRegistry.registerKeyBinding(new KeyBinding(
                 "speedrunigt.controls.start_timer",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_U,
                 "speedrunigt.title.options"
         ));
-
         timerStopKeyBinding = KeyBindingRegistry.registerKeyBinding(new KeyBinding(
                 "speedrunigt.controls.stop_timer",
                 InputUtil.Type.KEYSYM,
@@ -103,13 +143,7 @@ public class SpeedRunIGT implements ClientModInitializer {
                 "speedrunigt.title.options"
         ));
 
-        TimerSplit.load();
-
-        try {
-            TranslateHelper.init();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+        // End initializing
         isInitialized = true;
     }
 

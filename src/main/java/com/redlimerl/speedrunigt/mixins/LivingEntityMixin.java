@@ -1,7 +1,7 @@
 package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.timer.InGameTimer;
-import com.redlimerl.speedrunigt.timer.RunCategory;
+import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -31,7 +31,7 @@ public abstract class LivingEntityMixin extends Entity {
         if (this.removed || this.dead || timer.getStatus() == TimerStatus.NONE) return;
 
         //Kill All Bosses
-        if (timer.getCategory() == RunCategory.KILL_ALL_BOSSES) {
+        if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {
             if (this.getType() == EntityType.WITHER) {
                 timer.updateMoreData(1, 1);
             }
@@ -44,13 +44,13 @@ public abstract class LivingEntityMixin extends Entity {
         }
 
         //Kill Wither
-        if (timer.getCategory() == RunCategory.KILL_WITHER && this.getType() == EntityType.WITHER) {
+        if (timer.getCategory() == RunCategories.KILL_WITHER && this.getType() == EntityType.WITHER) {
             InGameTimer.complete();
             return;
         }
 
         //Kill Elder Guardian
-        if (timer.getCategory() == RunCategory.KILL_ELDER_GUARDIAN && this.getType() == EntityType.ELDER_GUARDIAN) {
+        if (timer.getCategory() == RunCategories.KILL_ELDER_GUARDIAN && this.getType() == EntityType.ELDER_GUARDIAN) {
             InGameTimer.complete();
         }
     }

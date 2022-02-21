@@ -63,7 +63,7 @@ public class SpeedRunOptionScreen extends Screen {
             }
         }
 
-        addButton(new ButtonWidget(width - 130, height - 30, 100, 20, ScreenTexts.CANCEL, (ButtonWidget button) -> onClose()));
+        addButton(new ButtonWidget(width - 115, height - 35, 100, 20, ScreenTexts.CANCEL, (ButtonWidget button) -> onClose()));
 
         buttonListWidget = addChild(new ButtonScrollListWidget());
 
@@ -83,7 +83,7 @@ public class SpeedRunOptionScreen extends Screen {
         drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 10, 16777215);
 
         ArrayList<Text> tooltip = getToolTip(mouseX, mouseY);
-        if (!tooltip.isEmpty()) this.renderTooltip(matrices, tooltip, 0, height - 34);
+        if (!tooltip.isEmpty()) this.renderTooltip(matrices, tooltip, 0, height);
     }
 
     public ArrayList<Text> getToolTip(int mouseX, int mouseY) {

@@ -175,7 +175,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
         if (Math.random() < 0.1) {
             factories.add(screen -> new OptionButtonFactory.Builder()
                     .setButtonWidget(new ButtonWidget(0, 0, 150, 20, new LiteralText("amongus"), (ButtonWidget button) -> {}))
-                    .setCategory("hidden")
+                    .setCategory("sus")
             );
         }
 

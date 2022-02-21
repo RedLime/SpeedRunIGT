@@ -1,6 +1,9 @@
 package com.redlimerl.speedrunigt.api;
 
 
+import com.redlimerl.speedrunigt.timer.running.RunCategory;
+import com.redlimerl.speedrunigt.timer.running.RunSplitType;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -14,6 +17,19 @@ public interface SpeedRunIGTApi {
         return new ArrayList<>();
     }
 
-    default void registerCategory() {
+    default RunCategory registerCategory() {
+        return null;
+    }
+
+    default Collection<RunCategory> registerCategories() {
+        return new ArrayList<>();
+    }
+
+    default RunSplitType registerSplitType() {
+        return null;
+    }
+
+    default Collection<RunSplitType> registerSplitTypes() {
+        return new ArrayList<>();
     }
 }

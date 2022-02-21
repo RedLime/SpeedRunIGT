@@ -4,6 +4,7 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.SplitDisplayType;
+import com.redlimerl.speedrunigt.timer.running.*;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.resource.language.I18n;
@@ -18,11 +19,11 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class TimerSplit {
+public class TimerRecord {
 
     private static final File SPLITS_DIR = SpeedRunIGT.getMainPath().resolve("splits").toFile();
 
-    public static ArrayList<TimerSplit> SPLIT_DATA = new ArrayList<>();
+    public static ArrayList<TimerRecord> SPLIT_DATA = new ArrayList<>();
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void load() {
@@ -33,7 +34,7 @@ public class TimerSplit {
         if (files != null) {
             try {
                 for (File file : files) {
-                    SPLIT_DATA.add(SpeedRunIGT.GSON.fromJson(FileUtils.readFileToString(file, StandardCharsets.UTF_8), TimerSplit.class));
+                    SPLIT_DATA.add(SpeedRunIGT.GSON.fromJson(FileUtils.readFileToString(file, StandardCharsets.UTF_8), TimerRecord.class));
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -62,53 +63,36 @@ public class TimerSplit {
         }).start();
     }
 
-
-    public enum SplitType {
-        ENTER_NETHER("advancements.story.enter_the_nether.title"), ENTER_END("advancements.story.enter_the_end.title"),
-        ENTER_STRONG_HOLD("advancements.story.follow_ender_eye.title"), ENTER_FORTRESS("advancements.nether.find_fortress.title"),
-        ENTER_BASTION("advancements.nether.find_bastion.title"), COMPLETE("speedrunigt.split.complete_run");
-
-        private final String titleKey;
-
-        SplitType(String titleKey) {
-            this.titleKey = titleKey;
-        }
-
-        public String getTitleKey() {
-            return titleKey;
-        }
-    }
-
     private final String seed;
     private final RunType runType;
     private boolean coop = false;
     private long timestamp = System.currentTimeMillis();
     private long resultTime = 0;
-    private RunCategory runCategory;
+    private String runCategory;
     private String version = "unknown";
-    private final LinkedHashMap<SplitType, Long> splitTimeline = new LinkedHashMap<>();
+    private final LinkedHashMap<String, Long> splitTimeline = new LinkedHashMap<>();
 
 
-    public TimerSplit(long seed, RunType runType, RunCategory runCategory) {
+    public TimerRecord(long seed, RunType runType, RunCategory runCategory) {
         this(String.valueOf(seed), runType, runCategory);
     }
-    public TimerSplit(String seed, RunType runType, RunCategory runCategory) {
+    public TimerRecord(String seed, RunType runType, RunCategory runCategory) {
         this.seed = seed;
         this.runType = runType;
-        this.runCategory = runCategory;
+        this.runCategory = runCategory.getID();
     }
 
-    public LinkedHashMap<SplitType, Long> getSplitTimeline() {
+    public Map<String, Long> getSplitTimeline() {
         return splitTimeline;
     }
 
-    private void updateSplit(SplitType splitType, Long time) {
-        if (splitType == SplitType.COMPLETE) resultTime = time;
-        getSplitTimeline().put(splitType, time);
+    private void updateSplit(RunSplitType splitType, Long time) {
+        if (splitType == RunSplitTypes.COMPLETE) resultTime = time;
+        getSplitTimeline().put(splitType.getID(), time);
     }
 
     public void completeSplit(boolean isCoop) {
-        if (getRunCategory() == RunCategory.CUSTOM) return;
+        if (getRunCategory() == RunCategories.CUSTOM) return;
 
         version = SharedConstants.getGameVersion().getName();
         timestamp = System.currentTimeMillis();
@@ -130,7 +114,7 @@ public class TimerSplit {
     }
 
     public RunCategory getRunCategory() {
-        return runCategory;
+        return RunCategory.getCategory(runCategory);
     }
 
     public boolean isCoop() {
@@ -138,7 +122,7 @@ public class TimerSplit {
     }
 
     public void setRunCategory(RunCategory runCategory) {
-        this.runCategory = runCategory;
+        this.runCategory = runCategory.getID();
     }
 
     public String getSeed() {
@@ -150,12 +134,12 @@ public class TimerSplit {
     }
 
     public String getIdentifyString() {
-        return (getRunType() == RunType.SET_SEED ? getSeed() : getRunType().name()) + ":" + getRunCategory().name() + ":" + getVersion() + ":" + this.coop;
+        return (getRunType() == RunType.SET_SEED ? getSeed() : getRunType().name()) + ":" + getRunCategory().getID() + ":" + getVersion() + ":" + this.coop;
     }
     public String getTimelineString() {
         StringBuilder stringBuilder = new StringBuilder();
-        for (Map.Entry<SplitType, Long> split : getSplitTimeline().entrySet()) {
-            stringBuilder.append(split.getKey().name()).append("|");
+        for (Map.Entry<String, Long> split : getSplitTimeline().entrySet()) {
+            stringBuilder.append(split.getKey()).append("|");
         }
         return stringBuilder.substring(0, stringBuilder.length() - (getSplitTimeline().entrySet().size() > 0 ? 1 : 0));
     }
@@ -163,30 +147,30 @@ public class TimerSplit {
         return new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date(timestamp)) + ".spl";
     }
 
-    public void tryUpdateSplit(SplitType splitType, Long igt) {
+    public void tryUpdateSplit(RunSplitType splitType, Long igt) {
         tryUpdateSplit(splitType, igt, true);
     }
     @SuppressWarnings("unused")
-    public void tryUpdateSplit(SplitType splitType, Long igt, boolean sendPacket) {
-        if (getSplitTimeline().containsKey(splitType)) return;
+    public void tryUpdateSplit(RunSplitType splitType, Long igt, boolean sendPacket) {
+        if (getSplitTimeline().containsKey(splitType.getID())) return;
 
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player == null) return;
         SplitDisplayType splitDisplayType = SpeedRunOption.getOption(SpeedRunOptions.SPLIT_DISPLAY_TYPE);
 
         long bestTime = 0L;
-        for (TimerSplit splits : SPLIT_DATA) {
+        for (TimerRecord splits : SPLIT_DATA) {
             if (splits.getIdentifyString().startsWith(this.getIdentifyString())
-                    && splits.getSplitTimeline().containsKey(splitType)
+                    && splits.getSplitTimeline().containsKey(splitType.getID())
                     && splits.getTimelineString().startsWith(this.getTimelineString())) {
-                long time = splits.getSplitTimeline().get(splitType);
+                long time = splits.getSplitTimeline().get(splitType.getID());
                 if (time < bestTime || bestTime == 0) bestTime = time;
             }
         }
 
 
         String timeString = "Time: " + InGameTimer.timeToStringFormat(igt) + (bestTime == 0L ? "" : " " + ((bestTime >= igt ? "§a[-" : "§c[+") + InGameTimer.timeToStringFormat(Math.abs(bestTime - igt)) + "]"));
-        String titleString = splitType == SplitType.COMPLETE ? (SharedConstants.getGameVersion().getName() + " " + getRunCategory().getText().getString() + " " + getRunType().name()) : I18n.translate(splitType.titleKey);
+        String titleString = splitType == RunSplitTypes.COMPLETE ? (SharedConstants.getGameVersion().getName() + " " + getRunCategory().getText().getString() + " " + getRunType().name()) : I18n.translate(splitType.getTranslateKey());
         if (splitDisplayType == SplitDisplayType.MESSAGE) {
             //client.player.sendMessage(new LiteralText("§f§l▶ §e" + titleString), false);
             //client.player.sendMessage(new LiteralText("§f§l▶ §f- " + timeString), false);

@@ -3,7 +3,9 @@ package com.redlimerl.speedrunigt.timer;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
-import com.redlimerl.speedrunigt.timer.TimerSplit.SplitType;
+import com.redlimerl.speedrunigt.timer.running.RunCategory;
+import com.redlimerl.speedrunigt.timer.running.RunSplitType;
+import com.redlimerl.speedrunigt.timer.running.RunType;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.PacketByteBuf;
@@ -35,7 +37,7 @@ public class TimerPacketHandler {
         if (!SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) return;
         PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
         passedData.writeLong(time);
-        passedData.writeEnumConstant(category);
+        passedData.writeString(category.getID());
         passedData.writeString(seed);
         passedData.writeEnumConstant(runType);
 
@@ -46,12 +48,12 @@ public class TimerPacketHandler {
     public static void receiveInitC2S(MinecraftServer server, PacketByteBuf buffer) {
         try {
             long startTime = buffer.readLong();
-            RunCategory category = buffer.readEnumConstant(RunCategory.class);
+            RunCategory category = RunCategory.getCategory(buffer.readString());
             String seed = buffer.readString();
             RunType runType = buffer.readEnumConstant(RunType.class);
 
             sendInitS2C(server.getPlayerManager().getPlayerList(), startTime, category, seed, runType);
-            SpeedRunIGT.debug("server received init: " + startTime + " / " + category.name());
+            SpeedRunIGT.debug("server received init: " + startTime + " / " + category.getID());
         } catch (Exception e) {
             SpeedRunIGT.error("Failed read packets, probably SpeedRunIGT version different between players");
         }
@@ -60,7 +62,7 @@ public class TimerPacketHandler {
     public static void sendInitS2C(List<ServerPlayerEntity> players, long startTime, RunCategory category, String seed, RunType runType) {
         PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
         passedData.writeLong(startTime);
-        passedData.writeEnumConstant(category);
+        passedData.writeString(category.getID());
         passedData.writeString(seed);
         passedData.writeEnumConstant(runType);
 
@@ -75,7 +77,7 @@ public class TimerPacketHandler {
         try {
             if (!SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) return;
             long startTime = buffer.readLong();
-            RunCategory category = buffer.readEnumConstant(RunCategory.class);
+            RunCategory category = RunCategory.getCategory(buffer.readString());
             String seed = buffer.readString();
             RunType runType = buffer.readEnumConstant(RunType.class);
 
@@ -84,14 +86,14 @@ public class TimerPacketHandler {
                     InGameTimer.start();
                     InGameTimer.getInstance().startTime = startTime;
                     InGameTimer.getInstance().setCategory(category);
-                    InGameTimer.getInstance().createNewTimerSplit(new TimerSplit(seed, runType, category));
+                    InGameTimer.getInstance().createNewTimerSplit(new TimerRecord(seed, runType, category));
                 }
                 InGameTimer.getInstance().isCoop = true;
                 InGameTimer.getInstance().isServerIntegrated = MinecraftClient.getInstance().isIntegratedServerRunning();
                 InGameTimer.getInstance().setPause(false);
             });
 
-            SpeedRunIGT.debug("client received init: " + startTime + " / " + category.name());
+            SpeedRunIGT.debug("client received init: " + startTime + " / " + category.getID());
         } catch (Exception e) {
             SpeedRunIGT.error("Failed read packets, probably SpeedRunIGT version different between players");
         }
@@ -146,10 +148,10 @@ public class TimerPacketHandler {
     /*
     Timer split packets
      */
-    public static void sendSplitC2S(SplitType splitType, long time) {
+    public static void sendSplitC2S(RunSplitType splitType, long time) {
         if (!SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) return;
         PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
-        passedData.writeEnumConstant(splitType);
+        passedData.writeString(splitType.getID());
         passedData.writeLong(time);
 
         if (client.getNetworkHandler() != null)
@@ -158,7 +160,7 @@ public class TimerPacketHandler {
 
     public static void receiveSplitC2S(MinecraftServer server, PacketByteBuf buffer) {
         try {
-            SplitType splitType = buffer.readEnumConstant(SplitType.class);
+            RunSplitType splitType = RunSplitType.getSplitType(buffer.readString());
             long time = buffer.readLong();
 
             sendSplitS2C(server.getPlayerManager().getPlayerList(), splitType, time);
@@ -168,9 +170,9 @@ public class TimerPacketHandler {
         }
     }
 
-    public static void sendSplitS2C(List<ServerPlayerEntity> players, SplitType splitType, long time) {
+    public static void sendSplitS2C(List<ServerPlayerEntity> players, RunSplitType splitType, long time) {
         PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
-        passedData.writeEnumConstant(splitType);
+        passedData.writeString(splitType.getID());
         passedData.writeLong(time);
 
         CustomPayloadS2CPacket s2CPacket = new CustomPayloadS2CPacket(PACKET_TIMER_SPLIT_ID, passedData);
@@ -183,7 +185,7 @@ public class TimerPacketHandler {
     public static void receiveSplitS2C(PacketByteBuf buffer) {
         try {
             if (!SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) return;
-            SplitType splitType = buffer.readEnumConstant(SplitType.class);
+            RunSplitType splitType = RunSplitType.getSplitType(buffer.readString());
             long time = buffer.readLong();
             client.execute(() -> InGameTimer.getInstance().getTimerSplit().tryUpdateSplit(splitType, time, false));
             SpeedRunIGT.debug("hello client split: " + splitType);

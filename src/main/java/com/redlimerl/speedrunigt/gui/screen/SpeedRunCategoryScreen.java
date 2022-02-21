@@ -5,7 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
-import com.redlimerl.speedrunigt.timer.RunCategory;
+import com.redlimerl.speedrunigt.timer.running.RunCategory;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -25,7 +25,6 @@ import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,7 +65,7 @@ public class SpeedRunCategoryScreen extends Screen {
         public CategorySelectionListWidget(MinecraftClient client) {
             super(client, SpeedRunCategoryScreen.this.width, SpeedRunCategoryScreen.this.height, 32, SpeedRunCategoryScreen.this.height - 55, 24);
 
-            this.replaceEntries(Arrays.stream(RunCategory.values()).map(CategoryEntry::new).collect(Collectors.toList()));
+            this.replaceEntries(RunCategory.getCategories().values().stream().map(CategoryEntry::new).collect(Collectors.toList()));
         }
 
         @Override
@@ -83,7 +82,7 @@ public class SpeedRunCategoryScreen extends Screen {
 
             public CategoryEntry(RunCategory category) {
                 this.checkBox = new CategoryCheckBoxWidget(category);
-                this.urlButton = new ButtonWidget(0, 0, 30, 20, new TranslatableText("speedrunigt.option.more"), button -> Util.getOperatingSystem().open("https://www.speedrun.com/"+category.getCode()));
+                this.urlButton = new ButtonWidget(0, 0, 30, 20, new TranslatableText("speedrunigt.option.more"), button -> Util.getOperatingSystem().open(category.getSRCLeaderboardUrl()));
                 children.add(urlButton);
                 children.add(checkBox);
             }

@@ -5,6 +5,10 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.crypt.Crypto;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
+import com.redlimerl.speedrunigt.timer.running.RunCategories;
+import com.redlimerl.speedrunigt.timer.running.RunCategory;
+import com.redlimerl.speedrunigt.timer.running.RunSplitTypes;
+import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
@@ -54,8 +58,8 @@ public class InGameTimer {
         this.isResettable = isResettable;
     }
 
-    private RunCategory category = RunCategory.ANY;
-    private TimerSplit timerSplit = null;
+    private String category = RunCategories.ANY.getID();
+    private TimerRecord timerRecord = null;
     private final boolean isResettable;
     private boolean isCompleted = false;
     boolean isServerIntegrated = true;
@@ -96,7 +100,7 @@ public class InGameTimer {
     public static void start() {
         INSTANCE = new InGameTimer();
         INSTANCE.setCategory(SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY));
-        INSTANCE.createNewTimerSplit(new TimerSplit(SpeedRunIGT.LATEST_PLAYED_SEED, RunType.getRunType(SpeedRunIGT.LATEST_IS_SSG, SpeedRunIGT.LATEST_IS_FSG), INSTANCE.getCategory()));
+        INSTANCE.createNewTimerSplit(new TimerRecord(SpeedRunIGT.LATEST_PLAYED_SEED, RunType.getRunType(SpeedRunIGT.LATEST_IS_SSG, SpeedRunIGT.LATEST_IS_FSG), INSTANCE.getCategory()));
         INSTANCE.setPause(true, TimerStatus.IDLE);
     }
 
@@ -105,11 +109,11 @@ public class InGameTimer {
      */
     public static void reset() {
         if (INSTANCE.isCompleted || INSTANCE.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
-        TimerSplit oldTimerSplit = INSTANCE.getTimerSplit();
+        TimerRecord oldTimerRecord = INSTANCE.getTimerSplit();
 
         INSTANCE = new InGameTimer(false);
-        INSTANCE.createNewTimerSplit(new TimerSplit(oldTimerSplit.getSeed(), oldTimerSplit.getRunType(), oldTimerSplit.getRunCategory()));
-        INSTANCE.setCategory(RunCategory.CUSTOM);
+        INSTANCE.createNewTimerSplit(new TimerRecord(oldTimerRecord.getSeed(), oldTimerRecord.getRunType(), oldTimerRecord.getRunCategory()));
+        INSTANCE.setCategory(RunCategories.CUSTOM);
         INSTANCE.setPause(true, TimerStatus.IDLE);
         INSTANCE.setPause(false);
         TimerPacketHandler.sendInitC2S(INSTANCE);
@@ -156,7 +160,7 @@ public class InGameTimer {
 
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.interactionManager != null && client.interactionManager.getCurrentGameMode() == GameMode.SURVIVAL) {
-            timer.getTimerSplit().tryUpdateSplit(TimerSplit.SplitType.COMPLETE, timer.getInGameTime());
+            timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.COMPLETE, timer.getInGameTime());
             timer.getTimerSplit().completeSplit(timer.isCoop());
         }
 
@@ -170,7 +174,7 @@ public class InGameTimer {
                     .append(", Total Ticks: ").append(timer.loggerTicks)
                     .append(", Rebased RTA Time: ").append(timeToStringFormat(timer.rebaseRealTime))
                     .append(", Rebased IGT Time: ").append(timeToStringFormat(timer.rebaseIGTime));
-            if (timer.category == RunCategory.ALL_ADVANCEMENTS)
+            if (timer.getCategory() == RunCategories.CUSTOM)
                 timer.pauseLog.append(", Excluded RTA Time: ").append(timeToStringFormat(timer.excludedTime));
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy.MM.dd HH:mm:ss");
@@ -238,22 +242,22 @@ public class InGameTimer {
 
 
     public @NotNull RunCategory getCategory() {
-        return category;
+        return RunCategory.getCategory(category);
     }
 
-    public TimerSplit getTimerSplit() {
-        return timerSplit;
+    public TimerRecord getTimerSplit() {
+        return timerRecord;
     }
 
-    public void createNewTimerSplit(TimerSplit timerSplit) {
-        this.timerSplit = timerSplit;
+    public void createNewTimerSplit(TimerRecord timerRecord) {
+        this.timerRecord = timerRecord;
     }
 
     public void setCategory(RunCategory category) {
-        this.category = category;
-        if (this.timerSplit != null) {
-            this.timerSplit.getSplitTimeline().clear();
-            this.timerSplit.setRunCategory(category);
+        this.category = category.getID();
+        if (this.timerRecord != null) {
+            this.timerRecord.getSplitTimeline().clear();
+            this.timerRecord.setRunCategory(category);
         }
     }
 
@@ -412,7 +416,7 @@ public class InGameTimer {
                 if (isPaused()) {
                     long nowTime = getRealTimeAttack();
                     pauseLog.append(timeToStringFormat(nowTime)).append(" RTA E, ").append(timeToStringFormat(nowTime - loggerPausedTime)).append(" Length (").append(leaveTime != 0 ? TimerStatus.LEAVE_LEGACY.getMessage() : getStatus().getMessage()).append(")\r\n");
-                    if (category == RunCategory.ALL_ADVANCEMENTS && leaveTime != 0) excludedTime = System.currentTimeMillis() - leaveTime;
+                    if (this.getCategory() == RunCategories.ALL_ADVANCEMENTS && leaveTime != 0) excludedTime = System.currentTimeMillis() - leaveTime;
                     leaveTime = 0;
                 }
                 if (this.getStatus() == TimerStatus.IDLE && loggerTicks != 0) {

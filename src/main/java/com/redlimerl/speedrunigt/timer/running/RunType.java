@@ -1,4 +1,4 @@
-package com.redlimerl.speedrunigt.timer;
+package com.redlimerl.speedrunigt.timer.running;
 
 public enum RunType {
     RANDOM_SEED("Random Seed"), SET_SEED("Set Seed"), FILTERED_SEED("Filtered Seed"), SAVED_WORLD("Saved World");
