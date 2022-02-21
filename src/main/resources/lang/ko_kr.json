@@ -16,7 +16,7 @@
   "speedrunigt.option.timer_position.show_time_only": "시간만 표시",
   "speedrunigt.option.timer_position.show_decimals": "타이머 소수점",
   "speedrunigt.option.timer_position.show_decimals.description": "참고사항: 이 옵션은 게임을 멈추지 않았을 때만 적용됩니다.",
-  "speedrunigt.option.timer_position.show_decimals.context": "소수점 %d자리",
+  "speedrunigt.option.timer_position.show_decimals.context": "소수점 %s자리",
   "speedrunigt.option.timer_position.lock_timer_position": "타이머 위치 고정",
   "speedrunigt.option.timer_position.text_decorate": "%s 텍스트 스타일",
   "speedrunigt.option.timer_position.text_decorate.none": "없음",

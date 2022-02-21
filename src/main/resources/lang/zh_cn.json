@@ -16,7 +16,7 @@
   "speedrunigt.option.timer_position.show_time_only": "只显示时间",
   "speedrunigt.option.timer_position.show_decimals": "计时器精度",
   "speedrunigt.option.timer_position.show_decimals.description": "注意:此选项仅适用于您没有暂停时。",
-  "speedrunigt.option.timer_position.show_decimals.context": "%d 位小数",
+  "speedrunigt.option.timer_position.show_decimals.context": "%s 位小数",
   "speedrunigt.option.timer_position.lock_timer_position": "锁定计时器位置",
   "speedrunigt.option.timer_position.text_decorate": "%s 文字样式",
   "speedrunigt.option.timer_position.text_decorate.none": "无",

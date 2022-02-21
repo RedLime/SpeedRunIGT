@@ -16,7 +16,7 @@
   "speedrunigt.option.timer_position.show_time_only": "Disable Timer Labels",
   "speedrunigt.option.timer_position.show_decimals": "Timer Precision",
   "speedrunigt.option.timer_position.show_decimals.description": "Note: This option only applies when you aren't paused.",
-  "speedrunigt.option.timer_position.show_decimals.context": "%d Decimals",
+  "speedrunigt.option.timer_position.show_decimals.context": "%s Decimals",
   "speedrunigt.option.timer_position.lock_timer_position": "Lock Timer Position",
   "speedrunigt.option.timer_position.text_decorate": "%s Text Style",
   "speedrunigt.option.timer_position.text_decorate.none": "None",
