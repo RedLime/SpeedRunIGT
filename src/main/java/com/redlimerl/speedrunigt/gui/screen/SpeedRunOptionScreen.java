@@ -1,13 +1,17 @@
 package com.redlimerl.speedrunigt.gui.screen;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
-import com.redlimerl.speedrunigt.gui.ButtonScrollListWidget;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ElementListWidget;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
@@ -61,7 +65,7 @@ public class SpeedRunOptionScreen extends Screen {
 
         addButton(new ButtonWidget(width - 130, height - 30, 100, 20, ScreenTexts.CANCEL, (ButtonWidget button) -> onClose()));
 
-        buttonListWidget = addChild(new ButtonScrollListWidget(client, width - 140, height, 28, height - 54, 24));
+        buttonListWidget = addChild(new ButtonScrollListWidget());
 
         categorySubButtons.keySet().stream().findFirst().ifPresent(this::selectCategory);
     }
@@ -73,8 +77,8 @@ public class SpeedRunOptionScreen extends Screen {
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        this.renderBackground(matrices);
         this.buttonListWidget.render(matrices, mouseX, mouseY, delta);
+        this.renderBackground(matrices);
         fill(matrices, width - 115, 28, width - 25, height - 54, 1677721600);
         super.render(matrices, mouseX, mouseY, delta);
         drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 10, 16777215);
@@ -83,6 +87,23 @@ public class SpeedRunOptionScreen extends Screen {
         if (!tooltip.isEmpty()) this.renderTooltip(matrices, tooltip, 0, height - 34);
     }
 
+    @SuppressWarnings("deprecation")
+    @Override
+    public void renderBackground(MatrixStack matrices) {
+        if (this.client == null) return;
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferBuilder = tessellator.getBuffer();
+        this.client.getTextureManager().bindTexture(BACKGROUND_TEXTURE);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        float f = 32.0F;
+        int emptyWidth = width - 140;
+        bufferBuilder.begin(7, VertexFormats.POSITION_TEXTURE_COLOR);
+        bufferBuilder.vertex(emptyWidth, this.height, 0.0D).texture(emptyWidth / f, (float)this.height / f).color(64, 64, 64, 255).next();
+        bufferBuilder.vertex(this.width, this.height, 0.0D).texture((float)this.width / f, (float)this.height / f + 0).color(64, 64, 64, 255).next();
+        bufferBuilder.vertex(this.width, 0.0D, 0.0D).texture((float)this.width / f, 0).color(64, 64, 64, 255).next();
+        bufferBuilder.vertex(emptyWidth, 0.0D, 0.0D).texture(emptyWidth / f, 0).color(64, 64, 64, 255).next();
+        tessellator.draw();
+    }
 
     public ArrayList<Text> getToolTip(int mouseX, int mouseY) {
         ArrayList<Text> tooltipList = new ArrayList<>();
@@ -120,4 +141,72 @@ public class SpeedRunOptionScreen extends Screen {
             buttonListWidget.setScrollAmount(0);
         }
     }
+
+    class ButtonScrollListWidget extends ElementListWidget<ButtonScrollListWidget.Entry> {
+
+        public ButtonScrollListWidget() {
+            super(SpeedRunOptionScreen.this.client, SpeedRunOptionScreen.this.width - 140, SpeedRunOptionScreen.this.height, 28, SpeedRunOptionScreen.this.height - 54, 24);
+        }
+
+        public void replaceButtons(Collection<AbstractButtonWidget> buttonWidgets) {
+            ArrayList<Entry> list = new ArrayList<>();
+            for (AbstractButtonWidget buttonWidget : buttonWidgets) {
+                list.add(new Entry(buttonWidget));
+            }
+            replaceEntries(list);
+        }
+
+        @Override
+        public int getRowWidth() {
+            return 150;
+        }
+
+        @SuppressWarnings("deprecation")
+        @Override
+        public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+            super.render(matrices, mouseX, mouseY, delta);
+
+            //Render bg on empty space
+            if (this.client == null) return;
+            Tessellator tessellator = Tessellator.getInstance();
+            BufferBuilder bufferBuilder = tessellator.getBuffer();
+            this.client.getTextureManager().bindTexture(BACKGROUND_TEXTURE);
+            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+            float f = 32.0F;
+            int emptyWidth = this.width;
+            bufferBuilder.begin(7, VertexFormats.POSITION_TEXTURE_COLOR);
+            bufferBuilder.vertex(this.width, this.height, 0.0D).texture(emptyWidth / f, (float)this.height / f).color(64, 64, 64, 255).next();
+            bufferBuilder.vertex(SpeedRunOptionScreen.this.width, this.height, 0.0D).texture((float)SpeedRunOptionScreen.this.width / f, (float)this.height / f + 0).color(64, 64, 64, 255).next();
+            bufferBuilder.vertex(SpeedRunOptionScreen.this.width, 0.0D, 0.0D).texture((float)SpeedRunOptionScreen.this.width / f, 0).color(64, 64, 64, 255).next();
+            bufferBuilder.vertex(this.width, 0.0D, 0.0D).texture(emptyWidth / f, 0).color(64, 64, 64, 255).next();
+            tessellator.draw();
+        }
+
+        class Entry extends ElementListWidget.Entry<Entry> {
+            ArrayList<AbstractButtonWidget> children = new ArrayList<>();
+            private final AbstractButtonWidget buttonWidget;
+
+            public Entry(AbstractButtonWidget buttonWidget) {
+                this.buttonWidget = buttonWidget;
+                this.buttonWidget.x = (ButtonScrollListWidget.this.width - this.buttonWidget.getWidth()) / 2;
+                children.add(this.buttonWidget);
+            }
+
+            @Override
+            public List<? extends Element> children() {
+                return children;
+            }
+
+            public AbstractButtonWidget getButtonWidget() {
+                return buttonWidget;
+            }
+
+            @Override
+            public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+                buttonWidget.y = y;
+                buttonWidget.render(matrices, mouseX, mouseY, tickDelta);
+            }
+        }
+    }
+
 }
