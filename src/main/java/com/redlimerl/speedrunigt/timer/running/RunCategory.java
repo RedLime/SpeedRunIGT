@@ -3,7 +3,9 @@ package com.redlimerl.speedrunigt.timer.running;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import net.minecraft.text.TranslatableText;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
 
 public class RunCategory {
 

@@ -19,6 +19,8 @@
     "access.WorldRendererAccessor",
     "coop.PlayerManagerMixin",
     "coop.TimeCommandMixin",
+    "keybinding.GameOptionsMixin",
+    "keybinding.KeyBindingAccessor",
     "network.ClientPlayNetworkHandlerMixin",
     "network.CustomPayloadC2SPacketAccessor",
     "network.ServerPlayNetworkHandlerMixin",
@@ -28,8 +30,6 @@
     "screen.GameMenuScreenMixin",
     "screen.MoreOptionsDialogMixin",
     "screen.OptionsScreenMixin",
-    "keybinding.GameOptionsMixin",
-    "keybinding.KeyBindingAccessor",
     "translate.I18nMixin",
     "translate.TranslatableTextMixin"
   ],
