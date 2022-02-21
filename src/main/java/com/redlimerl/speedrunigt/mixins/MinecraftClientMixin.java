@@ -5,6 +5,7 @@ import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
 import com.redlimerl.speedrunigt.mixins.access.FontManagerAccessor;
 import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
 import com.redlimerl.speedrunigt.mixins.access.WorldRendererAccessor;
+import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.RunCategory;
@@ -145,7 +146,7 @@ public abstract class MinecraftClientMixin {
             int entities = worldRendererAccessor.getRegularEntityCount() - (options.perspective > 0 ? 0 : 1);
 
             if (chunks + entities > 0) {
-                if (!(SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) && !timer.isStarted())) {
+                if (!(SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) && !timer.isStarted())) {
                     timer.setPause(false);
                 } else {
                     timer.updateFirstRendered();
@@ -155,8 +156,8 @@ public abstract class MinecraftClientMixin {
 
         SpeedRunIGT.DEBUG_DATA = timer.getStatus().name();
         if (!this.options.hudHidden && this.world != null && timer.getStatus() != TimerStatus.NONE
-                && (!this.isPaused() || this.currentScreen instanceof CreditsScreen || this.currentScreen instanceof GameMenuScreen || !SpeedRunOptions.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS))
-                && !(!this.isPaused() && SpeedRunOptions.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) && this.options.debugEnabled)
+                && (!this.isPaused() || this.currentScreen instanceof CreditsScreen || this.currentScreen instanceof GameMenuScreen || !SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS))
+                && !(!this.isPaused() && SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) && this.options.debugEnabled)
                 && !(this.currentScreen instanceof TimerCustomizeScreen)) {
             SpeedRunIGT.TIMER_DRAWER.draw();
         }

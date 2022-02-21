@@ -3,6 +3,7 @@ package com.redlimerl.speedrunigt.timer;
 import com.redlimerl.speedrunigt.mixins.access.FontManagerAccessor;
 import com.redlimerl.speedrunigt.mixins.access.FontStorageAccessor;
 import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
+import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecimals;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
@@ -48,24 +49,24 @@ public class TimerDrawer {
 
     public TimerDrawer(boolean translateZ) {
         this(translateZ,
-                SpeedRunOptions.getOption(SpeedRunOptions.TIMER_IGT_POSITION_X),
-                SpeedRunOptions.getOption(SpeedRunOptions.TIMER_IGT_POSITION_Y),
-                SpeedRunOptions.getOption(SpeedRunOptions.TIMER_IGT_SCALE),
-                SpeedRunOptions.getOption(SpeedRunOptions.TIMER_IGT_COLOR),
-                SpeedRunOptions.getOption(SpeedRunOptions.TIMER_IGT_DECO),
-                SpeedRunOptions.getOption(SpeedRunOptions.TIMER_RTA_POSITION_X),
-                SpeedRunOptions.getOption(SpeedRunOptions.TIMER_RTA_POSITION_Y),
-                SpeedRunOptions.getOption(SpeedRunOptions.TIMER_RTA_SCALE),
-                SpeedRunOptions.getOption(SpeedRunOptions.TIMER_RTA_COLOR),
-                SpeedRunOptions.getOption(SpeedRunOptions.TIMER_RTA_DECO),
-                SpeedRunOptions.getOption(SpeedRunOptions.IGT_BACKGROUND_PADDING),
-                SpeedRunOptions.getOption(SpeedRunOptions.RTA_BACKGROUND_PADDING),
-                SpeedRunOptions.getOption(SpeedRunOptions.BACKGROUND_OPACITY),
-                SpeedRunOptions.getOption(SpeedRunOptions.DISPLAY_TIME_ONLY),
-                SpeedRunOptions.getOption(SpeedRunOptions.TOGGLE_TIMER),
-                SpeedRunOptions.getOption(SpeedRunOptions.LOCK_TIMER_POSITION),
-                SpeedRunOptions.getOption(SpeedRunOptions.DISPLAY_DECIMALS),
-                SpeedRunOptions.getOption(SpeedRunOptions.TIMER_TEXT_FONT));
+                SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_POSITION_X),
+                SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_POSITION_Y),
+                SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_SCALE),
+                SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_COLOR),
+                SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_DECO),
+                SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_POSITION_X),
+                SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_POSITION_Y),
+                SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_SCALE),
+                SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_COLOR),
+                SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_DECO),
+                SpeedRunOption.getOption(SpeedRunOptions.IGT_BACKGROUND_PADDING),
+                SpeedRunOption.getOption(SpeedRunOptions.RTA_BACKGROUND_PADDING),
+                SpeedRunOption.getOption(SpeedRunOptions.BACKGROUND_OPACITY),
+                SpeedRunOption.getOption(SpeedRunOptions.DISPLAY_TIME_ONLY),
+                SpeedRunOption.getOption(SpeedRunOptions.TOGGLE_TIMER),
+                SpeedRunOption.getOption(SpeedRunOptions.LOCK_TIMER_POSITION),
+                SpeedRunOption.getOption(SpeedRunOptions.DISPLAY_DECIMALS),
+                SpeedRunOption.getOption(SpeedRunOptions.TIMER_TEXT_FONT));
     }
 
     public TimerDrawer(boolean translateZ,

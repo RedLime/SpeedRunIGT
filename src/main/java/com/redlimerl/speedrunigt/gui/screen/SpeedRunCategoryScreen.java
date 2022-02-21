@@ -2,6 +2,7 @@ package com.redlimerl.speedrunigt.gui.screen;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.RunCategory;
@@ -113,14 +114,14 @@ public class SpeedRunCategoryScreen extends Screen {
                 @Override
                 public void onPress() {
                     super.onPress();
-                    SpeedRunOptions.setOption(SpeedRunOptions.TIMER_CATEGORY, this.category);
+                    SpeedRunOption.setOption(SpeedRunOptions.TIMER_CATEGORY, this.category);
                     InGameTimer.getInstance().setCategory(this.category);
                     InGameTimer.getInstance().setUncompleted();
                 }
 
                 @Override
                 public boolean isChecked() {
-                    return SpeedRunOptions.getOption(SpeedRunOptions.TIMER_CATEGORY) == category;
+                    return SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY) == category;
                 }
 
                 @SuppressWarnings("deprecation")

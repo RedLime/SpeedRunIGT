@@ -3,6 +3,7 @@ package com.redlimerl.speedrunigt.gui.screen;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.mixins.access.FontManagerAccessor;
 import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
+import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecimals;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
@@ -140,43 +141,43 @@ public class TimerCustomizeScreen extends Screen {
         }));
 
         this.saveButton = addButton(new ButtonWidget(width / 2 - 29, height / 2 + 62, 58, 20, new TranslatableText("selectWorld.edit.save"), (ButtonWidget button) -> {
-            SpeedRunOptions.setOption(SpeedRunOptions.TIMER_IGT_POSITION_X, drawer.getIGT_XPos());
+            SpeedRunOption.setOption(SpeedRunOptions.TIMER_IGT_POSITION_X, drawer.getIGT_XPos());
             SpeedRunIGT.TIMER_DRAWER.setIGT_XPos(drawer.getIGT_XPos());
-            SpeedRunOptions.setOption(SpeedRunOptions.TIMER_IGT_POSITION_Y, drawer.getIGT_YPos());
+            SpeedRunOption.setOption(SpeedRunOptions.TIMER_IGT_POSITION_Y, drawer.getIGT_YPos());
             SpeedRunIGT.TIMER_DRAWER.setIGT_YPos(drawer.getIGT_YPos());
-            SpeedRunOptions.setOption(SpeedRunOptions.TIMER_IGT_SCALE, drawer.getIGTScale());
+            SpeedRunOption.setOption(SpeedRunOptions.TIMER_IGT_SCALE, drawer.getIGTScale());
             SpeedRunIGT.TIMER_DRAWER.setIGTScale(drawer.getIGTScale());
-            SpeedRunOptions.setOption(SpeedRunOptions.TIMER_IGT_COLOR, drawer.getIGTColor());
+            SpeedRunOption.setOption(SpeedRunOptions.TIMER_IGT_COLOR, drawer.getIGTColor());
             SpeedRunIGT.TIMER_DRAWER.setIGTColor(drawer.getIGTColor());
-            SpeedRunOptions.setOption(SpeedRunOptions.TIMER_IGT_DECO, drawer.getIGTDecoration());
+            SpeedRunOption.setOption(SpeedRunOptions.TIMER_IGT_DECO, drawer.getIGTDecoration());
             SpeedRunIGT.TIMER_DRAWER.setIGTDecoration(drawer.getIGTDecoration());
 
-            SpeedRunOptions.setOption(SpeedRunOptions.TIMER_RTA_POSITION_X, drawer.getRTA_XPos());
+            SpeedRunOption.setOption(SpeedRunOptions.TIMER_RTA_POSITION_X, drawer.getRTA_XPos());
             SpeedRunIGT.TIMER_DRAWER.setRTA_XPos(drawer.getRTA_XPos());
-            SpeedRunOptions.setOption(SpeedRunOptions.TIMER_RTA_POSITION_Y, drawer.getRTA_YPos());
+            SpeedRunOption.setOption(SpeedRunOptions.TIMER_RTA_POSITION_Y, drawer.getRTA_YPos());
             SpeedRunIGT.TIMER_DRAWER.setRTA_YPos(drawer.getRTA_YPos());
-            SpeedRunOptions.setOption(SpeedRunOptions.TIMER_RTA_SCALE, drawer.getRTAScale());
+            SpeedRunOption.setOption(SpeedRunOptions.TIMER_RTA_SCALE, drawer.getRTAScale());
             SpeedRunIGT.TIMER_DRAWER.setRTAScale(drawer.getRTAScale());
-            SpeedRunOptions.setOption(SpeedRunOptions.TIMER_RTA_COLOR, drawer.getRTAColor());
+            SpeedRunOption.setOption(SpeedRunOptions.TIMER_RTA_COLOR, drawer.getRTAColor());
             SpeedRunIGT.TIMER_DRAWER.setRTAColor(drawer.getRTAColor());
-            SpeedRunOptions.setOption(SpeedRunOptions.TIMER_RTA_DECO, drawer.getRTADecoration());
+            SpeedRunOption.setOption(SpeedRunOptions.TIMER_RTA_DECO, drawer.getRTADecoration());
             SpeedRunIGT.TIMER_DRAWER.setRTADecoration(drawer.getRTADecoration());
 
-            SpeedRunOptions.setOption(SpeedRunOptions.DISPLAY_TIME_ONLY, drawer.isSimplyTimer());
+            SpeedRunOption.setOption(SpeedRunOptions.DISPLAY_TIME_ONLY, drawer.isSimplyTimer());
             SpeedRunIGT.TIMER_DRAWER.setSimplyTimer(drawer.isSimplyTimer());
-            SpeedRunOptions.setOption(SpeedRunOptions.LOCK_TIMER_POSITION, drawer.isLocked());
+            SpeedRunOption.setOption(SpeedRunOptions.LOCK_TIMER_POSITION, drawer.isLocked());
             SpeedRunIGT.TIMER_DRAWER.setLocked(drawer.isLocked());
-            SpeedRunOptions.setOption(SpeedRunOptions.DISPLAY_DECIMALS, drawer.getTimerDecimals());
+            SpeedRunOption.setOption(SpeedRunOptions.DISPLAY_DECIMALS, drawer.getTimerDecimals());
             SpeedRunIGT.TIMER_DRAWER.setTimerDecimals(drawer.getTimerDecimals());
 
-            SpeedRunOptions.setOption(SpeedRunOptions.TIMER_TEXT_FONT, drawer.getTimerFont());
+            SpeedRunOption.setOption(SpeedRunOptions.TIMER_TEXT_FONT, drawer.getTimerFont());
             SpeedRunIGT.TIMER_DRAWER.setTimerFont(drawer.getTimerFont());
 
-            SpeedRunOptions.setOption(SpeedRunOptions.BACKGROUND_OPACITY, drawer.getBGOpacity());
+            SpeedRunOption.setOption(SpeedRunOptions.BACKGROUND_OPACITY, drawer.getBGOpacity());
             SpeedRunIGT.TIMER_DRAWER.setBGOpacity(drawer.getBGOpacity());
-            SpeedRunOptions.setOption(SpeedRunOptions.RTA_BACKGROUND_PADDING, drawer.getRTAPadding());
+            SpeedRunOption.setOption(SpeedRunOptions.RTA_BACKGROUND_PADDING, drawer.getRTAPadding());
             SpeedRunIGT.TIMER_DRAWER.setRTAPadding(drawer.getRTAPadding());
-            SpeedRunOptions.setOption(SpeedRunOptions.IGT_BACKGROUND_PADDING, drawer.getIGTPadding());
+            SpeedRunOption.setOption(SpeedRunOptions.IGT_BACKGROUND_PADDING, drawer.getIGTPadding());
             SpeedRunIGT.TIMER_DRAWER.setIGTPadding(drawer.getIGTPadding());
 
             changed = false;

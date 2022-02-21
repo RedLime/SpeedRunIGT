@@ -3,6 +3,7 @@ package com.redlimerl.speedrunigt.timer;
 import com.google.gson.Gson;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.crypt.Crypto;
+import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
@@ -94,7 +95,7 @@ public class InGameTimer {
      */
     public static void start() {
         INSTANCE = new InGameTimer();
-        INSTANCE.setCategory(SpeedRunOptions.getOption(SpeedRunOptions.TIMER_CATEGORY));
+        INSTANCE.setCategory(SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY));
         INSTANCE.createNewTimerSplit(new TimerSplit(SpeedRunIGT.LATEST_PLAYED_SEED, RunType.getRunType(SpeedRunIGT.LATEST_IS_SSG, SpeedRunIGT.LATEST_IS_FSG), INSTANCE.getCategory()));
         INSTANCE.setPause(true, TimerStatus.IDLE);
     }
@@ -226,7 +227,7 @@ public class InGameTimer {
             } catch (Exception e) {
                 return false;
             }
-        } else if (SpeedRunOptions.getOption(SpeedRunOptions.TIMER_START_GENERATED_WORLD)) {
+        } else if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_START_GENERATED_WORLD)) {
             InGameTimer.start();
             InGameTimer.currentWorldName = name;
             return true;
@@ -339,7 +340,7 @@ public class InGameTimer {
 
     private long firstRenderedTime = 0;
     public void updateFirstInput() {
-        if (firstInput.isEmpty() && !SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT)) {
+        if (firstInput.isEmpty() && !SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT)) {
             firstInput = "First Input: IGT " + timeToStringFormat(getInGameTime(false)) + (leastTickTime == 0 ? "" : " (+ " + (System.currentTimeMillis() - this.leastTickTime) + "ms)") + ", RTA " + timeToStringFormat(getRealTimeAttack());
         }
         if (firstRenderedTime != 0) {
@@ -348,7 +349,7 @@ public class InGameTimer {
     }
 
     public void updateFirstRendered() {
-        if (firstInput.isEmpty() && firstRenderedTime == 0 && SpeedRunOptions.getOption(SpeedRunOptions.WAITING_FIRST_INPUT)) {
+        if (firstInput.isEmpty() && firstRenderedTime == 0 && SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT)) {
             firstRenderedTime = System.currentTimeMillis();
         }
     }
@@ -427,7 +428,7 @@ public class InGameTimer {
     }
 
     public boolean isResettable() {
-        return isResettable || SpeedRunOptions.getOption(SpeedRunOptions.TIMER_LIMITLESS_RESET);
+        return isResettable || SpeedRunOption.getOption(SpeedRunOptions.TIMER_LIMITLESS_RESET);
     }
 
     private void sendTimerStartPacket() {

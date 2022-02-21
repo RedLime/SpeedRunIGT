@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.timer;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.SplitDisplayType;
 import net.minecraft.SharedConstants;
@@ -171,7 +172,7 @@ public class TimerSplit {
 
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player == null) return;
-        SplitDisplayType splitDisplayType = SpeedRunOptions.getOption(SpeedRunOptions.SPLIT_DISPLAY_TYPE);
+        SplitDisplayType splitDisplayType = SpeedRunOption.getOption(SpeedRunOptions.SPLIT_DISPLAY_TYPE);
 
         long bestTime = 0L;
         for (TimerSplit splits : SPLIT_DATA) {

@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.timer;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.TimerSplit.SplitType;
 import io.netty.buffer.Unpooled;
@@ -31,7 +32,7 @@ public class TimerPacketHandler {
     }
 
     public static void sendInitC2S(long time, RunCategory category, String seed, RunType runType) {
-        if (!SpeedRunOptions.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) return;
+        if (!SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) return;
         PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
         passedData.writeLong(time);
         passedData.writeEnumConstant(category);
@@ -72,7 +73,7 @@ public class TimerPacketHandler {
 
     public static void receiveInitS2C(PacketByteBuf buffer) {
         try {
-            if (!SpeedRunOptions.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) return;
+            if (!SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) return;
             long startTime = buffer.readLong();
             RunCategory category = buffer.readEnumConstant(RunCategory.class);
             String seed = buffer.readString();
@@ -101,7 +102,7 @@ public class TimerPacketHandler {
     Timer complete packets
      */
     public static void sendCompleteC2S(InGameTimer timer) {
-        if (!SpeedRunOptions.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) return;
+        if (!SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) return;
         PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
         passedData.writeLong(timer.endTime);
 
@@ -132,7 +133,7 @@ public class TimerPacketHandler {
 
     public static void receiveCompleteS2C(PacketByteBuf buffer) {
         try {
-            if (!SpeedRunOptions.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) return;
+            if (!SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) return;
             long endTime = buffer.readLong();
             client.execute(() -> InGameTimer.complete(endTime));
             SpeedRunIGT.debug("hello client complete: " + endTime);
@@ -146,7 +147,7 @@ public class TimerPacketHandler {
     Timer split packets
      */
     public static void sendSplitC2S(SplitType splitType, long time) {
-        if (!SpeedRunOptions.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) return;
+        if (!SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) return;
         PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
         passedData.writeEnumConstant(splitType);
         passedData.writeLong(time);
@@ -181,7 +182,7 @@ public class TimerPacketHandler {
 
     public static void receiveSplitS2C(PacketByteBuf buffer) {
         try {
-            if (!SpeedRunOptions.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) return;
+            if (!SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) return;
             SplitType splitType = buffer.readEnumConstant(SplitType.class);
             long time = buffer.readLong();
             client.execute(() -> InGameTimer.getInstance().getTimerSplit().tryUpdateSplit(splitType, time, false));
