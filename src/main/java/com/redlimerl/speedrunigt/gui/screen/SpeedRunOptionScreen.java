@@ -77,32 +77,13 @@ public class SpeedRunOptionScreen extends Screen {
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        this.buttonListWidget.render(matrices, mouseX, mouseY, delta);
         this.renderBackground(matrices);
-        fill(matrices, width - 115, 28, width - 25, height - 54, 1677721600);
+        this.buttonListWidget.render(matrices, mouseX, mouseY, delta);
         super.render(matrices, mouseX, mouseY, delta);
         drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 10, 16777215);
 
         ArrayList<Text> tooltip = getToolTip(mouseX, mouseY);
         if (!tooltip.isEmpty()) this.renderTooltip(matrices, tooltip, 0, height - 34);
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public void renderBackground(MatrixStack matrices) {
-        if (this.client == null) return;
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferBuilder = tessellator.getBuffer();
-        this.client.getTextureManager().bindTexture(BACKGROUND_TEXTURE);
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        float f = 32.0F;
-        int emptyWidth = width - 140;
-        bufferBuilder.begin(7, VertexFormats.POSITION_TEXTURE_COLOR);
-        bufferBuilder.vertex(emptyWidth, this.height, 0.0D).texture(emptyWidth / f, (float)this.height / f).color(64, 64, 64, 255).next();
-        bufferBuilder.vertex(this.width, this.height, 0.0D).texture((float)this.width / f, (float)this.height / f + 0).color(64, 64, 64, 255).next();
-        bufferBuilder.vertex(this.width, 0.0D, 0.0D).texture((float)this.width / f, 0).color(64, 64, 64, 255).next();
-        bufferBuilder.vertex(emptyWidth, 0.0D, 0.0D).texture(emptyWidth / f, 0).color(64, 64, 64, 255).next();
-        tessellator.draw();
     }
 
     public ArrayList<Text> getToolTip(int mouseX, int mouseY) {
