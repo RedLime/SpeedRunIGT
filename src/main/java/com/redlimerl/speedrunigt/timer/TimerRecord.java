@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.timer;
 
+import com.google.gson.JsonSyntaxException;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
@@ -21,23 +22,25 @@ import java.util.Map;
 
 public class TimerRecord {
 
-    private static final File SPLITS_DIR = SpeedRunIGT.getMainPath().resolve("splits").toFile();
+    private static final File RECORDS_DIR = SpeedRunIGT.getGlobalPath().resolve("splits").toFile();
 
-    public static ArrayList<TimerRecord> SPLIT_DATA = new ArrayList<>();
+    public static ArrayList<TimerRecord> RECORD_LIST = new ArrayList<>();
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void load() {
-        SPLITS_DIR.mkdirs();
-        SPLIT_DATA.clear();
+        RECORDS_DIR.mkdirs();
+        RECORD_LIST.clear();
 
-        File[] files = SPLITS_DIR.listFiles();
+        File[] files = RECORDS_DIR.listFiles();
         if (files != null) {
-            try {
-                for (File file : files) {
-                    SPLIT_DATA.add(SpeedRunIGT.GSON.fromJson(FileUtils.readFileToString(file, StandardCharsets.UTF_8), TimerRecord.class));
+            for (File file : files) {
+                try {
+                    RECORD_LIST.add(SpeedRunIGT.GSON.fromJson(FileUtils.readFileToString(file, StandardCharsets.UTF_8), TimerRecord.class));
+                } catch (JsonSyntaxException e) {
+                    SpeedRunIGT.error("Failed read to "+file.getName()+"! is it not timer record file? try delete it.");
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
     }
@@ -45,7 +48,7 @@ public class TimerRecord {
     private void save() {
         new Thread(() -> {
             try {
-                FileUtils.writeStringToFile(new File(SPLITS_DIR, this.getFileName()), SpeedRunIGT.GSON.toJson(this), StandardCharsets.UTF_8);
+                FileUtils.writeStringToFile(new File(RECORDS_DIR, this.getFileName()), SpeedRunIGT.GSON.toJson(this), StandardCharsets.UTF_8);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -53,10 +56,10 @@ public class TimerRecord {
     }
 
     public void delete() {
-        SPLIT_DATA.remove(this);
+        RECORD_LIST.remove(this);
         new Thread(() -> {
             try {
-                FileUtils.forceDelete(new File(SPLITS_DIR, this.getFileName()));
+                FileUtils.forceDelete(new File(RECORDS_DIR, this.getFileName()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -97,7 +100,7 @@ public class TimerRecord {
         version = SharedConstants.getGameVersion().getName();
         timestamp = System.currentTimeMillis();
         coop = isCoop;
-        SPLIT_DATA.add(this);
+        RECORD_LIST.add(this);
         save();
     }
 
@@ -159,7 +162,7 @@ public class TimerRecord {
         SplitDisplayType splitDisplayType = SpeedRunOption.getOption(SpeedRunOptions.SPLIT_DISPLAY_TYPE);
 
         long bestTime = 0L;
-        for (TimerRecord splits : SPLIT_DATA) {
+        for (TimerRecord splits : RECORD_LIST) {
             if (splits.getIdentifyString().startsWith(this.getIdentifyString())
                     && splits.getSplitTimeline().containsKey(splitType.getID())
                     && splits.getTimelineString().startsWith(this.getTimelineString())) {

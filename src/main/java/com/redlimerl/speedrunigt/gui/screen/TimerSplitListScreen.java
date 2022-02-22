@@ -100,7 +100,7 @@ public class TimerSplitListScreen extends Screen {
 
         void applyFilter(RunType filter, RunOrder runOrder) {
             ArrayList<TimerRecord> splitList = new ArrayList<>();
-            for (TimerRecord split : TimerRecord.SPLIT_DATA) {
+            for (TimerRecord split : TimerRecord.RECORD_LIST) {
                 if (filter == null || split.getRunType() == filter) splitList.add(split);
             }
             splitList.sort((o1, o2) -> {

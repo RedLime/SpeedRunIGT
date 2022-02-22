@@ -23,8 +23,8 @@ import java.util.Locale;
 public class SpeedRunIGTInfoScreen extends Screen {
 
 
-    enum UpdateStatus { NONE, UNKNOWN, UPDATED, OUTDATED }
-    static UpdateStatus UPDATE_STATUS = UpdateStatus.NONE;
+    public enum UpdateStatus { NONE, UNKNOWN, UPDATED, OUTDATED }
+    public static UpdateStatus UPDATE_STATUS = UpdateStatus.NONE;
     static String UPDATE_URL = "";
     static String UPDATE_VERSION = "0.0";
 
@@ -83,7 +83,7 @@ public class SpeedRunIGTInfoScreen extends Screen {
 
 
 
-    static void checkUpdate() {
+    public static void checkUpdate() {
         if (UPDATE_STATUS != UpdateStatus.NONE) {
             return;
         }

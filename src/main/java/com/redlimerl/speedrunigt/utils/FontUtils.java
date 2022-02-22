@@ -11,10 +11,7 @@ import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.stb.STBTruetype;
 import org.lwjgl.system.MemoryUtil;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -63,6 +60,34 @@ public class FontUtils {
                 if (fileInputStream != null) fileInputStream.close();
             } catch (IOException e) {
                 if (throwable != null) throwable.addSuppressed(e);
+            }
+        }
+    }
+
+    public static void copyDefaultFonts() {
+        copyResourceToFont("calibri_bold.ttf");
+        copyResourceToFont("calibri_bold.json");
+    }
+
+    private static void copyResourceToFont(String fileName) {
+        File fontFile = SpeedRunIGT.FONT_PATH.resolve(fileName).toFile();
+        if (!fontFile.exists()) {
+            InputStream fontInput = FontUtils.class.getResourceAsStream("/font/"+fileName);
+            if (fontInput == null) return;
+            try {
+                FileOutputStream output = new FileOutputStream(fontFile);
+
+                byte[] buf = new byte[1024];
+
+                int readData;
+                while ((readData = fontInput.read(buf)) > 0) {
+                    output.write(buf, 0, readData);
+                }
+
+                fontInput.close();
+                output.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }

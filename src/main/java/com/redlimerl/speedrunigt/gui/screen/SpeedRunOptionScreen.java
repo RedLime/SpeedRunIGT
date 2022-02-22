@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.gui.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import net.minecraft.client.gui.Element;
@@ -16,6 +17,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Util;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -37,7 +39,6 @@ public class SpeedRunOptionScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        SpeedRunIGTInfoScreen.checkUpdate();
         categorySubButtons.clear();
         categorySelectButtons.clear();
         tooltips.clear();
@@ -63,11 +64,13 @@ public class SpeedRunOptionScreen extends Screen {
             }
         }
 
-        addButton(new ButtonWidget(width - 115, height - 35, 100, 20, ScreenTexts.CANCEL, (ButtonWidget button) -> onClose()));
+        addButton(new ButtonWidget(width - 85, height - 35, 70, 20, ScreenTexts.CANCEL, (ButtonWidget button) -> onClose()));
+
+        addButton(new ButtonWidget(width - 160, height - 35, 70, 20, new TranslatableText("speedrunigt.menu.donate"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://ko-fi.com/redlimerl")));
 
         buttonListWidget = addChild(new ButtonScrollListWidget());
 
-        categorySubButtons.keySet().stream().findFirst().ifPresent(this::selectCategory);
+        categorySelectButtons.keySet().stream().findFirst().ifPresent(this::selectCategory);
     }
 
     @Override
@@ -80,7 +83,8 @@ public class SpeedRunOptionScreen extends Screen {
         this.renderBackground(matrices);
         this.buttonListWidget.render(matrices, mouseX, mouseY, delta);
         super.render(matrices, mouseX, mouseY, delta);
-        drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 10, 16777215);
+        drawCenteredText(matrices, textRenderer, this.title, this.width / 2, 10, 16777215);
+        drawStringWithShadow(matrices, textRenderer, "v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215);
 
         ArrayList<Text> tooltip = getToolTip(mouseX, mouseY);
         if (!tooltip.isEmpty()) this.renderTooltip(matrices, tooltip, 0, height);

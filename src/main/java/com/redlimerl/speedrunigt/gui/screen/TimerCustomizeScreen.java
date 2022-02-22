@@ -115,7 +115,10 @@ public class TimerCustomizeScreen extends Screen {
 
         this.rtaButton = addButton(new ButtonWidget(width / 2 - 29, height / 2 - 48, 58, 20, new LiteralText("RTA..."), (ButtonWidget button) -> openTab(2)));
 
-        this.fontButton = addButton(new ButtonWidget(width / 2 + 31, height / 2 - 48, 58, 20, new TranslatableText("speedrunigt.title.font"), (ButtonWidget button) -> openTab(3)));
+        this.fontButton = addButton(new ButtonWidget(width / 2 + 31, height / 2 - 48, 58, 20, new TranslatableText("speedrunigt.title.font"), (ButtonWidget button) -> {
+            openTab(3);
+            openFontPage();
+        }));
 
         this.backgroundButton = addButton(new ButtonWidget(width / 2 + 91, height / 2 - 48, 58, 20, new TranslatableText("speedrunigt.title.background"), (ButtonWidget button) -> openTab(4)));
 

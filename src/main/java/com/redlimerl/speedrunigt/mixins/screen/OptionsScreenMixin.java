@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.mixins.screen;
 
+import com.redlimerl.speedrunigt.gui.screen.SpeedRunIGTInfoScreen;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunOptionScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.options.OptionsScreen;
@@ -16,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(OptionsScreen.class)
 public class OptionsScreenMixin extends Screen {
     private static final Identifier ENDER_PEARL = new Identifier("textures/item/ender_pearl.png");
+    private static final Identifier BLAZE_POWDER = new Identifier("textures/item/blaze_powder.png");
     private static final Identifier ENDER_EYE = new Identifier("textures/item/ender_eye.png");
 
     private ButtonWidget timerButton;
@@ -37,7 +39,8 @@ public class OptionsScreenMixin extends Screen {
     @Inject(method = "render", at = @At("TAIL"))
     private void renderEnderPearl(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         if (this.client != null) {
-            this.client.getTextureManager().bindTexture(timerButton.isHovered() ? ENDER_EYE : ENDER_PEARL);
+            this.client.getTextureManager().bindTexture(timerButton.isHovered() ? ENDER_EYE :
+                    SpeedRunIGTInfoScreen.UPDATE_STATUS == SpeedRunIGTInfoScreen.UpdateStatus.OUTDATED ? BLAZE_POWDER : ENDER_PEARL);
             drawTexture(matrices, timerButton.x + 2, timerButton.y + 2, 0.0F, 0.0F, 16, 16, 16, 16);
         }
     }
