@@ -2,13 +2,13 @@
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/S6S77MX01)
 
 ## What is this mod?
-Simply, the **Timer** Mod for Minecraft Speedrun 
+The **Timer** Mod for Minecraft Speedrun
 
 ## Features
 - Display RTA/IGT timers In-game
 - Auto Start & Pause the timer
   - Support Many Categories!
-- Free Timer Position Adjustment 
+- Configurable Timer Position, Scale, Color
 - Custom font in timer
 
 ## Downloads
@@ -28,34 +28,26 @@ Simply, the **Timer** Mod for Minecraft Speedrun
 - Launch Minecraft
 
 ## Support Versions
-- [Differences each versions](https://github.com/RedLime/SpeedRunIGT/blob/1.16.1/Differences_each_versions.md)
-
-Legacy: No longer support new feature update [Last version is 2.14](https://github.com/RedLime/SpeedRunIGT/releases/tag/2.15.3)
-
-LF: Versions that should use [Legacy Fabric](https://github.com/Legacy-Fabric)
+### Stable Versions
 - 1.16.1
 - 1.17.1 
 - 1.15.2
 - 1.14.4
-- 1.16.5 (Legacy) 
-- 1.18.1 (Legacy)
-- 20w14∞ (Legacy)
-- 1.12.2 (Legacy / LF)
-- 1.8.9 (LF)
-- 1.8.0 (Legacy / LF)
-- 1.7.10 (LF)
+- 1.8.9 (with Legacy Fabric)
+- 1.7.10 (with Legacy Fabric)
+### LTS Versions (No longer feature update)
+- 1.16.5
+- 1.18.1
+- 20w14∞
+- 1.8.0 (with Legacy Fabric)
+- 1.12.2 (with Legacy Fabric)
 
 ## FaQ
-- Is allowed in *[Speedrun.com](https://speedrun.com/mc)* run verification?
-  - **YES!**
-- Is support Multi-Instances?
-  - Yes!
+- Is it allowed in *[Speedrun.com](https://speedrun.com/mc)* run verification? ✅
+- Is it support Multi-Instances? ✅
+- Is it work with full-screen or MacOS? ✅
 - Is there any way to display them separately in OBS?
-  - Currently, No.
   - Unfortunately, because this is a mod, it's hard to work on another window or widget.
-  - If someone can do it, please make a Pull Request.
-- Where is timer config file? (for multi-instances)
-  - `Minecraft Instance Folder`/speedrunigt/options.txt
 - How to add custom font in timer?
   - check out guide [video with description](https://youtu.be/agBbiTQWj78)
 - License?
@@ -75,11 +67,5 @@ can I donate for u : [here is my ko-fi](https://ko-fi.com/redlimerl)
 - [xiaolin](https://github.com/liuzhengjin), [Crsuh2er0](https://github.com/Crsuh2er0) - Support Chinese language
 - [Gregor0410](https://github.com/Gregor0410) - English texts grammar correction
 
-## For devs
+## API Document for Devs
 - [API Docs](https://github.com/RedLime/SpeedRunIGT/wiki/SpeedRunIGT-API-Document)
-## Images
-![](https://i.imgur.com/5xC9IQi.png)
-![](https://i.imgur.com/tN1IN2b.png)
-![](https://i.imgur.com/yPVAy9s.png)
-![](https://i.imgur.com/jz2LaVA.png)
-![](https://i.imgur.com/rQUkJ55.png)
