@@ -20,7 +20,7 @@ package com.redlimerl.speedrunigt.utils;
 
 import com.google.common.collect.Lists;
 import com.redlimerl.speedrunigt.mixins.keybinding.KeyBindingAccessor;
-import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.option.KeyBinding;
 
 import java.util.List;
 import java.util.Map;

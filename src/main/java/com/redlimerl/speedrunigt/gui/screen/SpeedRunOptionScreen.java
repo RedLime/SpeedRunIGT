@@ -4,10 +4,11 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
-import net.minecraft.client.gui.widget.AbstractButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.client.render.BufferBuilder;
@@ -25,8 +26,8 @@ import java.util.function.Supplier;
 public class SpeedRunOptionScreen extends Screen {
 
     private final Screen parent;
-    private final HashMap<String, ArrayList<AbstractButtonWidget>> categorySubButtons = new HashMap<>();
-    private final LinkedHashMap<String, AbstractButtonWidget> categorySelectButtons = new LinkedHashMap<>();
+    private final HashMap<String, ArrayList<ClickableWidget>> categorySubButtons = new HashMap<>();
+    private final LinkedHashMap<String, ClickableWidget> categorySelectButtons = new LinkedHashMap<>();
     private final HashMap<Element, Supplier<String>> tooltips = new HashMap<>();
     private ButtonScrollListWidget buttonListWidget;
     private String currentSelectCategory = "";
@@ -49,11 +50,11 @@ public class SpeedRunOptionScreen extends Screen {
 
         for (OptionButtonFactory factory : optionButtonFactoryList) {
             OptionButtonFactory.Storage builder = factory.create(this).build();
-            AbstractButtonWidget button = builder.getButtonWidget();
+            ClickableWidget button = builder.getButtonWidget();
             if (builder.getTooltip() != null) tooltips.put(button, builder.getTooltip());
 
             String category = builder.getCategory();
-            ArrayList<AbstractButtonWidget> categoryList = categorySubButtons.getOrDefault(category, new ArrayList<>());
+            ArrayList<ClickableWidget> categoryList = categorySubButtons.getOrDefault(category, new ArrayList<>());
             categoryList.add(button);
             categorySubButtons.put(category, categoryList);
 
@@ -98,7 +99,7 @@ public class SpeedRunOptionScreen extends Screen {
             Element element = e.get();
             if (element instanceof ButtonScrollListWidget.Entry) {
                 ButtonScrollListWidget.Entry entry = (ButtonScrollListWidget.Entry) element;
-                AbstractButtonWidget buttonWidget = entry.getButtonWidget();
+                ClickableWidget buttonWidget = entry.getButtonWidget();
                 if (tooltips.containsKey(buttonWidget)) {
                     String text = tooltips.get(buttonWidget).get();
                     for (String s : text.split("\n")) {
@@ -133,9 +134,9 @@ public class SpeedRunOptionScreen extends Screen {
             super(SpeedRunOptionScreen.this.client, SpeedRunOptionScreen.this.width - 140, SpeedRunOptionScreen.this.height, 28, SpeedRunOptionScreen.this.height - 54, 24);
         }
 
-        public void replaceButtons(Collection<AbstractButtonWidget> buttonWidgets) {
+        public void replaceButtons(Collection<ClickableWidget> buttonWidgets) {
             ArrayList<Entry> list = new ArrayList<>();
-            for (AbstractButtonWidget buttonWidget : buttonWidgets) {
+            for (ClickableWidget buttonWidget : buttonWidgets) {
                 list.add(new Entry(buttonWidget));
             }
             replaceEntries(list);
@@ -155,7 +156,7 @@ public class SpeedRunOptionScreen extends Screen {
             if (this.client == null) return;
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder bufferBuilder = tessellator.getBuffer();
-            this.client.getTextureManager().bindTexture(BACKGROUND_TEXTURE);
+            this.client.getTextureManager().bindTexture(DrawableHelper.OPTIONS_BACKGROUND_TEXTURE);
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             float f = 32.0F;
             int emptyWidth = this.width;
@@ -168,10 +169,10 @@ public class SpeedRunOptionScreen extends Screen {
         }
 
         class Entry extends ElementListWidget.Entry<Entry> {
-            ArrayList<AbstractButtonWidget> children = new ArrayList<>();
-            private final AbstractButtonWidget buttonWidget;
+            ArrayList<ClickableWidget> children = new ArrayList<>();
+            private final ClickableWidget buttonWidget;
 
-            public Entry(AbstractButtonWidget buttonWidget) {
+            public Entry(ClickableWidget buttonWidget) {
                 this.buttonWidget = buttonWidget;
                 this.buttonWidget.x = (ButtonScrollListWidget.this.width - this.buttonWidget.getWidth()) / 2;
                 children.add(this.buttonWidget);
@@ -182,7 +183,7 @@ public class SpeedRunOptionScreen extends Screen {
                 return children;
             }
 
-            public AbstractButtonWidget getButtonWidget() {
+            public ClickableWidget getButtonWidget() {
                 return buttonWidget;
             }
 

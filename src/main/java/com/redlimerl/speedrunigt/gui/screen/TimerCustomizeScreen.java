@@ -11,7 +11,7 @@ import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import net.minecraft.client.gui.hud.BackgroundHelper.ColorMixer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
-import net.minecraft.client.gui.widget.AbstractButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.client.util.math.MatrixStack;
@@ -33,11 +33,11 @@ public class TimerCustomizeScreen extends Screen {
 
     private boolean changed = false;
     private boolean hide = false;
-    private final ArrayList<AbstractButtonWidget> normalOptions = new ArrayList<>();
-    private final ArrayList<AbstractButtonWidget> igtOptions = new ArrayList<>();
-    private final ArrayList<AbstractButtonWidget> rtaOptions = new ArrayList<>();
-    private final ArrayList<AbstractButtonWidget> fontOptions = new ArrayList<>();
-    private final ArrayList<AbstractButtonWidget> backgroundOptions = new ArrayList<>();
+    private final ArrayList<ClickableWidget> normalOptions = new ArrayList<>();
+    private final ArrayList<ClickableWidget> igtOptions = new ArrayList<>();
+    private final ArrayList<ClickableWidget> rtaOptions = new ArrayList<>();
+    private final ArrayList<ClickableWidget> fontOptions = new ArrayList<>();
+    private final ArrayList<ClickableWidget> backgroundOptions = new ArrayList<>();
     private ButtonWidget normalButton;
     private ButtonWidget igtButton;
     private ButtonWidget rtaButton;
@@ -65,19 +65,19 @@ public class TimerCustomizeScreen extends Screen {
         this.backgroundButton.active = tab != 4;
 
         if (hide) return;
-        for (AbstractButtonWidget normalOption : normalOptions) {
+        for (ClickableWidget normalOption : normalOptions) {
             normalOption.visible = tab == 0;
         }
-        for (AbstractButtonWidget igtOption : igtOptions) {
+        for (ClickableWidget igtOption : igtOptions) {
             igtOption.visible = tab == 1;
         }
-        for (AbstractButtonWidget rtaOption : rtaOptions) {
+        for (ClickableWidget rtaOption : rtaOptions) {
             rtaOption.visible = tab == 2;
         }
-        for (AbstractButtonWidget fontOption : fontOptions) {
+        for (ClickableWidget fontOption : fontOptions) {
             fontOption.visible = tab == 3;
         }
-        for (AbstractButtonWidget backgroundOption : backgroundOptions) {
+        for (ClickableWidget backgroundOption : backgroundOptions) {
             backgroundOption.visible = tab == 4;
         }
 
@@ -124,19 +124,19 @@ public class TimerCustomizeScreen extends Screen {
 
         addButton(new ButtonWidget(width / 2 - 89, height / 2 + 62, 58, 20, new TranslatableText("speedrunigt.option.hide"), (ButtonWidget button) -> {
             hide = !hide;
-            for (AbstractButtonWidget normalOption : normalOptions) {
+            for (ClickableWidget normalOption : normalOptions) {
                 normalOption.visible = !hide && currentTab == 0;
             }
-            for (AbstractButtonWidget igtOption : igtOptions) {
+            for (ClickableWidget igtOption : igtOptions) {
                 igtOption.visible = !hide && currentTab == 1;
             }
-            for (AbstractButtonWidget rtaOption : rtaOptions) {
+            for (ClickableWidget rtaOption : rtaOptions) {
                 rtaOption.visible = !hide && currentTab == 2;
             }
-            for (AbstractButtonWidget fontOption : fontOptions) {
+            for (ClickableWidget fontOption : fontOptions) {
                 fontOption.visible = !hide && currentTab == 3;
             }
-            for (AbstractButtonWidget backgroundOption : backgroundOptions) {
+            for (ClickableWidget backgroundOption : backgroundOptions) {
                 backgroundOption.visible = !hide && currentTab == 4;
             }
             openTab(currentTab);
@@ -241,7 +241,7 @@ public class TimerCustomizeScreen extends Screen {
 
         drawer.draw();
 
-        this.drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 15, 16777215);
+        drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 15, 16777215);
 
         if (!hide) {
             if (!igtButton.active || !rtaButton.active) {
@@ -555,7 +555,7 @@ public class TimerCustomizeScreen extends Screen {
                     }
                 }))
         );
-        for (AbstractButtonWidget fontOption : fontOptions) {
+        for (ClickableWidget fontOption : fontOptions) {
             fontOption.visible = false;
         }
         for (ButtonWidget fontSelectButton : fontSelectButtons) {

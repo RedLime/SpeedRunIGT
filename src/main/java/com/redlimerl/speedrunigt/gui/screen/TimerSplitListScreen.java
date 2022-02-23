@@ -8,13 +8,14 @@ import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
-import net.minecraft.client.gui.widget.AbstractButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 
@@ -79,7 +80,7 @@ public class TimerSplitListScreen extends Screen {
         renderBackground(matrices);
         listWidget.render(matrices, mouseX, mouseY, delta);
         if (listWidget.children().size() == 0)
-            drawCenteredString(matrices, textRenderer, "▽◠▽.. :(", width / 2, height / 2, 16777215);
+            drawCenteredText(matrices, textRenderer, "▽◠▽.. :(", width / 2, height / 2, 16777215);
         super.render(matrices, mouseX, mouseY, delta);
     }
 
@@ -89,7 +90,7 @@ public class TimerSplitListScreen extends Screen {
     }
 
     private class TimerSplitListWidget extends ElementListWidget<TimerSplitListWidget.TimerSplitEntry> {
-        private List<MutableText> tooltip = null;
+        private List<Text> tooltip = null;
 
         public TimerSplitListWidget() {
             super(TimerSplitListScreen.this.client,
@@ -142,7 +143,7 @@ public class TimerSplitListScreen extends Screen {
         }
 
         private class TimerSplitEntry extends ElementListWidget.Entry<TimerSplitEntry> {
-            private final ArrayList<AbstractButtonWidget> children = new ArrayList<>();
+            private final ArrayList<ClickableWidget> children = new ArrayList<>();
             private final MutableText titleText;
             private MutableText resultTimeText = new LiteralText("");
             private final ArrayList<MutableText> timelineTextList = new ArrayList<>();
@@ -196,10 +197,10 @@ public class TimerSplitListScreen extends Screen {
                 } else {
                     drawTextWithShadow(matrices, textRenderer, resultTimeText, x, y + 13, 16777215);
                 }
-                drawCenteredString(matrices, textRenderer, "§8§m                                                                                ",
+                drawCenteredText(matrices, textRenderer, "§8§m                                                                                ",
                         x + (entryWidth / 2), y + 20, 16777215);
 
-                ArrayList<MutableText> tooltip = new ArrayList<>();
+                ArrayList<Text> tooltip = new ArrayList<>();
                 if (this.deleteButton.isMouseOver(mouseX, mouseY) && !Objects.equals(this.deleteButton.getMessage().getString(), I18n.translate("selectWorld.delete"))) {
                     tooltip.add(new TranslatableText("speedrunigt.message.click_delete_button_again"));
                     TimerSplitListWidget.this.tooltip = tooltip;

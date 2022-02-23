@@ -1,7 +1,7 @@
 package com.redlimerl.speedrunigt.api;
 
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.AbstractButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.LiteralText;
 
@@ -10,10 +10,10 @@ import java.util.function.Supplier;
 public interface OptionButtonFactory {
     class Builder {
         private String category = null;
-        private AbstractButtonWidget buttonWidget = new ButtonWidget(0, 0, 150, 20, new LiteralText(""), button -> {});
+        private ClickableWidget buttonWidget = new ButtonWidget(0, 0, 150, 20, new LiteralText(""), button -> {});
         private Supplier<String> tooltip = null;
 
-        public Builder setButtonWidget(AbstractButtonWidget buttonWidget) {
+        public Builder setButtonWidget(ClickableWidget buttonWidget) {
             if (buttonWidget.getWidth() != 150 || buttonWidget.getHeight() != 20) throw new IllegalArgumentException("ButtonWidget should be width 150, height 20");
             this.buttonWidget = buttonWidget;
             return this;
@@ -36,9 +36,9 @@ public interface OptionButtonFactory {
 
     class Storage {
         private final String category;
-        private final AbstractButtonWidget buttonWidget;
+        private final ClickableWidget buttonWidget;
         private final Supplier<String> tooltip;
-        public Storage(String category, AbstractButtonWidget buttonWidget, Supplier<String> tooltip) {
+        public Storage(String category, ClickableWidget buttonWidget, Supplier<String> tooltip) {
             this.category = category;
             this.buttonWidget = buttonWidget;
             this.tooltip = tooltip;
@@ -48,7 +48,7 @@ public interface OptionButtonFactory {
             return category;
         }
 
-        public AbstractButtonWidget getButtonWidget() {
+        public ClickableWidget getButtonWidget() {
             return buttonWidget;
         }
 

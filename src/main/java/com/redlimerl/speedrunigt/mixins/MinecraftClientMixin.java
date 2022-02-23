@@ -19,16 +19,16 @@ import net.minecraft.client.font.FontStorage;
 import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.options.GameOptions;
+import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.resource.ReloadableResourceManager;
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.SinglePreparationResourceReloadListener;
+import net.minecraft.resource.SinglePreparationResourceReloader;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.profiler.Profiler;
-import net.minecraft.util.registry.RegistryTracker;
+import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.GeneratorOptions;
 import net.minecraft.world.level.LevelInfo;
@@ -43,14 +43,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin {
+
+    @Shadow public abstract boolean isInSingleplayer();
 
     @Shadow @Final public GameOptions options;
 
@@ -69,9 +68,8 @@ public abstract class MinecraftClientMixin {
 
     @Shadow private Profiler profiler;
 
-    @Inject(at = @At("HEAD"), method = "method_29607(Ljava/lang/String;Lnet/minecraft/world/level/LevelInfo;Lnet/minecraft/util/registry/RegistryTracker$Modifiable;Lnet/minecraft/world/gen/GeneratorOptions;)V")
-    public void onCreate(String worldName, LevelInfo levelInfo, RegistryTracker.Modifiable registryTracker, GeneratorOptions generatorOptions, CallbackInfo ci) {
-        SpeedRunIGT.LATEST_PLAYED_SEED = generatorOptions.getSeed();
+    @Inject(at = @At("HEAD"), method = "createWorld")
+    public void onCreate(String worldName, LevelInfo levelInfo, DynamicRegistryManager.Impl registryTracker, GeneratorOptions generatorOptions, CallbackInfo ci) {
         InGameTimer.start();
         currentDimension = null;
         InGameTimer.currentWorldName = worldName;
@@ -89,7 +87,7 @@ public abstract class MinecraftClientMixin {
         } catch (Exception e) {
             InGameTimer.end();
             currentDimension = null;
-            SpeedRunIGT.error("Exception in timer load, can't load the timer.");
+            SpeedRunIGT.debug("Exception in timer load, can't load the timer.");
             e.printStackTrace();
         }
     }
@@ -98,25 +96,25 @@ public abstract class MinecraftClientMixin {
 
     @Inject(at = @At("HEAD"), method = "joinWorld")
     public void onJoin(ClientWorld targetWorld, CallbackInfo ci) {
+        if (!isInSingleplayer()) return;
         InGameTimer timer = InGameTimer.getInstance();
-        if (timer.getStatus() == TimerStatus.NONE) return;
 
         currentDimension = targetWorld.getDimension();
         InGameTimer.checkingWorld = true;
 
+        if (timer.getStatus() != TimerStatus.NONE) {
+            timer.setPause(true, TimerStatus.IDLE);
+        }
+
         //Enter Nether
-        if (timer.getCategory() == RunCategories.ENTER_NETHER && targetWorld.getDimensionRegistryKey() == DimensionType.THE_NETHER_REGISTRY_KEY) {
+        if (timer.getCategory() == RunCategories.ENTER_NETHER && Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionType.THE_NETHER_ID.toString())) {
             InGameTimer.complete();
-            return;
         }
 
         //Enter End
-        if (timer.getCategory() == RunCategories.ENTER_END && targetWorld.getDimensionRegistryKey() == DimensionType.THE_END_REGISTRY_KEY) {
+        if (timer.getCategory() == RunCategories.ENTER_END && Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionType.THE_END_ID.toString())) {
             InGameTimer.complete();
-            return;
         }
-
-        timer.setPause(true, TimerStatus.IDLE);
     }
 
     @ModifyVariable(method = "render(Z)V", at = @At(value = "STORE"), ordinal = 1)
@@ -143,7 +141,7 @@ public abstract class MinecraftClientMixin {
                 && timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld) {
             WorldRendererAccessor worldRendererAccessor = (WorldRendererAccessor) worldRenderer;
             int chunks = worldRendererAccessor.invokeCompletedChunkCount();
-            int entities = worldRendererAccessor.getRegularEntityCount() - (options.perspective > 0 ? 0 : 1);
+            int entities = worldRendererAccessor.getRegularEntityCount() -  (options.getPerspective().isFirstPerson() ? 0 : 1);
 
             if (chunks + entities > 0) {
                 if (!(SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) && !timer.isStarted())) {
@@ -169,10 +167,9 @@ public abstract class MinecraftClientMixin {
      */
     @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/debug/DebugRenderer;<init>(Lnet/minecraft/client/MinecraftClient;)V", shift = At.Shift.BEFORE))
     public void onInit(RunArgs args, CallbackInfo ci) {
-        this.resourceManager.registerListener(new SinglePreparationResourceReloadListener<Map<Identifier, List<Font>>>() {
+        this.resourceManager.registerReloader(new SinglePreparationResourceReloader<Map<Identifier, List<Font>>>() {
             @Override
             protected Map<Identifier, List<Font>> prepare(ResourceManager manager, Profiler profiler) {
-                SpeedRunIGT.FONT_MAPS.clear();
                 try {
                     HashMap<Identifier, List<Font>> map = new HashMap<>();
 
@@ -204,7 +201,7 @@ public abstract class MinecraftClientMixin {
                     }
                     TimerDrawer.fontHeightMap.clear();
                 } catch (Throwable e) {
-                    SpeedRunIGT.error("Error! failed import timer fonts!");
+                    SpeedRunIGT.debug("Error! failed import timer fonts!");
                     e.printStackTrace();
                 }
             }
