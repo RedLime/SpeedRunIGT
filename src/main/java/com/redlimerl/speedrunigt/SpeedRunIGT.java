@@ -49,7 +49,7 @@ public class SpeedRunIGT implements ClientModInitializer {
     public static boolean LATEST_IS_SSG = false;
     public static boolean LATEST_IS_FSG = false;
 
-    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    public static final Gson GSON = new GsonBuilder().create();
     public static final Path WORLDS_PATH = FabricLoader.getInstance().getGameDir().resolve("saves");
     public static final Path FONT_PATH = getGlobalPath().resolve("fonts");
 

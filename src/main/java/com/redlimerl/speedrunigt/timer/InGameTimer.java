@@ -40,6 +40,8 @@ public class InGameTimer {
     @NotNull
     private static InGameTimer COMPLETED_INSTANCE = new InGameTimer();
 
+    private static final String cryptKey = "faRQOs2GK5j863eP";
+
     @NotNull
     public static InGameTimer getInstance() { return INSTANCE; }
     public static String currentWorldName = "";
@@ -203,34 +205,41 @@ public class InGameTimer {
     }
 
     public static void leave() {
-        if (INSTANCE.isCompleted || !INSTANCE.isServerIntegrated) return;
+        if (!INSTANCE.isServerIntegrated) return;
 
         INSTANCE.leaveTime = System.currentTimeMillis();
         INSTANCE.pauseCount = 0;
         INSTANCE.setPause(true, TimerStatus.IDLE);
 
-        String data = SpeedRunIGT.GSON.toJson(INSTANCE);
-        String timerData = Crypto.encrypt(data, "faRQOs2GK5j863eP");
+        String timerData = Crypto.encrypt(SpeedRunIGT.GSON.toJson(INSTANCE), cryptKey);
+        String completeData = Crypto.encrypt(SpeedRunIGT.GSON.toJson(COMPLETED_INSTANCE), cryptKey);
+        File worldDir = MinecraftClient.getInstance().getLevelStorage().getSavesDirectory().resolve(currentWorldName).toFile();
         try {
-            File worldDir = MinecraftClient.getInstance().getLevelStorage().getSavesDirectory().resolve(currentWorldName).toFile();
-            if (worldDir.exists()) FileUtils.writeStringToFile(new File(worldDir, "timer.igt"), timerData, Charsets.UTF_8);
+            if (worldDir.exists()) {
+                FileUtils.writeStringToFile(new File(worldDir, "timer.igt"), timerData, Charsets.UTF_8);
+                if (INSTANCE.isCompleted) FileUtils.writeStringToFile(new File(worldDir, "timer.c.igt"), completeData, Charsets.UTF_8);
+                else FileUtils.deleteQuietly(new File(worldDir, "timer.c.igt"));
+            }
         } catch (IOException e) {
-            e.printStackTrace();
+            SpeedRunIGT.error("Failed to save timer data's :(");
         }
+
         end();
     }
 
     public static boolean load(String name) {
         Path worldPath = MinecraftClient.getInstance().getLevelStorage().getSavesDirectory().resolve(name);
         File file = new File(worldPath.toFile(), "timer.igt");
+        File completeFile = new File(worldPath.toFile(), "timer.c.igt");
         if (file.exists()) {
+            String instanceData, completeData = "";
             try {
-                String data = Crypto.decrypt(FileUtils.readFileToString(file, StandardCharsets.UTF_8), "faRQOs2GK5j863eP");
-                INSTANCE = SpeedRunIGT.GSON.fromJson(data, InGameTimer.class);
-                return true;
-            } catch (Exception e) {
+                INSTANCE = SpeedRunIGT.GSON.fromJson(Crypto.decrypt(FileUtils.readFileToString(file, StandardCharsets.UTF_8), cryptKey), InGameTimer.class);
+                if (completeFile.exists()) COMPLETED_INSTANCE = SpeedRunIGT.GSON.fromJson(Crypto.decrypt(FileUtils.readFileToString(completeFile, StandardCharsets.UTF_8), cryptKey), InGameTimer.class);
+            } catch (IOException e) {
                 return false;
             }
+            return true;
         } else if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_START_GENERATED_WORLD)) {
             InGameTimer.start();
             InGameTimer.currentWorldName = name;

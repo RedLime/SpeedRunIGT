@@ -3,7 +3,7 @@ package com.redlimerl.speedrunigt.utils;
 import com.google.gson.*;
 
 public class FontConfigure {
-    private static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public float size;
     public float oversample;
