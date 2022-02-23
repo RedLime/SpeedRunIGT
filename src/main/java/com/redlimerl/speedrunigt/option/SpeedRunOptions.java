@@ -68,7 +68,7 @@ public class SpeedRunOptions {
         }
     };
 
-    public static final OptionArgument<Identifier> TIMER_TEXT_FONT = new OptionArgument<Identifier>(new Identifier(SpeedRunIGT.MOD_ID, "timer_text_font"), MinecraftClient.DEFAULT_FONT_ID) {
+    public static final OptionArgument<Identifier> TIMER_TEXT_FONT = new OptionArgument<Identifier>(new Identifier(SpeedRunIGT.MOD_ID, "timer_text_font"), MinecraftClient.DEFAULT_TEXT_RENDERER_ID) {
         @Override
         public Identifier valueFromString(String string) {
             return Identifier.tryParse(string);

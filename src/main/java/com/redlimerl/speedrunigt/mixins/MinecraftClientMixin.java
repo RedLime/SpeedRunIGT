@@ -13,9 +13,11 @@ import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import com.redlimerl.speedrunigt.utils.FontUtils;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Mouse;
 import net.minecraft.client.RunArgs;
 import net.minecraft.client.font.Font;
 import net.minecraft.client.font.FontStorage;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -28,9 +30,7 @@ import net.minecraft.resource.SinglePreparationResourceReloadListener;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.profiler.Profiler;
-import net.minecraft.util.registry.RegistryTracker;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.gen.GeneratorOptions;
 import net.minecraft.world.level.LevelInfo;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -67,25 +67,26 @@ public abstract class MinecraftClientMixin {
 
     @Shadow @Final private ReloadableResourceManager resourceManager;
 
-    @Shadow private Profiler profiler;
+    @Shadow @Final public Mouse mouse;
 
-    @Inject(at = @At("HEAD"), method = "method_29607(Ljava/lang/String;Lnet/minecraft/world/level/LevelInfo;Lnet/minecraft/util/registry/RegistryTracker$Modifiable;Lnet/minecraft/world/gen/GeneratorOptions;)V")
-    public void onCreate(String worldName, LevelInfo levelInfo, RegistryTracker.Modifiable registryTracker, GeneratorOptions generatorOptions, CallbackInfo ci) {
-        SpeedRunIGT.LATEST_PLAYED_SEED = generatorOptions.getSeed();
-        InGameTimer.start();
-        currentDimension = null;
-        InGameTimer.currentWorldName = worldName;
-    }
+    @Shadow public abstract Profiler getProfiler();
 
-    @Inject(at = @At("HEAD"), method = "startIntegratedServer(Ljava/lang/String;)V")
-    public void onWorldOpen(String worldName, CallbackInfo ci) {
+    @Inject(at = @At("HEAD"), method = "startIntegratedServer")
+    public void onCreate(String name, String displayName, LevelInfo levelInfo, CallbackInfo ci) {
         try {
-            boolean loaded = InGameTimer.load(worldName);
-            if (!loaded) InGameTimer.end();
-            else {
-                InGameTimer.currentWorldName = worldName;
+            if (levelInfo != null) {
+                SpeedRunIGT.LATEST_PLAYED_SEED = levelInfo.getSeed();
+                InGameTimer.start();
+                currentDimension = null;
+                InGameTimer.currentWorldName = name;
+            } else {
+                boolean loaded = InGameTimer.load(name);
+                if (!loaded) InGameTimer.end();
+                else {
+                    InGameTimer.currentWorldName = name;
+                }
+                currentDimension = null;
             }
-            currentDimension = null;
         } catch (Exception e) {
             InGameTimer.end();
             currentDimension = null;
@@ -101,17 +102,17 @@ public abstract class MinecraftClientMixin {
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() == TimerStatus.NONE) return;
 
-        currentDimension = targetWorld.getDimension();
+        currentDimension = targetWorld.getDimension().getType();
         InGameTimer.checkingWorld = true;
 
         //Enter Nether
-        if (timer.getCategory() == RunCategories.ENTER_NETHER && targetWorld.getDimensionRegistryKey() == DimensionType.THE_NETHER_REGISTRY_KEY) {
+        if (timer.getCategory() == RunCategories.ENTER_NETHER && targetWorld.getDimension().getType() == DimensionType.THE_NETHER) {
             InGameTimer.complete();
             return;
         }
 
         //Enter End
-        if (timer.getCategory() == RunCategories.ENTER_END && targetWorld.getDimensionRegistryKey() == DimensionType.THE_END_REGISTRY_KEY) {
+        if (timer.getCategory() == RunCategories.ENTER_END && targetWorld.getDimension().getType() == DimensionType.THE_END) {
             InGameTimer.complete();
             return;
         }
@@ -134,13 +135,13 @@ public abstract class MinecraftClientMixin {
 
 
     @Inject(method = "render", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/client/toast/ToastManager;draw(Lnet/minecraft/client/util/math/MatrixStack;)V", shift = At.Shift.AFTER))
+            target = "Lnet/minecraft/client/toast/ToastManager;draw()V", shift = At.Shift.AFTER))
     private void drawTimer(CallbackInfo ci) {
-        this.profiler.swap("timer");
+        this.getProfiler().swap("timer");
         InGameTimer timer = InGameTimer.getInstance();
 
-        if (worldRenderer != null && world != null && world.getDimension() == currentDimension && !isPaused() && isWindowFocused()
-                && timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld) {
+        if (worldRenderer != null && world != null && world.getDimension().getType() == currentDimension && !isPaused() && isWindowFocused()
+                && timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld && this.mouse.isCursorLocked()) {
             WorldRendererAccessor worldRendererAccessor = (WorldRendererAccessor) worldRenderer;
             int chunks = worldRendererAccessor.invokeCompletedChunkCount();
             int entities = worldRendererAccessor.getRegularEntityCount() - (options.perspective > 0 ? 0 : 1);
@@ -196,11 +197,12 @@ public abstract class MinecraftClientMixin {
             @Override
             protected void apply(Map<Identifier, List<Font>> loader, ResourceManager manager, Profiler profiler) {
                 try {
-                    FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) MinecraftClient.getInstance()).getFontManager();
                     for (Map.Entry<Identifier, List<Font>> listEntry : loader.entrySet()) {
-                        FontStorage fontStorage = new FontStorage(fontManager.getTextureManager(), listEntry.getKey());
-                        fontStorage.setFonts(listEntry.getValue());
-                        fontManager.getFontStorages().put(listEntry.getKey(), fontStorage);
+                        FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) MinecraftClient.getInstance()).getFontManager();
+                        fontManager.getTextRenderers().computeIfAbsent(listEntry.getKey(),
+                                        (identifierX) -> new TextRenderer(fontManager.getTextureManager(),
+                                                new FontStorage(fontManager.getTextureManager(), identifierX)))
+                                .setFonts(listEntry.getValue());
                     }
                     TimerDrawer.fontHeightMap.clear();
                 } catch (Throwable e) {

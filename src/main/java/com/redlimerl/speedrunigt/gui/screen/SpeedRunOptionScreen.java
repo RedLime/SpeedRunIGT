@@ -4,18 +4,15 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
+import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Util;
 
@@ -58,7 +55,7 @@ public class SpeedRunOptionScreen extends Screen {
             categorySubButtons.put(category, categoryList);
 
             if (!categorySelectButtons.containsKey(category)) {
-                ButtonWidget buttonWidget = new ButtonWidget(width - 110, 30 + (categoryCount++ * 22), 80, 20, new TranslatableText(category), (ButtonWidget buttonWidget1) -> selectCategory(category));
+                ButtonWidget buttonWidget = new ButtonWidget(width - 110, 30 + (categoryCount++ * 22), 80, 20, new TranslatableText(category).asFormattedString(), (ButtonWidget buttonWidget1) -> selectCategory(category));
                 categorySelectButtons.put(category, buttonWidget);
                 addButton(buttonWidget);
             }
@@ -66,32 +63,33 @@ public class SpeedRunOptionScreen extends Screen {
 
         addButton(new ButtonWidget(width - 85, height - 35, 70, 20, ScreenTexts.CANCEL, (ButtonWidget button) -> onClose()));
 
-        addButton(new ButtonWidget(width - 160, height - 35, 70, 20, new TranslatableText("speedrunigt.menu.donate"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://ko-fi.com/redlimerl")));
+        addButton(new ButtonWidget(width - 160, height - 35, 70, 20, new TranslatableText("speedrunigt.menu.donate").asFormattedString(), (ButtonWidget button) -> Util.getOperatingSystem().open("https://ko-fi.com/redlimerl")));
 
-        buttonListWidget = addChild(new ButtonScrollListWidget());
+        buttonListWidget = new ButtonScrollListWidget();
+        children.add(buttonListWidget);
 
         categorySelectButtons.keySet().stream().findFirst().ifPresent(this::selectCategory);
     }
 
     @Override
     public void onClose() {
-        if (this.client != null) this.client.openScreen(parent);
+        if (this.minecraft != null) this.minecraft.openScreen(parent);
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        this.renderBackground(matrices);
-        this.buttonListWidget.render(matrices, mouseX, mouseY, delta);
-        super.render(matrices, mouseX, mouseY, delta);
-        drawCenteredText(matrices, textRenderer, this.title, this.width / 2, 10, 16777215);
-        drawStringWithShadow(matrices, textRenderer, "v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215);
+    public void render(int mouseX, int mouseY, float delta) {
+        this.renderBackground();
+        this.buttonListWidget.render(mouseX, mouseY, delta);
+        super.render(mouseX, mouseY, delta);
+        drawCenteredString(font, this.title.asFormattedString(), this.width / 2, 10, 16777215);
+        font.drawWithShadow("v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215);
 
-        ArrayList<Text> tooltip = getToolTip(mouseX, mouseY);
-        if (!tooltip.isEmpty()) this.renderTooltip(matrices, tooltip, 0, height);
+        ArrayList<String> tooltip = getToolTip(mouseX, mouseY);
+        if (!tooltip.isEmpty()) this.renderTooltip(tooltip, 0, height);
     }
 
-    public ArrayList<Text> getToolTip(int mouseX, int mouseY) {
-        ArrayList<Text> tooltipList = new ArrayList<>();
+    public ArrayList<String> getToolTip(int mouseX, int mouseY) {
+        ArrayList<String> tooltipList = new ArrayList<>();
 
         Optional<Element> e = buttonListWidget.hoveredElement(mouseX, mouseY);
         if (e.isPresent()) {
@@ -101,16 +99,14 @@ public class SpeedRunOptionScreen extends Screen {
                 AbstractButtonWidget buttonWidget = entry.getButtonWidget();
                 if (tooltips.containsKey(buttonWidget)) {
                     String text = tooltips.get(buttonWidget).get();
-                    for (String s : text.split("\n")) {
-                        tooltipList.add(new LiteralText(s));
-                    }
+                    tooltipList.addAll(Arrays.asList(text.split("\n")));
                     return tooltipList;
                 }
             }
         }
 
         if (SpeedRunIGTInfoScreen.UPDATE_STATUS == SpeedRunIGTInfoScreen.UpdateStatus.OUTDATED) {
-            tooltipList.add(new TranslatableText("speedrunigt.message.update_found"));
+            tooltipList.add(new TranslatableText("speedrunigt.message.update_found").asFormattedString());
         }
         return tooltipList;
     }
@@ -130,7 +126,7 @@ public class SpeedRunOptionScreen extends Screen {
     class ButtonScrollListWidget extends ElementListWidget<ButtonScrollListWidget.Entry> {
 
         public ButtonScrollListWidget() {
-            super(SpeedRunOptionScreen.this.client, SpeedRunOptionScreen.this.width - 140, SpeedRunOptionScreen.this.height, 28, SpeedRunOptionScreen.this.height - 54, 24);
+            super(SpeedRunOptionScreen.this.minecraft, SpeedRunOptionScreen.this.width - 140, SpeedRunOptionScreen.this.height, 28, SpeedRunOptionScreen.this.height - 54, 24);
         }
 
         public void replaceButtons(Collection<AbstractButtonWidget> buttonWidgets) {
@@ -148,14 +144,14 @@ public class SpeedRunOptionScreen extends Screen {
 
         @SuppressWarnings("deprecation")
         @Override
-        public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-            super.render(matrices, mouseX, mouseY, delta);
+        public void render(int mouseX, int mouseY, float delta) {
+            super.render(mouseX, mouseY, delta);
 
             //Render bg on empty space
-            if (this.client == null) return;
+            if (this.minecraft == null) return;
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder bufferBuilder = tessellator.getBuffer();
-            this.client.getTextureManager().bindTexture(BACKGROUND_TEXTURE);
+            this.minecraft.getTextureManager().bindTexture(BACKGROUND_LOCATION);
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             float f = 32.0F;
             int emptyWidth = this.width;
@@ -187,9 +183,9 @@ public class SpeedRunOptionScreen extends Screen {
             }
 
             @Override
-            public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+            public void render(int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
                 buttonWidget.y = y;
-                buttonWidget.render(matrices, mouseX, mouseY, tickDelta);
+                buttonWidget.render(mouseX, mouseY, tickDelta);
             }
         }
     }

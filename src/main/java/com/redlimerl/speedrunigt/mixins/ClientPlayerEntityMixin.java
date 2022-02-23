@@ -88,7 +88,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                     items.contains(Items.DIAMOND_SWORD) &&
                     items.contains(Items.GOLDEN_SWORD) &&
                     items.contains(Items.IRON_SWORD) &&
-                    items.contains(Items.NETHERITE_SWORD) &&
                     items.contains(Items.WOODEN_SWORD)) {
                 InGameTimer.complete();
             }
@@ -104,8 +103,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                     items.contains(Items.REDSTONE) &&
                     items.contains(Items.LAPIS_LAZULI) &&
                     items.contains(Items.EMERALD) &&
-                    items.contains(Items.QUARTZ) &&
-                    items.contains(Items.NETHERITE_INGOT)) {
+                    items.contains(Items.QUARTZ)) {
                 InGameTimer.complete();
             }
         }

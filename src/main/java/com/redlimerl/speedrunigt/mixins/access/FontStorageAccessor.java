@@ -9,6 +9,6 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface FontStorageAccessor {
 
     @Invoker("getRenderableGlyph")
-    RenderableGlyph invokeRenderableGlyph(int c);
+    RenderableGlyph invokeRenderableGlyph(char c);
 
 }

@@ -173,7 +173,7 @@ public class TimerRecord {
 
 
         String timeString = "Time: " + InGameTimer.timeToStringFormat(igt) + (bestTime == 0L ? "" : " " + ((bestTime >= igt ? "§a[-" : "§c[+") + InGameTimer.timeToStringFormat(Math.abs(bestTime - igt)) + "]"));
-        String titleString = splitType == RunSplitTypes.COMPLETE ? (SharedConstants.getGameVersion().getName() + " " + getRunCategory().getText().getString() + " " + getRunType().name()) : I18n.translate(splitType.getTranslateKey());
+        String titleString = splitType == RunSplitTypes.COMPLETE ? (SharedConstants.getGameVersion().getName() + " " + getRunCategory().getText().asFormattedString() + " " + getRunType().name()) : I18n.translate(splitType.getTranslateKey());
         if (splitDisplayType == SplitDisplayType.MESSAGE) {
             //client.player.sendMessage(new LiteralText("§f§l▶ §e" + titleString), false);
             //client.player.sendMessage(new LiteralText("§f§l▶ §f- " + timeString), false);

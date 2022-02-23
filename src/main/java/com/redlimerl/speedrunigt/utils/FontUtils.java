@@ -29,7 +29,7 @@ public class FontUtils {
         try {
             fileInputStream = new FileInputStream(file);
             sTBTTFontinfo = STBTTFontinfo.malloc();
-            byteBuffer = TextureUtil.readAllToByteBuffer(fileInputStream);
+            byteBuffer = TextureUtil.readResource(fileInputStream);
             byteBuffer.flip();
             if (!STBTruetype.stbtt_InitFont(sTBTTFontinfo, byteBuffer)) {
                 return;
