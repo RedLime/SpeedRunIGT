@@ -35,13 +35,13 @@ public class FontConfigScreen extends Screen {
     protected void init() {
         assert client != null;
 
-        addButton(new ButtonWidget(width / 2 - 21, height / 2 - 45, 20, 20, new LiteralText("-"), button -> newFontConfigure.size = MathHelper.clamp(newFontConfigure.size - 1, 1, 50)));
-        addButton(new ButtonWidget(width / 2 + 1, height / 2 - 45, 20, 20, new LiteralText("+"), button -> newFontConfigure.size = MathHelper.clamp(newFontConfigure.size + 1, 1, 50)));
+        addDrawableChild(new ButtonWidget(width / 2 - 21, height / 2 - 45, 20, 20, new LiteralText("-"), button -> newFontConfigure.size = MathHelper.clamp(newFontConfigure.size - 1, 1, 50)));
+        addDrawableChild(new ButtonWidget(width / 2 + 1, height / 2 - 45, 20, 20, new LiteralText("+"), button -> newFontConfigure.size = MathHelper.clamp(newFontConfigure.size + 1, 1, 50)));
 
-        addButton(new ButtonWidget(width / 2 - 21, height / 2 + 5, 20, 20, new LiteralText("-"), button -> newFontConfigure.oversample = MathHelper.clamp(Math.round((newFontConfigure.oversample - (Screen.hasShiftDown() ? 1f : 0.1f)) * 10) / 10f, 0.1f, 20f)));
-        addButton(new ButtonWidget(width / 2 + 1, height / 2 + 5, 20, 20, new LiteralText("+"), button -> newFontConfigure.oversample = MathHelper.clamp(Math.round((newFontConfigure.oversample + (Screen.hasShiftDown() ? 1f : 0.1f)) * 10) / 10f, 0.1f, 20f)));
+        addDrawableChild(new ButtonWidget(width / 2 - 21, height / 2 + 5, 20, 20, new LiteralText("-"), button -> newFontConfigure.oversample = MathHelper.clamp(Math.round((newFontConfigure.oversample - (Screen.hasShiftDown() ? 1f : 0.1f)) * 10) / 10f, 0.1f, 20f)));
+        addDrawableChild(new ButtonWidget(width / 2 + 1, height / 2 + 5, 20, 20, new LiteralText("+"), button -> newFontConfigure.oversample = MathHelper.clamp(Math.round((newFontConfigure.oversample + (Screen.hasShiftDown() ? 1f : 0.1f)) * 10) / 10f, 0.1f, 20f)));
 
-        addButton(new ButtonWidget(width / 2 - 50, height - 62, 100, 20, new TranslatableText("speedrunigt.font.apply_and_save"), button -> {
+        addDrawableChild(new ButtonWidget(width / 2 - 50, height - 62, 100, 20, new TranslatableText("speedrunigt.font.apply_and_save"), button -> {
             File config = SpeedRunIGT.FONT_PATH.resolve(fontIdentifier.getFile().getName().substring(0, fontIdentifier.getFile().getName().length() - 4) + ".json").toFile();
             try {
                 FileUtils.writeStringToFile(config, newFontConfigure.toString(), StandardCharsets.UTF_8);
@@ -51,12 +51,12 @@ public class FontConfigScreen extends Screen {
             }
         }));
 
-        addButton(new ButtonWidget(width / 2 - 50, height - 40, 100, 20, ScreenTexts.CANCEL, button -> this.onClose()));
+        addDrawableChild(new ButtonWidget(width / 2 - 50, height - 40, 100, 20, ScreenTexts.CANCEL, button -> this.onClose()));
     }
 
     @Override
     public void onClose() {
-        if (client != null) client.openScreen(parent);
+        if (client != null) client.setScreen(parent);
     }
 
     @Override

@@ -1,10 +1,10 @@
 package com.redlimerl.speedrunigt.utils;
 
+import com.mojang.blaze3d.platform.TextureUtil;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import net.minecraft.client.font.BlankFont;
 import net.minecraft.client.font.Font;
 import net.minecraft.client.font.TrueTypeFont;
-import net.minecraft.client.texture.TextureUtil;
 import net.minecraft.util.Identifier;
 import org.apache.commons.io.FileUtils;
 import org.lwjgl.stb.STBTTFontinfo;
@@ -29,7 +29,7 @@ public class FontUtils {
         try {
             fileInputStream = new FileInputStream(file);
             sTBTTFontinfo = STBTTFontinfo.malloc();
-            byteBuffer = TextureUtil.readAllToByteBuffer(fileInputStream);
+            byteBuffer = TextureUtil.readResource(fileInputStream);
             byteBuffer.flip();
             if (!STBTruetype.stbtt_InitFont(sTBTTFontinfo, byteBuffer)) {
                 return;

@@ -169,6 +169,7 @@ public abstract class MinecraftClientMixin {
         this.resourceManager.registerReloader(new SinglePreparationResourceReloader<Map<Identifier, List<Font>>>() {
             @Override
             protected Map<Identifier, List<Font>> prepare(ResourceManager manager, Profiler profiler) {
+                SpeedRunIGT.FONT_MAPS.clear();
                 try {
                     HashMap<Identifier, List<Font>> map = new HashMap<>();
 
@@ -185,7 +186,7 @@ public abstract class MinecraftClientMixin {
                     }
                     return map;
                 } catch (Throwable e) {
-                    return new HashMap<>();
+                    return Map.of();
                 }
             }
 
@@ -200,7 +201,7 @@ public abstract class MinecraftClientMixin {
                     }
                     TimerDrawer.fontHeightMap.clear();
                 } catch (Throwable e) {
-                    SpeedRunIGT.debug("Error! failed import timer fonts!");
+                    SpeedRunIGT.error("Error! failed import timer fonts!");
                     e.printStackTrace();
                 }
             }

@@ -6,6 +6,7 @@ import com.redlimerl.speedrunigt.timer.running.RunSplitType;
 import com.redlimerl.speedrunigt.timer.running.RunSplitTypes;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -46,9 +47,9 @@ public class TimerSplitListScreen extends Screen {
     @Override
     protected void init() {
         this.listWidget = new TimerSplitListWidget();
-        addChild(listWidget);
+        addSelectableChild(listWidget);
 
-        addButton(new ButtonWidget(10, 6, 120, 20, new TranslatableText("speedrunigt.option.show").append(" : ").append(this.getFilterText()), (ButtonWidget button) -> {
+        addDrawableChild(new ButtonWidget(10, 6, 120, 20, new TranslatableText("speedrunigt.option.show").append(" : ").append(this.getFilterText()), (ButtonWidget button) -> {
             int order = filter == null ? -1 : filter.ordinal();
             if (order + 1 == RunType.values().length) {
                 filter = null;
@@ -59,20 +60,20 @@ public class TimerSplitListScreen extends Screen {
             button.setMessage(new TranslatableText("speedrunigt.option.show").append(" : ").append(this.getFilterText()));
         }));
 
-        addButton(new ButtonWidget(134, 6, 120, 20, new TranslatableText("speedrunigt.split.order").append(" : ").append(this.runOrder.getText()), (ButtonWidget button) -> {
+        addDrawableChild(new ButtonWidget(134, 6, 120, 20, new TranslatableText("speedrunigt.split.order").append(" : ").append(this.runOrder.getText()), (ButtonWidget button) -> {
             int order = runOrder.ordinal() + 1;
             runOrder = RunOrder.values()[order % RunOrder.values().length];
             this.listWidget.applyFilter(filter, runOrder);
             button.setMessage(new TranslatableText("speedrunigt.split.order").append(" : ").append(this.runOrder.getText()));
         }));
 
-//        addButton(new ButtonWidget(width/2 - 153, height - 32, 150, 20, new TranslatableText("speedrunigt.option.split_notification").append(" : ").append(new TranslatableText("speedrunigt.option.split_notification." + SpeedRunOptions.getOption(SpeedRunOptions.SPLIT_DISPLAY_TYPE).name().toLowerCase(Locale.ROOT))), (ButtonWidget button) -> {
+//        addDrawableChild(new ButtonWidget(width/2 - 153, height - 32, 150, 20, new TranslatableText("speedrunigt.option.split_notification").append(" : ").append(new TranslatableText("speedrunigt.option.split_notification." + SpeedRunOptions.getOption(SpeedRunOptions.SPLIT_DISPLAY_TYPE).name().toLowerCase(Locale.ROOT))), (ButtonWidget button) -> {
 //            int order = SpeedRunOptions.getOption(SpeedRunOptions.SPLIT_DISPLAY_TYPE).ordinal();
 //            SpeedRunOptions.setOption(SpeedRunOptions.SPLIT_DISPLAY_TYPE, SpeedRunOptions.SplitDisplayType.values()[(++order) % SpeedRunOptions.SplitDisplayType.values().length]);
 //            button.setMessage(new TranslatableText("speedrunigt.option.split_notification").append(" : ").append(new TranslatableText("speedrunigt.option.split_notification." + SpeedRunOptions.getOption(SpeedRunOptions.SPLIT_DISPLAY_TYPE).name().toLowerCase(Locale.ROOT))));
 //        }));
 
-        addButton(new ButtonWidget(width/2 - 75, height - 32, 150, 20, ScreenTexts.DONE, (ButtonWidget button) -> onClose()));
+        addDrawableChild(new ButtonWidget(width/2 - 75, height - 32, 150, 20, ScreenTexts.DONE, (ButtonWidget button) -> onClose()));
     }
 
     @Override
@@ -86,7 +87,7 @@ public class TimerSplitListScreen extends Screen {
 
     @Override
     public void onClose() {
-        if (client != null) client.openScreen(parent);
+        if (client != null) client.setScreen(parent);
     }
 
     private class TimerSplitListWidget extends ElementListWidget<TimerSplitListWidget.TimerSplitEntry> {
@@ -104,19 +105,11 @@ public class TimerSplitListScreen extends Screen {
             for (TimerRecord split : TimerRecord.RECORD_LIST) {
                 if (filter == null || split.getRunType() == filter) splitList.add(split);
             }
-            splitList.sort((o1, o2) -> {
-                switch (runOrder) {
-                    case FASTEST:
-                        return Long.compare(o1.getResultTime(), o2.getResultTime());
-                    case SLOWEST:
-                        return Long.compare(o2.getResultTime(), o1.getResultTime());
-                    case OLDEST:
-                        return Long.compare(o1.getTimestamp(), o2.getTimestamp());
-                    case NEWEST:
-                        return Long.compare(o2.getTimestamp(), o1.getTimestamp());
-                    default:
-                        return 0;
-                }
+            splitList.sort((o1, o2) -> switch (runOrder) {
+                case FASTEST -> Long.compare(o1.getResultTime(), o2.getResultTime());
+                case SLOWEST -> Long.compare(o2.getResultTime(), o1.getResultTime());
+                case OLDEST -> Long.compare(o1.getTimestamp(), o2.getTimestamp());
+                case NEWEST -> Long.compare(o2.getTimestamp(), o1.getTimestamp());
             });
 
             this.replaceEntries(splitList.stream().map(TimerSplitEntry::new).collect(Collectors.toList()));
@@ -217,6 +210,11 @@ public class TimerSplitListScreen extends Screen {
                     tooltip.add(resultTimeText);
                     TimerSplitListWidget.this.tooltip = tooltip;
                 }
+            }
+
+            @Override
+            public List<? extends Selectable> selectableChildren() {
+                return children;
             }
         }
     }

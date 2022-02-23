@@ -4,16 +4,14 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
-import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
@@ -61,22 +59,22 @@ public class SpeedRunOptionScreen extends Screen {
             if (!categorySelectButtons.containsKey(category)) {
                 ButtonWidget buttonWidget = new ButtonWidget(width - 110, 30 + (categoryCount++ * 22), 80, 20, new TranslatableText(category), (ButtonWidget buttonWidget1) -> selectCategory(category));
                 categorySelectButtons.put(category, buttonWidget);
-                addButton(buttonWidget);
+                addDrawableChild(buttonWidget);
             }
         }
 
-        addButton(new ButtonWidget(width - 85, height - 35, 70, 20, ScreenTexts.CANCEL, (ButtonWidget button) -> onClose()));
+        addDrawableChild(new ButtonWidget(width - 85, height - 35, 70, 20, ScreenTexts.CANCEL, (ButtonWidget button) -> onClose()));
 
-        addButton(new ButtonWidget(width - 160, height - 35, 70, 20, new TranslatableText("speedrunigt.menu.donate"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://ko-fi.com/redlimerl")));
+        addDrawableChild(new ButtonWidget(width - 160, height - 35, 70, 20, new TranslatableText("speedrunigt.menu.donate"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://ko-fi.com/redlimerl")));
 
-        buttonListWidget = addChild(new ButtonScrollListWidget());
+        buttonListWidget = addSelectableChild(new ButtonScrollListWidget());
 
         categorySelectButtons.keySet().stream().findFirst().ifPresent(this::selectCategory);
     }
 
     @Override
     public void onClose() {
-        if (this.client != null) this.client.openScreen(parent);
+        if (this.client != null) this.client.setScreen(parent);
     }
 
     @Override
@@ -97,8 +95,7 @@ public class SpeedRunOptionScreen extends Screen {
         Optional<Element> e = buttonListWidget.hoveredElement(mouseX, mouseY);
         if (e.isPresent()) {
             Element element = e.get();
-            if (element instanceof ButtonScrollListWidget.Entry) {
-                ButtonScrollListWidget.Entry entry = (ButtonScrollListWidget.Entry) element;
+            if (element instanceof ButtonScrollListWidget.Entry entry) {
                 ClickableWidget buttonWidget = entry.getButtonWidget();
                 if (tooltips.containsKey(buttonWidget)) {
                     String text = tooltips.get(buttonWidget).get();
@@ -147,7 +144,6 @@ public class SpeedRunOptionScreen extends Screen {
             return 150;
         }
 
-        @SuppressWarnings("deprecation")
         @Override
         public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
             super.render(matrices, mouseX, mouseY, delta);
@@ -156,11 +152,12 @@ public class SpeedRunOptionScreen extends Screen {
             if (this.client == null) return;
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder bufferBuilder = tessellator.getBuffer();
-            this.client.getTextureManager().bindTexture(DrawableHelper.OPTIONS_BACKGROUND_TEXTURE);
-            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+            RenderSystem.setShaderTexture(0, OPTIONS_BACKGROUND_TEXTURE);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             float f = 32.0F;
             int emptyWidth = this.width;
-            bufferBuilder.begin(7, VertexFormats.POSITION_TEXTURE_COLOR);
+            bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
             bufferBuilder.vertex(this.width, this.height, 0.0D).texture(emptyWidth / f, (float)this.height / f).color(64, 64, 64, 255).next();
             bufferBuilder.vertex(SpeedRunOptionScreen.this.width, this.height, 0.0D).texture((float)SpeedRunOptionScreen.this.width / f, (float)this.height / f + 0).color(64, 64, 64, 255).next();
             bufferBuilder.vertex(SpeedRunOptionScreen.this.width, 0.0D, 0.0D).texture((float)SpeedRunOptionScreen.this.width / f, 0).color(64, 64, 64, 255).next();
@@ -180,6 +177,11 @@ public class SpeedRunOptionScreen extends Screen {
 
             @Override
             public List<? extends Element> children() {
+                return children;
+            }
+
+            @Override
+            public List<? extends Selectable> selectableChildren() {
                 return children;
             }
 

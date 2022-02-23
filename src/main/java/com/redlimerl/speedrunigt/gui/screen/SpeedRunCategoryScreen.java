@@ -11,6 +11,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -41,15 +42,15 @@ public class SpeedRunCategoryScreen extends Screen {
     @Override
     protected void init() {
         assert client != null;
-        addButton(new ButtonWidget(width / 2 - 100, height - 35, 200, 20, ScreenTexts.CANCEL, button -> client.openScreen(parent)));
+        addDrawableChild(new ButtonWidget(width / 2 - 100, height - 35, 200, 20, ScreenTexts.CANCEL, button -> client.setScreen(parent)));
 
         this.listWidget = new CategorySelectionListWidget(client);
-        addChild(listWidget);
+        addSelectableChild(listWidget);
     }
 
     @Override
     public void onClose() {
-        if (this.client != null) this.client.openScreen(parent);
+        if (this.client != null) this.client.setScreen(parent);
     }
 
     @Override
@@ -101,6 +102,11 @@ public class SpeedRunCategoryScreen extends Screen {
                 return children;
             }
 
+            @Override
+            public List<? extends Selectable> selectableChildren() {
+                return children;
+            }
+
             private class CategoryCheckBoxWidget extends CheckboxWidget {
                 private final Identifier TEXTURE = new Identifier("textures/gui/checkbox.png");
                 private final RunCategory category;
@@ -123,14 +129,13 @@ public class SpeedRunCategoryScreen extends Screen {
                     return SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY) == category;
                 }
 
-                @SuppressWarnings("deprecation")
                 @Override
                 public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
                     MinecraftClient minecraftClient = MinecraftClient.getInstance();
-                    minecraftClient.getTextureManager().bindTexture(TEXTURE);
+                    RenderSystem.setShaderTexture(0, TEXTURE);
                     RenderSystem.enableDepthTest();
                     TextRenderer textRenderer = minecraftClient.textRenderer;
-                    RenderSystem.color4f(1.0F, 1.0F, 1.0F, this.alpha);
+                    RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
                     RenderSystem.enableBlend();
                     RenderSystem.defaultBlendFunc();
                     RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);

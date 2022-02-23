@@ -28,7 +28,7 @@ public abstract class LivingEntityMixin extends Entity {
     public void onDeath(DamageSource source, CallbackInfo ci) {
         @NotNull InGameTimer timer = InGameTimer.getInstance();
 
-        if (this.removed || this.dead || timer.getStatus() == TimerStatus.NONE) return;
+        if (this.isRemoved() || this.dead || timer.getStatus() == TimerStatus.NONE) return;
 
         //Kill All Bosses
         if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {

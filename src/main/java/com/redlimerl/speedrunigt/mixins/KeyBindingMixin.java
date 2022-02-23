@@ -21,12 +21,12 @@ import java.util.Objects;
 @Mixin(KeyBinding.class)
 public abstract class KeyBindingMixin {
 
-    @Shadow @Final private static Map<InputUtil.Key, KeyBinding> keyToBindings;
+    @Shadow @Final private static Map<InputUtil.Key, KeyBinding> KEY_TO_BINDINGS;
 
     @Inject(method = "setKeyPressed", at = @At("TAIL"))
     private static void onPress(InputUtil.Key key, boolean pressed, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
-        KeyBinding keyBinding = keyToBindings.get(key);
+        KeyBinding keyBinding = KEY_TO_BINDINGS.get(key);
         if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
         if (keyBinding != null && pressed) {
             if (keyBinding == MinecraftClient.getInstance().options.keyAdvancements // Advancement
