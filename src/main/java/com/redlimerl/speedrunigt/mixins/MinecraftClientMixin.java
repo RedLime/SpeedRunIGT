@@ -49,8 +49,6 @@ import java.util.stream.Collectors;
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin {
 
-    @Shadow public abstract boolean isInSingleplayer();
-
     @Shadow @Final public GameOptions options;
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
@@ -70,6 +68,7 @@ public abstract class MinecraftClientMixin {
 
     @Inject(at = @At("HEAD"), method = "createWorld")
     public void onCreate(String worldName, LevelInfo levelInfo, DynamicRegistryManager.Impl registryTracker, GeneratorOptions generatorOptions, CallbackInfo ci) {
+        SpeedRunIGT.LATEST_PLAYED_SEED = generatorOptions.getSeed();
         InGameTimer.start();
         currentDimension = null;
         InGameTimer.currentWorldName = worldName;
@@ -87,7 +86,7 @@ public abstract class MinecraftClientMixin {
         } catch (Exception e) {
             InGameTimer.end();
             currentDimension = null;
-            SpeedRunIGT.debug("Exception in timer load, can't load the timer.");
+            SpeedRunIGT.error("Exception in timer load, can't load the timer.");
             e.printStackTrace();
         }
     }
@@ -96,25 +95,25 @@ public abstract class MinecraftClientMixin {
 
     @Inject(at = @At("HEAD"), method = "joinWorld")
     public void onJoin(ClientWorld targetWorld, CallbackInfo ci) {
-        if (!isInSingleplayer()) return;
         InGameTimer timer = InGameTimer.getInstance();
+        if (timer.getStatus() == TimerStatus.NONE) return;
 
         currentDimension = targetWorld.getDimension();
         InGameTimer.checkingWorld = true;
 
-        if (timer.getStatus() != TimerStatus.NONE) {
-            timer.setPause(true, TimerStatus.IDLE);
-        }
-
         //Enter Nether
         if (timer.getCategory() == RunCategories.ENTER_NETHER && Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionType.THE_NETHER_ID.toString())) {
             InGameTimer.complete();
+            return;
         }
 
         //Enter End
         if (timer.getCategory() == RunCategories.ENTER_END && Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionType.THE_END_ID.toString())) {
             InGameTimer.complete();
+            return;
         }
+
+        timer.setPause(true, TimerStatus.IDLE);
     }
 
     @ModifyVariable(method = "render(Z)V", at = @At(value = "STORE"), ordinal = 1)
@@ -141,7 +140,7 @@ public abstract class MinecraftClientMixin {
                 && timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld) {
             WorldRendererAccessor worldRendererAccessor = (WorldRendererAccessor) worldRenderer;
             int chunks = worldRendererAccessor.invokeCompletedChunkCount();
-            int entities = worldRendererAccessor.getRegularEntityCount() -  (options.getPerspective().isFirstPerson() ? 0 : 1);
+            int entities = worldRendererAccessor.getRegularEntityCount() - (options.getPerspective().isFirstPerson() ? 0 : 1);
 
             if (chunks + entities > 0) {
                 if (!(SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) && !timer.isStarted())) {
