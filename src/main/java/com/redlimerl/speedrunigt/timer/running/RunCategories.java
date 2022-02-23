@@ -2,6 +2,8 @@ package com.redlimerl.speedrunigt.timer.running;
 
 public class RunCategories {
 
+    public static RunCategory ERROR_CATEGORY = new RunCategory("unknown","mc");
+
     public static RunCategory ANY = new RunCategory("ANY","mc#Any_Glitchless");
     public static RunCategory CUSTOM = new RunCategory("CUSTOM","mc#");
     public static RunCategory HIGH = new RunCategory("HIGH","mcce#High");

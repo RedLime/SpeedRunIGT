@@ -36,6 +36,7 @@
   "speedrunigt.option.more": "More",
   "speedrunigt.option.select": "Select",
   "speedrunigt.option.timer_category": "Timer Category",
+  "speedrunigt.option.timer_category.unknown": "Unknown Category",
   "speedrunigt.option.timer_category.warning": "There are several unsupported categories, which will be added later.",
   "speedrunigt.option.timer_category.any": "Any%",
   "speedrunigt.option.timer_category.high": "High%",

@@ -13,7 +13,8 @@ public class SpeedRunOptions {
     public static final OptionArgument<RunCategory> TIMER_CATEGORY = new OptionArgument<RunCategory>(new Identifier(SpeedRunIGT.MOD_ID, "timer_category_v7"), RunCategories.ANY) {
         @Override
         public RunCategory valueFromString(String string) {
-            return RunCategory.getCategory(string);
+            RunCategory category = RunCategory.getCategory(string);
+            return category == RunCategories.ERROR_CATEGORY ? RunCategories.ANY : category;
         }
 
         @Override
