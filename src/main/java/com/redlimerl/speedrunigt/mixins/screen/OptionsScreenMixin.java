@@ -27,8 +27,8 @@ public class OptionsScreenMixin extends Screen {
     @Inject(method = "init", at = @At("TAIL"))
     private void onInit(CallbackInfo ci) {
         timerButton = new ButtonWidget(this.width / 2 - 180, this.height / 6 - 12, 20, 20, "", (buttonWidget) -> {
-            if (this.minecraft != null) {
-                this.minecraft.openScreen(new SpeedRunOptionScreen(this));
+            if (this.client != null) {
+                this.client.openScreen(new SpeedRunOptionScreen(this));
             }
         });
         this.addButton(timerButton);
@@ -36,10 +36,10 @@ public class OptionsScreenMixin extends Screen {
 
     @Inject(method = "render", at = @At("TAIL"))
     private void renderEnderPearl(int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        if (this.minecraft != null) {
-            this.minecraft.getTextureManager().bindTexture(timerButton.isHovered() ? ENDER_EYE :
+        if (this.client != null) {
+            this.client.getTextureManager().bindTexture(timerButton.isHovered() ? ENDER_EYE :
                     SpeedRunIGTInfoScreen.UPDATE_STATUS == SpeedRunIGTInfoScreen.UpdateStatus.OUTDATED ? BLAZE_POWDER : ENDER_PEARL);
-            blit(timerButton.x + 2, timerButton.y + 2, 0.0F, 0.0F, 16, 16, 16, 16);
+            drawTexture(timerButton.x + 2, timerButton.y + 2, 0.0F, 0.0F, 16, 16, 16, 16);
         }
     }
 }

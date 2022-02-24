@@ -94,8 +94,8 @@ public class TimerCustomizeScreen extends Screen {
         fontSelectButtons.clear();
         backgroundOptions.clear();
 
-        if (minecraft != null) {
-            FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) minecraft).getFontManager();
+        if (this.client != null) {
+            FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) this.client).getFontManager();
             if (!fontManager.getTextRenderers().containsKey(drawer.getTimerFont())) {
                 availableFonts.add(drawer.getTimerFont());
             }
@@ -213,17 +213,17 @@ public class TimerCustomizeScreen extends Screen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (modifiers == 2 && keyCode >= 262 && keyCode <= 265 && minecraft != null && !drawer.isLocked()) {
+        if (modifiers == 2 && keyCode >= 262 && keyCode <= 265 && this.client != null && !drawer.isLocked()) {
             int moveX = keyCode == 262 ? 1 : keyCode == 263 ? -1 : 0;
             int moveY = keyCode == 265 ? -1 : keyCode == 264 ? 1 : 0;
             if (!igtButton.active) {
-                drawer.setIGT_XPos(MathHelper.clamp(drawer.getIGT_XPos() + moveX * drawer.getIGTScale() / minecraft.getWindow().getScaledWidth(), 0, 1));
-                drawer.setIGT_YPos(MathHelper.clamp(drawer.getIGT_YPos() + moveY * drawer.getIGTScale() / minecraft.getWindow().getScaledHeight(), 0, 1));
+                drawer.setIGT_XPos(MathHelper.clamp(drawer.getIGT_XPos() + moveX * drawer.getIGTScale() / this.client.getWindow().getScaledWidth(), 0, 1));
+                drawer.setIGT_YPos(MathHelper.clamp(drawer.getIGT_YPos() + moveY * drawer.getIGTScale() / this.client.getWindow().getScaledHeight(), 0, 1));
                 changed = true;
             }
             if (!rtaButton.active) {
-                drawer.setRTA_XPos(MathHelper.clamp(drawer.getRTA_XPos() + moveX * drawer.getRTAScale() / minecraft.getWindow().getScaledWidth(), 0, 1));
-                drawer.setRTA_YPos(MathHelper.clamp(drawer.getRTA_YPos() + moveY * drawer.getRTAScale() / minecraft.getWindow().getScaledHeight(), 0, 1));
+                drawer.setRTA_XPos(MathHelper.clamp(drawer.getRTA_XPos() + moveX * drawer.getRTAScale() / this.client.getWindow().getScaledWidth(), 0, 1));
+                drawer.setRTA_YPos(MathHelper.clamp(drawer.getRTA_YPos() + moveY * drawer.getRTAScale() / this.client.getWindow().getScaledHeight(), 0, 1));
                 changed = true;
             }
             setFocused(null);
@@ -239,32 +239,32 @@ public class TimerCustomizeScreen extends Screen {
 
         drawer.draw();
 
-        drawCenteredString(this.font, this.title.asFormattedString(), this.width / 2, 15, 16777215);
+        drawCenteredString(this.textRenderer, this.title.asFormattedString(), this.width / 2, 15, 16777215);
 
         if (!hide) {
             if (!igtButton.active || !rtaButton.active) {
                 if (drawer.isLocked()) {
-                    drawCenteredString(this.font,
+                    drawCenteredString(this.textRenderer,
                             new TranslatableText("speedrunigt.option.timer_position.description.lock").asFormattedString(), this.width / 2, this.height / 2 - 80, 16777215);
                 } else {
-                    drawCenteredString(this.font,
+                    drawCenteredString(this.textRenderer,
                             new TranslatableText("speedrunigt.option.timer_position.description").asFormattedString(), this.width / 2, this.height / 2 - 80, 16777215);
-                    drawCenteredString(this.font,
+                    drawCenteredString(this.textRenderer,
                             new TranslatableText("speedrunigt.option.timer_position.description.move").asFormattedString(), this.width / 2, this.height / 2 - 69, 16777215);
                 }
             }
 
 
-            if (!fontButton.active && minecraft != null) {
+            if (!fontButton.active && this.client != null) {
                 int c = fontPage * 3;
-                FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) minecraft).getFontManager();
+                FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) this.client).getFontManager();
                 for (int i = 0; i < fontSelectButtons.size(); i++) {
                     if (c + i < availableFonts.size()) {
                         Identifier fontIdentifier = availableFonts.get(c + i);
                         LiteralText text = new LiteralText(fontIdentifier.getPath());
-                        TextRenderer targetFont = this.font;
+                        TextRenderer targetFont = this.textRenderer;
 
-                        if (minecraft != null && fontManager.getTextRenderers().containsKey(fontIdentifier)) {
+                        if (fontManager.getTextRenderers().containsKey(fontIdentifier)) {
                             targetFont = fontManager.getTextRenderers().get(fontIdentifier);
                         } else {
                             text.append(new LiteralText(" (Unavailable)")).formatted(Formatting.RED);
@@ -284,8 +284,8 @@ public class TimerCustomizeScreen extends Screen {
 
     @Override
     public void onClose() {
-        assert minecraft != null;
-        minecraft.openScreen(parent);
+        assert this.client != null;
+        this.client.openScreen(parent);
     }
 
 
@@ -565,7 +565,7 @@ public class TimerCustomizeScreen extends Screen {
 
 
         fontConfigButton = addButton(new ButtonWidget(width / 2 + 88, 0, 50, 20, new LiteralText("Config").asFormattedString(), (ButtonWidget button) -> {
-            if (minecraft != null) minecraft.openScreen(new FontConfigScreen(this, drawer.getTimerFont()));
+            if (this.client != null) this.client.openScreen(new FontConfigScreen(this, drawer.getTimerFont()));
         } ));
         fontOptions.add(addButton(new ButtonWidget(width / 2 - 154, height / 2 - 80, 150, 20, new TranslatableText("speedrunigt.option.timer_position.font.open_folder").asFormattedString(), (ButtonWidget button) -> Util.getOperatingSystem().open(SpeedRunIGT.FONT_PATH.toFile()))));
         fontOptions.add(addButton(new ButtonWidget(width / 2 + 4, height / 2 - 80, 150, 20, new TranslatableText("speedrunigt.option.timer_position.font.description").asFormattedString(), (ButtonWidget button) -> Util.getOperatingSystem().open("https://youtu.be/agBbiTQWj78"))));

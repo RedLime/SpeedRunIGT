@@ -73,7 +73,7 @@ public class SpeedRunOptionScreen extends Screen {
 
     @Override
     public void onClose() {
-        if (this.minecraft != null) this.minecraft.openScreen(parent);
+        if (this.client != null) this.client.openScreen(parent);
     }
 
     @Override
@@ -81,8 +81,8 @@ public class SpeedRunOptionScreen extends Screen {
         this.renderBackground();
         this.buttonListWidget.render(mouseX, mouseY, delta);
         super.render(mouseX, mouseY, delta);
-        drawCenteredString(font, this.title.asFormattedString(), this.width / 2, 10, 16777215);
-        font.drawWithShadow("v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215);
+        drawCenteredString(this.textRenderer, this.title.asFormattedString(), this.width / 2, 10, 16777215);
+        this.textRenderer.drawWithShadow("v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215);
 
         ArrayList<String> tooltip = getToolTip(mouseX, mouseY);
         if (!tooltip.isEmpty()) this.renderTooltip(tooltip, 0, height);
@@ -126,7 +126,7 @@ public class SpeedRunOptionScreen extends Screen {
     class ButtonScrollListWidget extends ElementListWidget<ButtonScrollListWidget.Entry> {
 
         public ButtonScrollListWidget() {
-            super(SpeedRunOptionScreen.this.minecraft, SpeedRunOptionScreen.this.width - 140, SpeedRunOptionScreen.this.height, 28, SpeedRunOptionScreen.this.height - 54, 24);
+            super(SpeedRunOptionScreen.this.client, SpeedRunOptionScreen.this.width - 140, SpeedRunOptionScreen.this.height, 28, SpeedRunOptionScreen.this.height - 54, 24);
         }
 
         public void replaceButtons(Collection<AbstractButtonWidget> buttonWidgets) {
@@ -148,10 +148,10 @@ public class SpeedRunOptionScreen extends Screen {
             super.render(mouseX, mouseY, delta);
 
             //Render bg on empty space
-            if (this.minecraft == null) return;
+            if (this.client == null) return;
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder bufferBuilder = tessellator.getBuffer();
-            this.minecraft.getTextureManager().bindTexture(BACKGROUND_LOCATION);
+            this.client.getTextureManager().bindTexture(BACKGROUND_TEXTURE);
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             float f = 32.0F;
             int emptyWidth = this.width;

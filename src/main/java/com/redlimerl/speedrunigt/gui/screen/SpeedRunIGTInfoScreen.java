@@ -55,18 +55,18 @@ public class SpeedRunIGTInfoScreen extends Screen {
         this.renderBackground();
         RenderSystem.pushMatrix();
         RenderSystem.scalef(1.5f, 1.5f, 1.5f);
-        this.drawCenteredString(this.font, this.title.asFormattedString(), this.width / 3, 15, 16777215);
+        this.drawCenteredString(this.textRenderer, this.title.asFormattedString(), this.width / 3, 15, 16777215);
         RenderSystem.popMatrix();
-        this.drawCenteredString(this.font, new LiteralText("Made by RedLime").asFormattedString(), this.width / 2, 50, 16777215);
-        this.drawCenteredString(this.font, new LiteralText("Discord : RedLime#0817").asFormattedString(), this.width / 2, 62, 16777215);
-        this.drawCenteredString(this.font,
+        this.drawCenteredString(this.textRenderer, new LiteralText("Made by RedLime").asFormattedString(), this.width / 2, 50, 16777215);
+        this.drawCenteredString(this.textRenderer, new LiteralText("Discord : RedLime#0817").asFormattedString(), this.width / 2, 62, 16777215);
+        this.drawCenteredString(this.textRenderer,
                 new LiteralText("Version : "+ SpeedRunIGT.MOD_VERSION.split("\\+")[0]).asFormattedString(), this.width / 2, 78, 16777215);
         if (UPDATE_STATUS != UpdateStatus.NONE) {
             if (UPDATE_STATUS == UpdateStatus.OUTDATED) {
                 update.active = true;
-                this.drawCenteredString(this.font, new LiteralText("Updated Version : "+ UPDATE_VERSION).formatted(Formatting.YELLOW).asFormattedString(), this.width / 2, 88, 16777215);
+                this.drawCenteredString(this.textRenderer, new LiteralText("Updated Version : "+ UPDATE_VERSION).formatted(Formatting.YELLOW).asFormattedString(), this.width / 2, 88, 16777215);
             }
-            this.drawCenteredString(this.font,
+            this.drawCenteredString(this.textRenderer,
                     new TranslatableText("speedrunigt.message.update."+UPDATE_STATUS.name().toLowerCase(Locale.ROOT)).asFormattedString(),
                     this.width / 2, 116, 16777215);
         }
@@ -76,8 +76,8 @@ public class SpeedRunIGTInfoScreen extends Screen {
 
     @Override
     public void onClose() {
-        if (minecraft != null) {
-            minecraft.openScreen(parent);
+        if (this.client != null) {
+            this.client.openScreen(parent);
         }
     }
 
