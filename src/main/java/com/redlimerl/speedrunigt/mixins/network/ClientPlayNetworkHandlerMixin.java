@@ -14,7 +14,7 @@ import java.util.Objects;
 @Mixin(ClientPlayNetworkHandler.class)
 public class ClientPlayNetworkHandlerMixin {
 
-    @Inject(method = "onCustomPayload", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "onCustomPayload", at = @At("TAIL"), cancellable = true)
     public void onCustom(CustomPayloadS2CPacket packet, CallbackInfo ci) {
         if (packet.getChannel().startsWith(SpeedRunIGT.MOD_ID+"|")) {
             SpeedRunIGT.debug("Client Side : " + packet.getChannel());

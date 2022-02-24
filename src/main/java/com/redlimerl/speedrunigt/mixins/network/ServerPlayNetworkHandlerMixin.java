@@ -19,7 +19,7 @@ public class ServerPlayNetworkHandlerMixin {
 
     @Shadow @Final private MinecraftServer server;
 
-    @Inject(method = "onCustomPayload", at = @At("HEAD"))
+    @Inject(method = "onCustomPayload", at = @At("TAIL"))
     public void onCustom(CustomPayloadC2SPacket packet, CallbackInfo ci) {
         if (packet.getChannel().startsWith(SpeedRunIGT.MOD_ID+"|")) {
             SpeedRunIGT.debug("Server Side : " + packet.getChannel());
