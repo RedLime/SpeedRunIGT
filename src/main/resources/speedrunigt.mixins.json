@@ -12,7 +12,6 @@
     "LivingEntityMixin",
     "MinecraftClientMixin",
     "StatHandlerMixin",
-    "WorldRendererMixin",
     "access.ButtonWidgetAccessor",
     "access.WorldRendererAccessor",
     "coop.PlayerManagerMixin",

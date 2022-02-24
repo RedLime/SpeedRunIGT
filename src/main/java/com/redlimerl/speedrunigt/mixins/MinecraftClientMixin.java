@@ -9,7 +9,6 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import com.redlimerl.speedrunigt.timer.running.RunSplitTypes;
-import com.redlimerl.speedrunigt.utils.MixinValues;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
@@ -127,7 +126,7 @@ public abstract class MinecraftClientMixin {
 
 
     @Inject(method = "runGameLoop", at = @At(value = "INVOKE",
-            target ="Lnet/minecraft/client/render/GameRenderer;method_9775(F)V", shift = At.Shift.AFTER))
+            target ="Lnet/minecraft/client/render/GameRenderer;method_1331(F)V", shift = At.Shift.AFTER))
     private void drawTimer(CallbackInfo ci) {
         this.profiler.swap("timer");
         InGameTimer timer = InGameTimer.getInstance();
@@ -135,8 +134,7 @@ public abstract class MinecraftClientMixin {
         if (worldRenderer != null && world != null && currentDimension != null && world.dimension.getName().equals(currentDimension.getName()) && !isPaused()
                 && (timer.getStatus() == TimerStatus.IDLE ) && InGameTimer.checkingWorld && Mouse.isGrabbed() && Display.isActive() && Mouse.isInsideWindow()) {
             WorldRendererAccessor worldRendererAccessor = (WorldRendererAccessor) worldRenderer;
-            worldRenderer.getChunksDebugString(); // For init MixinValues#completedChunks value
-            int chunks = MixinValues.COMPLETED_RENDER_CHUNKS;
+            int chunks = worldRendererAccessor.getCompletedChunkCount();
             int entities = worldRendererAccessor.getRegularEntityCount() - (options.perspective > 0 ? 0 : 1);
             if (chunks + entities > 0) {
                 if (!(SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) && !timer.isStarted())) {

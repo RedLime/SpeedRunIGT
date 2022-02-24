@@ -1,6 +1,5 @@
 package com.redlimerl.speedrunigt.gui.screen;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.gui.ConsumerButtonWidget;
@@ -11,10 +10,9 @@ import net.minecraft.class_1803;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.EntryListWidget;
-import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexFormats;
 import net.minecraft.text.TranslatableText;
+import org.lwjgl.opengl.GL11;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -84,12 +82,6 @@ public class SpeedRunOptionScreen extends Screen {
     }
 
     @Override
-    public void handleMouse() {
-        super.handleMouse();
-        this.buttonListWidget.handleMouse();
-    }
-
-    @Override
     protected void mouseClicked(int mouseX, int mouseY, int button) {
         ArrayList<ButtonWidget> widgets = new ArrayList<>(widgetButtons);
         buttons.addAll(widgets);
@@ -103,7 +95,7 @@ public class SpeedRunOptionScreen extends Screen {
         this.buttonListWidget.render(mouseX, mouseY, delta);
         super.render(mouseX, mouseY, delta);
         drawCenteredString(this.textRenderer, new TranslatableText("speedrunigt.title.options").asFormattedString(), this.width / 2, 10, 16777215);
-        this.textRenderer.drawWithShadow("v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215);
+        drawWithShadow(this.textRenderer, "v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215);
 
         ArrayList<String> tooltip = getToolTip(mouseX, mouseY);
         if (!tooltip.isEmpty()) this.renderTooltip(tooltip, 0, height);
@@ -181,22 +173,21 @@ public class SpeedRunOptionScreen extends Screen {
             super.render(mouseX, mouseY, delta);
 
             //Render bg on empty space
-            if (this.client == null) return;
+            if (SpeedRunOptionScreen.this.client == null) return;
             int emptyWidth = this.width;
-            GlStateManager.disableLighting();
-            GlStateManager.disableFog();
-            Tessellator var2 = Tessellator.getInstance();
-            BufferBuilder var3 = var2.getBuffer();
-            this.client.getTextureManager().bindTexture(OPTIONS_BACKGROUND_TEXTURE);
-            GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-            float var4 = 32.0F;
-            var3.method_21806();
-            var3.method_21807(4210752);
-            var3.method_9728(emptyWidth, this.height, 0.0D, emptyWidth, (float)this.height / var4);
-            var3.method_9728(SpeedRunOptionScreen.this.width, this.height, 0.0D, (float)SpeedRunOptionScreen.this.width / var4, (float)this.height / var4);
-            var3.method_9728(SpeedRunOptionScreen.this.width, 0.0D, 0.0D, (float)SpeedRunOptionScreen.this.width / var4, 0);
-            var3.method_9728(emptyWidth, 0.0D, 0.0D, emptyWidth, 0);
-            var2.method_9927();
+            GL11.glDisable(2896);
+            GL11.glDisable(2912);
+            Tessellator var2 = Tessellator.INSTANCE;
+            SpeedRunOptionScreen.this.client.getTextureManager().bindTexture(OPTIONS_BACKGROUND_TEXTURE);
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            float var3 = 32.0F;
+            var2.method_1405();
+            var2.method_1413(4210752);
+            var2.method_1399(emptyWidth, SpeedRunOptionScreen.this.height, 0.0D, emptyWidth, ((float)SpeedRunOptionScreen.this.height / var3));
+            var2.method_1399(SpeedRunOptionScreen.this.width, SpeedRunOptionScreen.this.height, 0.0D, ((float)SpeedRunOptionScreen.this.width / var3), (float)SpeedRunOptionScreen.this.height / var3);
+            var2.method_1399(SpeedRunOptionScreen.this.width, 0.0D, 0.0D, ((float)SpeedRunOptionScreen.this.width / var3), 0);
+            var2.method_1399(emptyWidth, 0.0D, 0.0D, emptyWidth, 0);
+            var2.method_1396();
         }
 
         class ButtonScrollListEntry implements class_1803 {
@@ -212,12 +203,7 @@ public class SpeedRunOptionScreen extends Screen {
             }
 
             @Override
-            public void method_9473(int i, int j, int k) {
-
-            }
-
-            @Override
-            public void method_6700(int index, int x, int y, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean hovered) {
+            public void method_6700(int index, int x, int y, int rowWidth, int rowHeight, Tessellator tessellator, int mouseX, int mouseY, boolean hovered) {
                 buttonWidget.y = y;
                 buttonWidget.render(SpeedRunOptionScreen.this.client, mouseX, mouseY);
             }

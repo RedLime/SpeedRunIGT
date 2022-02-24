@@ -1,12 +1,12 @@
 package com.redlimerl.speedrunigt.timer;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
 import com.redlimerl.speedrunigt.timer.TimerDrawer.Position;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.Window;
 import net.minecraft.util.math.MathHelper;
+import org.lwjgl.opengl.GL11;
 
 public class TimerElement {
     private static final MinecraftClient client = MinecraftClient.getInstance();
@@ -54,11 +54,11 @@ public class TimerElement {
     }
 
     public void draw(boolean doTranslate) {
-        GlStateManager.pushMatrix();
-        if (doTranslate) GlStateManager.translatef(0, 0, 999);
-        GlStateManager.scalef(scale, scale, 1.0F);
+        GL11.glPushMatrix();
+        if (doTranslate) GL11.glTranslatef(0, 0, 999);
+        GL11.glScalef(scale, scale, 1.0F);
         drawOutLine(this.textRenderer, scaledPosition.getX(), scaledPosition.getY(), text, color, decoration);
-        GlStateManager.popMatrix();
+        GL11.glPopMatrix();
     }
 
     private static void drawOutLine(TextRenderer textRenderer, int x, int y, String text, Integer color, TimerDecoration decoration) {

@@ -2,6 +2,7 @@ package com.redlimerl.speedrunigt.mixins.network;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.TimerPacketHandler;
+import io.netty.buffer.Unpooled;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -19,21 +20,21 @@ public class ServerPlayNetworkHandlerMixin {
 
     @Shadow @Final private MinecraftServer server;
 
-    @Inject(method = "onCustomPayload", at = @At("HEAD"))
+    @Inject(method = "onCustomPayload", at = @At("TAIL"))
     public void onCustom(CustomPayloadC2SPacket packet, CallbackInfo ci) {
-        if (packet.getChannel().startsWith(SpeedRunIGT.MOD_ID+"|")) {
+        if (packet.getChannel().startsWith(SpeedRunIGT.MOD_ID)) {
             SpeedRunIGT.debug("Server Side : " + packet.getChannel());
 
             if (Objects.equals(packet.getChannel(), TimerPacketHandler.PACKET_TIMER_INIT_ID)) {
-                TimerPacketHandler.receiveInitC2S(this.server, packet.getPayload());
+                TimerPacketHandler.receiveInitC2S(this.server, Unpooled.wrappedBuffer(packet.method_7981()));
             }
 
             if (Objects.equals(packet.getChannel(), TimerPacketHandler.PACKET_TIMER_COMPLETE_ID)) {
-                TimerPacketHandler.receiveCompleteC2S(this.server, packet.getPayload());
+                TimerPacketHandler.receiveCompleteC2S(this.server, Unpooled.wrappedBuffer(packet.method_7981()));
             }
 
             if (Objects.equals(packet.getChannel(), TimerPacketHandler.PACKET_TIMER_SPLIT_ID)) {
-                TimerPacketHandler.receiveSplitC2S(this.server, packet.getPayload());
+                TimerPacketHandler.receiveSplitC2S(this.server, Unpooled.wrappedBuffer(packet.method_7981()));
             }
         }
     }

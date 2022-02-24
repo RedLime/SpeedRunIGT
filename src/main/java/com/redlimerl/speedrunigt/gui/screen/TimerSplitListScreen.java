@@ -11,6 +11,7 @@ import net.minecraft.class_1803;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.EntryListWidget;
+import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
@@ -35,7 +36,7 @@ public class TimerSplitListScreen extends Screen {
     }
 
     private BaseText getFilterText() {
-        return filter == null ? new TranslatableText("gui.all") : new LiteralText(filter.getContext());
+        return filter == null ? new TranslatableText("options.particles.all") : new LiteralText(filter.getContext());
     }
 
     @Override
@@ -44,12 +45,6 @@ public class TimerSplitListScreen extends Screen {
             ((ConsumerButtonWidget) button).onClick(this);
         }
         super.buttonClicked(button);
-    }
-
-    @Override
-    public void handleMouse() {
-        super.handleMouse();
-        this.listWidget.handleMouse();
     }
 
     @Override
@@ -217,12 +212,7 @@ public class TimerSplitListScreen extends Screen {
             }
 
             @Override
-            public void method_9473(int i, int j, int k) {
-
-            }
-
-            @Override
-            public void method_6700(int index, int x, int y, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean hovered) {
+            public void method_6700(int index, int x, int y, int rowWidth, int rowHeight, Tessellator tessellator, int mouseX, int mouseY, boolean hovered) {
                 this.deleteButton.x = x + rowWidth - this.deleteButton.getWidth();
                 this.deleteButton.y = y + 2;
                 this.deleteButton.render(TimerSplitListScreen.this.client, mouseX, mouseY);

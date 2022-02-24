@@ -1,9 +1,14 @@
 package com.redlimerl.speedrunigt.gui;
 
-import net.minecraft.class_2302;
-import net.minecraft.client.gui.widget.SliderWidget;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import org.lwjgl.opengl.GL11;
 
-public class CustomSliderWidget extends SliderWidget {
+public class CustomSliderWidget extends ButtonWidget {
+
+    private float progress;
+    public boolean dragging;
+    private final SliderWorker onChange;
 
     public interface SliderWorker {
         String updateMessage();
@@ -11,24 +16,65 @@ public class CustomSliderWidget extends SliderWidget {
     }
 
     public CustomSliderWidget(int x, int y, int width, int height, float f, SliderWorker onSlide) {
-        super(new class_2302() {
-            @Override
-            public void method_9496(int id, boolean value) {
-
-            }
-
-            @Override
-            public void method_9494(int id, float value) {
-                onSlide.applyValue(value);
-            }
-
-            @Override
-            public void method_9495(int id, String text) {
-
-            }
-        }, 0, x, y, "", 0f, 1f, f, (i, s, v) -> onSlide.updateMessage());
+        super(99999, x, y, width, height, "");
         this.width = width;
         this.height = height;
         this.message = onSlide.updateMessage();
+        this.progress = f;
+        this.onChange = onSlide;
+    }
+
+    public float getSliderValue() {
+        return this.progress;
+    }
+
+    public int getYImage(boolean isHovered) {
+        return 0;
+    }
+
+    protected void renderBg(MinecraftClient client, int mouseX, int mouseY) {
+        if (this.visible) {
+            if (this.dragging) {
+                this.progress = (float)(mouseX - (this.x + 4)) / (float)(this.width - 8);
+                if (this.progress < 0) {
+                    this.progress = 0;
+                }
+
+                if (this.progress > 1) {
+                    this.progress = 1;
+                }
+
+                this.onChange.applyValue(this.getSliderValue());
+                this.message = onChange.updateMessage();
+            }
+
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            this.drawTexture(this.x + (int)(this.progress * (float)(this.width - 8)), this.y, 0, 66, 4, 20);
+            this.drawTexture(this.x + (int)(this.progress * (float)(this.width - 8)) + 4, this.y, 196, 66, 4, 20);
+        }
+    }
+
+    public boolean isMouseOver(MinecraftClient client, int mouseX, int mouseY) {
+        if (super.isMouseOver(client, mouseX, mouseY)) {
+            this.progress = (float)(mouseX - (this.x + 4)) / (float)(this.width - 8);
+            if (this.progress < 0.0F) {
+                this.progress = 0.0F;
+            }
+
+            if (this.progress > 1.0F) {
+                this.progress = 1.0F;
+            }
+
+            this.message = onChange.updateMessage();
+            this.onChange.applyValue(this.getSliderValue());
+            this.dragging = true;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void mouseReleased(int mouseX, int mouseY) {
+        this.dragging = false;
     }
 }

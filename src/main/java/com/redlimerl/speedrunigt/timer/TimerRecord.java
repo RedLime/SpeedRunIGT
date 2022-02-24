@@ -157,7 +157,7 @@ public class TimerRecord {
         if (getSplitTimeline().containsKey(splitType.getID())) return;
 
         MinecraftClient client = MinecraftClient.getInstance();
-        if (client.player == null) return;
+        if (client.world == null) return;
         SplitDisplayType splitDisplayType = SpeedRunOption.getOption(SpeedRunOptions.SPLIT_DISPLAY_TYPE);
 
         long bestTime = 0L;

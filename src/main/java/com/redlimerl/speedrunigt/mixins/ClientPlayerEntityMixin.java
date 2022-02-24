@@ -12,7 +12,6 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.util.DyeColor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -35,6 +34,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     public ClientPlayerEntityMixin(ClientWorld world, GameProfile profile) {
         super(world, profile);
     }
+
 
     @Inject(method = "tickMovement",
             at = @At("TAIL"))
@@ -99,7 +99,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             ) {
                 for (int i = 0; i < this.inventory.main.length; i++) {
                     ItemStack item = this.inventory.main[i];
-                    if (item != null && !item.isEmpty() && item.getItem().equals(Items.DYE) && DyeColor.getById(item.getMeta()) == DyeColor.BLUE) {
+                    if (item != null && !item.isEmpty() && item.getItem().equals(Items.DYE) && item.getMeta() == 4) {
                         InGameTimer.complete();
                     }
                 }
@@ -126,7 +126,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         }
     }
 
-    @Inject(at = @At("HEAD"), method = "tick")
+    @Inject(at = @At("HEAD"), method = "tickMovement")
     public void updateNausea(CallbackInfo ci) {
         if(this.changingDimension && this.timeInPortal == 1 && client.isInSingleplayer()){
             InGameTimer.checkingWorld = false;

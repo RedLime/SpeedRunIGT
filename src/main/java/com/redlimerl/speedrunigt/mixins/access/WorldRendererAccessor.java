@@ -11,4 +11,7 @@ public interface WorldRendererAccessor {
     @Accessor("field_1891")
     int getRegularEntityCount();
 
+    @Accessor("field_1896")
+    int getCompletedChunkCount();
+
 }

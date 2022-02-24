@@ -13,6 +13,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.EntryListWidget;
+import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
@@ -47,12 +48,6 @@ public class SpeedRunCategoryScreen extends Screen {
             ((ConsumerButtonWidget) button).onClick(this);
         }
         super.buttonClicked(button);
-    }
-
-    @Override
-    public void handleMouse() {
-        super.handleMouse();
-        this.listWidget.handleMouse();
     }
 
     @Override
@@ -112,12 +107,7 @@ public class SpeedRunCategoryScreen extends Screen {
             }
 
             @Override
-            public void method_9473(int i, int j, int k) {
-
-            }
-
-            @Override
-            public void method_6700(int index, int x, int y, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean hovered) {
+            public void method_6700(int index, int x, int y, int rowWidth, int rowHeight, Tessellator tessellator, int mouseX, int mouseY, boolean hovered) {
                 this.checkBox.x = x + 34;
                 this.checkBox.y = y;
                 this.checkBox.message = SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY) == this.category ? new LiteralText("█").setStyle(new Style().setBold(true)).asFormattedString() : "";

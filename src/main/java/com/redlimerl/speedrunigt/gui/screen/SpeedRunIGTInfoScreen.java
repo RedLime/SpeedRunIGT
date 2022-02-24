@@ -3,7 +3,6 @@ package com.redlimerl.speedrunigt.gui.screen;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.gui.ConsumerButtonWidget;
 import com.redlimerl.speedrunigt.utils.OperatingUtils;
@@ -14,6 +13,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
+import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -55,10 +55,10 @@ public class SpeedRunIGTInfoScreen extends Screen {
     @Override
     public void render(int mouseX, int mouseY, float delta) {
         this.renderBackground();
-        GlStateManager.pushMatrix();
-        GlStateManager.scalef(1.5f, 1.5f, 1.5f);
+        GL11.glPushMatrix();
+        GL11.glScalef(1.5f, 1.5f, 1.5f);
         this.drawCenteredString(this.textRenderer, new TranslatableText("speedrunigt.title").asFormattedString(), this.width / 3, 15, 16777215);
-        GlStateManager.popMatrix();
+        GL11.glPopMatrix();
         this.drawCenteredString(this.textRenderer, new LiteralText("Made by RedLime").asFormattedString(), this.width / 2, 50, 16777215);
         this.drawCenteredString(this.textRenderer, new LiteralText("Discord : RedLime#0817").asFormattedString(), this.width / 2, 62, 16777215);
         this.drawCenteredString(this.textRenderer,

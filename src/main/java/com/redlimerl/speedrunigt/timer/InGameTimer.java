@@ -12,7 +12,6 @@ import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.GameMode;
 import org.apache.commons.compress.utils.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
@@ -161,7 +160,7 @@ public class InGameTimer {
         timer.setStatus(TimerStatus.COMPLETED_LEGACY);
 
         MinecraftClient client = MinecraftClient.getInstance();
-        if (client.interactionManager != null && client.interactionManager.method_9667() == GameMode.SURVIVAL) {
+        if (client.interactionManager != null && client.interactionManager.hasStatusBars()) {
             timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.COMPLETE, timer.getInGameTime());
             timer.getTimerSplit().completeSplit(timer.isCoop());
         }
