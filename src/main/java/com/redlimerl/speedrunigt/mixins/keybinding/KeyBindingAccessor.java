@@ -5,11 +5,12 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 import java.util.Map;
+import java.util.Set;
 
 @Mixin(KeyBinding.class)
 public interface KeyBindingAccessor {
-    @Accessor("field_15867")
-    static Map<String, Integer> invokeGetCategoryMap() {
+    @Accessor("categories")
+    static Set<String> invokeGetCategoryMap() {
         throw new AssertionError();
     }
 }

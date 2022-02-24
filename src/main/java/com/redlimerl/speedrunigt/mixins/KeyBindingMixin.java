@@ -26,8 +26,7 @@ public abstract class KeyBindingMixin {
         KeyBinding keyBinding =KEY_MAP.get(keyCode);
         if(keyBinding!=null && pressed){
             InGameTimer timer = InGameTimer.getInstance();
-            if (keyBinding == MinecraftClient.getInstance().options.field_15880
-                    || Objects.equals(keyBinding.getCategory(), "key.categories.inventory")
+            if (Objects.equals(keyBinding.getCategory(), "key.categories.inventory")
                     || (Objects.equals(keyBinding.getCategory(), "key.categories.gameplay"))) {
                 if (timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld) {
                     timer.setPause(false);

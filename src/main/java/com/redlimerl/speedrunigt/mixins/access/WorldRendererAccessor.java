@@ -11,7 +11,4 @@ public interface WorldRendererAccessor {
     @Accessor("field_1891")
     int getRegularEntityCount();
 
-    @Invoker("method_12338")
-    int invokeCompletedChunkCount();
-
 }

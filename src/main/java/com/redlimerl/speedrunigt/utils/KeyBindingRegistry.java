@@ -23,30 +23,27 @@ import com.redlimerl.speedrunigt.mixins.keybinding.KeyBindingAccessor;
 import net.minecraft.client.options.KeyBinding;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.Set;
 
 public final class KeyBindingRegistry {
     private static final List<KeyBinding> moddedKeyBindings = Lists.newArrayList();
 
-    private static Map<String, Integer> getCategoryMap() {
+    private static Set<String> getCategoryMap() {
         return KeyBindingAccessor.invokeGetCategoryMap();
     }
 
     private static boolean hasCategory(String categoryTranslationKey) {
-        return getCategoryMap().containsKey(categoryTranslationKey);
+        return getCategoryMap().contains(categoryTranslationKey);
     }
 
     public static void addCategory(String categoryTranslationKey) {
-        Map<String, Integer> map = getCategoryMap();
+        Set<String> map = getCategoryMap();
 
-        if (map.containsKey(categoryTranslationKey)) {
+        if (map.contains(categoryTranslationKey)) {
             return;
         }
 
-        Optional<Integer> largest = map.values().stream().max(Integer::compareTo);
-        int largestInt = largest.orElse(0);
-        map.put(categoryTranslationKey, largestInt + 1);
+        map.add(categoryTranslationKey);
     }
 
     public static KeyBinding registerKeyBinding(KeyBinding binding) {

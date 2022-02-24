@@ -216,10 +216,15 @@ public class TimerSplitListScreen extends Screen {
             }
 
             @Override
-            public void method_6700(int index, int x, int y, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-                this.deleteButton.x = x + entryWidth - this.deleteButton.getWidth();
+            public void updatePosition(int index, int x, int y) {
+
+            }
+
+            @Override
+            public void render(int index, int x, int y, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean hovered) {
+                this.deleteButton.x = x + rowWidth - this.deleteButton.getWidth();
                 this.deleteButton.y = y + 2;
-                this.deleteButton.method_891(TimerSplitListScreen.this.client, mouseX, mouseY, tickDelta);
+                this.deleteButton.render(TimerSplitListScreen.this.client, mouseX, mouseY);
 
                 TimerSplitListScreen.this.textRenderer.draw(titleText.asFormattedString(), x, y + 4, 16777215);
                 if (timelineTextList.size() > 0) {
@@ -229,13 +234,13 @@ public class TimerSplitListScreen extends Screen {
                     TimerSplitListScreen.this.textRenderer.draw(resultTimeText.asFormattedString(), x, y + 13, 16777215);
                 }
                 drawCenteredString(TimerSplitListScreen.this.textRenderer, "§8§m                                                                                ",
-                        x + (entryWidth / 2), y + 20, 16777215);
+                        x + (rowWidth / 2), y + 20, 16777215);
 
                 ArrayList<String> tooltip = new ArrayList<>();
                 if (this.deleteButton.isMouseOver(TimerSplitListScreen.this.client, mouseX, mouseY) && !Objects.equals(this.deleteButton.message, I18n.translate("selectWorld.delete"))) {
                     tooltip.add(new TranslatableText("speedrunigt.message.click_delete_button_again").asFormattedString());
                     TimerSplitListWidget.this.tooltip = tooltip;
-                } else if (isMouseOver(x, y, entryWidth, entryHeight, mouseX, mouseY)) {
+                } else if (isMouseOver(x, y, rowWidth, rowHeight, mouseX, mouseY)) {
                     tooltip.add(titleText.copy().setStyle(new Style().setFormatting(Formatting.YELLOW)).asFormattedString());
                     tooltip.add(new LiteralText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(time))).setStyle(new Style().setFormatting(Formatting.GRAY)).asFormattedString());
                     if (split.getRunType() != RunType.SET_SEED && split.getRunType() != RunType.SAVED_WORLD)
@@ -248,11 +253,6 @@ public class TimerSplitListScreen extends Screen {
                     tooltip.add(resultTimeText.asFormattedString());
                     TimerSplitListWidget.this.tooltip = tooltip;
                 }
-            }
-
-            @Override
-            public void method_9473(int i, int j, int k, float f) {
-
             }
 
             @Override

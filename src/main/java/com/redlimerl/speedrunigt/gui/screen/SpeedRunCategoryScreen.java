@@ -111,16 +111,16 @@ public class SpeedRunCategoryScreen extends Screen {
             }
 
             @Override
-            public void method_9473(int index, int x, int y, float f) {
+            public void updatePosition(int index, int x, int y) {
 
             }
 
             @Override
-            public void method_6700(int index, int x, int y, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float f) {
+            public void render(int index, int x, int y, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean hovered) {
                 this.checkBox.x = x + 34;
                 this.checkBox.y = y;
                 this.checkBox.message = SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY) == this.category ? new LiteralText("█").setStyle(new Style().setBold(true)).asFormattedString() : "";
-                this.checkBox.method_891(MinecraftClient.getInstance(), mouseX, mouseY, f);
+                this.checkBox.render(MinecraftClient.getInstance(), mouseX, mouseY);
                 drawWithShadow(SpeedRunCategoryScreen.this.textRenderer, category.getText().asFormattedString(), this.checkBox.x + 24, this.checkBox.y + 6,14737632 | 255 << 24);
             }
 

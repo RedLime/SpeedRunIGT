@@ -6,12 +6,13 @@
   "mixins": [
   ],
   "client": [
-    "ClientAdvancementManagerMixin",
     "ClientPlayerEntityMixin",
     "ClientWorldMixin",
     "KeyBindingMixin",
     "LivingEntityMixin",
     "MinecraftClientMixin",
+    "StatHandlerMixin",
+    "WorldRendererMixin",
     "access.ButtonWidgetAccessor",
     "access.WorldRendererAccessor",
     "coop.PlayerManagerMixin",

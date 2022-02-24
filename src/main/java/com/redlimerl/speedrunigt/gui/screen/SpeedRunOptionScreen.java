@@ -207,13 +207,14 @@ public class SpeedRunOptionScreen extends Screen {
             }
 
             @Override
-            public void method_6700(int index, int x, int y, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-                buttonWidget.y = y;
-                buttonWidget.method_891(SpeedRunOptionScreen.this.client, mouseX, mouseY, tickDelta);
+            public void updatePosition(int index, int x, int y) {
+
             }
 
             @Override
-            public void method_9473(int i, int j, int k, float f) {
+            public void render(int index, int x, int y, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean hovered) {
+                buttonWidget.y = y;
+                buttonWidget.render(SpeedRunOptionScreen.this.client, mouseX, mouseY);
             }
 
             @Override

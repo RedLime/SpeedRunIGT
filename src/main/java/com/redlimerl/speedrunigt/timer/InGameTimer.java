@@ -9,10 +9,10 @@ import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import com.redlimerl.speedrunigt.timer.running.RunCategory;
 import com.redlimerl.speedrunigt.timer.running.RunSplitTypes;
 import com.redlimerl.speedrunigt.timer.running.RunType;
-import net.minecraft.class_1157;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.level.LevelInfo;
 import org.apache.commons.compress.utils.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
@@ -161,7 +161,7 @@ public class InGameTimer {
         timer.setStatus(TimerStatus.COMPLETED_LEGACY);
 
         MinecraftClient client = MinecraftClient.getInstance();
-        if (client.interactionManager != null && client.interactionManager.method_9667() == class_1157.field_4573) {
+        if (client.interactionManager != null && client.interactionManager.getCurrentGameMode() == LevelInfo.GameMode.SURVIVAL) {
             timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.COMPLETE, timer.getInGameTime());
             timer.getTimerSplit().completeSplit(timer.isCoop());
         }
@@ -446,7 +446,7 @@ public class InGameTimer {
 
     private void sendTimerStartPacket() {
         MinecraftServer server = MinecraftClient.getInstance().getServer();
-        if (server != null && server.getCurrentPlayerCount() > 1) {
+        if (this.getStatus() != TimerStatus.NONE && server != null && server.getCurrentPlayerCount() > 1) {
             TimerPacketHandler.sendInitC2S(this);
         }
     }
