@@ -18,7 +18,6 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 import static com.redlimerl.speedrunigt.SpeedRunIGT.TIMER_DRAWER;
