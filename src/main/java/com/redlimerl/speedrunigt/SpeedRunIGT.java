@@ -13,20 +13,16 @@ import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.timer.TimerRecord;
 import com.redlimerl.speedrunigt.timer.running.RunCategory;
 import com.redlimerl.speedrunigt.timer.running.RunSplitType;
-import com.redlimerl.speedrunigt.utils.FontIdentifier;
-import com.redlimerl.speedrunigt.utils.FontUtils;
 import com.redlimerl.speedrunigt.utils.KeyBindingRegistry;
 import com.redlimerl.speedrunigt.utils.TranslateHelper;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.minecraft.client.options.KeyBinding;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.Identifier;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.glfw.GLFW;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,7 +40,6 @@ public class SpeedRunIGT implements ClientModInitializer {
 
     public static String DEBUG_DATA = "";
     public static String MOD_VERSION;
-    public static HashMap<Identifier, FontIdentifier> FONT_MAPS = new HashMap<>();
     public static Long LATEST_PLAYED_SEED = 0L;
     public static boolean LATEST_IS_SSG = false;
     public static boolean LATEST_IS_FSG = false;
@@ -136,14 +131,12 @@ public class SpeedRunIGT implements ClientModInitializer {
         // Key Bindings initialize
         timerResetKeyBinding = KeyBindingRegistry.registerKeyBinding(new KeyBinding(
                 "speedrunigt.controls.start_timer",
-                InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_U,
+                22,
                 "speedrunigt.title.options"
         ));
         timerStopKeyBinding = KeyBindingRegistry.registerKeyBinding(new KeyBinding(
                 "speedrunigt.controls.stop_timer",
-                InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_I,
+                23,
                 "speedrunigt.title.options"
         ));
 
@@ -152,9 +145,6 @@ public class SpeedRunIGT implements ClientModInitializer {
 
         // Update checking
         SpeedRunIGTInfoScreen.checkUpdate();
-
-        // Add default fonts
-        FontUtils.copyDefaultFonts();
     }
 
     private static final Logger LOGGER = LogManager.getLogger("SpeedRunIGT");

@@ -21,20 +21,19 @@ public class ServerPlayNetworkHandlerMixin {
 
     @Inject(method = "onCustomPayload", at = @At("HEAD"))
     public void onCustom(CustomPayloadC2SPacket packet, CallbackInfo ci) {
-        CustomPayloadC2SPacketAccessor customPacket = (CustomPayloadC2SPacketAccessor) packet;
-        if (Objects.equals(customPacket.getChannel().getNamespace(), SpeedRunIGT.MOD_ID)) {
-            SpeedRunIGT.debug("Server Side : " + customPacket.getChannel().toString());
+        if (packet.getChannel().startsWith(SpeedRunIGT.MOD_ID+"|")) {
+            SpeedRunIGT.debug("Server Side : " + packet.getChannel());
 
-            if (Objects.equals(customPacket.getChannel().getPath(), TimerPacketHandler.PACKET_TIMER_INIT_ID.getPath())) {
-                TimerPacketHandler.receiveInitC2S(this.server, customPacket.getData());
+            if (Objects.equals(packet.getChannel(), TimerPacketHandler.PACKET_TIMER_INIT_ID)) {
+                TimerPacketHandler.receiveInitC2S(this.server, packet.getPayload());
             }
 
-            if (Objects.equals(customPacket.getChannel().getPath(), TimerPacketHandler.PACKET_TIMER_COMPLETE_ID.getPath())) {
-                TimerPacketHandler.receiveCompleteC2S(this.server, customPacket.getData());
+            if (Objects.equals(packet.getChannel(), TimerPacketHandler.PACKET_TIMER_COMPLETE_ID)) {
+                TimerPacketHandler.receiveCompleteC2S(this.server, packet.getPayload());
             }
 
-            if (Objects.equals(customPacket.getChannel().getPath(), TimerPacketHandler.PACKET_TIMER_SPLIT_ID.getPath())) {
-                TimerPacketHandler.receiveSplitC2S(this.server, customPacket.getData());
+            if (Objects.equals(packet.getChannel(), TimerPacketHandler.PACKET_TIMER_SPLIT_ID)) {
+                TimerPacketHandler.receiveSplitC2S(this.server, packet.getPayload());
             }
         }
     }

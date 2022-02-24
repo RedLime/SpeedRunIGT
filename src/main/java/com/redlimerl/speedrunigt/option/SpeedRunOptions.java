@@ -3,8 +3,6 @@ package com.redlimerl.speedrunigt.option;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import com.redlimerl.speedrunigt.timer.running.RunCategory;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
 import java.util.Objects;
@@ -64,18 +62,6 @@ public class SpeedRunOptions {
 
         @Override
         public String valueToString(Boolean value) {
-            return value.toString();
-        }
-    };
-
-    public static final OptionArgument<Identifier> TIMER_TEXT_FONT = new OptionArgument<Identifier>(new Identifier(SpeedRunIGT.MOD_ID, "timer_text_font"), MinecraftClient.DEFAULT_TEXT_RENDERER_ID) {
-        @Override
-        public Identifier valueFromString(String string) {
-            return Identifier.tryParse(string);
-        }
-
-        @Override
-        public String valueToString(Identifier value) {
             return value.toString();
         }
     };
@@ -236,7 +222,7 @@ public class SpeedRunOptions {
         }
     };
 
-    public static final OptionArgument<Integer> TIMER_IGT_COLOR = new OptionArgument<Integer>(new Identifier(SpeedRunIGT.MOD_ID, "timer_igt_color"), Formatting.YELLOW.getColorValue()) {
+    public static final OptionArgument<Integer> TIMER_IGT_COLOR = new OptionArgument<Integer>(new Identifier(SpeedRunIGT.MOD_ID, "timer_igt_color"), 16777045) {
         @Override
         public Integer valueFromString(String string) {
             return Integer.parseInt(string);
@@ -248,7 +234,7 @@ public class SpeedRunOptions {
         }
     };
 
-    public static final OptionArgument<Integer> TIMER_RTA_COLOR = new OptionArgument<Integer>(new Identifier(SpeedRunIGT.MOD_ID, "timer_rta_color"), Formatting.AQUA.getColorValue()) {
+    public static final OptionArgument<Integer> TIMER_RTA_COLOR = new OptionArgument<Integer>(new Identifier(SpeedRunIGT.MOD_ID, "timer_rta_color"), 5636095) {
         @Override
         public Integer valueFromString(String string) {
             return Integer.parseInt(string);

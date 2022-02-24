@@ -1,31 +1,27 @@
 package com.redlimerl.speedrunigt.gui.screen;
 
+import com.redlimerl.speedrunigt.gui.ConsumerButtonWidget;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerRecord;
 import com.redlimerl.speedrunigt.timer.running.RunSplitType;
 import com.redlimerl.speedrunigt.timer.running.RunSplitTypes;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
-import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.AbstractButtonWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ElementListWidget;
+import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.resource.language.I18n;
-import net.minecraft.text.BaseText;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class TimerSplitListScreen extends Screen {
 
     private final Screen parent;
     private TimerSplitListWidget listWidget;
+    private final ArrayList<ButtonWidget> widgetButtons = new ArrayList<>();
     private RunType filter = null;
     private enum RunOrder {
         FASTEST, SLOWEST, NEWEST, OLDEST;
@@ -34,7 +30,6 @@ public class TimerSplitListScreen extends Screen {
     private RunOrder runOrder = RunOrder.FASTEST;
 
     public TimerSplitListScreen(Screen parent) {
-        super(new TranslatableText("speedrunigt.split.title"));
         this.parent = parent;
     }
 
@@ -43,11 +38,36 @@ public class TimerSplitListScreen extends Screen {
     }
 
     @Override
-    protected void init() {
-        this.listWidget = new TimerSplitListWidget();
-        children.add(listWidget);
+    protected void buttonClicked(ButtonWidget button) {
+        if (button instanceof ConsumerButtonWidget) {
+            ((ConsumerButtonWidget) button).onClick(this);
+        }
+        super.buttonClicked(button);
+    }
 
-        addButton(new ButtonWidget(10, 6, 120, 20, new TranslatableText("speedrunigt.option.show").append(" : ").append(this.getFilterText()).asFormattedString(), (ButtonWidget button) -> {
+    @Override
+    public void handleMouse() {
+        super.handleMouse();
+        this.listWidget.handleMouse();
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int button) {
+        ArrayList<ButtonWidget> widgets = new ArrayList<>(widgetButtons);
+        buttons.addAll(widgets);
+        super.mouseClicked(mouseX, mouseY, button);
+        buttons.removeAll(widgets);
+    }
+
+    public <T extends ButtonWidget> void addButton(T button) {
+        buttons.add(button);
+    }
+
+    @Override
+    public void init() {
+        this.listWidget = new TimerSplitListWidget();
+
+        addButton(new ConsumerButtonWidget(10, 6, 120, 20, new TranslatableText("speedrunigt.option.show").append(" : ").append(this.getFilterText()).asFormattedString(), (screen, button) -> {
             int order = filter == null ? -1 : filter.ordinal();
             if (order + 1 == RunType.values().length) {
                 filter = null;
@@ -55,14 +75,14 @@ public class TimerSplitListScreen extends Screen {
                 filter = RunType.values()[(++order) % RunType.values().length];
             }
             this.listWidget.applyFilter(filter, runOrder);
-            button.setMessage(new TranslatableText("speedrunigt.option.show").append(" : ").append(this.getFilterText()).asFormattedString());
+            button.message = (new TranslatableText("speedrunigt.option.show").append(" : ").append(this.getFilterText()).asFormattedString());
         }));
 
-        addButton(new ButtonWidget(134, 6, 120, 20, new TranslatableText("speedrunigt.split.order").append(" : ").append(this.runOrder.getText()).asFormattedString(), (ButtonWidget button) -> {
+        addButton(new ConsumerButtonWidget(134, 6, 120, 20, new TranslatableText("speedrunigt.split.order").append(" : ").append(this.runOrder.getText()).asFormattedString(), (screen, button) -> {
             int order = runOrder.ordinal() + 1;
             runOrder = RunOrder.values()[order % RunOrder.values().length];
             this.listWidget.applyFilter(filter, runOrder);
-            button.setMessage(new TranslatableText("speedrunigt.split.order").append(" : ").append(this.runOrder.getText()).asFormattedString());
+            button.message = (new TranslatableText("speedrunigt.split.order").append(" : ").append(this.runOrder.getText()).asFormattedString());
         }));
 
 //        addButton(new ButtonWidget(width/2 - 153, height - 32, 150, 20, new TranslatableText("speedrunigt.option.split_notification").append(" : ").append(new TranslatableText("speedrunigt.option.split_notification." + SpeedRunOptions.getOption(SpeedRunOptions.SPLIT_DISPLAY_TYPE).name().toLowerCase(Locale.ROOT))), (ButtonWidget button) -> {
@@ -71,28 +91,32 @@ public class TimerSplitListScreen extends Screen {
 //            button.setMessage(new TranslatableText("speedrunigt.option.split_notification").append(" : ").append(new TranslatableText("speedrunigt.option.split_notification." + SpeedRunOptions.getOption(SpeedRunOptions.SPLIT_DISPLAY_TYPE).name().toLowerCase(Locale.ROOT))));
 //        }));
 
-        addButton(new ButtonWidget(width/2 - 75, height - 32, 150, 20, ScreenTexts.DONE, (ButtonWidget button) -> onClose()));
+        addButton(new ConsumerButtonWidget(width/2 - 75, height - 32, 150, 20, ScreenTexts.DONE, (screen, button) -> onClose()));
     }
 
     @Override
     public void render(int mouseX, int mouseY, float delta) {
         renderBackground();
         listWidget.render(mouseX, mouseY, delta);
-        if (listWidget.children().size() == 0)
-            drawCenteredString(this.font, "▽◠▽.. :(", width / 2, height / 2, 16777215);
+        if (listWidget.getEntryCount() == 0)
+            drawCenteredString(this.textRenderer, "▽◠▽.. :(", width / 2, height / 2, 16777215);
         super.render(mouseX, mouseY, delta);
+
+        if (listWidget.tooltip != null) {
+            renderTooltip(listWidget.tooltip, mouseX, mouseY);
+            listWidget.tooltip = null;
+        }
     }
 
-    @Override
     public void onClose() {
-        if (this.minecraft != null) this.minecraft.openScreen(parent);
+        if (this.client != null) this.client.openScreen(parent);
     }
 
-    private class TimerSplitListWidget extends ElementListWidget<TimerSplitListWidget.TimerSplitEntry> {
+    private class TimerSplitListWidget extends EntryListWidget {
         private List<String> tooltip = null;
 
         public TimerSplitListWidget() {
-            super(TimerSplitListScreen.this.minecraft,
+            super(TimerSplitListScreen.this.client,
                     TimerSplitListScreen.this.width, TimerSplitListScreen.this.height,
                     32, TimerSplitListScreen.this.height - 42, 24);
             this.applyFilter(TimerSplitListScreen.this.filter, TimerSplitListScreen.this.runOrder);
@@ -118,17 +142,28 @@ public class TimerSplitListScreen extends Screen {
                 }
             });
 
-            this.replaceEntries(splitList.stream().map(TimerSplitEntry::new).collect(Collectors.toList()));
-            setScrollAmount(0);
+
+            widgetButtons.clear();
+            ArrayList<TimerSplitEntry> entryArrayList = new ArrayList<>();
+            for (TimerRecord timerRecord : splitList) {
+                TimerSplitEntry entry = new TimerSplitEntry(timerRecord);
+                widgetButtons.add(entry.deleteButton);
+                entryArrayList.add(entry);
+            }
+            entries.clear();
+            entries.addAll(entryArrayList);
+            scroll(0);
+        }
+
+        private final ArrayList<TimerSplitEntry> entries = new ArrayList<>();
+        @Override
+        protected int getEntryCount() {
+            return entries.size();
         }
 
         @Override
-        public void render(int mouseX, int mouseY, float delta) {
-            super.render(mouseX, mouseY, delta);
-            if (tooltip != null) {
-                renderTooltip(tooltip, mouseX, mouseY);
-                tooltip = null;
-            }
+        public TimerSplitEntry getEntry(int index) {
+            return entries.get(index);
         }
 
         @Override
@@ -141,8 +176,7 @@ public class TimerSplitListScreen extends Screen {
             return super.getScrollbarPosition() + 50;
         }
 
-        private class TimerSplitEntry extends ElementListWidget.Entry<TimerSplitEntry> {
-            private final ArrayList<AbstractButtonWidget> children = new ArrayList<>();
+        private class TimerSplitEntry implements Entry {
             private final Text titleText;
             private BaseText resultTimeText = new LiteralText("");
             private final ArrayList<String> timelineTextList = new ArrayList<>();
@@ -155,9 +189,9 @@ public class TimerSplitListScreen extends Screen {
                 this.split = split;
                 this.time = split.getTimestamp();
                 this.titleText = new LiteralText(String.format("%s - %s %s%s",
-                        split.getVersion(), (split.isCoop() ? "Co-op " : "") + split.getRunCategory().getText().asFormattedString(), split.getRunType().getContext(),
+                        split.getVersion(), (split.isCoop() ? "Co-op " : "") + split.getRunCategory().getText().getString(), split.getRunType().getContext(),
                         (split.getRunType() == RunType.SET_SEED || split.getRunType() == RunType.SAVED_WORLD) ? (" [" + split.getSeed() + "]") : ""))
-                        .formatted(Formatting.GRAY);
+                        .setStyle(new Style().setFormatting(Formatting.GRAY));
                 for (Map.Entry<String, Long> splitPoint : split.getSplitTimeline().entrySet()) {
                     RunSplitType splitType = RunSplitType.getSplitType(splitPoint.getKey());
                     String time = InGameTimer.timeToStringFormat(splitPoint.getValue());
@@ -167,47 +201,45 @@ public class TimerSplitListScreen extends Screen {
                         timelineTextList.add(new LiteralText("§b" + I18n.translate(splitType.getTranslateKey()) + ": §f" + time).asFormattedString());
                     }
                 }
-                this.deleteButton = new ButtonWidget(0, 0, 40, 20, new TranslatableText("selectWorld.delete").asFormattedString(), buttonWidget -> {
-                    if (Objects.equals(buttonWidget.getMessage(), new TranslatableText("selectWorld.delete").asFormattedString())) {
-                        buttonWidget.setMessage(new TranslatableText("selectWorld.delete").append("?").asFormattedString());
+                this.deleteButton = new ConsumerButtonWidget(0, 0, 40, 20, new TranslatableText("selectWorld.delete").getString(), (screen, buttonWidget) -> {
+                    if (Objects.equals(buttonWidget.message, new TranslatableText("selectWorld.delete").getString())) {
+                        buttonWidget.message = new TranslatableText("selectWorld.delete").append("?").getString();
                     } else {
                         split.delete();
-                        TimerSplitListWidget.this.removeEntry(this);
+                        TimerSplitListWidget.this.entries.remove(this);
                     }
                 });
-                children.add(this.deleteButton);
+            }
+
+            private boolean isMouseOver(int x, int y, int entryWidth, int entryHeight, int mouseX, int mouseY) {
+                return x < mouseX && x + entryWidth > mouseX && y < mouseY && y + entryHeight > mouseY;
             }
 
             @Override
-            public List<? extends Element> children() {
-                return children;
-            }
-
-            @Override
-            public void render(int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+            public void method_6700(int index, int x, int y, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
                 this.deleteButton.x = x + entryWidth - this.deleteButton.getWidth();
                 this.deleteButton.y = y + 2;
-                this.deleteButton.render(mouseX, mouseY, tickDelta);
+                this.deleteButton.method_891(TimerSplitListScreen.this.client, mouseX, mouseY, tickDelta);
 
-                drawString(TimerSplitListScreen.this.font, titleText.asFormattedString(), x, y + 4, 16777215);
+                TimerSplitListScreen.this.textRenderer.draw(titleText.asFormattedString(), x, y + 4, 16777215);
                 if (timelineTextList.size() > 0) {
                     int count = (int) ((System.currentTimeMillis() - entryCreatedTime) / 2500) % timelineTextList.size();
-                    drawString(TimerSplitListScreen.this.font, resultTimeText.deepCopy().append("  ").append(timelineTextList.get(count)).asFormattedString(), x, y + 13, 16777215);
+                    TimerSplitListScreen.this.textRenderer.draw(resultTimeText.copy().append("  ").append(timelineTextList.get(count)).asFormattedString(), x, y + 13, 16777215);
                 } else {
-                    drawString(TimerSplitListScreen.this.font, resultTimeText.asFormattedString(), x, y + 13, 16777215);
+                    TimerSplitListScreen.this.textRenderer.draw(resultTimeText.asFormattedString(), x, y + 13, 16777215);
                 }
-                drawCenteredString(TimerSplitListScreen.this.font, "§8§m                                                                                ",
+                drawCenteredString(TimerSplitListScreen.this.textRenderer, "§8§m                                                                                ",
                         x + (entryWidth / 2), y + 20, 16777215);
 
                 ArrayList<String> tooltip = new ArrayList<>();
-                if (this.deleteButton.isMouseOver(mouseX, mouseY) && !Objects.equals(this.deleteButton.getMessage(), I18n.translate("selectWorld.delete"))) {
+                if (this.deleteButton.isMouseOver(TimerSplitListScreen.this.client, mouseX, mouseY) && !Objects.equals(this.deleteButton.message, I18n.translate("selectWorld.delete"))) {
                     tooltip.add(new TranslatableText("speedrunigt.message.click_delete_button_again").asFormattedString());
                     TimerSplitListWidget.this.tooltip = tooltip;
-                } else if (isMouseOver(mouseX, mouseY)) {
-                    tooltip.add(titleText.deepCopy().formatted(Formatting.YELLOW).asFormattedString());
-                    tooltip.add(new LiteralText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(time))).formatted(Formatting.GRAY).asFormattedString());
+                } else if (isMouseOver(x, y, entryWidth, entryHeight, mouseX, mouseY)) {
+                    tooltip.add(titleText.copy().setStyle(new Style().setFormatting(Formatting.YELLOW)).asFormattedString());
+                    tooltip.add(new LiteralText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(time))).setStyle(new Style().setFormatting(Formatting.GRAY)).asFormattedString());
                     if (split.getRunType() != RunType.SET_SEED && split.getRunType() != RunType.SAVED_WORLD)
-                        tooltip.add(new LiteralText(I18n.translate("commands.seed.success", split.getSeed())).formatted(Formatting.GRAY).asFormattedString());
+                        tooltip.add(new LiteralText(I18n.translate("commands.seed.success", split.getSeed())).setStyle(new Style().setFormatting(Formatting.GRAY)).asFormattedString());
                     tooltip.add("");
                     if (timelineTextList.size() > 0) {
                         tooltip.addAll(timelineTextList);
@@ -216,6 +248,21 @@ public class TimerSplitListScreen extends Screen {
                     tooltip.add(resultTimeText.asFormattedString());
                     TimerSplitListWidget.this.tooltip = tooltip;
                 }
+            }
+
+            @Override
+            public void method_9473(int i, int j, int k, float f) {
+
+            }
+
+            @Override
+            public boolean mouseClicked(int index, int mouseX, int mouseY, int button, int x, int y) {
+                return false;
+            }
+
+            @Override
+            public void mouseReleased(int index, int mouseX, int mouseY, int button, int x, int y) {
+
             }
         }
     }

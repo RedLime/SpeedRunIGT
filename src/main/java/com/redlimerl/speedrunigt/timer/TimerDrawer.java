@@ -1,25 +1,14 @@
 package com.redlimerl.speedrunigt.timer;
 
-import com.redlimerl.speedrunigt.mixins.access.FontManagerAccessor;
-import com.redlimerl.speedrunigt.mixins.access.FontStorageAccessor;
-import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
-import com.redlimerl.speedrunigt.mixins.access.TextRendererAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecimals;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
 import com.redlimerl.speedrunigt.version.ColorMixer;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.RenderableGlyph;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.util.Identifier;
-
-import java.util.HashMap;
 
 public class TimerDrawer {
-
-    public static final HashMap<String, Float> fontHeightMap = new HashMap<>();
 
     private final boolean translateZ;
     private final MinecraftClient client = MinecraftClient.getInstance();
@@ -44,7 +33,6 @@ public class TimerDrawer {
     private boolean toggle;
     private boolean isLocked;
     private TimerDecimals timerDecimals;
-    private Identifier timerFont;
 
     public TimerDrawer(boolean translateZ) {
         this(translateZ,
@@ -64,15 +52,14 @@ public class TimerDrawer {
                 SpeedRunOption.getOption(SpeedRunOptions.DISPLAY_TIME_ONLY),
                 SpeedRunOption.getOption(SpeedRunOptions.TOGGLE_TIMER),
                 SpeedRunOption.getOption(SpeedRunOptions.LOCK_TIMER_POSITION),
-                SpeedRunOption.getOption(SpeedRunOptions.DISPLAY_DECIMALS),
-                SpeedRunOption.getOption(SpeedRunOptions.TIMER_TEXT_FONT));
+                SpeedRunOption.getOption(SpeedRunOptions.DISPLAY_DECIMALS));
     }
 
     public TimerDrawer(boolean translateZ,
                        float igtXPos, float igtYPos, float igtScale, Integer igtColor, TimerDecoration igtDecoration,
                        float rtaXPos, float rtaYPos, float rtaScale, Integer rtaColor, TimerDecoration rtaDecoration,
                        int igtPadding, int rtaPadding, float bgOpacity,
-                       boolean simply, boolean toggle, boolean isLocked, TimerDecimals timerDecimals, Identifier timerFont) {
+                       boolean simply, boolean toggle, boolean isLocked, TimerDecimals timerDecimals) {
         this.translateZ = translateZ;
         this.igtXPos = igtXPos;
         this.igtYPos = igtYPos;
@@ -91,7 +78,6 @@ public class TimerDrawer {
         this.toggle = toggle;
         this.isLocked = isLocked;
         this.timerDecimals = timerDecimals;
-        this.timerFont = timerFont;
     }
 
     public float getIGT_XPos() {
@@ -206,14 +192,6 @@ public class TimerDrawer {
         this.timerDecimals = timerDecimals;
     }
 
-    public Identifier getTimerFont() {
-        return timerFont;
-    }
-
-    public void setTimerFont(Identifier timerFont) {
-        this.timerFont = timerFont;
-    }
-
     public int getIGTPadding() {
         return igtPadding;
     }
@@ -272,34 +250,22 @@ public class TimerDrawer {
     public void draw() {
         if (!toggle) return;
 
-        client.getProfiler().push("timer");
+        client.profiler.push("timer");
 
         String igtText = getIGTText();
         String rtaText = getRTAText();
 
-        client.getProfiler().swap("font");
-        //폰트 조정
-        float fontHeight = 8;
-        TextRenderer targetFont = client.textRenderer;
-        FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) MinecraftClient.getInstance()).getFontManager();
-        if (getTimerFont() != MinecraftClient.DEFAULT_TEXT_RENDERER_ID && fontManager.getTextRenderers().containsKey(getTimerFont())) {
-            targetFont = fontManager.getTextRenderers().get(getTimerFont());
-            FontStorageAccessor fontStorage = (FontStorageAccessor) ((TextRendererAccessor) targetFont).getFontStorage();
-            fontHeight = fontHeightMap.computeIfAbsent(getTimerFont().toString(), key -> {
-                RenderableGlyph glyph = fontStorage.invokeRenderableGlyph('I');
-                return glyph.getHeight() / glyph.getOversample();
-            });
-        }
+        client.profiler.swap("font");
 
         //초기 값 조정
-        client.getProfiler().swap("init");
-        TimerElement igtTimerElement = new TimerElement(targetFont);
-        TimerElement rtaTimerElement = new TimerElement(targetFont);
-        rtaTimerElement.init(rtaXPos, rtaYPos, rtaScale, rtaText, rtaColor, rtaDecoration, fontHeight);
-        igtTimerElement.init(igtXPos, igtYPos, igtScale, igtText, igtColor, igtDecoration, fontHeight);
+        client.profiler.swap("init");
+        TimerElement igtTimerElement = new TimerElement();
+        TimerElement rtaTimerElement = new TimerElement();
+        rtaTimerElement.init(rtaXPos, rtaYPos, rtaScale, rtaText, rtaColor, rtaDecoration, 9);
+        igtTimerElement.init(igtXPos, igtYPos, igtScale, igtText, igtColor, igtDecoration, 9);
 
         //배경 렌더
-        client.getProfiler().swap("background");
+        client.profiler.swap("background");
         if (bgOpacity > 0.01f) {
             Position rtaMin = new Position(rtaTimerElement.getPosition().getX() - rtaPadding, rtaTimerElement.getPosition().getY() - rtaPadding);
             Position rtaMax = new Position(rtaMin.getX() + rtaTimerElement.getScaledTextWidth() + ((rtaPadding - 1) + rtaPadding), rtaMin.getY() + rtaTimerElement.getScaledTextHeight() + ((rtaPadding - 1) + rtaPadding));
@@ -317,11 +283,11 @@ public class TimerDrawer {
         }
 
         //렌더
-        client.getProfiler().swap("draw");
+        client.profiler.swap("draw");
         if (igtScale != 0) igtTimerElement.draw(translateZ);
         if (rtaScale != 0) rtaTimerElement.draw(translateZ);
 
-        client.getProfiler().pop();
+        client.profiler.pop();
     }
 
 

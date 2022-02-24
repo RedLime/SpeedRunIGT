@@ -15,7 +15,7 @@ public class CreateWorldScreenMixin {
 
     @Shadow private TextFieldWidget seedField;
 
-    @Inject(method = "createLevel", at = @At("HEAD"))
+    @Inject(method = "buttonClicked", at = @At("HEAD"))
     public void onLoadOptions(CallbackInfo ci) {
         String string = this.seedField.getText();
         SpeedRunIGT.LATEST_IS_SSG = !StringUtils.isEmpty(string);

@@ -5,12 +5,13 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
 import com.redlimerl.speedrunigt.timer.TimerDrawer.Position;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.util.Window;
 import net.minecraft.util.math.MathHelper;
 
 public class TimerElement {
     private static final MinecraftClient client = MinecraftClient.getInstance();
 
-    private final TextRenderer textRenderer;
+    private final TextRenderer textRenderer = client.textRenderer;
     private final Position position = new Position(0, 0);
     private final Position scaledPosition = new Position(0, 0);
     private float scale = 1;
@@ -19,10 +20,7 @@ public class TimerElement {
     private Integer color;
     private TimerDecoration decoration;
     private float fontHeight = 8;
-
-    public TimerElement(TextRenderer textRenderer) {
-        this.textRenderer = textRenderer;
-    }
+    private final Window window = new Window(client);
 
     public void init(float xPos, float yPos, float scale, String text, Integer color, TimerDecoration decoration, float fontHeight) {
         this.scale = scale;
@@ -30,8 +28,8 @@ public class TimerElement {
         this.color = color;
         this.decoration = decoration;
         this.fontHeight = fontHeight;
-        int scaledWindowWidth = client.window.getScaledWidth();
-        int scaledWindowHeight = client.window.getScaledHeight();
+        double scaledWindowWidth = window.getScaledWidth();
+        double scaledWindowHeight = window.getScaledHeight();
 
         int translateX = (int) (xPos * scaledWindowWidth);
         int translateY = (int) (yPos * scaledWindowHeight);
@@ -65,18 +63,18 @@ public class TimerElement {
 
     private static void drawOutLine(TextRenderer textRenderer, int x, int y, String text, Integer color, TimerDecoration decoration) {
         if (decoration == TimerDecoration.OUTLINE) {
-            textRenderer.draw(text, (float)x + 1, (float)y + 1, 0);
-            textRenderer.draw(text, (float)x + 1, (float)y, 0);
-            textRenderer.draw(text, (float)x + 1, (float)y - 1, 0);
-            textRenderer.draw(text, (float)x, (float)y - 1, 0);
-            textRenderer.draw(text, (float)x, (float)y + 1, 0);
-            textRenderer.draw(text, (float)x - 1, (float)y + 1, 0);
-            textRenderer.draw(text, (float)x - 1, (float)y, 0);
-            textRenderer.draw(text, (float)x - 1, (float)y - 1, 0);
+            textRenderer.draw(text, x + 1, y + 1, 0);
+            textRenderer.draw(text, x + 1, y, 0);
+            textRenderer.draw(text, x + 1, y - 1, 0);
+            textRenderer.draw(text, x, y - 1, 0);
+            textRenderer.draw(text, x, y + 1, 0);
+            textRenderer.draw(text, x - 1, y + 1, 0);
+            textRenderer.draw(text, x - 1, y, 0);
+            textRenderer.draw(text, x - 1, y - 1, 0);
         } else if (decoration == TimerDecoration.SHADOW) {
-            textRenderer.draw(text, (float)x + 1, (float)y + 1, -12566464);
+            textRenderer.draw(text, x + 1, y + 1, -12566464);
         }
-        textRenderer.draw(text, (float)x, (float)y, color);
+        textRenderer.draw(text, x, y, color);
     }
 
     public Position getPosition() {

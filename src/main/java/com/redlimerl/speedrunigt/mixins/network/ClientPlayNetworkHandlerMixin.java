@@ -16,19 +16,19 @@ public class ClientPlayNetworkHandlerMixin {
 
     @Inject(method = "onCustomPayload", at = @At("HEAD"), cancellable = true)
     public void onCustom(CustomPayloadS2CPacket packet, CallbackInfo ci) {
-        if (Objects.equals(packet.getChannel().getNamespace(), SpeedRunIGT.MOD_ID)) {
-            SpeedRunIGT.debug("Client Side : " + packet.getChannel().toString());
+        if (packet.getChannel().startsWith(SpeedRunIGT.MOD_ID+"|")) {
+            SpeedRunIGT.debug("Client Side : " + packet.getChannel());
 
-            if (Objects.equals(packet.getChannel().getPath(), TimerPacketHandler.PACKET_TIMER_INIT_ID.getPath())) {
-                TimerPacketHandler.receiveInitS2C(packet.getData());
+            if (Objects.equals(packet.getChannel(), TimerPacketHandler.PACKET_TIMER_INIT_ID)) {
+                TimerPacketHandler.receiveInitS2C(packet.getPayload());
             }
 
-            if (Objects.equals(packet.getChannel().getPath(), TimerPacketHandler.PACKET_TIMER_COMPLETE_ID.getPath())) {
-                TimerPacketHandler.receiveCompleteS2C(packet.getData());
+            if (Objects.equals(packet.getChannel(), TimerPacketHandler.PACKET_TIMER_COMPLETE_ID)) {
+                TimerPacketHandler.receiveCompleteS2C(packet.getPayload());
             }
 
-            if (Objects.equals(packet.getChannel().getPath(), TimerPacketHandler.PACKET_TIMER_SPLIT_ID.getPath())) {
-                TimerPacketHandler.receiveSplitS2C(packet.getData());
+            if (Objects.equals(packet.getChannel(), TimerPacketHandler.PACKET_TIMER_SPLIT_ID)) {
+                TimerPacketHandler.receiveSplitS2C(packet.getPayload());
             }
 
             ci.cancel();

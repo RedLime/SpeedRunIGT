@@ -8,45 +8,46 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.MovementType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.util.math.Vec3d;
-import org.spongepowered.asm.mixin.Final;
+import net.minecraft.util.DyeColor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Mixin(ClientPlayerEntity.class)
 public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
 
-    @Shadow public float nextNauseaStrength;
+    @Shadow public abstract boolean isSneaking();
+    @Shadow protected MinecraftClient client;
 
-    @Shadow @Final protected MinecraftClient client;
+    @Shadow public float timeInPortal;
 
     public ClientPlayerEntityMixin(ClientWorld world, GameProfile profile) {
         super(world, profile);
     }
 
-    @Inject(method = "move(Lnet/minecraft/entity/MovementType;Lnet/minecraft/util/math/Vec3d;)V",
+    @Inject(method = "tickMovement",
             at = @At("TAIL"))
-    private void onMove(MovementType movementType, Vec3d vec3d, CallbackInfo ci) {
+    private void onMove(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
-        if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
-
-        if (timer.getStatus() == TimerStatus.IDLE && (vec3d.x != 0 || vec3d.z != 0 || this.jumping || this.isSneaking())) {
+        if (timer.getStatus() == TimerStatus.IDLE && (this.velocityX != 0 || this.velocityZ != 0 || this.jumping || this.isSneaking())) {
             timer.setPause(false);
         }
-        if (vec3d.x != 0 || vec3d.z != 0 || this.jumping) {
+        if (this.velocityX != 0 || this.velocityZ != 0 || this.jumping || this.isSneaking()) {
             timer.updateFirstInput();
         }
+
+        if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
 
         //HIGH%
         if (timer.getCategory() == RunCategories.HIGH && this.y >= 420) {
@@ -56,34 +57,25 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
         //Full Inventory
         if (timer.getCategory() == RunCategories.FULL_INV) {
-            if (this.inventory.main.stream().filter(itemStack -> itemStack != null && itemStack != ItemStack.EMPTY).map(ItemStack::getItem).distinct().toArray().length == 36)
-                InGameTimer.complete();
+            ArrayList<String> itemList = new ArrayList<>();
+            int slot = 0;
+            for (int i = 0; i < this.inventory.field_15082.size(); i++) {
+                ItemStack itemStack = this.inventory.field_15082.get(i);
+                if (itemStack.isEmpty()) continue;
+                String itemId = Item.getRawId(itemStack.getItem()) + (itemStack.isDamaged() ? (":" + itemStack.getMeta()) : "");
+                if (!itemList.contains(itemId)) {
+                    itemList.add(itemId);
+                    slot++;
+                }
+            }
+            if (slot == 36) InGameTimer.complete();
             return;
         }
 
-        //All Workstations
-        if (timer.getCategory() == RunCategories.ALL_WORKSTATIONS) {
-            List<Item> items = this.inventory.main.stream().map(ItemStack::getItem).collect(Collectors.toList());
-            if (items.contains(Items.BLAST_FURNACE) &&
-                    items.contains(Items.SMOKER) &&
-                    items.contains(Items.CARTOGRAPHY_TABLE) &&
-                    items.contains(Items.BREWING_STAND) &&
-                    items.contains(Items.COMPOSTER) &&
-                    items.contains(Items.BARREL) &&
-                    items.contains(Items.FLETCHING_TABLE) &&
-                    items.contains(Items.CAULDRON) &&
-                    items.contains(Items.LECTERN) &&
-                    items.contains(Items.STONECUTTER) &&
-                    items.contains(Items.LOOM) &&
-                    items.contains(Items.SMITHING_TABLE) &&
-                    items.contains(Items.GRINDSTONE)) {
-                InGameTimer.complete();
-            }
-        }
 
         //All Swords
         if (timer.getCategory() == RunCategories.ALL_SWORDS) {
-            List<Item> items = this.inventory.main.stream().map(ItemStack::getItem).collect(Collectors.toList());
+            List<Item> items = Arrays.stream(this.inventory.field_15082.toArray()).filter(itemStack -> itemStack instanceof ItemStack && !((ItemStack) itemStack).isEmpty()).map(item -> ((ItemStack) item).getItem()).collect(Collectors.toList());
             if (items.contains(Items.STONE_SWORD) &&
                     items.contains(Items.DIAMOND_SWORD) &&
                     items.contains(Items.GOLDEN_SWORD) &&
@@ -95,22 +87,28 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
         //All Minerals
         if (timer.getCategory() == RunCategories.ALL_MINERALS) {
-            List<Item> items = this.inventory.main.stream().map(ItemStack::getItem).collect(Collectors.toList());
+            List<Item> items = Arrays.stream(this.inventory.field_15082.toArray()).filter(itemStack -> itemStack instanceof ItemStack && !((ItemStack) itemStack).isEmpty()).map(item -> ((ItemStack) item).getItem()).collect(Collectors.toList());
             if (items.contains(Items.COAL) &&
                     items.contains(Items.IRON_INGOT) &&
                     items.contains(Items.GOLD_INGOT) &&
                     items.contains(Items.DIAMOND) &&
                     items.contains(Items.REDSTONE) &&
-                    items.contains(Items.LAPIS_LAZULI) &&
                     items.contains(Items.EMERALD) &&
-                    items.contains(Items.QUARTZ)) {
-                InGameTimer.complete();
+                    items.contains(Items.QUARTZ)
+            ) {
+                for (int i = 0; i < this.inventory.field_15082.size(); i++) {
+                    ItemStack item = this.inventory.field_15082.get(i);
+                    if (!item.isEmpty() && item.getItem().equals(Items.DYE) && DyeColor.getById(item.getMeta()) == DyeColor.BLUE) {
+                        InGameTimer.complete();
+                    }
+                }
+
             }
         }
 
         //Iron Armors & lvl 15
         if (timer.getCategory() == RunCategories.FULL_IA_15_LVL) {
-            List<Item> items = this.inventory.armor.stream().map(ItemStack::getItem).collect(Collectors.toList());
+            List<Item> items = Arrays.stream(this.inventory.field_15083.toArray()).filter(itemStack -> itemStack instanceof ItemStack && !((ItemStack) itemStack).isEmpty()).map(item -> ((ItemStack) item).getItem()).collect(Collectors.toList());
             if (items.contains(Items.IRON_HELMET) &&
                     items.contains(Items.IRON_CHESTPLATE) &&
                     items.contains(Items.IRON_BOOTS) &&
@@ -118,18 +116,11 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                 InGameTimer.complete();
             }
         }
-
-        //Stack of Lime Wool
-        if (timer.getCategory() == RunCategories.STACK_OF_LIME_WOOL) {
-            for (ItemStack itemStack : this.inventory.main) {
-                if (itemStack != null && itemStack.getItem() == Items.LIME_WOOL && itemStack.getCount() == 64) InGameTimer.complete();
-            }
-        }
     }
 
     @Inject(at = @At("HEAD"), method = "tick")
     public void updateNausea(CallbackInfo ci) {
-        if (this.inNetherPortal && nextNauseaStrength + 0.0125F >= 1F && InGameTimer.getInstance().getStatus() != TimerStatus.IDLE && client.isInSingleplayer()) {
+        if(this.changingDimension && this.timeInPortal == 1 && client.isInSingleplayer()){
             InGameTimer.checkingWorld = false;
             InGameTimer.getInstance().setPause(true, TimerStatus.IDLE);
         }

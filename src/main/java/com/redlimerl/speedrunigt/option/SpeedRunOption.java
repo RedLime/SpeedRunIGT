@@ -101,7 +101,7 @@ public class SpeedRunOption {
     public static void reload() {
         isInit = false;
         init();
-        SpeedRunIGT.TIMER_DRAWER = new TimerDrawer(false);
+        SpeedRunIGT.TIMER_DRAWER = new TimerDrawer(true);
     }
 
     private static final ArrayList<OptionButtonFactory> optionButtonFactories = new ArrayList<>();

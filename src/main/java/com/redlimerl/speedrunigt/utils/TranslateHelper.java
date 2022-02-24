@@ -45,7 +45,7 @@ public class TranslateHelper {
         LanguageManager languageManager = MinecraftClient.getInstance().getLanguageManager();
         String languageCode = DEFAULT_LANG;
         if (languageManager != null) {
-            languageCode = languageManager.getLanguage().getCode();
+            languageCode = languageManager.method_5942().method_5935();
             if (!LANGUAGE_MAPS.containsKey(languageCode)
                     || !LANGUAGE_MAPS.get(languageCode).containsKey(key)) {
                 languageCode = DEFAULT_LANG;

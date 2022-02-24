@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Language.class)
 public class TranslatableTextMixin {
 
-    @Inject(method = "translate", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "translateNullSafe", at = @At("HEAD"), cancellable = true)
     private void injected(String string, CallbackInfoReturnable<String> cir) {
         if (TranslateHelper.hasTranslate(string)) {
             cir.setReturnValue(TranslateHelper.translate(string));

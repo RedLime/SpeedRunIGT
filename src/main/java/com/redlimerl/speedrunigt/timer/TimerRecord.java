@@ -6,7 +6,6 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.SplitDisplayType;
 import com.redlimerl.speedrunigt.timer.running.*;
-import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.resource.language.I18n;
 import org.apache.commons.io.FileUtils;
@@ -97,7 +96,7 @@ public class TimerRecord {
     public void completeSplit(boolean isCoop) {
         if (getRunCategory() == RunCategories.CUSTOM) return;
 
-        version = SharedConstants.getGameVersion().getName();
+        version = SpeedRunIGT.MOD_VERSION.split("\\+")[1];
         timestamp = System.currentTimeMillis();
         coop = isCoop;
         RECORD_LIST.add(this);
@@ -173,7 +172,7 @@ public class TimerRecord {
 
 
         String timeString = "Time: " + InGameTimer.timeToStringFormat(igt) + (bestTime == 0L ? "" : " " + ((bestTime >= igt ? "§a[-" : "§c[+") + InGameTimer.timeToStringFormat(Math.abs(bestTime - igt)) + "]"));
-        String titleString = splitType == RunSplitTypes.COMPLETE ? (SharedConstants.getGameVersion().getName() + " " + getRunCategory().getText().asFormattedString() + " " + getRunType().name()) : I18n.translate(splitType.getTranslateKey());
+        String titleString = splitType == RunSplitTypes.COMPLETE ? (SpeedRunIGT.MOD_VERSION.split("\\+")[1] + " " + getRunCategory().getText().asFormattedString() + " " + getRunType().name()) : I18n.translate(splitType.getTranslateKey());
         if (splitDisplayType == SplitDisplayType.MESSAGE) {
             //client.player.sendMessage(new LiteralText("§f§l▶ §e" + titleString), false);
             //client.player.sendMessage(new LiteralText("§f§l▶ §f- " + timeString), false);

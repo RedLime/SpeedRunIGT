@@ -9,12 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Mixin(DownloadingTerrainScreen.class)
-public abstract class DownloadingTerrainScreenMixin extends Screen {
-
-    protected DownloadingTerrainScreenMixin(Text title) {
-        super(title);
-    }
-
+public class DownloadingTerrainScreenMixin extends Screen {
     @ModifyArg(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/DownloadingTerrainScreen;drawCenteredString(Lnet/minecraft/client/font/TextRenderer;Ljava/lang/String;III)V"), index = 1)
     public String onRender(String string) {
         if (InGameTimer.getInstance().isPaused() && InGameTimer.getInstance().isStarted() && !InGameTimer.getInstance().isCoop()) {

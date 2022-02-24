@@ -5,13 +5,15 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.gui.ConsumerButtonWidget;
+import com.redlimerl.speedrunigt.utils.OperatingUtils;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Style;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Util;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -33,21 +35,21 @@ public class SpeedRunIGTInfoScreen extends Screen {
     private ButtonWidget update;
 
     public SpeedRunIGTInfoScreen(Screen parent) {
-        super(new TranslatableText("speedrunigt.title"));
         this.parent = parent;
     }
 
     @Override
-    protected void init() {
+    public void init() {
         checkUpdate();
 
-        update = addButton(new ButtonWidget(width / 2 - 155, height - 104, 150, 20, new TranslatableText("speedrunigt.menu.download_update").asFormattedString(), (ButtonWidget button) -> Util.getOperatingSystem().open(UPDATE_URL)));
+        update = new ConsumerButtonWidget(width / 2 - 155, height - 104, 150, 20, new TranslatableText("speedrunigt.menu.download_update").asFormattedString(), (screen, button) -> OperatingUtils.setUrl(UPDATE_URL));
         update.active = false;
-        addButton(new ButtonWidget(width / 2 + 5, height - 104, 150, 20, new TranslatableText("speedrunigt.menu.latest_change_log").asFormattedString(), (ButtonWidget button) -> Util.getOperatingSystem().open("https://github.com/RedLime/SpeedRunIGT/releases/latest")));
+        buttons.add(update);
+        buttons.add(new ConsumerButtonWidget(width / 2 + 5, height - 104, 150, 20, new TranslatableText("speedrunigt.menu.latest_change_log").asFormattedString(), (screen, button) -> OperatingUtils.setUrl("https://github.com/RedLime/SpeedRunIGT/releases/latest")));
 
-        addButton(new ButtonWidget(width / 2 - 155, height - 80, 150, 20, new TranslatableText("speedrunigt.menu.open_github_repo").asFormattedString(), (ButtonWidget button) -> Util.getOperatingSystem().open("https://github.com/RedLime/SpeedRunIGT/")));
-        addButton(new ButtonWidget(width / 2 + 5, height - 80, 150, 20, new TranslatableText("speedrunigt.menu.open_support_page").asFormattedString(), (ButtonWidget button) -> Util.getOperatingSystem().open("https://ko-fi.com/redlimerl")));
-        addButton(new ButtonWidget(width / 2 - 100, height - 40, 200, 20, ScreenTexts.BACK, (ButtonWidget button) -> onClose()));
+        buttons.add(new ConsumerButtonWidget(width / 2 - 155, height - 80, 150, 20, new TranslatableText("speedrunigt.menu.open_github_repo").asFormattedString(), (screen, button) -> OperatingUtils.setUrl("https://github.com/RedLime/SpeedRunIGT/")));
+        buttons.add(new ConsumerButtonWidget(width / 2 + 5, height - 80, 150, 20, new TranslatableText("speedrunigt.menu.open_support_page").asFormattedString(), (screen, button) -> OperatingUtils.setUrl("https://ko-fi.com/redlimerl")));
+        buttons.add(new ConsumerButtonWidget(width / 2 - 100, height - 40, 200, 20, ScreenTexts.BACK, (screen, button) -> onClose()));
     }
 
     @Override
@@ -55,18 +57,18 @@ public class SpeedRunIGTInfoScreen extends Screen {
         this.renderBackground();
         GlStateManager.pushMatrix();
         GlStateManager.scalef(1.5f, 1.5f, 1.5f);
-        this.drawCenteredString(this.font, this.title.asFormattedString(), this.width / 3, 15, 16777215);
+        this.drawCenteredString(this.textRenderer, new TranslatableText("speedrunigt.title").asFormattedString(), this.width / 3, 15, 16777215);
         GlStateManager.popMatrix();
-        this.drawCenteredString(this.font, new LiteralText("Made by RedLime").asFormattedString(), this.width / 2, 50, 16777215);
-        this.drawCenteredString(this.font, new LiteralText("Discord : RedLime#0817").asFormattedString(), this.width / 2, 62, 16777215);
-        this.drawCenteredString(this.font,
+        this.drawCenteredString(this.textRenderer, new LiteralText("Made by RedLime").asFormattedString(), this.width / 2, 50, 16777215);
+        this.drawCenteredString(this.textRenderer, new LiteralText("Discord : RedLime#0817").asFormattedString(), this.width / 2, 62, 16777215);
+        this.drawCenteredString(this.textRenderer,
                 new LiteralText("Version : "+ SpeedRunIGT.MOD_VERSION.split("\\+")[0]).asFormattedString(), this.width / 2, 78, 16777215);
         if (UPDATE_STATUS != UpdateStatus.NONE) {
             if (UPDATE_STATUS == UpdateStatus.OUTDATED) {
                 update.active = true;
-                this.drawCenteredString(this.font, new LiteralText("Updated Version : "+ UPDATE_VERSION).formatted(Formatting.YELLOW).asFormattedString(), this.width / 2, 88, 16777215);
+                this.drawCenteredString(this.textRenderer, new LiteralText("Updated Version : "+ UPDATE_VERSION).setStyle(new Style().setFormatting(Formatting.YELLOW)).asFormattedString(), this.width / 2, 88, 16777215);
             }
-            this.drawCenteredString(this.font,
+            this.drawCenteredString(this.textRenderer,
                     new TranslatableText("speedrunigt.message.update."+UPDATE_STATUS.name().toLowerCase(Locale.ROOT)).asFormattedString(),
                     this.width / 2, 116, 16777215);
         }
@@ -74,13 +76,19 @@ public class SpeedRunIGTInfoScreen extends Screen {
         super.render(mouseX, mouseY, delta);
     }
 
-    @Override
     public void onClose() {
-        if (this.minecraft != null) {
-            this.minecraft.openScreen(parent);
+        if (this.client != null) {
+            this.client.openScreen(parent);
         }
     }
 
+    @Override
+    protected void buttonClicked(ButtonWidget button) {
+        if (button instanceof ConsumerButtonWidget) {
+            ((ConsumerButtonWidget) button).onClick(this);
+        }
+        super.buttonClicked(button);
+    }
 
 
     public static void checkUpdate() {
