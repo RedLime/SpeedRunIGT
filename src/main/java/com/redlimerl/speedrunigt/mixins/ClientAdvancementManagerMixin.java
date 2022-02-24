@@ -85,12 +85,12 @@ public abstract class ClientAdvancementManagerMixin {
 
         //All Advancements
         if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategories.ALL_ADVANCEMENTS) {
-            if (getCompleteAdvancementsCount() >= 69) InGameTimer.complete();
+            if (getCompleteAdvancementsCount() >= 71) InGameTimer.complete();
         }
 
         //Half%
         if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategories.HALF) {
-            if (getCompleteAdvancementsCount() >= 35) InGameTimer.complete();
+            if (getCompleteAdvancementsCount() >= 36) InGameTimer.complete();
         }
 
         //(PogLoot) Quater
