@@ -24,7 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class TimerSplitListScreen extends Screen {
+public class TimerRecordListScreen extends Screen {
 
     private final Screen parent;
     private TimerSplitListWidget listWidget;
@@ -35,7 +35,7 @@ public class TimerSplitListScreen extends Screen {
     }
     private RunOrder runOrder = RunOrder.FASTEST;
 
-    public TimerSplitListScreen(Screen parent) {
+    public TimerRecordListScreen(Screen parent) {
         super(new TranslatableText("speedrunigt.split.title"));
         this.parent = parent;
     }
@@ -94,10 +94,10 @@ public class TimerSplitListScreen extends Screen {
         private List<Text> tooltip = null;
 
         public TimerSplitListWidget() {
-            super(TimerSplitListScreen.this.client,
-                    TimerSplitListScreen.this.width, TimerSplitListScreen.this.height,
-                    32, TimerSplitListScreen.this.height - 42, 24);
-            this.applyFilter(TimerSplitListScreen.this.filter, TimerSplitListScreen.this.runOrder);
+            super(TimerRecordListScreen.this.client,
+                    TimerRecordListScreen.this.width, TimerRecordListScreen.this.height,
+                    32, TimerRecordListScreen.this.height - 42, 24);
+            this.applyFilter(TimerRecordListScreen.this.filter, TimerRecordListScreen.this.runOrder);
         }
 
         void applyFilter(RunType filter, RunOrder runOrder) {
