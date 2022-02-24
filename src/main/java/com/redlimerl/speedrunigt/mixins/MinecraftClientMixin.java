@@ -11,6 +11,7 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
+import com.redlimerl.speedrunigt.timer.running.RunSplitTypes;
 import com.redlimerl.speedrunigt.utils.FontUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
@@ -104,6 +105,10 @@ public abstract class MinecraftClientMixin {
         currentDimension = targetWorld.getDimension();
         InGameTimer.checkingWorld = true;
 
+        if (timer.getStatus() != TimerStatus.NONE) {
+            timer.setPause(true, TimerStatus.IDLE);
+        }
+
         //Enter Nether
         if (timer.getCategory() == RunCategories.ENTER_NETHER && targetWorld.getDimensionRegistryKey() == DimensionType.THE_NETHER_REGISTRY_KEY) {
             InGameTimer.complete();
@@ -116,7 +121,15 @@ public abstract class MinecraftClientMixin {
             return;
         }
 
-        timer.setPause(true, TimerStatus.IDLE);
+        //Timer Split
+        if (timer.getCategory() == RunCategories.ANY) {
+            if (Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionType.THE_NETHER_ID.toString())) {
+                timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_NETHER, timer.getInGameTime());
+            }
+            else if (Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionType.THE_END_ID.toString())) {
+                timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_END, timer.getInGameTime());
+            }
+        }
     }
 
     @ModifyVariable(method = "render(Z)V", at = @At(value = "STORE"), ordinal = 1)
