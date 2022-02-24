@@ -8,8 +8,8 @@ import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
 import com.redlimerl.speedrunigt.gui.screen.TimerRecordListScreen;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
-import net.fabricmc.loader.api.ModContainer;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
+import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ConfirmScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -18,7 +18,6 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 import static com.redlimerl.speedrunigt.SpeedRunIGT.TIMER_DRAWER;
