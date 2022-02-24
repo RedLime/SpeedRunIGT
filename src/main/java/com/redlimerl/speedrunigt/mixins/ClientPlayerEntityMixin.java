@@ -49,7 +49,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         }
 
         //HIGH%
-        if (timer.getCategory() == RunCategories.HIGH && this.getY() >= 420) {
+        if (timer.getCategory() == RunCategories.HIGH && this.y >= 420) {
             InGameTimer.complete();
             return;
         }

@@ -1,6 +1,6 @@
 package com.redlimerl.speedrunigt.gui.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
@@ -73,7 +73,7 @@ public class SpeedRunOptionScreen extends Screen {
 
     @Override
     public void onClose() {
-        if (this.client != null) this.client.openScreen(parent);
+        if (this.minecraft != null) this.minecraft.openScreen(parent);
     }
 
     @Override
@@ -81,8 +81,8 @@ public class SpeedRunOptionScreen extends Screen {
         this.renderBackground();
         this.buttonListWidget.render(mouseX, mouseY, delta);
         super.render(mouseX, mouseY, delta);
-        drawCenteredString(this.textRenderer, this.title.asFormattedString(), this.width / 2, 10, 16777215);
-        this.textRenderer.drawWithShadow("v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215);
+        drawCenteredString(this.font, this.title.asFormattedString(), this.width / 2, 10, 16777215);
+        this.font.drawWithShadow("v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215);
 
         ArrayList<String> tooltip = getToolTip(mouseX, mouseY);
         if (!tooltip.isEmpty()) this.renderTooltip(tooltip, 0, height);
@@ -126,7 +126,7 @@ public class SpeedRunOptionScreen extends Screen {
     class ButtonScrollListWidget extends ElementListWidget<ButtonScrollListWidget.Entry> {
 
         public ButtonScrollListWidget() {
-            super(SpeedRunOptionScreen.this.client, SpeedRunOptionScreen.this.width - 140, SpeedRunOptionScreen.this.height, 28, SpeedRunOptionScreen.this.height - 54, 24);
+            super(SpeedRunOptionScreen.this.minecraft, SpeedRunOptionScreen.this.width - 140, SpeedRunOptionScreen.this.height, 28, SpeedRunOptionScreen.this.height - 54, 24);
         }
 
         public void replaceButtons(Collection<AbstractButtonWidget> buttonWidgets) {
@@ -142,17 +142,16 @@ public class SpeedRunOptionScreen extends Screen {
             return 150;
         }
 
-        @SuppressWarnings("deprecation")
         @Override
         public void render(int mouseX, int mouseY, float delta) {
             super.render(mouseX, mouseY, delta);
 
             //Render bg on empty space
-            if (this.client == null) return;
+            if (this.minecraft == null) return;
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder bufferBuilder = tessellator.getBuffer();
-            this.client.getTextureManager().bindTexture(BACKGROUND_TEXTURE);
-            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+            this.minecraft.getTextureManager().bindTexture(BACKGROUND_LOCATION);
+            GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             float f = 32.0F;
             int emptyWidth = this.width;
             bufferBuilder.begin(7, VertexFormats.POSITION_TEXTURE_COLOR);

@@ -79,20 +79,20 @@ public class TimerSplitListScreen extends Screen {
         renderBackground();
         listWidget.render(mouseX, mouseY, delta);
         if (listWidget.children().size() == 0)
-            drawCenteredString(this.textRenderer, "▽◠▽.. :(", width / 2, height / 2, 16777215);
+            drawCenteredString(this.font, "▽◠▽.. :(", width / 2, height / 2, 16777215);
         super.render(mouseX, mouseY, delta);
     }
 
     @Override
     public void onClose() {
-        if (this.client != null) this.client.openScreen(parent);
+        if (this.minecraft != null) this.minecraft.openScreen(parent);
     }
 
     private class TimerSplitListWidget extends ElementListWidget<TimerSplitListWidget.TimerSplitEntry> {
         private List<String> tooltip = null;
 
         public TimerSplitListWidget() {
-            super(TimerSplitListScreen.this.client,
+            super(TimerSplitListScreen.this.minecraft,
                     TimerSplitListScreen.this.width, TimerSplitListScreen.this.height,
                     32, TimerSplitListScreen.this.height - 42, 24);
             this.applyFilter(TimerSplitListScreen.this.filter, TimerSplitListScreen.this.runOrder);
@@ -137,8 +137,8 @@ public class TimerSplitListScreen extends Screen {
         }
 
         @Override
-        protected int getScrollbarPositionX() {
-            return super.getScrollbarPositionX() + 50;
+        protected int getScrollbarPosition() {
+            return super.getScrollbarPosition() + 50;
         }
 
         private class TimerSplitEntry extends ElementListWidget.Entry<TimerSplitEntry> {
@@ -189,14 +189,14 @@ public class TimerSplitListScreen extends Screen {
                 this.deleteButton.y = y + 2;
                 this.deleteButton.render(mouseX, mouseY, tickDelta);
 
-                drawString(TimerSplitListScreen.this.textRenderer, titleText.asFormattedString(), x, y + 4, 16777215);
+                drawString(TimerSplitListScreen.this.font, titleText.asFormattedString(), x, y + 4, 16777215);
                 if (timelineTextList.size() > 0) {
                     int count = (int) ((System.currentTimeMillis() - entryCreatedTime) / 2500) % timelineTextList.size();
-                    drawString(TimerSplitListScreen.this.textRenderer, resultTimeText.deepCopy().append("  ").append(timelineTextList.get(count)).asFormattedString(), x, y + 13, 16777215);
+                    drawString(TimerSplitListScreen.this.font, resultTimeText.deepCopy().append("  ").append(timelineTextList.get(count)).asFormattedString(), x, y + 13, 16777215);
                 } else {
-                    drawString(TimerSplitListScreen.this.textRenderer, resultTimeText.asFormattedString(), x, y + 13, 16777215);
+                    drawString(TimerSplitListScreen.this.font, resultTimeText.asFormattedString(), x, y + 13, 16777215);
                 }
-                drawCenteredString(TimerSplitListScreen.this.textRenderer, "§8§m                                                                                ",
+                drawCenteredString(TimerSplitListScreen.this.font, "§8§m                                                                                ",
                         x + (entryWidth / 2), y + 20, 16777215);
 
                 ArrayList<String> tooltip = new ArrayList<>();

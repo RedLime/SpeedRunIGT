@@ -1,6 +1,6 @@
 package com.redlimerl.speedrunigt.timer;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
 import com.redlimerl.speedrunigt.timer.TimerDrawer.Position;
 import net.minecraft.client.MinecraftClient;
@@ -30,8 +30,8 @@ public class TimerElement {
         this.color = color;
         this.decoration = decoration;
         this.fontHeight = fontHeight;
-        int scaledWindowWidth = client.getWindow().getScaledWidth();
-        int scaledWindowHeight = client.getWindow().getScaledHeight();
+        int scaledWindowWidth = client.window.getScaledWidth();
+        int scaledWindowHeight = client.window.getScaledHeight();
 
         int translateX = (int) (xPos * scaledWindowWidth);
         int translateY = (int) (yPos * scaledWindowHeight);
@@ -56,11 +56,11 @@ public class TimerElement {
     }
 
     public void draw(boolean doTranslate) {
-        RenderSystem.pushMatrix();
-        if (doTranslate) RenderSystem.translatef(0, 0, 999);
-        RenderSystem.scalef(scale, scale, 1.0F);
+        GlStateManager.pushMatrix();
+        if (doTranslate) GlStateManager.translatef(0, 0, 999);
+        GlStateManager.scalef(scale, scale, 1.0F);
         drawOutLine(this.textRenderer, scaledPosition.getX(), scaledPosition.getY(), text, color, decoration);
-        RenderSystem.popMatrix();
+        GlStateManager.popMatrix();
     }
 
     private static void drawOutLine(TextRenderer textRenderer, int x, int y, String text, Integer color, TimerDecoration decoration) {

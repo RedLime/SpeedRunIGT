@@ -1,7 +1,6 @@
 package com.redlimerl.speedrunigt.gui.screen;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
@@ -41,20 +40,20 @@ public class SpeedRunCategoryScreen extends Screen {
     protected void init() {
         addButton(new ButtonWidget(width / 2 - 100, height - 35, 200, 20, ScreenTexts.CANCEL, button -> onClose()));
 
-        this.listWidget = new CategorySelectionListWidget(this.client);
+        this.listWidget = new CategorySelectionListWidget(this.minecraft);
         children.add(listWidget);
     }
 
     @Override
     public void onClose() {
-        if (this.client != null) this.client.openScreen(parent);
+        if (this.minecraft != null) this.minecraft.openScreen(parent);
     }
 
     @Override
     public void render(int mouseX, int mouseY, float delta) {
         this.listWidget.render(mouseX, mouseY, delta);
-        this.drawCenteredString(this.textRenderer, this.title.asFormattedString(), this.width / 2, 16, 16777215);
-        this.drawCenteredString(this.textRenderer, "(" + I18n.translate("speedrunigt.option.timer_category.warning") + ")", this.width / 2, this.height - 46, 8421504);
+        this.drawCenteredString(this.font, this.title.asFormattedString(), this.width / 2, 16, 16777215);
+        this.drawCenteredString(this.font, "(" + I18n.translate("speedrunigt.option.timer_category.warning") + ")", this.width / 2, this.height - 46, 8421504);
         super.render(mouseX, mouseY, delta);
     }
 
@@ -67,8 +66,8 @@ public class SpeedRunCategoryScreen extends Screen {
         }
 
         @Override
-        protected int getScrollbarPositionX() {
-            return super.getScrollbarPositionX() + 30;
+        protected int getScrollbarPosition() {
+            return super.getScrollbarPosition() + 30;
         }
 
         @Environment(EnvType.CLIENT)
@@ -125,13 +124,13 @@ public class SpeedRunCategoryScreen extends Screen {
                 public void render(int mouseX, int mouseY, float delta) {
                     MinecraftClient minecraftClient = MinecraftClient.getInstance();
                     minecraftClient.getTextureManager().bindTexture(TEXTURE);
-                    RenderSystem.enableDepthTest();
+                    GlStateManager.enableDepthTest();
                     TextRenderer textRenderer = minecraftClient.textRenderer;
-                    RenderSystem.color4f(1.0F, 1.0F, 1.0F, this.alpha);
-                    RenderSystem.enableBlend();
-                    RenderSystem.defaultBlendFunc();
-                    RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
-                    drawTexture(this.x, this.y, this.isFocused() ? 20.0F : 0.0F, this.isChecked() ? 20.0F : 0.0F, 20, this.height, 32, 64);
+                    GlStateManager.color4f(1.0F, 1.0F, 1.0F, this.alpha);
+                    GlStateManager.enableBlend();
+                    GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+                    GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+                    blit(this.x, this.y, this.isFocused() ? 20.0F : 0.0F, this.isChecked() ? 20.0F : 0.0F, 20, this.height, 32, 64);
                     this.renderBg(minecraftClient, mouseX, mouseY);
                     this.drawString(textRenderer, this.getMessage(), this.x + 24, this.y + (this.height - 8) / 2, 14737632 | MathHelper.ceil(this.alpha * 255.0F) << 24);
                 }

@@ -14,7 +14,6 @@ import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import com.redlimerl.speedrunigt.utils.FontUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
-import net.minecraft.client.RunArgs;
 import net.minecraft.client.font.Font;
 import net.minecraft.client.font.FontStorage;
 import net.minecraft.client.font.TextRenderer;
@@ -33,7 +32,6 @@ import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.level.LevelInfo;
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -52,22 +50,22 @@ import java.util.stream.Collectors;
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin {
 
-    @Shadow @Final public GameOptions options;
+    @Shadow public GameOptions options;
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     @Shadow public abstract boolean isPaused();
 
     @Shadow @Nullable public Screen currentScreen;
 
-    @Shadow @Final public WorldRenderer worldRenderer;
+    @Shadow public WorldRenderer worldRenderer;
 
     @Shadow @Nullable public ClientWorld world;
 
     @Shadow public abstract boolean isWindowFocused();
 
-    @Shadow @Final private ReloadableResourceManager resourceManager;
+    @Shadow private ReloadableResourceManager resourceManager;
 
-    @Shadow @Final public Mouse mouse;
+    @Shadow public Mouse mouse;
 
     @Shadow public abstract Profiler getProfiler();
 
@@ -168,8 +166,8 @@ public abstract class MinecraftClientMixin {
     /**
      * Add import font system
      */
-    @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/debug/DebugRenderer;<init>(Lnet/minecraft/client/MinecraftClient;)V", shift = At.Shift.BEFORE))
-    public void onInit(RunArgs args, CallbackInfo ci) {
+    @Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/debug/DebugRenderer;<init>(Lnet/minecraft/client/MinecraftClient;)V", shift = At.Shift.BEFORE))
+    public void onInit(CallbackInfo ci) {
         this.resourceManager.registerListener(new SinglePreparationResourceReloadListener<Map<Identifier, List<Font>>>() {
             @Override
             protected Map<Identifier, List<Font>> prepare(ResourceManager manager, Profiler profiler) {
@@ -197,11 +195,10 @@ public abstract class MinecraftClientMixin {
             @Override
             protected void apply(Map<Identifier, List<Font>> loader, ResourceManager manager, Profiler profiler) {
                 try {
+                    FontManagerAccessor fontManagerAccessor = (FontManagerAccessor) ((MinecraftClientAccessor) MinecraftClient.getInstance()).getFontManager();
                     for (Map.Entry<Identifier, List<Font>> listEntry : loader.entrySet()) {
-                        FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) MinecraftClient.getInstance()).getFontManager();
-                        fontManager.getTextRenderers().computeIfAbsent(listEntry.getKey(),
-                                        (identifierX) -> new TextRenderer(fontManager.getTextureManager(),
-                                                new FontStorage(fontManager.getTextureManager(), identifierX)))
+                        fontManagerAccessor.getTextRenderers().computeIfAbsent(listEntry.getKey(),
+                                        (identifierX) -> new TextRenderer(fontManagerAccessor.getTextureManager(), new FontStorage(fontManagerAccessor.getTextureManager(), identifierX)))
                                 .setFonts(listEntry.getValue());
                     }
                     TimerDrawer.fontHeightMap.clear();

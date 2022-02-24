@@ -1,20 +1,20 @@
 package com.redlimerl.speedrunigt.mixins.translate;
 
 import com.redlimerl.speedrunigt.utils.TranslateHelper;
-import net.minecraft.text.TranslatableText;
-import org.spongepowered.asm.mixin.Final;
+import net.minecraft.util.Language;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(TranslatableText.class)
+@Mixin(Language.class)
 public class TranslatableTextMixin {
 
-    @Shadow @Final private String key;
-
-    @ModifyVariable(method = "updateTranslations", at = @At("STORE"), ordinal = 0)
-    private String injected(String string) {
-        return TranslateHelper.hasTranslate(this.key) ? TranslateHelper.translate(this.key) : string;
+    @Inject(method = "translate", at = @At("HEAD"), cancellable = true)
+    private void injected(String string, CallbackInfoReturnable<String> cir) {
+        if (TranslateHelper.hasTranslate(string)) {
+            cir.setReturnValue(TranslateHelper.translate(string));
+        }
     }
+
 }
