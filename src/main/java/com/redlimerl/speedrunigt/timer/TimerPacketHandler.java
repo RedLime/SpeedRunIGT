@@ -20,9 +20,9 @@ import java.util.List;
 
 public class TimerPacketHandler {
 
-    public static final String PACKET_TIMER_INIT_ID = SpeedRunIGT.MOD_ID + "|timer_init";
-    public static final String PACKET_TIMER_COMPLETE_ID = SpeedRunIGT.MOD_ID + "|timer_complete";
-    public static final String PACKET_TIMER_SPLIT_ID = SpeedRunIGT.MOD_ID + "|timer_split";
+    public static final String PACKET_TIMER_INIT_ID = SpeedRunIGT.MOD_ID + "|t_in";
+    public static final String PACKET_TIMER_COMPLETE_ID = SpeedRunIGT.MOD_ID + "|t_cm";
+    public static final String PACKET_TIMER_SPLIT_ID = SpeedRunIGT.MOD_ID + "|t_sp";
 
     private static final MinecraftClient client = MinecraftClient.getInstance();
 
