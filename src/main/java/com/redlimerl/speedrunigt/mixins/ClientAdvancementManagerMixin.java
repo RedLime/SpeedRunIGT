@@ -59,13 +59,7 @@ public abstract class ClientAdvancementManagerMixin {
 
             //Timer Split
             if (timer.getCategory() == RunCategories.ANY) {
-                if (Objects.equals(advancement.getId().toString(), new Identifier("story/enter_the_nether").toString())) {
-                    timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_NETHER, timer.getInGameTime());
-                }
-                else if (Objects.equals(advancement.getId().toString(), new Identifier("story/enter_the_end").toString())) {
-                    timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_END, timer.getInGameTime());
-                }
-                else if (Objects.equals(advancement.getId().toString(), new Identifier("story/follow_ender_eye").toString())) {
+                if (Objects.equals(advancement.getId().toString(), new Identifier("story/follow_ender_eye").toString())) {
                     timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_STRONG_HOLD, timer.getInGameTime());
                 }
                 else if (Objects.equals(advancement.getId().toString(), new Identifier("nether/find_fortress").toString())) {
