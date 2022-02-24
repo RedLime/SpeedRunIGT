@@ -4,7 +4,6 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.util.IntObjectStorage;
 import org.spongepowered.asm.mixin.Final;
