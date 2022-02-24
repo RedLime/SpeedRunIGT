@@ -3,7 +3,6 @@ package com.redlimerl.speedrunigt.mixins.screen;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import net.minecraft.client.gui.screen.DownloadingTerrainScreen;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
