@@ -173,13 +173,14 @@ public class TimerCustomizeScreen extends Screen {
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int button) {
         boolean isButtonClick = false;
-        for (ButtonWidget widget : this.buttons) {
+        for (Object obj : this.buttons) {
+            ButtonWidget widget = (ButtonWidget) obj;
             if (widget.isMouseOver(this.client, mouseX, mouseY)) {
                 isButtonClick = true;
             }
         }
         if (button == 0 && !drawer.isLocked()&&!isButtonClick) {
-            Window window = new Window(client);
+            Window window = new Window(client, client.width, client.height);
             if (!this.igtButton.active) {
                 drawer.setIGT_XPos((float) MathHelper.clamp(mouseX / window.getScaledWidth(), 0, 1));
                 drawer.setIGT_YPos((float) MathHelper.clamp(mouseY / window.getScaledHeight(), 0, 1));

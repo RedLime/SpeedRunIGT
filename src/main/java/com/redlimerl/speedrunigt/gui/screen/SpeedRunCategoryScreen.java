@@ -8,6 +8,7 @@ import com.redlimerl.speedrunigt.timer.running.RunCategory;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.class_1803;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -80,11 +81,6 @@ public class SpeedRunCategoryScreen extends Screen {
         }
 
         @Override
-        public Entry getEntry(int index) {
-            return entries.get(index);
-        }
-
-        @Override
         protected int getEntryCount() {
             return entries.size();
         }
@@ -94,8 +90,13 @@ public class SpeedRunCategoryScreen extends Screen {
             return super.getScrollbarPosition() + 30;
         }
 
+        @Override
+        public class_1803 method_6697(int i) {
+            return entries.get(i);
+        }
+
         @Environment(EnvType.CLIENT)
-        public class CategoryEntry implements Entry {
+        public class CategoryEntry implements class_1803 {
 
             private final ConsumerButtonWidget checkBox;
             private final RunCategory category;
@@ -111,12 +112,12 @@ public class SpeedRunCategoryScreen extends Screen {
             }
 
             @Override
-            public void updatePosition(int index, int x, int y) {
+            public void method_9473(int i, int j, int k) {
 
             }
 
             @Override
-            public void render(int index, int x, int y, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean hovered) {
+            public void method_6700(int index, int x, int y, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean hovered) {
                 this.checkBox.x = x + 34;
                 this.checkBox.y = y;
                 this.checkBox.message = SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY) == this.category ? new LiteralText("█").setStyle(new Style().setBold(true)).asFormattedString() : "";
@@ -125,12 +126,12 @@ public class SpeedRunCategoryScreen extends Screen {
             }
 
             @Override
-            public boolean mouseClicked(int index, int mouseX, int mouseY, int button, int x, int y) {
+            public boolean method_6699(int i, int j, int k, int l, int m, int n) {
                 return false;
             }
 
             @Override
-            public void mouseReleased(int index, int mouseX, int mouseY, int button, int x, int y) {
+            public void method_6701(int i, int j, int k, int l, int m, int n) {
 
             }
         }

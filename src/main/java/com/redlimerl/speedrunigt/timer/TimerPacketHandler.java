@@ -51,7 +51,7 @@ public class TimerPacketHandler {
             String seed = buffer.readString(64).trim();
             RunType runType = RunType.valueOf(buffer.readString(64).trim());
 
-            sendInitS2C(server.getPlayerManager().getPlayers(), startTime, category, seed, runType);
+            sendInitS2C(server.getPlayerManager().players, startTime, category, seed, runType);
             SpeedRunIGT.debug("server received init: " + startTime + " / " + category.getID());
         } catch (Exception e) {
             SpeedRunIGT.error("Failed read packets, probably SpeedRunIGT version different between players");
@@ -115,7 +115,7 @@ public class TimerPacketHandler {
         try {
             long endTime = buffer.readLong();
 
-            sendCompleteS2C(server.getPlayerManager().getPlayers(), endTime);
+            sendCompleteS2C(server.getPlayerManager().players, endTime);
             SpeedRunIGT.debug("hello server complete: " + endTime);
         } catch (Exception e) {
             SpeedRunIGT.error("Failed read packets, probably SpeedRunIGT version different between players");
@@ -162,7 +162,7 @@ public class TimerPacketHandler {
             RunSplitType splitType = RunSplitType.getSplitType(buffer.readString(64).trim());
             long time = buffer.readLong();
 
-            sendSplitS2C(server.getPlayerManager().getPlayers(), splitType, time);
+            sendSplitS2C(server.getPlayerManager().players, splitType, time);
             SpeedRunIGT.debug("hello server split: " + splitType);
         } catch (Exception e) {
             SpeedRunIGT.error("Failed read packets, probably SpeedRunIGT version different between players");

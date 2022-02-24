@@ -7,6 +7,7 @@ import com.redlimerl.speedrunigt.timer.running.RunSplitType;
 import com.redlimerl.speedrunigt.timer.running.RunSplitTypes;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
+import net.minecraft.class_1803;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.EntryListWidget;
@@ -162,8 +163,8 @@ public class TimerSplitListScreen extends Screen {
         }
 
         @Override
-        public TimerSplitEntry getEntry(int index) {
-            return entries.get(index);
+        public TimerSplitEntry method_6697(int i) {
+            return entries.get(i);
         }
 
         @Override
@@ -176,7 +177,7 @@ public class TimerSplitListScreen extends Screen {
             return super.getScrollbarPosition() + 50;
         }
 
-        private class TimerSplitEntry implements Entry {
+        private class TimerSplitEntry implements class_1803 {
             private final Text titleText;
             private BaseText resultTimeText = new LiteralText("");
             private final ArrayList<String> timelineTextList = new ArrayList<>();
@@ -216,12 +217,12 @@ public class TimerSplitListScreen extends Screen {
             }
 
             @Override
-            public void updatePosition(int index, int x, int y) {
+            public void method_9473(int i, int j, int k) {
 
             }
 
             @Override
-            public void render(int index, int x, int y, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean hovered) {
+            public void method_6700(int index, int x, int y, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean hovered) {
                 this.deleteButton.x = x + rowWidth - this.deleteButton.getWidth();
                 this.deleteButton.y = y + 2;
                 this.deleteButton.render(TimerSplitListScreen.this.client, mouseX, mouseY);
@@ -256,12 +257,12 @@ public class TimerSplitListScreen extends Screen {
             }
 
             @Override
-            public boolean mouseClicked(int index, int mouseX, int mouseY, int button, int x, int y) {
+            public boolean method_6699(int i, int j, int k, int l, int m, int n) {
                 return false;
             }
 
             @Override
-            public void mouseReleased(int index, int mouseX, int mouseY, int button, int x, int y) {
+            public void method_6701(int i, int j, int k, int l, int m, int n) {
 
             }
         }

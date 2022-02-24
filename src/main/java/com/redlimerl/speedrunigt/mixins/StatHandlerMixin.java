@@ -42,7 +42,8 @@ public abstract class StatHandlerMixin {
     }
     private int getCompleteAdvancementsCount() {
         int count = 0;
-        for (Stat stat : Stats.ALL) {
+        for (Object obj : Stats.ALL) {
+            Stat stat = (Stat) obj;
             if(stat.isAchievement()&&this.method_8298((Achievement) stat)){
                 count++;
             }

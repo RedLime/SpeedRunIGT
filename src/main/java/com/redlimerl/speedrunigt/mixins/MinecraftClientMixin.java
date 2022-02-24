@@ -20,6 +20,8 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.dimension.Dimension;
+import net.minecraft.world.dimension.TheEndDimension;
+import net.minecraft.world.dimension.TheNetherDimension;
 import net.minecraft.world.level.LevelInfo;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Mouse;
@@ -92,21 +94,21 @@ public abstract class MinecraftClientMixin {
         }
 
         //Enter Nether
-        if (timer.getCategory() == RunCategories.ENTER_NETHER && targetWorld.dimension.isNether()) {
+        if (timer.getCategory() == RunCategories.ENTER_NETHER && targetWorld.dimension instanceof TheNetherDimension) {
             InGameTimer.complete();
         }
 
         //Enter End
-        if (timer.getCategory() == RunCategories.ENTER_END && !targetWorld.dimension.hasGround()) {
+        if (timer.getCategory() == RunCategories.ENTER_END && targetWorld.dimension instanceof TheEndDimension) {
             InGameTimer.complete();
         }
 
         //Timer splits
         if (timer.getCategory() == RunCategories.ANY) {
-            if (targetWorld.dimension.isNether()) {
+            if (targetWorld.dimension instanceof TheNetherDimension) {
                 timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_NETHER, timer.getInGameTime(false));
             }
-            if (!targetWorld.dimension.hasGround()) {
+            if (targetWorld.dimension instanceof TheEndDimension) {
                 timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_END, timer.getInGameTime(false));
             }
         }
@@ -124,7 +126,8 @@ public abstract class MinecraftClientMixin {
     }
 
 
-    @Inject(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;render(FJ)V", shift = At.Shift.AFTER))
+    @Inject(method = "runGameLoop", at = @At(value = "INVOKE",
+            target ="Lnet/minecraft/client/render/GameRenderer;method_9775(F)V", shift = At.Shift.AFTER))
     private void drawTimer(CallbackInfo ci) {
         this.profiler.swap("timer");
         InGameTimer timer = InGameTimer.getInstance();

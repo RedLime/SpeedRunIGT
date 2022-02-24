@@ -7,6 +7,7 @@ import com.redlimerl.speedrunigt.gui.ConsumerButtonWidget;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.utils.OperatingUtils;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
+import net.minecraft.class_1803;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.EntryListWidget;
@@ -114,7 +115,7 @@ public class SpeedRunOptionScreen extends Screen {
 
         int e = buttonListWidget.getEntryAt(mouseX, mouseY);
         if (e > -1) {
-            ButtonWidget element = buttonListWidget.getEntry(e).getButtonWidget();
+            ButtonWidget element = buttonListWidget.method_6697(e).getButtonWidget();
             if (tooltips.containsKey(element)) {
                 String text = tooltips.get(element).get();
                 tooltipList.addAll(Arrays.asList(text.split("\n")));
@@ -164,9 +165,10 @@ public class SpeedRunOptionScreen extends Screen {
         }
 
         private final ArrayList<ButtonScrollListEntry> entries = new ArrayList<>();
+
         @Override
-        public ButtonScrollListEntry getEntry(int index) {
-            return entries.get(index);
+        public ButtonScrollListEntry method_6697(int i) {
+            return entries.get(i);
         }
 
         @Override
@@ -180,21 +182,24 @@ public class SpeedRunOptionScreen extends Screen {
 
             //Render bg on empty space
             if (this.client == null) return;
-            Tessellator tessellator = Tessellator.getInstance();
-            BufferBuilder bufferBuilder = tessellator.getBuffer();
+            int emptyWidth = this.width;
+            GlStateManager.disableLighting();
+            GlStateManager.disableFog();
+            Tessellator var2 = Tessellator.getInstance();
+            BufferBuilder var3 = var2.getBuffer();
             this.client.getTextureManager().bindTexture(OPTIONS_BACKGROUND_TEXTURE);
             GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-            float f = 32.0F;
-            int emptyWidth = this.width;
-            bufferBuilder.begin(7, VertexFormats.POSITION_TEXTURE_COLOR);
-            bufferBuilder.vertex(this.width, this.height, 0.0D).texture(emptyWidth / f, (float)this.height / f).color(64, 64, 64, 255).next();
-            bufferBuilder.vertex(SpeedRunOptionScreen.this.width, this.height, 0.0D).texture((float)SpeedRunOptionScreen.this.width / f, (float)this.height / f + 0).color(64, 64, 64, 255).next();
-            bufferBuilder.vertex(SpeedRunOptionScreen.this.width, 0.0D, 0.0D).texture((float)SpeedRunOptionScreen.this.width / f, 0).color(64, 64, 64, 255).next();
-            bufferBuilder.vertex(this.width, 0.0D, 0.0D).texture(emptyWidth / f, 0).color(64, 64, 64, 255).next();
-            tessellator.draw();
+            float var4 = 32.0F;
+            var3.method_21806();
+            var3.method_21807(4210752);
+            var3.method_9728(emptyWidth, this.height, 0.0D, emptyWidth, (float)this.height / var4);
+            var3.method_9728(SpeedRunOptionScreen.this.width, this.height, 0.0D, (float)SpeedRunOptionScreen.this.width / var4, (float)this.height / var4);
+            var3.method_9728(SpeedRunOptionScreen.this.width, 0.0D, 0.0D, (float)SpeedRunOptionScreen.this.width / var4, 0);
+            var3.method_9728(emptyWidth, 0.0D, 0.0D, emptyWidth, 0);
+            var2.method_9927();
         }
 
-        class ButtonScrollListEntry implements EntryListWidget.Entry {
+        class ButtonScrollListEntry implements class_1803 {
             private final ButtonWidget buttonWidget;
 
             public ButtonScrollListEntry(ButtonWidget buttonWidget) {
@@ -207,23 +212,24 @@ public class SpeedRunOptionScreen extends Screen {
             }
 
             @Override
-            public void updatePosition(int index, int x, int y) {
+            public void method_9473(int i, int j, int k) {
 
             }
 
             @Override
-            public void render(int index, int x, int y, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean hovered) {
+            public void method_6700(int index, int x, int y, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean hovered) {
                 buttonWidget.y = y;
                 buttonWidget.render(SpeedRunOptionScreen.this.client, mouseX, mouseY);
             }
 
             @Override
-            public boolean mouseClicked(int index, int mouseX, int mouseY, int button, int x, int y) {
+            public boolean method_6699(int i, int j, int k, int l, int m, int n) {
                 return false;
             }
 
             @Override
-            public void mouseReleased(int index, int mouseX, int mouseY, int button, int x, int y) {
+            public void method_6701(int i, int j, int k, int l, int m, int n) {
+
             }
         }
     }
