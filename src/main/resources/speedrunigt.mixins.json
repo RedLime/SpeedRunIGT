@@ -17,7 +17,6 @@
     "coop.PlayerManagerMixin",
     "coop.TimeCommandMixin",
     "keybinding.GameOptionsMixin",
-    "keybinding.KeyBindingAccessor",
     "network.ClientPlayNetworkHandlerMixin",
     "network.ServerPlayNetworkHandlerMixin",
     "screen.CreateWorldScreenMixin",

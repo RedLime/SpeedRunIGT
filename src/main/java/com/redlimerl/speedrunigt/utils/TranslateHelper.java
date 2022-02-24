@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -45,7 +46,7 @@ public class TranslateHelper {
         LanguageManager languageManager = MinecraftClient.getInstance().getLanguageManager();
         String languageCode = DEFAULT_LANG;
         if (languageManager != null) {
-            languageCode = languageManager.method_5942().method_5935();
+            languageCode = languageManager.method_5942().method_5935().toLowerCase(Locale.ROOT);
             if (!LANGUAGE_MAPS.containsKey(languageCode)
                     || !LANGUAGE_MAPS.get(languageCode).containsKey(key)) {
                 languageCode = DEFAULT_LANG;

@@ -19,38 +19,15 @@
 package com.redlimerl.speedrunigt.utils;
 
 import com.google.common.collect.Lists;
-import com.redlimerl.speedrunigt.mixins.keybinding.KeyBindingAccessor;
+import com.redlimerl.speedrunigt.SpeedRunIGT;
 import net.minecraft.client.options.KeyBinding;
 
 import java.util.List;
-import java.util.Set;
 
 public final class KeyBindingRegistry {
     private static final List<KeyBinding> moddedKeyBindings = Lists.newArrayList();
 
-    private static Set<String> getCategoryMap() {
-        return KeyBindingAccessor.invokeGetCategoryMap();
-    }
-
-    private static boolean hasCategory(String categoryTranslationKey) {
-        return getCategoryMap().contains(categoryTranslationKey);
-    }
-
-    public static void addCategory(String categoryTranslationKey) {
-        Set<String> map = getCategoryMap();
-
-        if (map.contains(categoryTranslationKey)) {
-            return;
-        }
-
-        map.add(categoryTranslationKey);
-    }
-
     public static KeyBinding registerKeyBinding(KeyBinding binding) {
-        if (!hasCategory(binding.getCategory())) {
-            addCategory(binding.getCategory());
-        }
-
         moddedKeyBindings.add(binding);
         return binding;
     }
@@ -60,6 +37,18 @@ public final class KeyBindingRegistry {
      * we can make sure that there are no duplicates this way.
      */
     public static KeyBinding[] process(KeyBinding[] keysAll) {
+        // Key Bindings initialize
+        SpeedRunIGT.timerResetKeyBinding = registerKeyBinding(new KeyBinding(
+                "speedrunigt.controls.start_timer",
+                22,
+                "speedrunigt.title.options"
+        ));
+        SpeedRunIGT.timerStopKeyBinding = registerKeyBinding(new KeyBinding(
+                "speedrunigt.controls.stop_timer",
+                23,
+                "speedrunigt.title.options"
+        ));
+
         List<KeyBinding> newKeysAll = Lists.newArrayList(keysAll);
         newKeysAll.removeAll(moddedKeyBindings);
         newKeysAll.addAll(moddedKeyBindings);

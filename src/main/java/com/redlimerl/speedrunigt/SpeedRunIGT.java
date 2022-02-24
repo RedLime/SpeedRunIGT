@@ -18,6 +18,8 @@ import com.redlimerl.speedrunigt.utils.TranslateHelper;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.options.GameOptions;
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.util.Identifier;
 import org.apache.commons.io.FileUtils;
@@ -27,6 +29,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -127,18 +130,6 @@ public class SpeedRunIGT implements ClientModInitializer {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
-        // Key Bindings initialize
-        timerResetKeyBinding = KeyBindingRegistry.registerKeyBinding(new KeyBinding(
-                "speedrunigt.controls.start_timer",
-                22,
-                "speedrunigt.title.options"
-        ));
-        timerStopKeyBinding = KeyBindingRegistry.registerKeyBinding(new KeyBinding(
-                "speedrunigt.controls.stop_timer",
-                23,
-                "speedrunigt.title.options"
-        ));
 
         // End initializing
         isInitialized = true;
