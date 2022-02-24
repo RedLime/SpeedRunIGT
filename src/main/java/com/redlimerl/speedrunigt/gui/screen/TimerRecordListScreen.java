@@ -18,7 +18,7 @@ import net.minecraft.util.Formatting;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class TimerSplitListScreen extends Screen {
+public class TimerRecordListScreen extends Screen {
 
     private final Screen parent;
     private TimerSplitListWidget listWidget;
@@ -30,7 +30,7 @@ public class TimerSplitListScreen extends Screen {
     }
     private RunOrder runOrder = RunOrder.FASTEST;
 
-    public TimerSplitListScreen(Screen parent) {
+    public TimerRecordListScreen(Screen parent) {
         this.parent = parent;
     }
 
@@ -117,10 +117,10 @@ public class TimerSplitListScreen extends Screen {
         private List<String> tooltip = null;
 
         public TimerSplitListWidget() {
-            super(TimerSplitListScreen.this.client,
-                    TimerSplitListScreen.this.width, TimerSplitListScreen.this.height,
-                    32, TimerSplitListScreen.this.height - 42, 24);
-            this.applyFilter(TimerSplitListScreen.this.filter, TimerSplitListScreen.this.runOrder);
+            super(TimerRecordListScreen.this.client,
+                    TimerRecordListScreen.this.width, TimerRecordListScreen.this.height,
+                    32, TimerRecordListScreen.this.height - 42, 24);
+            this.applyFilter(TimerRecordListScreen.this.filter, TimerRecordListScreen.this.runOrder);
         }
 
         void applyFilter(RunType filter, RunOrder runOrder) {
@@ -225,20 +225,20 @@ public class TimerSplitListScreen extends Screen {
             public void method_6700(int index, int x, int y, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean hovered) {
                 this.deleteButton.x = x + rowWidth - this.deleteButton.getWidth();
                 this.deleteButton.y = y + 2;
-                this.deleteButton.render(TimerSplitListScreen.this.client, mouseX, mouseY);
+                this.deleteButton.render(TimerRecordListScreen.this.client, mouseX, mouseY);
 
-                TimerSplitListScreen.this.textRenderer.draw(titleText.asFormattedString(), x, y + 4, 16777215);
+                TimerRecordListScreen.this.textRenderer.draw(titleText.asFormattedString(), x, y + 4, 16777215);
                 if (timelineTextList.size() > 0) {
                     int count = (int) ((System.currentTimeMillis() - entryCreatedTime) / 2500) % timelineTextList.size();
-                    TimerSplitListScreen.this.textRenderer.draw(resultTimeText.copy().append("  ").append(timelineTextList.get(count)).asFormattedString(), x, y + 13, 16777215);
+                    TimerRecordListScreen.this.textRenderer.draw(resultTimeText.copy().append("  ").append(timelineTextList.get(count)).asFormattedString(), x, y + 13, 16777215);
                 } else {
-                    TimerSplitListScreen.this.textRenderer.draw(resultTimeText.asFormattedString(), x, y + 13, 16777215);
+                    TimerRecordListScreen.this.textRenderer.draw(resultTimeText.asFormattedString(), x, y + 13, 16777215);
                 }
-                drawCenteredString(TimerSplitListScreen.this.textRenderer, "§8§m                                                                                ",
+                drawCenteredString(TimerRecordListScreen.this.textRenderer, "§8§m                                                                                ",
                         x + (rowWidth / 2), y + 20, 16777215);
 
                 ArrayList<String> tooltip = new ArrayList<>();
-                if (this.deleteButton.isMouseOver(TimerSplitListScreen.this.client, mouseX, mouseY) && !Objects.equals(this.deleteButton.message, I18n.translate("selectWorld.delete"))) {
+                if (this.deleteButton.isMouseOver(TimerRecordListScreen.this.client, mouseX, mouseY) && !Objects.equals(this.deleteButton.message, I18n.translate("selectWorld.delete"))) {
                     tooltip.add(new TranslatableText("speedrunigt.message.click_delete_button_again").asFormattedString());
                     TimerSplitListWidget.this.tooltip = tooltip;
                 } else if (isMouseOver(x, y, rowWidth, rowHeight, mouseX, mouseY)) {
