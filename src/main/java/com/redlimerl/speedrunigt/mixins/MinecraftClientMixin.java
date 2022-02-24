@@ -123,10 +123,10 @@ public abstract class MinecraftClientMixin {
 
         //Timer Split
         if (timer.getCategory() == RunCategories.ANY) {
-            if (Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionType.THE_NETHER_ID.toString())) {
+            if (targetWorld.getDimensionRegistryKey() == DimensionType.THE_NETHER_REGISTRY_KEY) {
                 timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_NETHER, timer.getInGameTime());
             }
-            else if (Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionType.THE_END_ID.toString())) {
+            else if (targetWorld.getDimensionRegistryKey() == DimensionType.THE_END_REGISTRY_KEY) {
                 timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_END, timer.getInGameTime());
             }
         }
