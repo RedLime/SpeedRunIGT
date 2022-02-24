@@ -81,6 +81,11 @@ public class TimerSplitListScreen extends Screen {
         if (listWidget.children().size() == 0)
             drawCenteredString(font, "▽◠▽.. :(", width / 2, height / 2, 16777215);
         super.render(mouseX, mouseY, delta);
+
+        if (listWidget.tooltip != null) {
+            renderTooltip(listWidget.tooltip, mouseX, mouseY);
+            listWidget.tooltip = null;
+        }
     }
 
     @Override
@@ -125,10 +130,6 @@ public class TimerSplitListScreen extends Screen {
         @Override
         public void render(int mouseX, int mouseY, float delta) {
             super.render(mouseX, mouseY, delta);
-            if (tooltip != null) {
-                renderTooltip(tooltip, mouseX, mouseY);
-                tooltip = null;
-            }
         }
 
         @Override
@@ -155,7 +156,7 @@ public class TimerSplitListScreen extends Screen {
                 this.split = split;
                 this.time = split.getTimestamp();
                 this.titleText = new LiteralText(String.format("%s - %s %s%s",
-                        split.getVersion(), (split.isCoop() ? "Co-op " : "") + split.getRunCategory().getText().asFormattedString(), split.getRunType().getContext(),
+                        split.getVersion(), (split.isCoop() ? "Co-op " : "") + split.getRunCategory().getText().getString(), split.getRunType().getContext(),
                         (split.getRunType() == RunType.SET_SEED || split.getRunType() == RunType.SAVED_WORLD) ? (" [" + split.getSeed() + "]") : ""))
                         .formatted(Formatting.GRAY);
                 for (Map.Entry<String, Long> splitPoint : split.getSplitTimeline().entrySet()) {
@@ -167,9 +168,9 @@ public class TimerSplitListScreen extends Screen {
                         timelineTextList.add(new LiteralText("§b" + I18n.translate(splitType.getTranslateKey()) + ": §f" + time).asFormattedString());
                     }
                 }
-                this.deleteButton = new ButtonWidget(0, 0, 40, 20, new TranslatableText("selectWorld.delete").asFormattedString(), buttonWidget -> {
-                    if (Objects.equals(buttonWidget.getMessage(), new TranslatableText("selectWorld.delete").asFormattedString())) {
-                        buttonWidget.setMessage(new TranslatableText("selectWorld.delete").append("?").asFormattedString());
+                this.deleteButton = new ButtonWidget(0, 0, 40, 20, new TranslatableText("selectWorld.delete").getString(), buttonWidget -> {
+                    if (Objects.equals(buttonWidget.getMessage(), new TranslatableText("selectWorld.delete").getString())) {
+                        buttonWidget.setMessage(new TranslatableText("selectWorld.delete").append("?").getString());
                     } else {
                         split.delete();
                         TimerSplitListWidget.this.removeEntry(this);
