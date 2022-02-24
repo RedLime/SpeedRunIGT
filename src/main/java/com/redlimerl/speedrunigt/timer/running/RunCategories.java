@@ -10,7 +10,7 @@ public class RunCategories {
     public static RunCategory KILL_ALL_BOSSES = new RunCategory("KILL_ALL_BOSSES","mcce#Kill_Bosses");
     public static RunCategory KILL_WITHER = new RunCategory("KILL_WITHER","mcce#Kill_Bosses");
     public static RunCategory KILL_ELDER_GUARDIAN = new RunCategory("KILL_ELDER_GUARDIAN","mcce#Kill_Bosses");
-    public static RunCategory ALL_ADVANCEMENTS = new RunCategory("ALL_ADVANCEMENTS","mc#All_Advancements");
+    public static RunCategory ALL_ACHIEVEMENTS = new RunCategory("ALL_ACHIEVEMENTS","mc#All_Achievements");
     public static RunCategory HALF = new RunCategory("HALF","mcce#Half");
     public static RunCategory POGLOOT_QUATER = new RunCategory("POGLOOT_QUATER","pogloot_ce#Quater");
     public static RunCategory HOW_DID_WE_GET_HERE = new RunCategory("HOW_DID_WE_GET_HERE","mcce#How_Did_We_Get_Here");

@@ -29,7 +29,7 @@ public abstract class StatHandlerMixin {
             InGameTimer timer = InGameTimer.getInstance();
 
             //All Advancements
-            if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategories.ALL_ADVANCEMENTS) {
+            if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategories.ALL_ACHIEVEMENTS) {
                 if (getCompleteAdvancementsCount()+1 >= 34) InGameTimer.complete();
             }
 

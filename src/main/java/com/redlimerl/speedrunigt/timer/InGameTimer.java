@@ -425,7 +425,7 @@ public class InGameTimer {
                 if (isPaused()) {
                     long nowTime = getRealTimeAttack();
                     pauseLog.append(timeToStringFormat(nowTime)).append(" RTA E, ").append(timeToStringFormat(nowTime - loggerPausedTime)).append(" Length (").append(leaveTime != 0 ? TimerStatus.LEAVE_LEGACY.getMessage() : getStatus().getMessage()).append(")\r\n");
-                    if (this.getCategory() == RunCategories.ALL_ADVANCEMENTS && leaveTime != 0) excludedTime = System.currentTimeMillis() - leaveTime;
+                    if (this.getCategory() == RunCategories.ALL_ACHIEVEMENTS && leaveTime != 0) excludedTime = System.currentTimeMillis() - leaveTime;
                     leaveTime = 0;
                 }
                 if (this.getStatus() == TimerStatus.IDLE && loggerTicks != 0) {
