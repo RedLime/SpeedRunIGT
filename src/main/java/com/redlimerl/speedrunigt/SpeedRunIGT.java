@@ -19,6 +19,7 @@ import com.redlimerl.speedrunigt.utils.KeyBindingRegistry;
 import com.redlimerl.speedrunigt.utils.TranslateHelper;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.util.InputUtil;
@@ -31,6 +32,7 @@ import org.lwjgl.glfw.GLFW;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -58,6 +60,7 @@ public class SpeedRunIGT implements ClientModInitializer {
     }
     public static Path getGlobalPath() { return new File(System.getProperty("user.home").replace("\\", "/"), SpeedRunIGT.MOD_ID).toPath(); }
 
+    public static final ArrayList<ModContainer> API_PROVIDERS = new ArrayList<>();
 
     static {
         getMainPath().toFile().mkdirs();
@@ -118,6 +121,8 @@ public class SpeedRunIGT implements ClientModInitializer {
             // Registry multiple split types
             Collection<RunSplitType> runSplitTypes = api.registerSplitTypes();
             if (runSplitTypes != null) new SplitTypeRegistryImpl().registerSplitTypes().forEach(RunSplitType::registrySplitType);
+
+            API_PROVIDERS.add(entryPoint.getProvider());
         }
 
         // Options initialize
