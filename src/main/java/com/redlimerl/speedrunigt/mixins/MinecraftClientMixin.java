@@ -8,6 +8,7 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
+import com.redlimerl.speedrunigt.timer.running.RunSplitTypes;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
@@ -18,6 +19,8 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.dimension.Dimension;
+import net.minecraft.world.dimension.TheEndDimension;
+import net.minecraft.world.dimension.TheNetherDimension;
 import net.minecraft.world.level.LevelInfo;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Mouse;
@@ -90,13 +93,23 @@ public abstract class MinecraftClientMixin {
         }
 
         //Enter Nether
-        if (timer.getCategory() == RunCategories.ENTER_NETHER && targetWorld.dimension.isNether()) {
+        if (timer.getCategory() == RunCategories.ENTER_NETHER && targetWorld.dimension instanceof TheNetherDimension) {
             InGameTimer.complete();
         }
 
         //Enter End
-        if (timer.getCategory() == RunCategories.ENTER_END && !targetWorld.dimension.hasGround()) {
+        if (timer.getCategory() == RunCategories.ENTER_END && targetWorld.dimension instanceof TheEndDimension) {
             InGameTimer.complete();
+        }
+
+        //Timer splits
+        if (timer.getCategory() == RunCategories.ANY) {
+            if (targetWorld.dimension instanceof TheNetherDimension) {
+                timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_NETHER, timer.getInGameTime(false));
+            }
+            if (targetWorld.dimension instanceof TheEndDimension) {
+                timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_END, timer.getInGameTime(false));
+            }
         }
     }
 
