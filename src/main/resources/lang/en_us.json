@@ -80,6 +80,8 @@
   "speedrunigt.option.category.general": "General",
   "speedrunigt.option.category.timing": "Timings",
   "speedrunigt.option.category.timer": "Timer",
+  "speedrunigt.option.current_extensions": "Timer Extensions",
+  "speedrunigt.option.current_extensions.description": "Currently using SpeedRunIGT extensions: %s",
   "speedrunigt.controls.start_timer": "Restart Timer (for 'Custom' Category)",
   "speedrunigt.controls.stop_timer": "Stop Timer (for 'Custom' Category)",
   "speedrunigt.message.update.unknown": "Failed to get latest version of information.",

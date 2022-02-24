@@ -9,6 +9,7 @@ import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
 import com.redlimerl.speedrunigt.gui.screen.TimerRecordListScreen;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
+import net.fabricmc.loader.api.ModContainer;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ConfirmScreen;
@@ -17,6 +18,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import static com.redlimerl.speedrunigt.SpeedRunIGT.TIMER_DRAWER;
@@ -171,13 +173,33 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                 .setCategory("speedrunigt.option.category.timing")
         );
 
-
         if (Math.random() < 0.1) {
             factories.add(screen -> new OptionButtonFactory.Builder()
                     .setButtonWidget(new ConsumerButtonWidget(0, 0, 150, 20, new LiteralText("amongus").asFormattedString(), (screen1, button) -> {}))
                     .setCategory("sus")
             );
         }
+
+        factories.add(screen -> new OptionButtonFactory.Builder()
+                .setButtonWidget(
+                        new ButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.current_extensions").getString(),
+                                (ButtonWidget button) -> {})
+                )
+                .setToolTip(() -> {
+                    StringBuilder extension = new StringBuilder(I18n.translate("speedrunigt.option.current_extensions.description", SpeedRunIGTApi.getProviders().length));
+                    extension.append("\n");
+                    int auto = 0;
+                    for (ModContainer provider : SpeedRunIGTApi.getProviders()) {
+                        if (auto++ > 4) {
+                            auto = 0;
+                            extension.append("\n");
+                        }
+                        extension.append(String.format("%s v%s,", provider.getMetadata().getName(), provider.getMetadata().getVersion()));
+                    }
+                    return extension.substring(0, extension.length() - 1);
+                })
+                .setCategory("speedrunigt.option.category.general")
+        );
 
         return factories;
     }
