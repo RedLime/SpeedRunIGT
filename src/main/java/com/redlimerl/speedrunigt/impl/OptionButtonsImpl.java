@@ -6,7 +6,7 @@ import com.redlimerl.speedrunigt.gui.ConsumerButtonWidget;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunCategoryScreen;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunIGTInfoScreen;
 import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
-import com.redlimerl.speedrunigt.gui.screen.TimerSplitListScreen;
+import com.redlimerl.speedrunigt.gui.screen.TimerRecordListScreen;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
@@ -46,7 +46,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
                         new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.split.title").asFormattedString(),
-                                (screen1, button) -> MinecraftClient.getInstance().openScreen(new TimerSplitListScreen(screen)))
+                                (screen1, button) -> MinecraftClient.getInstance().openScreen(new TimerRecordListScreen(screen)))
                 )
                 .setCategory("speedrunigt.option.category.general")
         );
