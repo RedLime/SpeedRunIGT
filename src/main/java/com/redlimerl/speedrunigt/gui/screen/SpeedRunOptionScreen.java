@@ -183,10 +183,10 @@ public class SpeedRunOptionScreen extends Screen {
             float var3 = 32.0F;
             var2.method_1405();
             var2.method_1413(4210752);
-            var2.method_1399(emptyWidth, SpeedRunOptionScreen.this.height, 0.0D, emptyWidth, ((float)SpeedRunOptionScreen.this.height / var3));
+            var2.method_1399(emptyWidth, SpeedRunOptionScreen.this.height, 0.0D, emptyWidth / var3, ((float)SpeedRunOptionScreen.this.height / var3));
             var2.method_1399(SpeedRunOptionScreen.this.width, SpeedRunOptionScreen.this.height, 0.0D, ((float)SpeedRunOptionScreen.this.width / var3), (float)SpeedRunOptionScreen.this.height / var3);
             var2.method_1399(SpeedRunOptionScreen.this.width, 0.0D, 0.0D, ((float)SpeedRunOptionScreen.this.width / var3), 0);
-            var2.method_1399(emptyWidth, 0.0D, 0.0D, emptyWidth, 0);
+            var2.method_1399(emptyWidth, 0.0D, 0.0D, emptyWidth / var3, 0);
             var2.method_1396();
         }
 
