@@ -54,15 +54,15 @@ public class SpeedRunOptionScreen extends Screen {
             categorySubButtons.put(category, categoryList);
 
             if (!categorySelectButtons.containsKey(category)) {
-                ButtonWidget buttonWidget = new ConsumerButtonWidget(width - 110, 30 + (categoryCount++ * 22), 80, 20, new TranslatableText(category).asFormattedString(), (screen, buttonWidget1) -> selectCategory(category));
+                ButtonWidget buttonWidget = new ConsumerButtonWidget(width - 110, 30 + (categoryCount++ * 22), 80, 20, new TranslatableText(category).asFormattedString(), (buttonWidget1) -> selectCategory(category));
                 categorySelectButtons.put(category, buttonWidget);
                 buttons.add(buttonWidget);
             }
         }
 
-        buttons.add(new ConsumerButtonWidget(width - 85, height - 35, 70, 20, ScreenTexts.CANCEL, (screen, button) -> onClose()));
+        buttons.add(new ConsumerButtonWidget(width - 85, height - 35, 70, 20, ScreenTexts.CANCEL, (button) -> onClose()));
 
-        buttons.add(new ConsumerButtonWidget(width - 160, height - 35, 70, 20, new TranslatableText("speedrunigt.menu.donate").asFormattedString(), (screen, button) -> OperatingUtils.setUrl("https://ko-fi.com/redlimerl")));
+        buttons.add(new ConsumerButtonWidget(width - 160, height - 35, 70, 20, new TranslatableText("speedrunigt.menu.donate").asFormattedString(), (button) -> OperatingUtils.setUrl("https://ko-fi.com/redlimerl")));
 
         buttonListWidget = new ButtonScrollListWidget();
 
@@ -76,7 +76,7 @@ public class SpeedRunOptionScreen extends Screen {
     @Override
     protected void buttonClicked(ButtonWidget button) {
         if (button instanceof ConsumerButtonWidget) {
-            ((ConsumerButtonWidget) button).onClick(this);
+            ((ConsumerButtonWidget) button).onClick();
         }
         super.buttonClicked(button);
     }

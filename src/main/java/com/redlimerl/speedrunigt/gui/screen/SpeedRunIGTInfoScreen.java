@@ -42,14 +42,14 @@ public class SpeedRunIGTInfoScreen extends Screen {
     public void init() {
         checkUpdate();
 
-        update = new ConsumerButtonWidget(width / 2 - 155, height - 104, 150, 20, new TranslatableText("speedrunigt.menu.download_update").asFormattedString(), (screen, button) -> OperatingUtils.setUrl(UPDATE_URL));
+        update = new ConsumerButtonWidget(width / 2 - 155, height - 104, 150, 20, new TranslatableText("speedrunigt.menu.download_update").asFormattedString(), (button) -> OperatingUtils.setUrl(UPDATE_URL));
         update.active = false;
         buttons.add(update);
-        buttons.add(new ConsumerButtonWidget(width / 2 + 5, height - 104, 150, 20, new TranslatableText("speedrunigt.menu.latest_change_log").asFormattedString(), (screen, button) -> OperatingUtils.setUrl("https://github.com/RedLime/SpeedRunIGT/releases/latest")));
+        buttons.add(new ConsumerButtonWidget(width / 2 + 5, height - 104, 150, 20, new TranslatableText("speedrunigt.menu.latest_change_log").asFormattedString(), (button) -> OperatingUtils.setUrl("https://github.com/RedLime/SpeedRunIGT/releases/latest")));
 
-        buttons.add(new ConsumerButtonWidget(width / 2 - 155, height - 80, 150, 20, new TranslatableText("speedrunigt.menu.open_github_repo").asFormattedString(), (screen, button) -> OperatingUtils.setUrl("https://github.com/RedLime/SpeedRunIGT/")));
-        buttons.add(new ConsumerButtonWidget(width / 2 + 5, height - 80, 150, 20, new TranslatableText("speedrunigt.menu.open_support_page").asFormattedString(), (screen, button) -> OperatingUtils.setUrl("https://ko-fi.com/redlimerl")));
-        buttons.add(new ConsumerButtonWidget(width / 2 - 100, height - 40, 200, 20, ScreenTexts.BACK, (screen, button) -> onClose()));
+        buttons.add(new ConsumerButtonWidget(width / 2 - 155, height - 80, 150, 20, new TranslatableText("speedrunigt.menu.open_github_repo").asFormattedString(), (button) -> OperatingUtils.setUrl("https://github.com/RedLime/SpeedRunIGT/")));
+        buttons.add(new ConsumerButtonWidget(width / 2 + 5, height - 80, 150, 20, new TranslatableText("speedrunigt.menu.open_support_page").asFormattedString(), (button) -> OperatingUtils.setUrl("https://ko-fi.com/redlimerl")));
+        buttons.add(new ConsumerButtonWidget(width / 2 - 100, height - 40, 200, 20, ScreenTexts.BACK, (button) -> onClose()));
     }
 
     @Override
@@ -85,7 +85,7 @@ public class SpeedRunIGTInfoScreen extends Screen {
     @Override
     protected void buttonClicked(ButtonWidget button) {
         if (button instanceof ConsumerButtonWidget) {
-            ((ConsumerButtonWidget) button).onClick(this);
+            ((ConsumerButtonWidget) button).onClick();
         }
         super.buttonClicked(button);
     }

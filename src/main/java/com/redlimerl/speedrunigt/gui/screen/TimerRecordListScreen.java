@@ -42,7 +42,7 @@ public class TimerRecordListScreen extends Screen {
     @Override
     protected void buttonClicked(ButtonWidget button) {
         if (button instanceof ConsumerButtonWidget) {
-            ((ConsumerButtonWidget) button).onClick(this);
+            ((ConsumerButtonWidget) button).onClick();
         }
         super.buttonClicked(button);
     }
@@ -63,7 +63,7 @@ public class TimerRecordListScreen extends Screen {
     public void init() {
         this.listWidget = new TimerSplitListWidget();
 
-        addButton(new ConsumerButtonWidget(10, 6, 120, 20, new TranslatableText("speedrunigt.option.show").append(" : ").append(this.getFilterText()).asFormattedString(), (screen, button) -> {
+        addButton(new ConsumerButtonWidget(10, 6, 120, 20, new TranslatableText("speedrunigt.option.show").append(" : ").append(this.getFilterText()).asFormattedString(), (button) -> {
             int order = filter == null ? -1 : filter.ordinal();
             if (order + 1 == RunType.values().length) {
                 filter = null;
@@ -74,7 +74,7 @@ public class TimerRecordListScreen extends Screen {
             button.message = (new TranslatableText("speedrunigt.option.show").append(" : ").append(this.getFilterText()).asFormattedString());
         }));
 
-        addButton(new ConsumerButtonWidget(134, 6, 120, 20, new TranslatableText("speedrunigt.split.order").append(" : ").append(this.runOrder.getText()).asFormattedString(), (screen, button) -> {
+        addButton(new ConsumerButtonWidget(134, 6, 120, 20, new TranslatableText("speedrunigt.split.order").append(" : ").append(this.runOrder.getText()).asFormattedString(), (button) -> {
             int order = runOrder.ordinal() + 1;
             runOrder = RunOrder.values()[order % RunOrder.values().length];
             this.listWidget.applyFilter(filter, runOrder);
@@ -87,7 +87,7 @@ public class TimerRecordListScreen extends Screen {
 //            button.setMessage(new TranslatableText("speedrunigt.option.split_notification").append(" : ").append(new TranslatableText("speedrunigt.option.split_notification." + SpeedRunOptions.getOption(SpeedRunOptions.SPLIT_DISPLAY_TYPE).name().toLowerCase(Locale.ROOT))));
 //        }));
 
-        addButton(new ConsumerButtonWidget(width/2 - 75, height - 32, 150, 20, ScreenTexts.DONE, (screen, button) -> onClose()));
+        addButton(new ConsumerButtonWidget(width/2 - 75, height - 32, 150, 20, ScreenTexts.DONE, (button) -> onClose()));
     }
 
     @Override
@@ -197,7 +197,7 @@ public class TimerRecordListScreen extends Screen {
                         timelineTextList.add(new LiteralText("§b" + I18n.translate(splitType.getTranslateKey()) + ": §f" + time).asFormattedString());
                     }
                 }
-                this.deleteButton = new ConsumerButtonWidget(0, 0, 40, 20, new TranslatableText("selectWorld.delete").getString(), (screen, buttonWidget) -> {
+                this.deleteButton = new ConsumerButtonWidget(0, 0, 40, 20, new TranslatableText("selectWorld.delete").getString(), (buttonWidget) -> {
                     if (Objects.equals(buttonWidget.message, new TranslatableText("selectWorld.delete").getString())) {
                         buttonWidget.message = new TranslatableText("selectWorld.delete").append("?").getString();
                     } else {
