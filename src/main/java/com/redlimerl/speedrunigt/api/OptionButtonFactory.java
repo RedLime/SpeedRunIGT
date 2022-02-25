@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 public interface OptionButtonFactory {
     class Builder {
         private String category = null;
-        private ButtonWidget buttonWidget = new ConsumerButtonWidget(0, 0, 150, 20, "", (screen, button) -> {});
+        private ButtonWidget buttonWidget = new ConsumerButtonWidget(0, 0, 150, 20, "", (button) -> {});
         private Supplier<String> tooltip = null;
 
         public Builder setButtonWidget(ButtonWidget buttonWidget) {
