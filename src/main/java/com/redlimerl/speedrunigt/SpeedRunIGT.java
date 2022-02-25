@@ -105,7 +105,7 @@ public class SpeedRunIGT implements ClientModInitializer {
 
             // Registry multiple categories
             Collection<RunCategory> multipleCategories = api.registerCategories();
-            if (multipleCategories != null) new CategoryRegistryImpl().registerCategories().forEach(RunCategory::registerCategory);
+            if (multipleCategories != null) multipleCategories.forEach(RunCategory::registerCategory);
 
             // Registry single split type
             RunSplitType runSplitType = api.registerSplitType();
@@ -113,7 +113,7 @@ public class SpeedRunIGT implements ClientModInitializer {
 
             // Registry multiple split types
             Collection<RunSplitType> runSplitTypes = api.registerSplitTypes();
-            if (runSplitTypes != null) new SplitTypeRegistryImpl().registerSplitTypes().forEach(RunSplitType::registrySplitType);
+            if (runSplitTypes != null) runSplitTypes.forEach(RunSplitType::registrySplitType);
 
             API_PROVIDERS.add(entryPoint.getProvider());
         }
