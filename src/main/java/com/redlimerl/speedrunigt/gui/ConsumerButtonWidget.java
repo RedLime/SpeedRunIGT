@@ -1,12 +1,11 @@
 package com.redlimerl.speedrunigt.gui;
 
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 
 public class ConsumerButtonWidget extends ButtonWidget {
 
     public interface ButtonWorker {
-        void accept(Screen screen, ButtonWidget buttonWidget);
+        void accept(ButtonWidget buttonWidget);
     }
     private final ButtonWorker onClick;
 
@@ -15,7 +14,7 @@ public class ConsumerButtonWidget extends ButtonWidget {
         this.onClick = onClick;
     }
 
-    public void onClick(Screen screen) {
-        onClick.accept(screen, this);
+    public void onClick() {
+        onClick.accept(this);
     }
 }

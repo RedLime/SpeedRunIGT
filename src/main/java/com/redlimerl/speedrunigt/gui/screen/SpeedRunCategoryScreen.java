@@ -32,7 +32,7 @@ public class SpeedRunCategoryScreen extends Screen {
 
     @Override
     public void init() {
-        buttons.add(new ConsumerButtonWidget(width / 2 - 100, height - 35, 200, 20, ScreenTexts.CANCEL, (screen, button) -> onClose()));
+        buttons.add(new ConsumerButtonWidget(width / 2 - 100, height - 35, 200, 20, ScreenTexts.CANCEL, (button) -> onClose()));
         this.listWidget = new CategorySelectionListWidget(this.client);
     }
     
@@ -43,7 +43,7 @@ public class SpeedRunCategoryScreen extends Screen {
     @Override
     protected void buttonClicked(ButtonWidget button) {
         if (button instanceof ConsumerButtonWidget) {
-            ((ConsumerButtonWidget) button).onClick(this);
+            ((ConsumerButtonWidget) button).onClick();
         }
         super.buttonClicked(button);
     }
@@ -101,7 +101,7 @@ public class SpeedRunCategoryScreen extends Screen {
             private final RunCategory category;
 
             public CategoryEntry(RunCategory category) {
-                this.checkBox = new ConsumerButtonWidget(0, 0, 20, 20, "", (screen, button) -> {
+                this.checkBox = new ConsumerButtonWidget(0, 0, 20, 20, "", (button) -> {
                     button.playDownSound(SpeedRunCategoryScreen.this.client.getSoundManager());
                     SpeedRunOption.setOption(SpeedRunOptions.TIMER_CATEGORY, category);
                     InGameTimer.getInstance().setCategory(category);
