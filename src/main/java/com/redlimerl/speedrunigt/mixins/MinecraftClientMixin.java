@@ -19,7 +19,7 @@ import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.profiler.Profiler;
-import net.minecraft.world.dimension.Dimension;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.dimension.TheEndDimension;
 import net.minecraft.world.dimension.TheNetherDimension;
 import net.minecraft.world.level.LevelInfo;
@@ -79,14 +79,14 @@ public abstract class MinecraftClientMixin {
         }
     }
 
-    private static Dimension currentDimension = null;
+    private static DimensionType currentDimension = null;
 
     @Inject(at = @At("HEAD"), method = "connect(Lnet/minecraft/client/world/ClientWorld;Ljava/lang/String;)V")
     public void onJoin(ClientWorld targetWorld, String loadingMessage, CallbackInfo ci) {
         if (targetWorld == null) return;
         InGameTimer timer = InGameTimer.getInstance();
 
-        currentDimension = targetWorld.dimension;
+        currentDimension = targetWorld.dimension.getDimensionType();
         InGameTimer.checkingWorld = true;
 
         if (timer.getStatus() != TimerStatus.NONE) {
@@ -94,12 +94,12 @@ public abstract class MinecraftClientMixin {
         }
 
         //Enter Nether
-        if (timer.getCategory() == RunCategories.ENTER_NETHER && targetWorld.dimension instanceof TheNetherDimension) {
+        if (timer.getCategory() == RunCategories.ENTER_NETHER && currentDimension == DimensionType.NETHER) {
             InGameTimer.complete();
         }
 
         //Enter End
-        if (timer.getCategory() == RunCategories.ENTER_END && targetWorld.dimension instanceof TheEndDimension) {
+        if (timer.getCategory() == RunCategories.ENTER_END && currentDimension == DimensionType.THE_END) {
             InGameTimer.complete();
         }
 
@@ -131,7 +131,7 @@ public abstract class MinecraftClientMixin {
         this.profiler.swap("timer");
         InGameTimer timer = InGameTimer.getInstance();
 
-        if (worldRenderer != null && world != null && currentDimension != null && world.dimension.getName().equals(currentDimension.getName()) && !isPaused()
+        if (worldRenderer != null && world != null && currentDimension != null && world.dimension.getDimensionType() == currentDimension && !isPaused()
                 && (timer.getStatus() == TimerStatus.IDLE ) && InGameTimer.checkingWorld && Mouse.isGrabbed() && Display.isActive() && Mouse.isInsideWindow()) {
             WorldRendererAccessor worldRendererAccessor = (WorldRendererAccessor) worldRenderer;
             worldRenderer.getChunksDebugString(); // For init MixinValues#completedChunks value
@@ -164,7 +164,7 @@ public abstract class MinecraftClientMixin {
     private float previousX=0;
     private float previousY=0;
 
-    @Redirect(method="tick", at=@At(value="INVOKE", target = "Lorg/lwjgl/input/Mouse;getEventDWheel()I"))
+    @Redirect(method="method_12141", at=@At(value="INVOKE", target = "Lorg/lwjgl/input/Mouse;getEventDWheel()I"))
     public int getScrolled(){
         if(Mouse.getEventDWheel()!=0){
             unlock();
