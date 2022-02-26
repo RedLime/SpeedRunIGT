@@ -7,7 +7,6 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.SplitDisplayType;
 import com.redlimerl.speedrunigt.timer.running.*;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.resource.language.I18n;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -19,6 +18,8 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+// Unused from 7.1 version. because it will be not use in the mod.
+@SuppressWarnings("unused")
 public class TimerRecord {
 
     private static final File RECORDS_DIR = SpeedRunIGT.getGlobalPath().resolve("splits").toFile();
@@ -101,7 +102,6 @@ public class TimerRecord {
         timestamp = System.currentTimeMillis();
         coop = isCoop;
         this.isGlitched = isGlitched;
-        RECORD_LIST.add(this);
         save();
     }
 
@@ -165,28 +165,6 @@ public class TimerRecord {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player == null) return;
         SplitDisplayType splitDisplayType = SpeedRunOption.getOption(SpeedRunOptions.SPLIT_DISPLAY_TYPE);
-
-        long bestTime = 0L;
-        for (TimerRecord splits : RECORD_LIST) {
-            if (splits.getIdentifyString().startsWith(this.getIdentifyString())
-                    && splits.getSplitTimeline().containsKey(splitType.getID())
-                    && splits.getTimelineString().startsWith(this.getTimelineString())) {
-                long time = splits.getSplitTimeline().get(splitType.getID());
-                if (time < bestTime || bestTime == 0) bestTime = time;
-            }
-        }
-
-
-        String timeString = "Time: " + InGameTimer.timeToStringFormat(igt) + (bestTime == 0L ? "" : " " + ((bestTime >= igt ? "§a[-" : "§c[+") + InGameTimer.timeToStringFormat(Math.abs(bestTime - igt)) + "]"));
-        String titleString = splitType == RunSplitTypes.COMPLETE ? (SpeedRunIGT.MOD_VERSION.split("\\+")[1] + " " + getRunCategory().getText().asFormattedString() + " " + getRunType().name()) : I18n.translate(splitType.getTranslateKey());
-        if (splitDisplayType == SplitDisplayType.MESSAGE) {
-            //client.player.sendMessage(new LiteralText("§f§l▶ §e" + titleString), false);
-            //client.player.sendMessage(new LiteralText("§f§l▶ §f- " + timeString), false);
-            SpeedRunIGT.debug("split message");
-        } else if (splitDisplayType == SplitDisplayType.TOAST) {
-            //client.getToastManager().add(new GenericToast("§e" + titleString, timeString, new ItemStack(Items.CLOCK)));
-            SpeedRunIGT.debug("split toast");
-        }
 
         this.updateSplit(splitType, igt);
 
