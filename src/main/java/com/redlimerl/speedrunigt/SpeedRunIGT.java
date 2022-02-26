@@ -120,9 +120,6 @@ public class SpeedRunIGT implements ClientModInitializer {
         // Options initialize
         SpeedRunOption.init();
 
-        // Records initialize
-        TimerRecord.load();
-
         // Translate initialize
         try {
             TranslateHelper.init();
