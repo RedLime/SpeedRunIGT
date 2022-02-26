@@ -72,6 +72,8 @@
   "speedrunigt.option.reload": "重载设置",
   "speedrunigt.option.limitless_reset": "不限制重置",
   "speedrunigt.option.limitless_reset.description": "使用自定义类别时，\n计时器只能重置一次（关闭）或无数次（打开）。",
+  "speedrunigt.option.glitched_timer": "Glitched类别",
+  "speedrunigt.option.glitched_timer.description": "这个选项适用于Glitched类别。\nIGT将通过世界的Tick来显示，就像LiveSplit。",
   "speedrunigt.option.split_notification": "拆分提示",
   "speedrunigt.option.split_notification.none": "无",
   "speedrunigt.option.split_notification.toast": "Toast",
