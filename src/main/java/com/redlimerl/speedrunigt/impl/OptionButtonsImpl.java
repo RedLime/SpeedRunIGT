@@ -200,6 +200,18 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                 .setCategory("speedrunigt.option.category.general")
         );
 
+        factories.add(screen -> new OptionButtonFactory.Builder()
+                .setButtonWidget(
+                        new ButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.glitched_timer").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.TIMER_GLITCHED_MODE) ? ScreenTexts.ON : ScreenTexts.OFF),
+                                (ButtonWidget button) -> {
+                                    SpeedRunOption.setOption(SpeedRunOptions.TIMER_GLITCHED_MODE, !SpeedRunOption.getOption(SpeedRunOptions.TIMER_GLITCHED_MODE));
+                                    button.setMessage(new TranslatableText("speedrunigt.option.glitched_timer").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.TIMER_GLITCHED_MODE) ? ScreenTexts.ON : ScreenTexts.OFF));
+                                })
+                )
+                .setToolTip(() -> I18n.translate("speedrunigt.option.glitched_timer.description"))
+                .setCategory("speedrunigt.option.category.timer")
+        );
+
         return factories;
     }
 }

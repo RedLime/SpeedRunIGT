@@ -25,7 +25,7 @@ public class RunCategory {
         if (SpeedRunIGT.isInitialized()) return;
         for (String id : CATEGORIES.keySet()) {
             if (id.equalsIgnoreCase(category.getID())) {
-                throw new IllegalArgumentException("This is an already registered RunCategory ID.");
+                throw new IllegalArgumentException("ID \"" + id + "\" is an already registered RunCategory ID.");
             }
         }
 

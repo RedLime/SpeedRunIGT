@@ -23,7 +23,7 @@ public class RunSplitType {
         if (SpeedRunIGT.isInitialized()) return;
         for (String id : SPLIT_TYPES.keySet()) {
             if (id.equalsIgnoreCase(split.getID())) {
-                throw new IllegalArgumentException("This is an already registered RunSplitType ID.");
+                throw new IllegalArgumentException("ID \"" + id + "\" is an already registered RunSplitType ID.");
             }
         }
 
