@@ -71,6 +71,7 @@ public class TimerRecord {
     private boolean coop = false;
     private long timestamp = System.currentTimeMillis();
     private long resultTime = 0;
+    private boolean isGlitched = false;
     private String runCategory;
     private String version = "unknown";
     private final LinkedHashMap<String, Long> splitTimeline = new LinkedHashMap<>();
@@ -94,12 +95,13 @@ public class TimerRecord {
         getSplitTimeline().put(splitType.getID(), time);
     }
 
-    public void completeSplit(boolean isCoop) {
+    public void completeSplit(boolean isCoop, boolean isGlitched) {
         if (getRunCategory() == RunCategories.CUSTOM) return;
 
         version = SharedConstants.getGameVersion().getName();
         timestamp = System.currentTimeMillis();
         coop = isCoop;
+        this.isGlitched = isGlitched;
         RECORD_LIST.add(this);
         save();
     }
@@ -122,6 +124,10 @@ public class TimerRecord {
 
     public boolean isCoop() {
         return coop;
+    }
+
+    public boolean isGlitched() {
+        return isGlitched;
     }
 
     public void setRunCategory(RunCategory runCategory) {
