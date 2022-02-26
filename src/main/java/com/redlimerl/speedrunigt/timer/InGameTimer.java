@@ -350,7 +350,7 @@ public class InGameTimer {
 
         if (this.isGlitched && this.isServerIntegrated && MinecraftClient.getInstance().getServer() != null) {
             return MinecraftClient.getInstance().getServer().getPlayerManager().getPlayerList().get(0)
-                    .getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME)) * 50L;
+                    .getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_ONE_MINUTE)) * 50L;
         }
 
         long ms = System.currentTimeMillis();
