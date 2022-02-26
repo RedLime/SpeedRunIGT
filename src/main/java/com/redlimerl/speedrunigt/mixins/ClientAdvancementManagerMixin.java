@@ -76,7 +76,6 @@ public abstract class ClientAdvancementManagerMixin {
     @Inject(at = @At("RETURN"), method = "onAdvancements")
     public void onComplete(AdvancementUpdateS2CPacket packet, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
-        System.out.println(getCompleteAdvancementsCount());
 
         //All Advancements
         if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategories.ALL_ADVANCEMENTS) {
