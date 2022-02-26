@@ -11,9 +11,10 @@ import com.redlimerl.speedrunigt.timer.running.RunSplitTypes;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.stat.Stats;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.GameMode;
-import org.apache.commons.compress.utils.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -66,6 +67,7 @@ public class InGameTimer {
     private boolean isCompleted = false;
     boolean isServerIntegrated = true;
     boolean isCoop = false;
+    private boolean isGlitched = false;
     private int completeCount = 0;
 
     //Timer time
@@ -104,6 +106,7 @@ public class InGameTimer {
         INSTANCE.setCategory(SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY));
         INSTANCE.createNewTimerSplit(new TimerRecord(SpeedRunIGT.LATEST_PLAYED_SEED, RunType.getRunType(SpeedRunIGT.LATEST_IS_SSG, SpeedRunIGT.LATEST_IS_FSG), INSTANCE.getCategory()));
         INSTANCE.setPause(true, TimerStatus.IDLE);
+        INSTANCE.isGlitched = SpeedRunOption.getOption(SpeedRunOptions.TIMER_GLITCHED_MODE);
     }
 
     /**
@@ -163,7 +166,7 @@ public class InGameTimer {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.interactionManager != null && client.interactionManager.method_9667() == GameMode.SURVIVAL) {
             timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.COMPLETE, timer.getInGameTime());
-            timer.getTimerSplit().completeSplit(timer.isCoop());
+            timer.getTimerSplit().completeSplit(timer.isCoop(), timer.isGlitched);
         }
 
         if (timer.isCoop) TimerPacketHandler.sendCompleteC2S(timer);
@@ -187,8 +190,8 @@ public class InGameTimer {
 
             new Thread(() -> {
                 try {
-                    FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(currentWorldName).toFile(), "igt_timer" + (timer.completeCount == 0 ? "" : "_"+timer.completeCount) + ".log"), logInfo + timer.firstInput + "\r\n" + timer.pauseLog, Charsets.UTF_8);
-                    FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(currentWorldName).toFile(), "igt_freeze" + (timer.completeCount == 0 ? "" : "_"+timer.completeCount) + ".log"), logInfo + timer.freezeLog, Charsets.UTF_8);
+                    FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(currentWorldName).toFile(), "igt_timer" + (timer.completeCount == 0 ? "" : "_"+timer.completeCount) + ".log"), logInfo + timer.firstInput + "\r\n" + timer.pauseLog, StandardCharsets.UTF_8);
+                    FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(currentWorldName).toFile(), "igt_freeze" + (timer.completeCount == 0 ? "" : "_"+timer.completeCount) + ".log"), logInfo + timer.freezeLog, StandardCharsets.UTF_8);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -211,20 +214,23 @@ public class InGameTimer {
         INSTANCE.pauseCount = 0;
         INSTANCE.setPause(true, TimerStatus.IDLE);
 
+        save();
+        end();
+    }
+
+    private static void save() {
         String timerData = Crypto.encrypt(SpeedRunIGT.GSON.toJson(INSTANCE), cryptKey);
         String completeData = Crypto.encrypt(SpeedRunIGT.GSON.toJson(COMPLETED_INSTANCE), cryptKey);
         File worldDir = WORLD_SAVES_PATH.resolve(currentWorldName).toFile();
         try {
             if (worldDir.exists()) {
-                FileUtils.writeStringToFile(new File(worldDir, "timer.igt"), timerData, Charsets.UTF_8);
-                if (INSTANCE.isCompleted) FileUtils.writeStringToFile(new File(worldDir, "timer.c.igt"), completeData, Charsets.UTF_8);
+                FileUtils.writeStringToFile(new File(worldDir, "timer.igt"), timerData, StandardCharsets.UTF_8);
+                if (INSTANCE.isCompleted) FileUtils.writeStringToFile(new File(worldDir, "timer.c.igt"), completeData, StandardCharsets.UTF_8);
                 else FileUtils.deleteQuietly(new File(worldDir, "timer.c.igt"));
             }
         } catch (IOException e) {
             SpeedRunIGT.error("Failed to save timer data's :(");
         }
-
-        end();
     }
 
     public static boolean load(String name) {
@@ -343,6 +349,11 @@ public class InGameTimer {
         if (this.isCompleted && this != COMPLETED_INSTANCE) return COMPLETED_INSTANCE.getInGameTime(smooth);
         if (this.isCoop) return getRealTimeAttack();
 
+        if (this.isGlitched && this.isServerIntegrated && MinecraftClient.getInstance().getServer() != null) {
+            ServerPlayerEntity player = (ServerPlayerEntity) MinecraftClient.getInstance().getServer().getPlayerManager().players.get(0);
+            return player.getStatHandler().method_1729(Stats.MINUTES_PLAYED) * 50L;
+        }
+
         long ms = System.currentTimeMillis();
         return !isStarted() ? 0 :
                 (this.getTicks() * 50L) // Tick Based
@@ -433,6 +444,7 @@ public class InGameTimer {
                 }
             } else {
                 startTime = System.currentTimeMillis();
+                if (this.isGlitched) save();
                 if (loggerTicks != 0) leastStartTime = startTime;
                 sendTimerStartPacket();
             }
