@@ -73,6 +73,8 @@
   "speedrunigt.option.reload": "Reload Options",
   "speedrunigt.option.limitless_reset": "Timer Limitless Reset",
   "speedrunigt.option.limitless_reset.description": "When using a custom category timer,\nwhether the timer can be reset only once(Off) or limitless(On).",
+  "speedrunigt.option.glitched_timer": "Glitched Mode",
+  "speedrunigt.option.glitched_timer.description": "It is for the Glitched category.\nIGT to Displays by the world's ticks, like LiveSplit.",
   "speedrunigt.option.split_notification": "Split Notification",
   "speedrunigt.option.split_notification.none": "None",
   "speedrunigt.option.split_notification.toast": "Toast",

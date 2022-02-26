@@ -188,9 +188,10 @@ public class TimerRecordListScreen extends Screen {
             private TimerSplitEntry(TimerRecord split) {
                 this.split = split;
                 this.time = split.getTimestamp();
-                this.titleText = new LiteralText(String.format("%s - %s %s%s",
-                        split.getVersion(), (split.isCoop() ? "Co-op " : "") + split.getRunCategory().getText().getString(), split.getRunType().getContext(),
-                        (split.getRunType() == RunType.SET_SEED || split.getRunType() == RunType.SAVED_WORLD) ? (" [" + split.getSeed() + "]") : ""))
+                this.titleText = new LiteralText(String.format("%s - %s %s%s%s",
+                        split.getVersion(), (split.isCoop() ? "Co-op " : "") + split.getRunCategory().getText().asFormattedString(), split.getRunType().getContext(),
+                        (split.getRunType() == RunType.SET_SEED || split.getRunType() == RunType.SAVED_WORLD) ? (" [" + split.getSeed() + "]") : "",
+                        (split.isGlitched() ? " (Glitched)" : "")))
                         .setStyle(new Style().setFormatting(Formatting.GRAY));
                 for (Map.Entry<String, Long> splitPoint : split.getSplitTimeline().entrySet()) {
                     RunSplitType splitType = RunSplitType.getSplitType(splitPoint.getKey());
