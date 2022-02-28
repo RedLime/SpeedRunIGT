@@ -12,7 +12,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.GameMode;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 
