@@ -3,7 +3,6 @@ package com.redlimerl.speedrunigt.option;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import com.redlimerl.speedrunigt.timer.running.RunCategory;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
