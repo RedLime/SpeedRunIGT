@@ -139,9 +139,12 @@ public abstract class MinecraftClientMixin {
         if (!this.options.hudHidden && this.world != null && timer.getStatus() != TimerStatus.NONE
                 && (!this.isPaused() || this.currentScreen instanceof CreditsScreen || this.currentScreen instanceof GameMenuScreen || !SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS))
                 && !(!this.isPaused() && SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) && this.options.debugEnabled)
-                && !(this.currentScreen instanceof TimerCustomizeScreen)) {
+                && !(this.currentScreen instanceof TimerCustomizeScreen)
+                && MixinValues.IS_RENDERED_BEFORE) {
             SpeedRunIGT.TIMER_DRAWER.draw();
         }
+
+        MixinValues.IS_RENDERED_BEFORE = false;
     }
 
 
