@@ -176,14 +176,16 @@ public class InGameTimer {
                     + "Run Date : " + simpleDateFormat.format(new Date()) + "\r\n"
                     + "====================\r\n";
 
-            new Thread(() -> {
+            String worldName = currentWorldName;
+            saveManagerThread.submit(() -> {
                 try {
-                    FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(currentWorldName).toFile(), "igt_timer" + (timer.completeCount == 0 ? "" : "_"+timer.completeCount) + ".log"), logInfo + timer.firstInput + "\r\n" + timer.pauseLog, StandardCharsets.UTF_8);
-                    FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(currentWorldName).toFile(), "igt_freeze" + (timer.completeCount == 0 ? "" : "_"+timer.completeCount) + ".log"), logInfo + timer.freezeLog, StandardCharsets.UTF_8);
+                    FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(worldName).toFile(), "igt_timer" + (timer.completeCount == 0 ? "" : "_"+timer.completeCount) + ".log"), logInfo + timer.firstInput + "\r\n" + timer.pauseLog, StandardCharsets.UTF_8);
+                    FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(worldName).toFile(), "igt_freeze" + (timer.completeCount == 0 ? "" : "_"+timer.completeCount) + ".log"), logInfo + timer.freezeLog, StandardCharsets.UTF_8);
                 } catch (IOException e) {
                     e.printStackTrace();
+                    SpeedRunIGT.error("Failed to save timer logs :( RTA : " + timeToStringFormat(timer.getRealTimeAttack(false)) + " / IGT : " + timeToStringFormat(timer.getInGameTime()));
                 }
-            }).start();
+            });
         }
 
         for (Consumer<InGameTimer> onCompleteConsumer : onCompleteConsumers) {
@@ -211,9 +213,8 @@ public class InGameTimer {
     private static void save() {
         if (waitingSaveTask != null || saveManagerThread.isShutdown() || saveManagerThread.isTerminated()) return;
 
-        String timerData = Crypto.encrypt(SpeedRunIGT.GSON.toJson(INSTANCE), cryptKey);
-        String completeData = Crypto.encrypt(SpeedRunIGT.GSON.toJson(COMPLETED_INSTANCE), cryptKey);
-        File worldDir = WORLD_SAVES_PATH.resolve(currentWorldName).toFile();
+        String worldName = currentWorldName, timerData = SpeedRunIGT.GSON.toJson(INSTANCE), completeData = SpeedRunIGT.GSON.toJson(COMPLETED_INSTANCE);
+        File worldDir = WORLD_SAVES_PATH.resolve(worldName).toFile();
 
         long time = System.currentTimeMillis();
         waitingSaveTask = () -> {
@@ -236,15 +237,15 @@ public class InGameTimer {
                     }
 
                     // Save data
-                    FileUtils.writeStringToFile(timerFile, timerData, StandardCharsets.UTF_8);
-                    if (INSTANCE.isCompleted) FileUtils.writeStringToFile(timerCompleteFile, completeData, StandardCharsets.UTF_8);
+                    FileUtils.writeStringToFile(timerFile, Crypto.encrypt(SpeedRunIGT.GSON.toJson(INSTANCE), cryptKey), StandardCharsets.UTF_8);
+                    if (INSTANCE.isCompleted) FileUtils.writeStringToFile(timerCompleteFile, Crypto.encrypt(SpeedRunIGT.GSON.toJson(COMPLETED_INSTANCE), cryptKey), StandardCharsets.UTF_8);
                 }
             } catch (Throwable e) {
                 e.printStackTrace();
                 SpeedRunIGT.error("Failed to save timer data's :(");
             } finally {
                 waitingSaveTask = null;
-                SpeedRunIGT.debug((System.currentTimeMillis() - time) + "ms save");
+                //SpeedRunIGT.debug((System.currentTimeMillis() - time) + "ms save");
             }
         };
         saveManagerThread.submit(waitingSaveTask);
