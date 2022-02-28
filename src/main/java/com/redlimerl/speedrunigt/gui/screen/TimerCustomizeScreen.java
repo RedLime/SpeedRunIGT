@@ -181,8 +181,6 @@ public class TimerCustomizeScreen extends Screen {
 
     @Override
     public boolean keyPressed(int keyCode, int j, int k) {
-        System.out.println(j);
-        System.out.println(k);
         if (keyCode >= 262 && keyCode <= 265 && client != null && !drawer.isLocked()) {
             int moveX = keyCode == 262 ? 1 : keyCode == 263 ? -1 : 0;
             int moveY = keyCode == 265 ? -1 : keyCode == 264 ? 1 : 0;
