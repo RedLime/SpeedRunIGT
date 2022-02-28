@@ -11,7 +11,6 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
-import com.redlimerl.speedrunigt.timer.running.RunSplitTypes;
 import com.redlimerl.speedrunigt.utils.FontUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
@@ -69,7 +68,6 @@ public abstract class MinecraftClientMixin {
 
     @Inject(at = @At("HEAD"), method = "createWorld")
     public void onCreate(String worldName, LevelInfo levelInfo, DynamicRegistryManager.Impl registryTracker, GeneratorOptions generatorOptions, CallbackInfo ci) {
-        SpeedRunIGT.LATEST_PLAYED_SEED = generatorOptions.getSeed();
         InGameTimer.start();
         currentDimension = null;
         InGameTimer.currentWorldName = worldName;
@@ -115,17 +113,6 @@ public abstract class MinecraftClientMixin {
         //Enter End
         if (timer.getCategory() == RunCategories.ENTER_END && Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionType.THE_END_ID.toString())) {
             InGameTimer.complete();
-            return;
-        }
-
-        //Timer Split
-        if (timer.getCategory() == RunCategories.ANY) {
-            if (Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionType.THE_NETHER_ID.toString())) {
-                timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_NETHER, timer.getInGameTime());
-            }
-            else if (Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionType.THE_END_ID.toString())) {
-                timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_END, timer.getInGameTime());
-            }
         }
     }
 
