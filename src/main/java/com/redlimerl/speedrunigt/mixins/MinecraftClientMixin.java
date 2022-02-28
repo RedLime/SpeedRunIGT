@@ -8,7 +8,6 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
-import com.redlimerl.speedrunigt.timer.running.RunSplitTypes;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
@@ -58,7 +57,6 @@ public abstract class MinecraftClientMixin {
     public void onCreate(String name, String displayName, LevelInfo levelInfo, CallbackInfo ci) {
         try {
             if (levelInfo != null) {
-                SpeedRunIGT.LATEST_PLAYED_SEED = levelInfo.getSeed();
                 InGameTimer.start();
                 currentDimension = null;
                 InGameTimer.currentWorldName = name;
@@ -100,16 +98,6 @@ public abstract class MinecraftClientMixin {
         //Enter End
         if (timer.getCategory() == RunCategories.ENTER_END && targetWorld.dimension instanceof TheEndDimension) {
             InGameTimer.complete();
-        }
-
-        //Timer splits
-        if (timer.getCategory() == RunCategories.ANY) {
-            if (targetWorld.dimension instanceof TheNetherDimension) {
-                timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_NETHER, timer.getInGameTime(false));
-            }
-            if (targetWorld.dimension instanceof TheEndDimension) {
-                timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_END, timer.getInGameTime(false));
-            }
         }
     }
 

@@ -3,7 +3,6 @@ package com.redlimerl.speedrunigt.mixins;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
-import com.redlimerl.speedrunigt.timer.running.RunSplitTypes;
 import net.minecraft.*;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
@@ -38,19 +37,6 @@ public abstract class ClientAdvancementManagerMixin {
             //How Did We Get Here
             if (timer.getCategory() == RunCategories.HOW_DID_WE_GET_HERE && Objects.equals(advancement.method_14801().toString(), new Identifier("nether/all_effects").toString())) {
                 InGameTimer.complete();
-            }
-
-            //Timer Split
-            if (timer.getCategory() == RunCategories.ANY) {
-                if (Objects.equals(advancement.method_14801().toString(), new Identifier("story/follow_ender_eye").toString())) {
-                    timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_STRONG_HOLD, timer.getInGameTime());
-                }
-                else if (Objects.equals(advancement.method_14801().toString(), new Identifier("nether/find_fortress").toString())) {
-                    timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_FORTRESS, timer.getInGameTime());
-                }
-                else if (Objects.equals(advancement.method_14801().toString(), new Identifier("nether/find_bastion").toString())) {
-                    timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_BASTION, timer.getInGameTime());
-                }
             }
         }
         return entry.getValue();

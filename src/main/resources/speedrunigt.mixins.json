@@ -20,7 +20,6 @@
     "keybinding.KeyBindingAccessor",
     "network.ClientPlayNetworkHandlerMixin",
     "network.ServerPlayNetworkHandlerMixin",
-    "screen.CreateWorldScreenMixin",
     "screen.CreditsScreenMixin",
     "screen.DownloadingTerrainScreenMixin",
     "screen.GameMenuScreenMixin",
