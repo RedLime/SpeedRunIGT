@@ -63,7 +63,7 @@ public class SpeedRunOptionScreen extends Screen {
 
         method_13411(new ConsumerButtonWidget(width - 85, height - 35, 70, 20, ScreenTexts.CANCEL, (button) -> method_18608()));
 
-        method_13411(new ConsumerButtonWidget(width - 160, height - 35, 70, 20, new TranslatableText("speedrunigt.menu.donate").asFormattedString(), (button) -> Util.getOperatingSystem().method_20236("https://ko-fi.com/redlimerl")));
+        method_13411(new ConsumerButtonWidget(15, height - 35, 70, 20, new TranslatableText("speedrunigt.menu.donate").asFormattedString(), (button) -> Util.getOperatingSystem().method_20236("https://ko-fi.com/redlimerl")));
 
         buttonListWidget = new ButtonScrollListWidget();
 
