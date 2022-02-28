@@ -65,7 +65,7 @@ public class SpeedRunOptionScreen extends Screen {
 
         addDrawableChild(new ButtonWidget(width - 85, height - 35, 70, 20, ScreenTexts.CANCEL, (ButtonWidget button) -> onClose()));
 
-        addDrawableChild(new ButtonWidget(width - 160, height - 35, 70, 20, new TranslatableText("speedrunigt.menu.donate"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://ko-fi.com/redlimerl")));
+        addDrawableChild(new ButtonWidget(15, height - 35, 70, 20, new TranslatableText("speedrunigt.menu.donate"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://ko-fi.com/redlimerl")));
 
         buttonListWidget = addSelectableChild(new ButtonScrollListWidget());
 
