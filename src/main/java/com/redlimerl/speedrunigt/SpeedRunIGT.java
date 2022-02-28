@@ -7,12 +7,9 @@ import com.redlimerl.speedrunigt.api.SpeedRunIGTApi;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunIGTInfoScreen;
 import com.redlimerl.speedrunigt.impl.CategoryRegistryImpl;
 import com.redlimerl.speedrunigt.impl.OptionButtonsImpl;
-import com.redlimerl.speedrunigt.impl.SplitTypeRegistryImpl;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
-import com.redlimerl.speedrunigt.timer.TimerRecord;
 import com.redlimerl.speedrunigt.timer.running.RunCategory;
-import com.redlimerl.speedrunigt.timer.running.RunSplitType;
 import com.redlimerl.speedrunigt.utils.FontIdentifier;
 import com.redlimerl.speedrunigt.utils.FontUtils;
 import com.redlimerl.speedrunigt.utils.KeyBindingRegistry;
@@ -47,9 +44,6 @@ public class SpeedRunIGT implements ClientModInitializer {
     public static String DEBUG_DATA = "";
     public static String MOD_VERSION;
     public static HashMap<Identifier, FontIdentifier> FONT_MAPS = new HashMap<>();
-    public static Long LATEST_PLAYED_SEED = 0L;
-    public static boolean LATEST_IS_SSG = false;
-    public static boolean LATEST_IS_FSG = false;
 
     public static final Gson GSON = new GsonBuilder().create();
     public static final Path WORLDS_PATH = FabricLoader.getInstance().getGameDir().resolve("saves");
@@ -90,8 +84,6 @@ public class SpeedRunIGT implements ClientModInitializer {
         SpeedRunOption.addOptionButtonFactories(new OptionButtonsImpl().createOptionButtons().toArray(new OptionButtonFactory[0]));
         // init default categories
         new CategoryRegistryImpl().registerCategories().forEach(RunCategory::registerCategory);
-        // init default split types
-        new SplitTypeRegistryImpl().registerSplitTypes().forEach(RunSplitType::registrySplitType);
 
 
         // Registry API's
@@ -113,14 +105,6 @@ public class SpeedRunIGT implements ClientModInitializer {
             // Registry multiple categories
             Collection<RunCategory> multipleCategories = api.registerCategories();
             if (multipleCategories != null) multipleCategories.forEach(RunCategory::registerCategory);
-
-            // Registry single split type
-            RunSplitType runSplitType = api.registerSplitType();
-            if (runSplitType != null) RunSplitType.registrySplitType(runSplitType);
-
-            // Registry multiple split types
-            Collection<RunSplitType> runSplitTypes = api.registerSplitTypes();
-            if (runSplitTypes != null) runSplitTypes.forEach(RunSplitType::registrySplitType);
 
             API_PROVIDERS.add(entryPoint.getProvider());
         }
