@@ -3,7 +3,6 @@ package com.redlimerl.speedrunigt.api;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.running.RunCategory;
-import com.redlimerl.speedrunigt.timer.running.RunSplitType;
 import net.fabricmc.loader.api.ModContainer;
 
 import java.util.ArrayList;
@@ -28,14 +27,6 @@ public interface SpeedRunIGTApi {
     }
 
     default Collection<RunCategory> registerCategories() {
-        return new ArrayList<>();
-    }
-
-    default RunSplitType registerSplitType() {
-        return null;
-    }
-
-    default Collection<RunSplitType> registerSplitTypes() {
         return new ArrayList<>();
     }
 }

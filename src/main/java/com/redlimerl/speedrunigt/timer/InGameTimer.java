@@ -7,8 +7,6 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import com.redlimerl.speedrunigt.timer.running.RunCategory;
-import com.redlimerl.speedrunigt.timer.running.RunSplitTypes;
-import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -62,7 +60,6 @@ public class InGameTimer {
     }
 
     private String category = RunCategories.ANY.getID();
-    private TimerRecord timerRecord = null;
     private final boolean isResettable;
     private boolean isCompleted = false;
     boolean isServerIntegrated = true;
@@ -104,7 +101,6 @@ public class InGameTimer {
     public static void start() {
         INSTANCE = new InGameTimer();
         INSTANCE.setCategory(SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY));
-        INSTANCE.createNewTimerSplit(new TimerRecord(SpeedRunIGT.LATEST_PLAYED_SEED, RunType.getRunType(SpeedRunIGT.LATEST_IS_SSG, SpeedRunIGT.LATEST_IS_FSG), INSTANCE.getCategory()));
         INSTANCE.setPause(true, TimerStatus.IDLE);
         INSTANCE.isGlitched = SpeedRunOption.getOption(SpeedRunOptions.TIMER_GLITCHED_MODE);
     }
@@ -114,10 +110,8 @@ public class InGameTimer {
      */
     public static void reset() {
         if (INSTANCE.isCompleted || INSTANCE.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
-        TimerRecord oldTimerRecord = INSTANCE.getTimerSplit();
 
         INSTANCE = new InGameTimer(false);
-        INSTANCE.createNewTimerSplit(new TimerRecord(oldTimerRecord.getSeed(), oldTimerRecord.getRunType(), oldTimerRecord.getRunCategory()));
         INSTANCE.setCategory(RunCategories.CUSTOM);
         INSTANCE.setPause(true, TimerStatus.IDLE);
         INSTANCE.setPause(false);
@@ -162,12 +156,6 @@ public class InGameTimer {
         timer.endTime = endTime;
         timer.endIGTTime = timer.endTime - timer.leastTickTime;
         timer.setStatus(TimerStatus.COMPLETED_LEGACY);
-
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.interactionManager != null && client.interactionManager.method_9667() == GameMode.SURVIVAL) {
-            timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.COMPLETE, timer.getInGameTime());
-            timer.getTimerSplit().completeSplit(timer.isCoop(), timer.isGlitched);
-        }
 
         if (timer.isCoop) TimerPacketHandler.sendCompleteC2S(timer);
 
@@ -260,20 +248,8 @@ public class InGameTimer {
         return RunCategory.getCategory(category);
     }
 
-    public TimerRecord getTimerSplit() {
-        return timerRecord;
-    }
-
-    public void createNewTimerSplit(TimerRecord timerRecord) {
-        this.timerRecord = timerRecord;
-    }
-
     public void setCategory(RunCategory category) {
         this.category = category.getID();
-        if (this.timerRecord != null) {
-            this.timerRecord.getSplitTimeline().clear();
-            this.timerRecord.setRunCategory(category);
-        }
     }
 
     public boolean isCoop() {

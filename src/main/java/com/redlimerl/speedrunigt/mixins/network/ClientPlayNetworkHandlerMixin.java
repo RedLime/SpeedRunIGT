@@ -27,10 +27,6 @@ public class ClientPlayNetworkHandlerMixin {
                 TimerPacketHandler.receiveCompleteS2C(packet.getPayload());
             }
 
-            if (Objects.equals(packet.getChannel(), TimerPacketHandler.PACKET_TIMER_SPLIT_ID)) {
-                TimerPacketHandler.receiveSplitS2C(packet.getPayload());
-            }
-
             ci.cancel();
         }
     }
