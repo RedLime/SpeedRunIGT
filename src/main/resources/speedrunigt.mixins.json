@@ -8,6 +8,7 @@
   "client": [
     "ClientPlayerEntityMixin",
     "ClientWorldMixin",
+    "GameRendererMixin",
     "KeyBindingMixin",
     "LivingEntityMixin",
     "MinecraftClientMixin",
