@@ -18,6 +18,7 @@ import net.minecraft.text.TranslatableText;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Locale;
 
 import static com.redlimerl.speedrunigt.SpeedRunIGT.TIMER_DRAWER;
 
@@ -192,13 +193,27 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
 
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
-                        new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.glitched_timer").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.TIMER_GLITCHED_MODE) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString(),
+                        new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.legacy_igt_mode").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString(),
                                 (button) -> {
-                                    SpeedRunOption.setOption(SpeedRunOptions.TIMER_GLITCHED_MODE, !SpeedRunOption.getOption(SpeedRunOptions.TIMER_GLITCHED_MODE));
-                                    button.message = (new TranslatableText("speedrunigt.option.glitched_timer").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.TIMER_GLITCHED_MODE) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
+                                    SpeedRunOption.setOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE, !SpeedRunOption.getOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE));
+                                    button.message = (new TranslatableText("speedrunigt.option.legacy_igt_mode").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
                                 })
                 )
-                .setToolTip(() -> I18n.translate("speedrunigt.option.glitched_timer.description"))
+                .setToolTip(() -> I18n.translate("speedrunigt.option.legacy_igt_mode.description"))
+                .setCategory("speedrunigt.option.category.timer")
+        );
+
+        factories.add(screen -> new OptionButtonFactory.Builder()
+                .setButtonWidget(
+                        new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.auto_save_interval").append(" : ").append(new TranslatableText("speedrunigt.option.auto_save_interval." + SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE).name().toLowerCase(Locale.ROOT)).asFormattedString()).asFormattedString(),
+                                (button) -> {
+                                    int order = SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE).ordinal() + 1;
+                                    SpeedRunOptions.TimerSaveInterval[] intervals = SpeedRunOptions.TimerSaveInterval.values();
+                                    SpeedRunOption.setOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE, intervals[order % intervals.length]);
+                                    button.message = (new TranslatableText("speedrunigt.option.auto_save_interval").append(" : ").append(new TranslatableText("speedrunigt.option.auto_save_interval." + SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE).name().toLowerCase(Locale.ROOT)).asFormattedString()).asFormattedString());
+                                })
+                )
+                .setToolTip(() -> I18n.translate("speedrunigt.option.auto_save_interval.description"))
                 .setCategory("speedrunigt.option.category.timer")
         );
 
