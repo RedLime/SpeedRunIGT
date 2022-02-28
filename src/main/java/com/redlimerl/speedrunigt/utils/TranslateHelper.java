@@ -33,7 +33,9 @@ public class TranslateHelper {
 
         for (String langFileName : getLangFileNames()) {
             if (langFileName.isEmpty()) continue;
-            Map<String, String> translations = SpeedRunIGT.GSON.fromJson(getResource("/lang/"+langFileName), type);
+            String resource = getResource("/lang/"+langFileName);
+            if (resource == null) continue;
+            Map<String, String> translations = SpeedRunIGT.GSON.fromJson(resource, type);
             for (String key : translations.keySet()) {
                 if (!LANGUAGE_KEYS.contains(key)) LANGUAGE_KEYS.add(key);
             }
@@ -64,7 +66,10 @@ public class TranslateHelper {
 
     private static String getResource(String path) throws IOException {
         InputStream langInputStream = TranslateHelper.class.getResourceAsStream(path);
-        if (langInputStream == null) throw new IOException("'" + path + "' directory is null");
+        if (langInputStream == null) {
+            SpeedRunIGT.error("Failed to load '" + path + "' resource, try again to get jar resource");
+            return null;
+        }
 
         String result = IOUtils.toString(langInputStream, StandardCharsets.UTF_8);
         langInputStream.close();
@@ -72,8 +77,10 @@ public class TranslateHelper {
     }
 
     public static String[] getLangFileNames() throws IOException {
-        if (FabricLoader.getInstance().isDevelopmentEnvironment())
-            return getResource("/lang").split("\n");
+        if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
+            String resource = getResource("/lang");
+            if (resource != null) return resource.split("\n");
+        }
 
         CodeSource src = TranslateHelper.class.getProtectionDomain().getCodeSource();
         ArrayList<String> list = new ArrayList<>();
