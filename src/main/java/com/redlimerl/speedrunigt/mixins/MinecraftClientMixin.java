@@ -123,7 +123,7 @@ public abstract class MinecraftClientMixin {
                 && (timer.getStatus() == TimerStatus.IDLE ) && InGameTimer.checkingWorld && Mouse.isGrabbed() && Display.isActive() && Mouse.isInsideWindow()) {
             WorldRendererAccessor worldRendererAccessor = (WorldRendererAccessor) worldRenderer;
             worldRenderer.getChunksDebugString(); // For init MixinValues#completedChunks value
-            int chunks = MixinValues.COMPLETED_RENDER_CHUNKS;
+            int chunks = worldRendererAccessor.getRegularEntityCount();
             int entities = worldRendererAccessor.getRegularEntityCount() - (options.perspective > 0 ? 0 : 1);
             if (chunks + entities > 0) {
                 if (!(SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) && !timer.isStarted())) {
