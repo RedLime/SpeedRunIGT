@@ -150,7 +150,7 @@ public class SpeedRunOptions {
         }
     };
 
-    public static final OptionArgument<Boolean> TIMER_GLITCHED_MODE = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "glitched_category"), false) {
+    public static final OptionArgument<Boolean> TIMER_LEGACY_IGT_MODE = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "legacy_igt_mod"), false) {
         @Override
         public Boolean valueFromString(String string) {
             return Objects.equals(string, "true");
@@ -159,6 +159,19 @@ public class SpeedRunOptions {
         @Override
         public String valueToString(Boolean value) {
             return value.toString();
+        }
+    };
+
+    public enum TimerSaveInterval { NONE, PAUSE, TICKS }
+    public static final OptionArgument<TimerSaveInterval> TIMER_DATA_AUTO_SAVE = new OptionArgument<TimerSaveInterval>(new Identifier(SpeedRunIGT.MOD_ID, "auto_save_interval"), TimerSaveInterval.NONE) {
+        @Override
+        public TimerSaveInterval valueFromString(String string) {
+            return TimerSaveInterval.valueOf(string);
+        }
+
+        @Override
+        public String valueToString(TimerSaveInterval value) {
+            return value.name();
         }
     };
 
@@ -316,19 +329,6 @@ public class SpeedRunOptions {
         @Override
         public String valueToString(Float value) {
             return String.valueOf(value);
-        }
-    };
-
-    public enum SplitDisplayType { NONE, MESSAGE, TOAST }
-    public static final OptionArgument<SplitDisplayType> SPLIT_DISPLAY_TYPE = new OptionArgument<SplitDisplayType>(new Identifier(SpeedRunIGT.MOD_ID, "split_display_type"), SplitDisplayType.NONE) {
-        @Override
-        public SplitDisplayType valueFromString(String string) {
-            return SplitDisplayType.valueOf(string);
-        }
-
-        @Override
-        public String valueToString(SplitDisplayType value) {
-            return value.name();
         }
     };
 }
