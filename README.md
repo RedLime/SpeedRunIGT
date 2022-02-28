@@ -16,31 +16,15 @@ The **Timer** Mod for Minecraft Speedrun
 - [Release Page](https://github.com/RedLime/SpeedRunIGT/releases)
 
 ## How to install & use
-> If you are using 1.14+
-- Install [Fabric Loader](https://fabricmc.net/use/installer/) (0.12.2 version or above)
-- Download `.jar` file to the version you are using in release page.
-- Put the `.jar` file in the *`Minecraft instance folder`/mods* folder.
-- Launch Minecraft
-> If you are using Pre-1.14
-- Install [Legacy Fabric Loader (direct link)](https://jitpack.io/com/github/Legacy-Fabric/fabric-installer/-SNAPSHOT/fabric-installer--SNAPSHOT.jar) (0.12.2 version or above)
-- Download `.jar` file to the version you are using in release page.
-- Put the `.jar` file in the *`Minecraft instance folder`/mods* folder.
-- Launch Minecraft
+- [Link](https://github.com/RedLime/SpeedRunIGT/wiki/How-to-install)
 
 ## Support Versions
 ### Stable Versions
-- 1.16.1
-- 1.17.1 
-- 1.15.2
-- 1.14.4
-- 1.8.9 (with Legacy Fabric)
-- 1.7.10 (with Legacy Fabric)
+- 1.16.1, 1.17.1, 1.15.2, 1.14.4
+- 1.8.9, 1.7.10 (with Legacy Fabric)
 ### LTS Versions (No longer feature update)
-- 1.16.5
-- 1.18.1
-- 20w14∞
-- 1.8.0 (with Legacy Fabric)
-- 1.12.2 (with Legacy Fabric)
+- 20w14∞, 1.16.5, 1.18.1
+- 1.8.0, 1.9.4, 1.12.2, 1.13.2 (with Legacy Fabric)
 
 ## FaQ
 - Is it allowed in *[Speedrun.com](https://speedrun.com/mc)* run verification? ✅
