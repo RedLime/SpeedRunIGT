@@ -9,7 +9,6 @@ import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import com.redlimerl.speedrunigt.timer.running.RunCategory;
 import com.redlimerl.speedrunigt.timer.running.RunSplitTypes;
 import com.redlimerl.speedrunigt.timer.running.RunType;
-import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stat.Stats;
@@ -163,7 +162,7 @@ public class InGameTimer {
         timer.setStatus(TimerStatus.COMPLETED_LEGACY);
 
         MinecraftClient client = MinecraftClient.getInstance();
-        if (client.interactionManager != null && client.interactionManager.getCurrentGameMode() == GameMode.SURVIVAL) {
+        if (client.interactionManager != null && client.interactionManager.method_9667() == GameMode.SURVIVAL) {
             timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.COMPLETE, timer.getInGameTime());
             timer.getTimerSplit().completeSplit(timer.isCoop(), timer.isGlitched);
         }
@@ -182,7 +181,7 @@ public class InGameTimer {
                 timer.pauseLog.append(", Excluded RTA Time: ").append(timeToStringFormat(timer.excludedTime));
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy.MM.dd HH:mm:ss");
-            String logInfo = "MC Version : " + SharedConstants.getGameVersion().getName() + "\r\n"
+            String logInfo = "MC Version : " + SpeedRunIGT.MOD_VERSION.split("\\+")[1] + "\r\n"
                     + "Timer Version : " + SpeedRunIGT.MOD_VERSION + "\r\n"
                     + "Run Date : " + simpleDateFormat.format(new Date()) + "\r\n"
                     + "====================\r\n";
@@ -220,7 +219,7 @@ public class InGameTimer {
     private static void save() {
         String timerData = Crypto.encrypt(SpeedRunIGT.GSON.toJson(INSTANCE), cryptKey);
         String completeData = Crypto.encrypt(SpeedRunIGT.GSON.toJson(COMPLETED_INSTANCE), cryptKey);
-        File worldDir = MinecraftClient.getInstance().getLevelStorage().getSavesDirectory().resolve(currentWorldName).toFile();
+        File worldDir = MinecraftClient.getInstance().getCurrentSave().method_17969(currentWorldName).toFile();
         try {
             if (worldDir.exists()) {
                 FileUtils.writeStringToFile(new File(worldDir, "timer.igt"), timerData, StandardCharsets.UTF_8);
@@ -233,7 +232,7 @@ public class InGameTimer {
     }
 
     public static boolean load(String name) {
-        Path worldPath = MinecraftClient.getInstance().getLevelStorage().getSavesDirectory().resolve(name);
+        Path worldPath = MinecraftClient.getInstance().getCurrentSave().method_17969(name);
         File file = new File(worldPath.toFile(), "timer.igt");
         File completeFile = new File(worldPath.toFile(), "timer.c.igt");
         if (file.exists()) {
@@ -349,8 +348,8 @@ public class InGameTimer {
         if (this.isCoop) return getRealTimeAttack();
 
         if (this.isGlitched && this.isServerIntegrated && MinecraftClient.getInstance().getServer() != null) {
-            return MinecraftClient.getInstance().getServer().getPlayerManager().getPlayerList().get(0)
-                    .getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_ONE_MINUTE)) * 50L;
+            return MinecraftClient.getInstance().getServer().getPlayerManager().getPlayers().get(0)
+                    .getStatHandler().method_21434(Stats.CUSTOM.method_21429(Stats.PLAY_ONE_MINUTE)) * 50L;
         }
 
         long ms = System.currentTimeMillis();

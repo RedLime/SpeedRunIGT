@@ -1,8 +1,8 @@
 package com.redlimerl.speedrunigt.api;
 
-import com.redlimerl.speedrunigt.mixins.access.AbstractButtonWidgetAccessor;
+import com.redlimerl.speedrunigt.gui.ConsumerButtonWidget;
+import com.redlimerl.speedrunigt.mixins.access.ButtonWidgetAccessor;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.AbstractButtonWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
 
 import java.util.function.Supplier;
@@ -10,11 +10,11 @@ import java.util.function.Supplier;
 public interface OptionButtonFactory {
     class Builder {
         private String category = null;
-        private AbstractButtonWidget buttonWidget = new ButtonWidget(0, 0, 150, 20, "", button -> {});
+        private ButtonWidget buttonWidget = new ConsumerButtonWidget(0, 0, 150, 20, "", button -> {});
         private Supplier<String> tooltip = null;
 
-        public Builder setButtonWidget(AbstractButtonWidget buttonWidget) {
-            AbstractButtonWidgetAccessor buttonWidgetAccessor = (AbstractButtonWidgetAccessor) buttonWidget;
+        public Builder setButtonWidget(ButtonWidget buttonWidget) {
+            ButtonWidgetAccessor buttonWidgetAccessor = (ButtonWidgetAccessor) buttonWidget;
             if (buttonWidget.getWidth() != 150 || buttonWidgetAccessor.getHeight() != 20) throw new IllegalArgumentException("ButtonWidget should be width 150, height 20");
             this.buttonWidget = buttonWidget;
             return this;
@@ -37,9 +37,9 @@ public interface OptionButtonFactory {
 
     class Storage {
         private final String category;
-        private final AbstractButtonWidget buttonWidget;
+        private final ButtonWidget buttonWidget;
         private final Supplier<String> tooltip;
-        public Storage(String category, AbstractButtonWidget buttonWidget, Supplier<String> tooltip) {
+        public Storage(String category, ButtonWidget buttonWidget, Supplier<String> tooltip) {
             this.category = category;
             this.buttonWidget = buttonWidget;
             this.tooltip = tooltip;
@@ -49,7 +49,7 @@ public interface OptionButtonFactory {
             return category;
         }
 
-        public AbstractButtonWidget getButtonWidget() {
+        public ButtonWidget getButtonWidget() {
             return buttonWidget;
         }
 

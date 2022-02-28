@@ -3,8 +3,8 @@ package com.redlimerl.speedrunigt.mixins;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
+import net.minecraft.class_3460;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.world.World;
@@ -20,11 +20,11 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Shadow protected boolean dead;
 
-    public LivingEntityMixin(EntityType<?> type, World world) {
+    public LivingEntityMixin(class_3460<?> type, World world) {
         super(type, world);
     }
 
-    @Inject(at = @At("HEAD"), method = "onDeath")
+    @Inject(at = @At("HEAD"), method = "onKilled")
     public void onDeath(DamageSource source, CallbackInfo ci) {
         @NotNull InGameTimer timer = InGameTimer.getInstance();
 
@@ -32,10 +32,10 @@ public abstract class LivingEntityMixin extends Entity {
 
         //Kill All Bosses
         if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {
-            if (this.getType() == EntityType.WITHER) {
+            if (this.method_15557() == class_3460.field_16737) {
                 timer.updateMoreData(1, 1);
             }
-            if (this.getType() == EntityType.ELDER_GUARDIAN) {
+            if (this.method_15557() == class_3460.field_16798) {
                 timer.updateMoreData(2, 1);
             }
             if (timer.getMoreData(0) == 1 && timer.getMoreData(1) == 1 && timer.getMoreData(2) == 1)
@@ -44,13 +44,13 @@ public abstract class LivingEntityMixin extends Entity {
         }
 
         //Kill Wither
-        if (timer.getCategory() == RunCategories.KILL_WITHER && this.getType() == EntityType.WITHER) {
+        if (timer.getCategory() == RunCategories.KILL_WITHER && this.method_15557() == class_3460.field_16737) {
             InGameTimer.complete();
             return;
         }
 
         //Kill Elder Guardian
-        if (timer.getCategory() == RunCategories.KILL_ELDER_GUARDIAN && this.getType() == EntityType.ELDER_GUARDIAN) {
+        if (timer.getCategory() == RunCategories.KILL_ELDER_GUARDIAN && this.method_15557() == class_3460.field_16798) {
             InGameTimer.complete();
         }
     }

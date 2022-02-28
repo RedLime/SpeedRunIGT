@@ -6,7 +6,6 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.SplitDisplayType;
 import com.redlimerl.speedrunigt.timer.running.*;
-import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import org.apache.commons.io.FileUtils;
 
@@ -99,7 +98,7 @@ public class TimerRecord {
     public void completeSplit(boolean isCoop, boolean isGlitched) {
         if (getRunCategory() == RunCategories.CUSTOM) return;
 
-        version = SharedConstants.getGameVersion().getName();
+        version = SpeedRunIGT.MOD_VERSION.split("\\+")[1];
         timestamp = System.currentTimeMillis();
         coop = isCoop;
         this.isGlitched = isGlitched;

@@ -2,37 +2,27 @@ package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
-import com.redlimerl.speedrunigt.mixins.access.FontManagerAccessor;
-import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
 import com.redlimerl.speedrunigt.mixins.access.WorldRendererAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
-import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import com.redlimerl.speedrunigt.timer.running.RunSplitTypes;
-import com.redlimerl.speedrunigt.utils.FontUtils;
+import net.minecraft.class_3793;
+import net.minecraft.class_4112;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.Mouse;
-import net.minecraft.client.font.Font;
-import net.minecraft.client.font.FontStorage;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.options.GameOptions;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.resource.ReloadableResourceManager;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.SinglePreparationResourceReloadListener;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.profiler.Profiler;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.level.LevelInfo;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -40,13 +30,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin {
@@ -64,13 +47,11 @@ public abstract class MinecraftClientMixin {
 
     @Shadow public abstract boolean isWindowFocused();
 
-    @Shadow private ReloadableResourceManager resourceManager;
+    @Shadow @Final public Profiler profiler;
 
-    @Shadow public Mouse mouse;
+    @Shadow public class_4112 field_19945;
 
-    @Shadow public abstract Profiler getProfiler();
-
-    @Inject(at = @At("HEAD"), method = "startIntegratedServer")
+    @Inject(at = @At("HEAD"), method = "startGame")
     public void onCreate(String name, String displayName, LevelInfo levelInfo, CallbackInfo ci) {
         try {
             if (levelInfo != null) {
@@ -94,14 +75,14 @@ public abstract class MinecraftClientMixin {
         }
     }
 
-    private static DimensionType currentDimension = null;
+    private static class_3793 currentDimension = null;
 
-    @Inject(at = @At("HEAD"), method = "joinWorld")
+    @Inject(at = @At("HEAD"), method = "connect")
     public void onJoin(ClientWorld targetWorld, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
-        if (timer.getStatus() == TimerStatus.NONE) return;
+        if (timer.getStatus() == TimerStatus.NONE || targetWorld == null) return;
 
-        currentDimension = targetWorld.getDimension().getType();
+        currentDimension = targetWorld.dimension.method_11789();
         InGameTimer.checkingWorld = true;
 
         if (timer.getStatus() != TimerStatus.NONE) {
@@ -109,29 +90,29 @@ public abstract class MinecraftClientMixin {
         }
 
         //Enter Nether
-        if (timer.getCategory() == RunCategories.ENTER_NETHER && targetWorld.getDimension().getType() == DimensionType.THE_NETHER) {
+        if (timer.getCategory() == RunCategories.ENTER_NETHER && targetWorld.dimension.method_11789() == class_3793.field_18955) {
             InGameTimer.complete();
             return;
         }
 
         //Enter End
-        if (timer.getCategory() == RunCategories.ENTER_END && targetWorld.getDimension().getType() == DimensionType.THE_END) {
+        if (timer.getCategory() == RunCategories.ENTER_END && targetWorld.dimension.method_11789() == class_3793.field_18956) {
             InGameTimer.complete();
             return;
         }
 
         //Timer Split
         if (timer.getCategory() == RunCategories.ANY) {
-            if (targetWorld.getDimension().getType() == DimensionType.THE_NETHER) {
+            if (targetWorld.dimension.method_11789() == class_3793.field_18955) {
                 timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_NETHER, timer.getInGameTime());
             }
-            else if (targetWorld.getDimension().getType() == DimensionType.THE_END) {
+            else if (targetWorld.dimension.method_11789() == class_3793.field_18956) {
                 timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_END, timer.getInGameTime());
             }
         }
     }
 
-    @ModifyVariable(method = "render(Z)V", at = @At(value = "STORE"), ordinal = 1)
+    @ModifyVariable(method = "method_18228", at = @At(value = "STORE"), ordinal = 1)
     private boolean renderMixin(boolean paused) {
         InGameTimer timer = InGameTimer.getInstance();
 
@@ -145,14 +126,14 @@ public abstract class MinecraftClientMixin {
     }
 
 
-    @Inject(method = "render", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/client/toast/ToastManager;draw()V", shift = At.Shift.AFTER))
+    @Inject(method = "method_18228", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/class_3264;method_18450()V", shift = At.Shift.AFTER))
     private void drawTimer(CallbackInfo ci) {
-        this.getProfiler().swap("timer");
+        this.profiler.swap("timer");
         InGameTimer timer = InGameTimer.getInstance();
 
-        if (worldRenderer != null && world != null && world.getDimension().getType() == currentDimension && !isPaused() && isWindowFocused()
-                && timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld && this.mouse.isCursorLocked()) {
+        if (worldRenderer != null && world != null && world.dimension.method_11789() == currentDimension && !isPaused() && isWindowFocused()
+                && timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld && this.field_19945.method_18252()) {
             WorldRendererAccessor worldRendererAccessor = (WorldRendererAccessor) worldRenderer;
             int chunks = worldRendererAccessor.invokeCompletedChunkCount();
             int entities = worldRendererAccessor.getRegularEntityCount() - (options.perspective > 0 ? 0 : 1);
@@ -167,7 +148,7 @@ public abstract class MinecraftClientMixin {
         }
 
         SpeedRunIGT.DEBUG_DATA = timer.getStatus().name();
-        if (!this.options.hudHidden && this.world != null && timer.getStatus() != TimerStatus.NONE
+        if (!this.options.field_19987 && this.world != null && timer.getStatus() != TimerStatus.NONE
                 && (!this.isPaused() || this.currentScreen instanceof CreditsScreen || this.currentScreen instanceof GameMenuScreen || !SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS))
                 && !(!this.isPaused() && SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) && this.options.debugEnabled)
                 && !(this.currentScreen instanceof TimerCustomizeScreen)) {
@@ -175,56 +156,8 @@ public abstract class MinecraftClientMixin {
         }
     }
 
-
-    /**
-     * Add import font system
-     */
-    @Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/debug/DebugRenderer;<init>(Lnet/minecraft/client/MinecraftClient;)V", shift = At.Shift.BEFORE))
-    public void onInit(CallbackInfo ci) {
-        this.resourceManager.registerListener(new SinglePreparationResourceReloadListener<Map<Identifier, List<Font>>>() {
-            @Override
-            protected Map<Identifier, List<Font>> prepare(ResourceManager manager, Profiler profiler) {
-                SpeedRunIGT.FONT_MAPS.clear();
-                try {
-                    HashMap<Identifier, List<Font>> map = new HashMap<>();
-
-                    File[] fontFiles = SpeedRunIGT.FONT_PATH.toFile().listFiles();
-                    if (fontFiles == null) return new HashMap<>();
-
-                    for (File file : Arrays.stream(fontFiles).filter(file -> file.getName().endsWith(".ttf")).collect(Collectors.toList())) {
-                        File config = SpeedRunIGT.FONT_PATH.resolve(file.getName().substring(0, file.getName().length() - 4) + ".json").toFile();
-                        if (config.exists()) {
-                            FontUtils.addFont(map, file, config);
-                        } else {
-                            FontUtils.addFont(map, file, null);
-                        }
-                    }
-                    return map;
-                } catch (Throwable e) {
-                    return new HashMap<>();
-                }
-            }
-
-            @Override
-            protected void apply(Map<Identifier, List<Font>> loader, ResourceManager manager, Profiler profiler) {
-                try {
-                    FontManagerAccessor fontManagerAccessor = (FontManagerAccessor) ((MinecraftClientAccessor) MinecraftClient.getInstance()).getFontManager();
-                    for (Map.Entry<Identifier, List<Font>> listEntry : loader.entrySet()) {
-                        fontManagerAccessor.getTextRenderers().computeIfAbsent(listEntry.getKey(),
-                                        (identifierX) -> new TextRenderer(fontManagerAccessor.getTextureManager(), new FontStorage(fontManagerAccessor.getTextureManager(), identifierX)))
-                                .setFonts(listEntry.getValue());
-                    }
-                    TimerDrawer.fontHeightMap.clear();
-                } catch (Throwable e) {
-                    SpeedRunIGT.error("Error! failed import timer fonts!");
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
     // Crash safety
-    @Inject(method = "addDetailsToCrashReport", at = @At("HEAD"))
+    @Inject(method = "addSystemDetailsToCrashReport", at = @At("HEAD"))
     public void onCrash(CrashReport report, CallbackInfoReturnable<CrashReport> cir) {
         if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) InGameTimer.leave();
     }

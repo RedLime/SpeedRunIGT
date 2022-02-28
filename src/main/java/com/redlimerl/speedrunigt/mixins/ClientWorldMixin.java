@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientWorld.class)
 public class ClientWorldMixin {
 
-    @Inject(at = @At("HEAD"), method = "tick")
+    @Inject(at = @At("HEAD"), method = "method_16327")
     public void onTick(CallbackInfo ci) {
         InGameTimer.getInstance().tick();
     }

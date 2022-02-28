@@ -68,18 +68,6 @@ public class SpeedRunOptions {
         }
     };
 
-    public static final OptionArgument<Identifier> TIMER_TEXT_FONT = new OptionArgument<Identifier>(new Identifier(SpeedRunIGT.MOD_ID, "timer_text_font"), MinecraftClient.DEFAULT_TEXT_RENDERER_ID) {
-        @Override
-        public Identifier valueFromString(String string) {
-            return Identifier.tryParse(string);
-        }
-
-        @Override
-        public String valueToString(Identifier value) {
-            return value.toString();
-        }
-    };
-
     public static final OptionArgument<Boolean> TOGGLE_TIMER = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "toggle_timer"), true) {
         @Override
         public Boolean valueFromString(String string) {
@@ -248,7 +236,7 @@ public class SpeedRunOptions {
         }
     };
 
-    public static final OptionArgument<Integer> TIMER_IGT_COLOR = new OptionArgument<Integer>(new Identifier(SpeedRunIGT.MOD_ID, "timer_igt_color"), Formatting.YELLOW.getColorValue()) {
+    public static final OptionArgument<Integer> TIMER_IGT_COLOR = new OptionArgument<Integer>(new Identifier(SpeedRunIGT.MOD_ID, "timer_igt_color"), Formatting.YELLOW.method_15108()) {
         @Override
         public Integer valueFromString(String string) {
             return Integer.parseInt(string);
@@ -260,7 +248,7 @@ public class SpeedRunOptions {
         }
     };
 
-    public static final OptionArgument<Integer> TIMER_RTA_COLOR = new OptionArgument<Integer>(new Identifier(SpeedRunIGT.MOD_ID, "timer_rta_color"), Formatting.AQUA.getColorValue()) {
+    public static final OptionArgument<Integer> TIMER_RTA_COLOR = new OptionArgument<Integer>(new Identifier(SpeedRunIGT.MOD_ID, "timer_rta_color"), Formatting.AQUA.method_15108()) {
         @Override
         public Integer valueFromString(String string) {
             return Integer.parseInt(string);

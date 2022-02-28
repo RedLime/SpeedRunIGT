@@ -18,20 +18,18 @@ public class TimerElement {
     private String text;
     private Integer color;
     private TimerDecoration decoration;
-    private float fontHeight = 8;
 
-    public TimerElement(TextRenderer textRenderer) {
-        this.textRenderer = textRenderer;
+    public TimerElement() {
+        this.textRenderer = client.textRenderer;
     }
 
-    public void init(float xPos, float yPos, float scale, String text, Integer color, TimerDecoration decoration, float fontHeight) {
+    public void init(float xPos, float yPos, float scale, String text, Integer color, TimerDecoration decoration) {
         this.scale = scale;
         this.text = text;
         this.color = color;
         this.decoration = decoration;
-        this.fontHeight = fontHeight;
-        int scaledWindowWidth = client.window.getScaledWidth();
-        int scaledWindowHeight = client.window.getScaledHeight();
+        int scaledWindowWidth = client.field_19944.method_18321();
+        int scaledWindowHeight = client.field_19944.method_18322();
 
         int translateX = (int) (xPos * scaledWindowWidth);
         int translateY = (int) (yPos * scaledWindowHeight);
@@ -65,18 +63,18 @@ public class TimerElement {
 
     private static void drawOutLine(TextRenderer textRenderer, int x, int y, String text, Integer color, TimerDecoration decoration) {
         if (decoration == TimerDecoration.OUTLINE) {
-            textRenderer.draw(text, (float)x + 1, (float)y + 1, 0);
-            textRenderer.draw(text, (float)x + 1, (float)y, 0);
-            textRenderer.draw(text, (float)x + 1, (float)y - 1, 0);
-            textRenderer.draw(text, (float)x, (float)y - 1, 0);
-            textRenderer.draw(text, (float)x, (float)y + 1, 0);
-            textRenderer.draw(text, (float)x - 1, (float)y + 1, 0);
-            textRenderer.draw(text, (float)x - 1, (float)y, 0);
-            textRenderer.draw(text, (float)x - 1, (float)y - 1, 0);
+            textRenderer.method_18355(text, (float)x + 1, (float)y + 1, 0);
+            textRenderer.method_18355(text, (float)x + 1, (float)y, 0);
+            textRenderer.method_18355(text, (float)x + 1, (float)y - 1, 0);
+            textRenderer.method_18355(text, (float)x, (float)y - 1, 0);
+            textRenderer.method_18355(text, (float)x, (float)y + 1, 0);
+            textRenderer.method_18355(text, (float)x - 1, (float)y + 1, 0);
+            textRenderer.method_18355(text, (float)x - 1, (float)y, 0);
+            textRenderer.method_18355(text, (float)x - 1, (float)y - 1, 0);
         } else if (decoration == TimerDecoration.SHADOW) {
-            textRenderer.draw(text, (float)x + 1, (float)y + 1, -12566464);
+            textRenderer.method_18355(text, (float)x + 1, (float)y + 1, -12566464);
         }
-        textRenderer.draw(text, (float)x, (float)y, color);
+        textRenderer.method_18355(text, (float)x, (float)y, color);
     }
 
     public Position getPosition() {
@@ -88,6 +86,7 @@ public class TimerElement {
     }
 
     public int getScaledTextHeight() {
+        float fontHeight = 8;
         return Math.round(fontHeight * scale);
     }
 }

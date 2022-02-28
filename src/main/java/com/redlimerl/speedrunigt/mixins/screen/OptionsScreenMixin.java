@@ -5,7 +5,6 @@ import com.redlimerl.speedrunigt.gui.screen.SpeedRunOptionScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SettingsScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,26 +19,25 @@ public class OptionsScreenMixin extends Screen {
 
     private ButtonWidget timerButton;
 
-    protected OptionsScreenMixin(Text title) {
-        super(title);
-    }
-
     @Inject(method = "init", at = @At("TAIL"))
     private void onInit(CallbackInfo ci) {
-        timerButton = new ButtonWidget(this.width / 2 - 180, this.height / 6 - 12, 20, 20, "", (buttonWidget) -> {
-            if (this.minecraft != null) {
-                this.minecraft.openScreen(new SpeedRunOptionScreen(this));
+        timerButton = new ButtonWidget(123456, this.width / 2 - 180, this.height / 6 - 12, 20, 20, "") {
+            @Override
+            public void method_18374(double d, double e) {
+                if (OptionsScreenMixin.this.client != null) {
+                    OptionsScreenMixin.this.client.openScreen(new SpeedRunOptionScreen(OptionsScreenMixin.this));
+                }
             }
-        });
-        this.addButton(timerButton);
+        };
+        method_13411(timerButton);
     }
 
     @Inject(method = "render", at = @At("TAIL"))
     private void renderEnderPearl(int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        if (this.minecraft != null) {
-            this.minecraft.getTextureManager().bindTexture(timerButton.isHovered() ? ENDER_EYE :
+        if (this.client != null) {
+            this.client.getTextureManager().bindTexture(timerButton.isHovered() ? ENDER_EYE :
                     SpeedRunIGTInfoScreen.UPDATE_STATUS == SpeedRunIGTInfoScreen.UpdateStatus.OUTDATED ? BLAZE_POWDER : ENDER_PEARL);
-            blit(timerButton.x + 2, timerButton.y + 2, 0.0F, 0.0F, 16, 16, 16, 16);
+            drawTexture(timerButton.x + 2, timerButton.y + 2, 0.0F, 0.0F, 16, 16, 16, 16);
         }
     }
 }
