@@ -19,7 +19,7 @@ public class TimeCommandMixin {
         try {
             if (time == 0 && InGameTimer.getInstance().getStatus() != TimerStatus.NONE && InGameTimer.getInstance().isCoop()
             && source.getPlayer().getServer() != null) {
-                TimerPacketHandler.sendInitS2C(source.getPlayer().getServer().getPlayerManager().getPlayerList(), System.currentTimeMillis(), InGameTimer.getInstance().getCategory(), InGameTimer.getInstance().getTimerSplit().getSeed(), InGameTimer.getInstance().getTimerSplit().getRunType());
+                TimerPacketHandler.sendInitS2C(source.getPlayer().getServer().getPlayerManager().getPlayerList(), System.currentTimeMillis(), InGameTimer.getInstance().getCategory());
             }
         } catch (CommandSyntaxException ignored) {
         }
