@@ -3,7 +3,6 @@ package com.redlimerl.speedrunigt.mixins;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
-import com.redlimerl.speedrunigt.timer.running.RunSplitTypes;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementManager;
 import net.minecraft.advancement.AdvancementProgress;
@@ -54,20 +53,6 @@ public abstract class ClientAdvancementManagerMixin {
             //Arbalistic
             if (timer.getCategory() == RunCategories.ARBALISTIC && Objects.equals(advancement.getId().toString(), new Identifier("adventure/arbalistic").toString())) {
                 InGameTimer.complete();
-            }
-
-
-            //Timer Split
-            if (timer.getCategory() == RunCategories.ANY) {
-                if (Objects.equals(advancement.getId().toString(), new Identifier("story/follow_ender_eye").toString())) {
-                    timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_STRONG_HOLD, timer.getInGameTime());
-                }
-                else if (Objects.equals(advancement.getId().toString(), new Identifier("nether/find_fortress").toString())) {
-                    timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_FORTRESS, timer.getInGameTime());
-                }
-                else if (Objects.equals(advancement.getId().toString(), new Identifier("nether/find_bastion").toString())) {
-                    timer.getTimerSplit().tryUpdateSplit(RunSplitTypes.ENTER_BASTION, timer.getInGameTime());
-                }
             }
         }
         return entry.getValue();
