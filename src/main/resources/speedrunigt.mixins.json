@@ -15,6 +15,7 @@
     "StatHandlerMixin",
     "WorldRendererMixin",
     "access.ButtonWidgetAccessor",
+    "access.LevelStorageAccessor",
     "access.WorldRendererAccessor",
     "coop.PlayerManagerMixin",
     "coop.TimeCommandMixin",

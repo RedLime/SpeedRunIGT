@@ -3,6 +3,7 @@ package com.redlimerl.speedrunigt.timer;
 import com.google.gson.Gson;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.crypt.Crypto;
+import com.redlimerl.speedrunigt.mixins.access.LevelStorageAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
@@ -41,7 +42,7 @@ public class InGameTimer {
 
     private static final String cryptKey = "faRQOs2GK5j863eP";
     private static Path getWorldSavePath(String name) {
-        return MinecraftClient.getInstance().getCurrentSave().method_11957(name, "./").toPath();
+        return ((LevelStorageAccessor) MinecraftClient.getInstance().getCurrentSave()).getFile().toPath().resolve(name);
     }
 
     @NotNull
