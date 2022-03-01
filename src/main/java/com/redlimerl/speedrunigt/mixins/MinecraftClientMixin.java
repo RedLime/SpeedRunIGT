@@ -73,17 +73,12 @@ public abstract class MinecraftClientMixin {
     public void onCreate(String name, String displayName, LevelInfo levelInfo, CallbackInfo ci) {
         try {
             if (levelInfo != null) {
-                InGameTimer.start();
-                currentDimension = null;
-                InGameTimer.currentWorldName = name;
+                InGameTimer.start(name);
             } else {
                 boolean loaded = InGameTimer.load(name);
                 if (!loaded) InGameTimer.end();
-                else {
-                    InGameTimer.currentWorldName = name;
-                }
-                currentDimension = null;
             }
+            currentDimension = null;
         } catch (Exception e) {
             InGameTimer.end();
             currentDimension = null;
