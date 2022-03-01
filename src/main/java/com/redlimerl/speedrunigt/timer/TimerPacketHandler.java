@@ -71,7 +71,7 @@ public class TimerPacketHandler {
             RunCategory category = RunCategory.getCategory(buffer.readBytes(64).toString(StandardCharsets.UTF_8).trim());
 
             if (InGameTimer.getInstance().startTime != startTime) {
-                InGameTimer.start();
+                InGameTimer.start("");
                 InGameTimer.getInstance().startTime = startTime;
                 InGameTimer.getInstance().setCategory(category);
             }
