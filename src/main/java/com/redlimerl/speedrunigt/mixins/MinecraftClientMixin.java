@@ -68,9 +68,8 @@ public abstract class MinecraftClientMixin {
 
     @Inject(at = @At("HEAD"), method = "createWorld")
     public void onCreate(String worldName, LevelInfo levelInfo, DynamicRegistryManager.Impl registryTracker, GeneratorOptions generatorOptions, CallbackInfo ci) {
-        InGameTimer.start();
+        InGameTimer.start(worldName);
         currentDimension = null;
-        InGameTimer.currentWorldName = worldName;
     }
 
     @Inject(at = @At("HEAD"), method = "startIntegratedServer(Ljava/lang/String;)V")
@@ -78,9 +77,6 @@ public abstract class MinecraftClientMixin {
         try {
             boolean loaded = InGameTimer.load(worldName);
             if (!loaded) InGameTimer.end();
-            else {
-                InGameTimer.currentWorldName = worldName;
-            }
             currentDimension = null;
         } catch (Exception e) {
             InGameTimer.end();
