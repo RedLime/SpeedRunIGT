@@ -39,7 +39,9 @@ public class InGameTimer {
     private static InGameTimer COMPLETED_INSTANCE = new InGameTimer();
 
     private static final String cryptKey = "faRQOs2GK5j863eP";
-    private static final Path WORLD_SAVES_PATH = MinecraftClient.getInstance().getCurrentSave().method_17969("./");
+    private static Path getWorldSavePath(String name) {
+        return MinecraftClient.getInstance().getCurrentSave().method_17969(name);
+    }
 
     @NotNull
     public static InGameTimer getInstance() { return INSTANCE; }
@@ -202,22 +204,23 @@ public class InGameTimer {
 
         INSTANCE.leaveTime = System.currentTimeMillis();
         INSTANCE.pauseCount = 0;
-        INSTANCE.setPause(true, TimerStatus.IDLE);
+        INSTANCE.setPause(true, TimerStatus.LEAVE);
 
-        save();
-        end();
+        save(true);
     }
 
-    private static Runnable waitingSaveTask = null;
+    private static boolean waitingSaveTask = false;
     private static final ExecutorService saveManagerThread = Executors.newFixedThreadPool(2);
-    private static void save() {
-        if (waitingSaveTask != null || saveManagerThread.isShutdown() || saveManagerThread.isTerminated()) return;
+    private static void save() { save(false); }
+    private static void save(boolean withLeave) {
+        if (waitingSaveTask || saveManagerThread.isShutdown() || saveManagerThread.isTerminated()) return;
 
-        String worldName = currentWorldName, timerData = SpeedRunIGT.GSON.toJson(INSTANCE), completeData = SpeedRunIGT.GSON.toJson(COMPLETED_INSTANCE);
-        File worldDir = WORLD_SAVES_PATH.resolve(worldName).toFile();
+        String worldName = currentWorldName, timerData = SpeedRunIGT.GSON.toJson(INSTANCE) + "", completeData = SpeedRunIGT.GSON.toJson(COMPLETED_INSTANCE) + "";
+        File worldDir = getWorldSavePath(worldName).toFile();
+        if (withLeave) end();
 
-        long time = System.currentTimeMillis();
-        waitingSaveTask = () -> {
+        waitingSaveTask = true;
+        saveManagerThread.submit(() -> {
             try {
                 if (worldDir.exists()) {
                     File timerFile = new File(worldDir, "timer.igt");
@@ -237,31 +240,29 @@ public class InGameTimer {
                     }
 
                     // Save data
-                    FileUtils.writeStringToFile(timerFile, Crypto.encrypt(SpeedRunIGT.GSON.toJson(INSTANCE), cryptKey), StandardCharsets.UTF_8);
-                    if (INSTANCE.isCompleted) FileUtils.writeStringToFile(timerCompleteFile, Crypto.encrypt(SpeedRunIGT.GSON.toJson(COMPLETED_INSTANCE), cryptKey), StandardCharsets.UTF_8);
+                    FileUtils.writeStringToFile(timerFile, Crypto.encrypt(timerData, cryptKey), StandardCharsets.UTF_8);
+                    if (INSTANCE.isCompleted) FileUtils.writeStringToFile(timerCompleteFile, Crypto.encrypt(completeData, cryptKey), StandardCharsets.UTF_8);
+
+                    waitingSaveTask = false;
                 }
             } catch (Throwable e) {
                 e.printStackTrace();
                 SpeedRunIGT.error("Failed to save timer data's :(");
-            } finally {
-                waitingSaveTask = null;
-                //SpeedRunIGT.debug((System.currentTimeMillis() - time) + "ms save");
             }
-        };
-        saveManagerThread.submit(waitingSaveTask);
+        });
     }
 
     public static boolean load(String name) {
-        Path worldPath = WORLD_SAVES_PATH.resolve(name);
+        Path worldPath = getWorldSavePath(name);
         String isOld = "";
         while (true) {
             File file = new File(worldPath.toFile(), "timer.igt"+isOld);
             File completeFile = new File(worldPath.toFile(), "timer.c.igt"+isOld);
             if (file.exists()) {
-                String instanceData, completeData = "";
                 try {
                     INSTANCE = SpeedRunIGT.GSON.fromJson(Crypto.decrypt(FileUtils.readFileToString(file, StandardCharsets.UTF_8), cryptKey), InGameTimer.class);
                     if (completeFile.exists()) COMPLETED_INSTANCE = SpeedRunIGT.GSON.fromJson(Crypto.decrypt(FileUtils.readFileToString(completeFile, StandardCharsets.UTF_8), cryptKey), InGameTimer.class);
+                    SpeedRunIGT.debug("Loaded Timer Saved Data! " + isOld);
                     return true;
                 } catch (Throwable e) {
                     if (!isOld.isEmpty()) return false;
@@ -441,13 +442,13 @@ public class InGameTimer {
                     pauseLog.append("#").append(pauseCount).append(") ").append(timeToStringFormat(getInGameTime(false))).append(" IGT, ").append(timeToStringFormat(loggerPausedTime)).append(" RTA S, ");
                 }
                 this.setStatus(toStatus);
-                if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE) == SpeedRunOptions.TimerSaveInterval.PAUSE) save();
+                if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE) == SpeedRunOptions.TimerSaveInterval.PAUSE && status != TimerStatus.LEAVE) save();
             }
         } else {
             if (this.isStarted()) {
                 if (isPaused()) {
                     long nowTime = getRealTimeAttack();
-                    pauseLog.append(timeToStringFormat(nowTime)).append(" RTA E, ").append(timeToStringFormat(nowTime - loggerPausedTime)).append(" Length (").append(leaveTime != 0 ? TimerStatus.LEAVE_LEGACY.getMessage() : getStatus().getMessage()).append(")\r\n");
+                    pauseLog.append(timeToStringFormat(nowTime)).append(" RTA E, ").append(timeToStringFormat(nowTime - loggerPausedTime)).append(" Length (").append(leaveTime != 0 ? TimerStatus.LEAVE.getMessage() : getStatus().getMessage()).append(")\r\n");
                     if (this.getCategory() == RunCategories.ALL_ADVANCEMENTS && leaveTime != 0) excludedTime = System.currentTimeMillis() - leaveTime;
                     leaveTime = 0;
                 }
