@@ -35,18 +35,18 @@ import java.util.function.Consumer;
 public class InGameTimer {
 
     @NotNull
-    private static InGameTimer INSTANCE = new InGameTimer();
+    private static InGameTimer INSTANCE = new InGameTimer("");
     @NotNull
-    private static InGameTimer COMPLETED_INSTANCE = new InGameTimer();
+    private static InGameTimer COMPLETED_INSTANCE = new InGameTimer("");
 
     private static final String cryptKey = "faRQOs2GK5j863eP";
+
     private static Path getWorldSavePath(String name) {
         return ((LevelStorageAccessor) MinecraftClient.getInstance().getCurrentSave()).getFile().toPath().resolve(name);
     }
 
     @NotNull
     public static InGameTimer getInstance() { return INSTANCE; }
-    public static String currentWorldName = "";
     public static boolean checkingWorld = true;
 
     private static final ArrayList<Consumer<InGameTimer>> onCompleteConsumers = new ArrayList<>();
@@ -55,13 +55,15 @@ public class InGameTimer {
         onCompleteConsumers.add(supplier);
     }
 
-    public InGameTimer() {
-        this(true);
+    public InGameTimer(String worldName) {
+        this(worldName, true);
     }
-    public InGameTimer(boolean isResettable) {
+    public InGameTimer(String worldName, boolean isResettable) {
+        this.worldName = worldName;
         this.isResettable = isResettable;
     }
 
+    private final String worldName;
     private String category = RunCategories.ANY.getID();
     private final boolean isResettable;
     private boolean isCompleted = false;
@@ -101,8 +103,8 @@ public class InGameTimer {
     /**
      * Start the Timer, Trigger when player to join(created) the world
      */
-    public static void start() {
-        INSTANCE = new InGameTimer();
+    public static void start(String worldName) {
+        INSTANCE = new InGameTimer(worldName);
         INSTANCE.setCategory(SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY));
         INSTANCE.setPause(true, TimerStatus.IDLE);
         INSTANCE.isGlitched = SpeedRunOption.getOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE);
@@ -114,7 +116,7 @@ public class InGameTimer {
     public static void reset() {
         if (INSTANCE.isCompleted || INSTANCE.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
 
-        INSTANCE = new InGameTimer(false);
+        INSTANCE = new InGameTimer(INSTANCE.worldName, false);
         INSTANCE.setCategory(RunCategories.CUSTOM);
         INSTANCE.setPause(true, TimerStatus.IDLE);
         INSTANCE.setPause(false);
@@ -179,7 +181,7 @@ public class InGameTimer {
                     + "Run Date : " + simpleDateFormat.format(new Date()) + "\r\n"
                     + "====================\r\n";
 
-            String worldName = currentWorldName;
+            String worldName = INSTANCE.worldName;
             saveManagerThread.submit(() -> {
                 try {
                     FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(worldName).toFile(), "igt_timer" + (timer.completeCount == 0 ? "" : "_"+timer.completeCount) + ".log"), logInfo + timer.firstInput + "\r\n" + timer.pauseLog, StandardCharsets.UTF_8);
@@ -214,9 +216,9 @@ public class InGameTimer {
     private static final ExecutorService saveManagerThread = Executors.newFixedThreadPool(2);
     private static void save() { save(false); }
     private static void save(boolean withLeave) {
-        if (waitingSaveTask || saveManagerThread.isShutdown() || saveManagerThread.isTerminated()) return;
+        if (waitingSaveTask || saveManagerThread.isShutdown() || saveManagerThread.isTerminated() || !INSTANCE.isServerIntegrated) return;
 
-        String worldName = currentWorldName, timerData = SpeedRunIGT.GSON.toJson(INSTANCE) + "", completeData = SpeedRunIGT.GSON.toJson(COMPLETED_INSTANCE) + "";
+        String worldName = INSTANCE.worldName, timerData = SpeedRunIGT.GSON.toJson(INSTANCE) + "", completeData = SpeedRunIGT.GSON.toJson(COMPLETED_INSTANCE) + "";
         File worldDir = getWorldSavePath(worldName).toFile();
         if (withLeave) end();
 
@@ -270,8 +272,7 @@ public class InGameTimer {
                     isOld = ".old";
                 }
             } else if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_START_GENERATED_WORLD) && isOld.isEmpty()) {
-                InGameTimer.start();
-                InGameTimer.currentWorldName = name;
+                InGameTimer.start(name);
                 return true;
             } else return false;
         }
@@ -443,7 +444,7 @@ public class InGameTimer {
                     pauseLog.append("#").append(pauseCount).append(") ").append(timeToStringFormat(getInGameTime(false))).append(" IGT, ").append(timeToStringFormat(loggerPausedTime)).append(" RTA S, ");
                 }
                 this.setStatus(toStatus);
-                if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE) == SpeedRunOptions.TimerSaveInterval.PAUSE && status != TimerStatus.LEAVE) save();
+                if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE) == SpeedRunOptions.TimerSaveInterval.PAUSE && status != TimerStatus.LEAVE && this.isStarted()) save();
             }
         } else {
             if (this.isStarted()) {
