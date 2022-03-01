@@ -29,7 +29,7 @@ public abstract class KeyBindingMixin {
         KeyBinding keyBinding = KEY_TO_BINDINGS.get(key);
         if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
         if (keyBinding != null && pressed) {
-            if (keyBinding == MinecraftClient.getInstance().options.keyAdvancements // Advancement
+            if (keyBinding == MinecraftClient.getInstance().options.advancementsKey // Advancement
                     || Objects.equals(keyBinding.getCategory(), "key.categories.inventory")
                     || (((MinecraftClientAccessor) MinecraftClient.getInstance()).getAttackCooldown() != 10000 && Objects.equals(keyBinding.getCategory(), "key.categories.gameplay"))) {
                 if (timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld) {

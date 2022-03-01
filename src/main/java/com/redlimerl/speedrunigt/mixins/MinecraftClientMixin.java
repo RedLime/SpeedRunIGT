@@ -22,7 +22,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.resource.ReloadableResourceManager;
+import net.minecraft.resource.ReloadableResourceManagerImpl;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.SinglePreparationResourceReloader;
 import net.minecraft.util.Identifier;
@@ -62,12 +62,12 @@ public abstract class MinecraftClientMixin {
 
     @Shadow public abstract boolean isWindowFocused();
 
-    @Shadow @Final private ReloadableResourceManager resourceManager;
-
     @Shadow private Profiler profiler;
 
+    @Shadow @Final private ReloadableResourceManagerImpl resourceManager;
+
     @Inject(at = @At("HEAD"), method = "createWorld")
-    public void onCreate(String worldName, LevelInfo levelInfo, DynamicRegistryManager.Impl registryTracker, GeneratorOptions generatorOptions, CallbackInfo ci) {
+    public void onCreate(String worldName, LevelInfo levelInfo, DynamicRegistryManager dynamicRegistryManager, GeneratorOptions generatorOptions, CallbackInfo ci) {
         InGameTimer.start(worldName);
         currentDimension = null;
     }

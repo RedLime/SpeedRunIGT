@@ -51,11 +51,11 @@ public class FontConfigScreen extends Screen {
             }
         }));
 
-        addDrawableChild(new ButtonWidget(width / 2 - 50, height - 40, 100, 20, ScreenTexts.CANCEL, button -> this.onClose()));
+        addDrawableChild(new ButtonWidget(width / 2 - 50, height - 40, 100, 20, ScreenTexts.CANCEL, button -> this.close()));
     }
 
     @Override
-    public void onClose() {
+    public void close() {
         if (client != null) client.setScreen(parent);
     }
 

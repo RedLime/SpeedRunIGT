@@ -75,7 +75,7 @@ public class SpeedRunIGTInfoScreen extends Screen {
     }
 
     @Override
-    public void onClose() {
+    public void close() {
         if (client != null) {
             client.setScreen(parent);
         }
@@ -96,7 +96,7 @@ public class SpeedRunIGTInfoScreen extends Screen {
                 c.setReadTimeout(10000);
 
                 InputStreamReader r = new InputStreamReader(c.getInputStream(), StandardCharsets.UTF_8);
-                JsonElement jsonElement = new JsonParser().parse(r);
+                JsonElement jsonElement = JsonParser.parseReader(r);
                 if (jsonElement.getAsJsonArray().size() == 0) {
                     UPDATE_STATUS = UpdateStatus.UNKNOWN;
                 } else {

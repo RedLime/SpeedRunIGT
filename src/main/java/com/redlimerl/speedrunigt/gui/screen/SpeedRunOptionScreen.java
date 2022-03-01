@@ -63,7 +63,7 @@ public class SpeedRunOptionScreen extends Screen {
             }
         }
 
-        addDrawableChild(new ButtonWidget(width - 85, height - 35, 70, 20, ScreenTexts.CANCEL, (ButtonWidget button) -> onClose()));
+        addDrawableChild(new ButtonWidget(width - 85, height - 35, 70, 20, ScreenTexts.CANCEL, (ButtonWidget button) -> close()));
 
         addDrawableChild(new ButtonWidget(15, height - 35, 70, 20, new TranslatableText("speedrunigt.menu.donate"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://ko-fi.com/redlimerl")));
 
@@ -73,7 +73,7 @@ public class SpeedRunOptionScreen extends Screen {
     }
 
     @Override
-    public void onClose() {
+    public void close() {
         if (this.client != null) this.client.setScreen(parent);
     }
 

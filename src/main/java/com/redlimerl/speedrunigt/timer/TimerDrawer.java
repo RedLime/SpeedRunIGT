@@ -10,11 +10,11 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.RenderableGlyph;
 import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.gui.hud.BackgroundHelper;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.ColorHelper;
 
 import java.util.HashMap;
 
@@ -306,7 +306,7 @@ public class TimerDrawer {
             Position rtaMax = new Position(rtaMin.getX() + rtaTimerElement.getScaledTextWidth() + ((rtaPadding - 1) + rtaPadding), rtaMin.getY() + rtaTimerElement.getScaledTextHeight() + ((rtaPadding - 1) + rtaPadding));
             Position igtMin = new Position(igtTimerElement.getPosition().getX() - igtPadding, igtTimerElement.getPosition().getY() - igtPadding);
             Position igtMax = new Position(igtMin.getX() + igtTimerElement.getScaledTextWidth() + ((igtPadding - 1) + igtPadding), igtMin.getY() + igtTimerElement.getScaledTextHeight() + ((igtPadding - 1) + igtPadding));
-            int opacity = BackgroundHelper.ColorMixer.getArgb((int) (bgOpacity * 255), 0, 0, 0);
+            int opacity = ColorHelper.Argb.getArgb((int) (bgOpacity * 255), 0, 0, 0);
             if (rtaMin.getX() < igtMax.getX() && rtaMin.getY() < igtMax.getY() &&
                     igtMin.getX() < rtaMax.getX() && igtMin.getY() < rtaMax.getY()) {
                 DrawableHelper.fill(matrixStack, Math.min(rtaMin.getX(), igtMin.getX()), Math.min(rtaMin.getY(), igtMin.getY()),
