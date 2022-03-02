@@ -2,10 +2,10 @@ package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
-import com.redlimerl.speedrunigt.mixins.access.WorldRendererAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
+import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import com.redlimerl.speedrunigt.utils.MixinValues;
@@ -14,13 +14,9 @@ import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.options.GameOptions;
-import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.profiler.Profiler;
-import net.minecraft.world.dimension.Dimension;
-import net.minecraft.world.dimension.TheEndDimension;
-import net.minecraft.world.dimension.TheNetherDimension;
 import net.minecraft.world.level.LevelInfo;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Mouse;
@@ -44,15 +40,11 @@ public abstract class MinecraftClientMixin {
 
     @Shadow @Nullable public Screen currentScreen;
 
-    @Shadow public WorldRenderer worldRenderer;
-
     @Shadow @Nullable public ClientWorld world;
 
-    @Shadow public boolean focused;
+    @Shadow @Final public Profiler profiler;
 
     @Shadow private boolean paused;
-
-    @Shadow @Final public Profiler profiler;
 
     @Inject(at = @At("HEAD"), method = "startGame")
     public void onCreate(String name, String displayName, LevelInfo levelInfo, CallbackInfo ci) {
@@ -63,47 +55,43 @@ public abstract class MinecraftClientMixin {
                 boolean loaded = InGameTimer.load(name);
                 if (!loaded) InGameTimer.end();
             }
-            currentDimension = null;
         } catch (Exception e) {
             InGameTimer.end();
-            currentDimension = null;
             SpeedRunIGT.error("Exception in timer load, can't load the timer.");
             e.printStackTrace();
         }
+        InGameTimerUtils.IS_CHANGING_DIMENSION = true;
     }
-
-    private static Dimension currentDimension = null;
 
     @Inject(at = @At("HEAD"), method = "connect(Lnet/minecraft/client/world/ClientWorld;Ljava/lang/String;)V")
     public void onJoin(ClientWorld targetWorld, String loadingMessage, CallbackInfo ci) {
         if (targetWorld == null) return;
         InGameTimer timer = InGameTimer.getInstance();
 
-        currentDimension = targetWorld.dimension;
-        InGameTimer.checkingWorld = true;
+        InGameTimerUtils.IS_CHANGING_DIMENSION = false;
 
         if (timer.getStatus() != TimerStatus.NONE) {
             timer.setPause(true, TimerStatus.IDLE);
         }
 
         //Enter Nether
-        if (timer.getCategory() == RunCategories.ENTER_NETHER && targetWorld.dimension instanceof TheNetherDimension) {
+        if (timer.getCategory() == RunCategories.ENTER_NETHER && targetWorld.dimension.getType() == -1) {
             InGameTimer.complete();
         }
 
         //Enter End
-        if (timer.getCategory() == RunCategories.ENTER_END && targetWorld.dimension instanceof TheEndDimension) {
+        if (timer.getCategory() == RunCategories.ENTER_END && targetWorld.dimension.getType() == 1) {
             InGameTimer.complete();
         }
     }
 
-    @Inject(method = "runGameLoop", at = @At(value = "INVOKE", target = "Ljava/lang/System;nanoTime()J", shift = At.Shift.BEFORE))
+    @Inject(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/MetricsData;pushSample(J)V", shift = At.Shift.BEFORE))
     private void renderMixin(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
         if (timer.getStatus() == TimerStatus.RUNNING && this.paused) {
             timer.setPause(true, TimerStatus.PAUSED);
-        } else if (timer.getStatus() == TimerStatus.PAUSED && !paused) {
+        } else if (timer.getStatus() == TimerStatus.PAUSED && !this.paused) {
             timer.setPause(false);
         }
     }
@@ -114,18 +102,11 @@ public abstract class MinecraftClientMixin {
         this.profiler.swap("timer");
         InGameTimer timer = InGameTimer.getInstance();
 
-        if (worldRenderer != null && world != null && currentDimension != null && world.dimension.getName().equals(currentDimension.getName()) && !isPaused()
-                && (timer.getStatus() == TimerStatus.IDLE ) && InGameTimer.checkingWorld && Mouse.isGrabbed() && Display.isActive() && Mouse.isInsideWindow()) {
-            WorldRendererAccessor worldRendererAccessor = (WorldRendererAccessor) worldRenderer;
-            worldRenderer.getChunksDebugString(); // For init MixinValues#completedChunks value
-            int chunks = worldRendererAccessor.getRegularEntityCount();
-            int entities = worldRendererAccessor.getRegularEntityCount() - (options.perspective > 0 ? 0 : 1);
-            if (chunks + entities > 0) {
-                if (!(SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) && !timer.isStarted())) {
-                    timer.setPause(false);
-                } else {
-                    timer.updateFirstRendered();
-                }
+        if (InGameTimerUtils.canUnpauseTimer(true)) {
+            if (!(SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) && !timer.isStarted())) {
+                timer.setPause(false);
+            } else {
+                timer.updateFirstRendered();
             }
         }
 
@@ -169,12 +150,10 @@ public abstract class MinecraftClientMixin {
 
     private void unlock() {
         InGameTimer timer = InGameTimer.getInstance();
-        if (timer.getStatus() == TimerStatus.COMPLETED_LEGACY || timer.getStatus() == TimerStatus.NONE) return;
-
-        if ((timer.getStatus() == TimerStatus.IDLE )  && Display.isActive() && !MinecraftClient.getInstance().isPaused() && InGameTimer.checkingWorld && Mouse.isGrabbed()) {
+        if (InGameTimerUtils.canUnpauseTimer(false)) {
             timer.setPause(false);
         }
-        if (this.focused&&!MinecraftClient.getInstance().isPaused() && Mouse.isGrabbed()) {
+        if (Display.isActive() && !MinecraftClient.getInstance().isPaused() && Mouse.isGrabbed()) {
             timer.updateFirstInput();
         }
     }
