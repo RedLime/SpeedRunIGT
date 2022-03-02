@@ -1,8 +1,8 @@
 package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
-import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
+import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import net.minecraft.client.MinecraftClient;
@@ -31,8 +31,8 @@ public abstract class KeyBindingMixin {
         if (keyBinding != null && pressed) {
             if (keyBinding == MinecraftClient.getInstance().options.keyAdvancements // Advancement
                     || Objects.equals(keyBinding.getCategory(), "key.categories.inventory")
-                    || (((MinecraftClientAccessor) MinecraftClient.getInstance()).getAttackCooldown() != 10000 && Objects.equals(keyBinding.getCategory(), "key.categories.gameplay"))) {
-                if (timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld) {
+                    || Objects.equals(keyBinding.getCategory(), "key.categories.gameplay")) {
+                if (InGameTimerUtils.canUnpauseTimer(true)) {
                     timer.setPause(false);
                 }
                 timer.updateFirstInput();
