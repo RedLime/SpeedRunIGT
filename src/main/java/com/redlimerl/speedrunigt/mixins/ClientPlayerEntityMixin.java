@@ -2,6 +2,7 @@ package com.redlimerl.speedrunigt.mixins;
 
 import com.mojang.authlib.GameProfile;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
+import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import net.minecraft.client.MinecraftClient;
@@ -129,11 +130,23 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         }
     }
 
+
+    private int portalTick = 0;
     @Inject(at = @At("HEAD"), method = "tick")
     public void updateNausea(CallbackInfo ci) {
-        if (this.inNetherPortal && nextNauseaStrength + 0.0125F >= 1F && InGameTimer.getInstance().getStatus() != TimerStatus.IDLE && client.isInSingleplayer()) {
-            InGameTimer.checkingWorld = false;
-            InGameTimer.getInstance().setPause(true, TimerStatus.IDLE);
+        // Portal time update
+        if (this.inNetherPortal) {
+            if (++portalTick >= 80) {
+                portalTick = 0;
+                if (InGameTimer.getInstance().getStatus() != TimerStatus.IDLE && client.isInSingleplayer()) {
+                    InGameTimerUtils.IS_CHANGING_DIMENSION = true;
+                    InGameTimer.getInstance().setPause(true, TimerStatus.IDLE);
+                }
+            }
+        } else {
+            if (portalTick > 0 && InGameTimerUtils.IS_CHANGING_DIMENSION)
+                InGameTimerUtils.IS_CHANGING_DIMENSION = false;
+            portalTick = 0;
         }
     }
 }
