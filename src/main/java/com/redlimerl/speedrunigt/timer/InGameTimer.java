@@ -40,13 +40,8 @@ public class InGameTimer {
 
     private static final String cryptKey = "faRQOs2GK5j863eP";
 
-    private static Path getWorldSavePath(String name) {
-        return MinecraftClient.getInstance().getCurrentSave().method_11957(name, "./").toPath();
-    }
-
     @NotNull
     public static InGameTimer getInstance() { return INSTANCE; }
-    public static boolean checkingWorld = true;
 
     private static final ArrayList<Consumer<InGameTimer>> onCompleteConsumers = new ArrayList<>();
 
@@ -218,7 +213,7 @@ public class InGameTimer {
         if (waitingSaveTask || saveManagerThread.isShutdown() || saveManagerThread.isTerminated() || !INSTANCE.isServerIntegrated) return;
 
         String worldName = INSTANCE.worldName, timerData = SpeedRunIGT.GSON.toJson(INSTANCE) + "", completeData = SpeedRunIGT.GSON.toJson(COMPLETED_INSTANCE) + "";
-        File worldDir = getWorldSavePath(worldName).toFile();
+        File worldDir = InGameTimerUtils.getWorldSavePath(worldName).toFile();
         if (withLeave) end();
 
         waitingSaveTask = true;
@@ -255,7 +250,7 @@ public class InGameTimer {
     }
 
     public static boolean load(String name) {
-        Path worldPath = getWorldSavePath(name);
+        Path worldPath = InGameTimerUtils.getWorldSavePath(name);
         String isOld = "";
         while (true) {
             File file = new File(worldPath.toFile(), "timer.igt"+isOld);
