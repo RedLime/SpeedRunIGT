@@ -2,6 +2,7 @@ package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
+import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import net.minecraft.class_4107;
@@ -31,7 +32,7 @@ public abstract class KeyBindingMixin {
             if (keyBinding == MinecraftClient.getInstance().options.field_15880 // Advancement
                     || Objects.equals(keyBinding.getCategory(), "key.categories.inventory")
                     || Objects.equals(keyBinding.getCategory(), "key.categories.gameplay")) {
-                if (timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld) {
+                if (InGameTimerUtils.canUnpauseTimer(true)) {
                     timer.setPause(false);
                 }
                 timer.updateFirstInput();

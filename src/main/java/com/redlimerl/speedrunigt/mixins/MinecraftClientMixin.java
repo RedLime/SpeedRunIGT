@@ -2,20 +2,18 @@ package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
-import com.redlimerl.speedrunigt.mixins.access.WorldRendererAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
+import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import net.minecraft.class_3793;
-import net.minecraft.class_4112;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.options.GameOptions;
-import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.profiler.Profiler;
@@ -26,7 +24,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -40,15 +37,11 @@ public abstract class MinecraftClientMixin {
 
     @Shadow @Nullable public Screen currentScreen;
 
-    @Shadow public WorldRenderer worldRenderer;
-
     @Shadow @Nullable public ClientWorld world;
-
-    @Shadow public abstract boolean isWindowFocused();
 
     @Shadow @Final public Profiler profiler;
 
-    @Shadow public class_4112 field_19945;
+    @Shadow private boolean paused;
 
     @Inject(at = @At("HEAD"), method = "startGame")
     public void onCreate(String name, String displayName, LevelInfo levelInfo, CallbackInfo ci) {
@@ -59,24 +52,20 @@ public abstract class MinecraftClientMixin {
                 boolean loaded = InGameTimer.load(name);
                 if (!loaded) InGameTimer.end();
             }
-            currentDimension = null;
         } catch (Exception e) {
             InGameTimer.end();
-            currentDimension = null;
             SpeedRunIGT.error("Exception in timer load, can't load the timer.");
             e.printStackTrace();
         }
+        InGameTimerUtils.IS_CHANGING_DIMENSION = true;
     }
-
-    private static class_3793 currentDimension = null;
 
     @Inject(at = @At("HEAD"), method = "connect")
     public void onJoin(ClientWorld targetWorld, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() == TimerStatus.NONE || targetWorld == null) return;
 
-        currentDimension = targetWorld.dimension.method_11789();
-        InGameTimer.checkingWorld = true;
+        InGameTimerUtils.IS_CHANGING_DIMENSION = false;
 
         if (timer.getStatus() != TimerStatus.NONE) {
             timer.setPause(true, TimerStatus.IDLE);
@@ -94,17 +83,15 @@ public abstract class MinecraftClientMixin {
         }
     }
 
-    @ModifyVariable(method = "method_18228", at = @At(value = "STORE"), ordinal = 1)
-    private boolean renderMixin(boolean paused) {
+    @Inject(method = "method_18228", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Util;method_20230()J", shift = At.Shift.AFTER))
+    private void renderMixin(boolean tick, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
-        if (timer.getStatus() == TimerStatus.RUNNING && paused) {
+        if (timer.getStatus() == TimerStatus.RUNNING && this.paused) {
             timer.setPause(true, TimerStatus.PAUSED);
-        } else if (timer.getStatus() == TimerStatus.PAUSED && !paused) {
+        } else if (timer.getStatus() == TimerStatus.PAUSED && !this.paused) {
             timer.setPause(false);
         }
-
-        return paused;
     }
 
 
@@ -114,18 +101,11 @@ public abstract class MinecraftClientMixin {
         this.profiler.swap("timer");
         InGameTimer timer = InGameTimer.getInstance();
 
-        if (worldRenderer != null && world != null && world.dimension.method_11789() == currentDimension && !isPaused() && isWindowFocused()
-                && timer.getStatus() == TimerStatus.IDLE && InGameTimer.checkingWorld && this.field_19945.method_18252()) {
-            WorldRendererAccessor worldRendererAccessor = (WorldRendererAccessor) worldRenderer;
-            int chunks = worldRendererAccessor.invokeCompletedChunkCount();
-            int entities = worldRendererAccessor.getRegularEntityCount() - (options.perspective > 0 ? 0 : 1);
-
-            if (chunks + entities > 0) {
-                if (!(SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) && !timer.isStarted())) {
-                    timer.setPause(false);
-                } else {
-                    timer.updateFirstRendered();
-                }
+        if (InGameTimerUtils.canUnpauseTimer(true)) {
+            if (!(SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) && !timer.isStarted())) {
+                timer.setPause(false);
+            } else {
+                timer.updateFirstRendered();
             }
         }
 
