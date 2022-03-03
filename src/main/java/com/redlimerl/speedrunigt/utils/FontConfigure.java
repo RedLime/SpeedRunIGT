@@ -15,7 +15,7 @@ public class FontConfigure {
     }
 
     public static FontConfigure fromJson(String json) {
-        JsonObject configure = new JsonParser().parse(json).getAsJsonObject();
+        JsonObject configure = JsonParser.parseString(json).getAsJsonObject();
         FontConfigure fontConfigure = create();
         if (configure.has("size")) fontConfigure.size = configure.get("size").getAsFloat();
         if (configure.has("oversample")) fontConfigure.oversample = configure.get("oversample").getAsFloat();
