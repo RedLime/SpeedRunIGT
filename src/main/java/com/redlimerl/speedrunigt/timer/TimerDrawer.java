@@ -241,7 +241,7 @@ public class TimerDrawer {
 
     private String getTimeFormat(long time) {
         if ((InGameTimer.getInstance().isCompleted() || InGameTimer.getInstance().isPaused()) && translateZ) {
-            return InGameTimer.timeToStringFormat(time);
+            return InGameTimerUtils.timeToStringFormat(time);
         }
         String millsString = String.format("%03d", time % 1000).substring(0, timerDecimals.getNumber());
         int seconds = ((int) (time / 1000)) % 60;
