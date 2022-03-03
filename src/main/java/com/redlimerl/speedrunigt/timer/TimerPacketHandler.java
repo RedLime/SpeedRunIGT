@@ -77,7 +77,7 @@ public class TimerPacketHandler {
             }
             InGameTimer.getInstance().isCoop = true;
             InGameTimer.getInstance().isServerIntegrated = MinecraftClient.getInstance().isIntegratedServerRunning();
-            InGameTimer.getInstance().setPause(false);
+            InGameTimer.getInstance().setPause(false, "co-op setup");
 
             SpeedRunIGT.debug("client received init: " + startTime + " / " + category.getID());
         } catch (Exception e) {

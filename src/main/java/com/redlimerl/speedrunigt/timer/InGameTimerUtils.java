@@ -7,6 +7,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 
 public class InGameTimerUtils {
     public static boolean IS_CHANGING_DIMENSION = false;
@@ -33,6 +34,27 @@ public class InGameTimerUtils {
             return true;
         }
         return false;
+    }
+
+    public static String logListToString(ArrayList<?> arrayList) {
+        if (arrayList.size() == 0) return "";
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Object o : arrayList) {
+            stringBuilder.append(o.toString()).append("\n");
+        }
+        return stringBuilder.toString();
+    }
+
+    public static String timeToStringFormat(long time) {
+        int seconds = ((int) (time / 1000)) % 60;
+        int minutes = ((int) (time / 1000)) / 60;
+        if (minutes > 59) {
+            int hours = minutes / 60;
+            minutes = minutes % 60;
+            return String.format("%d:%02d:%02d.%03d", hours, minutes, seconds, time % 1000);
+        } else {
+            return String.format("%02d:%02d.%03d", minutes, seconds, time % 1000);
+        }
     }
 
 }

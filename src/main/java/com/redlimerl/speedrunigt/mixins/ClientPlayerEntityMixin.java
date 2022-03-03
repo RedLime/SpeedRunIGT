@@ -42,10 +42,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     private void onMove(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
-        if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
-
-        if (timer.getStatus() == TimerStatus.IDLE && (this.velocityX != 0 || this.velocityZ != 0 || this.jumping||this.isSneaking())) {
-            timer.setPause(false);
+        if (timer.getStatus() == TimerStatus.IDLE && (this.velocityX != 0 || this.velocityZ != 0 || this.jumping || this.isSneaking())) {
+            timer.setPause(false, "moved player");
         }
         if (this.velocityX != 0 || this.velocityZ != 0 || this.jumping) {
             timer.updateFirstInput();
@@ -133,11 +131,11 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     public void updateNausea(CallbackInfo ci) {
         // Portal time update
         if (this.changingDimension) {
-            if (++portalTick >= 80) {
+            if (++portalTick >= 81) {
                 portalTick = 0;
                 if (InGameTimer.getInstance().getStatus() != TimerStatus.IDLE && client.isInSingleplayer()) {
                     InGameTimerUtils.IS_CHANGING_DIMENSION = true;
-                    InGameTimer.getInstance().setPause(true, TimerStatus.IDLE);
+                    InGameTimer.getInstance().setPause(true, TimerStatus.IDLE, "portal ticks");
                 }
             }
         } else {
