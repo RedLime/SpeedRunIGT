@@ -33,7 +33,7 @@ public abstract class MouseMixin {
         if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
 
         if (InGameTimerUtils.canUnpauseTimer(false)) {
-            timer.setPause(false);
+            timer.setPause(false, "moved mouse");
         }
         if (this.method_18252() && !MinecraftClient.getInstance().isPaused()) {
             timer.updateFirstInput();
