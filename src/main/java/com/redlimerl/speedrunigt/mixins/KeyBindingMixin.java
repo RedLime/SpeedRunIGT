@@ -29,8 +29,8 @@ public abstract class KeyBindingMixin {
             if (keyBinding == MinecraftClient.getInstance().options.field_15880
                     || Objects.equals(keyBinding.getCategory(), "key.categories.inventory")
                     || Objects.equals(keyBinding.getCategory(), "key.categories.gameplay")) {
-                if (InGameTimerUtils.canUnpauseTimer(true)) {
-                    timer.setPause(false);
+                if (InGameTimerUtils.canUnpauseTimer(false)) {
+                    timer.setPause(false, "pressed key");
                 }
                 timer.updateFirstInput();
             }

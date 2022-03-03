@@ -72,7 +72,7 @@ public abstract class MinecraftClientMixin {
         InGameTimerUtils.IS_CHANGING_DIMENSION = false;
 
         if (timer.getStatus() != TimerStatus.NONE) {
-            timer.setPause(true, TimerStatus.IDLE);
+            timer.setPause(true, TimerStatus.IDLE, "changed dimension");
         }
 
         //Enter Nether
@@ -91,9 +91,9 @@ public abstract class MinecraftClientMixin {
         InGameTimer timer = InGameTimer.getInstance();
 
         if (timer.getStatus() == TimerStatus.RUNNING && this.paused) {
-            timer.setPause(true, TimerStatus.PAUSED);
+            timer.setPause(true, TimerStatus.PAUSED, "player");
         } else if (timer.getStatus() == TimerStatus.PAUSED && !this.paused) {
-            timer.setPause(false);
+            timer.setPause(false, "player");
         }
     }
 
@@ -105,7 +105,7 @@ public abstract class MinecraftClientMixin {
 
         if (InGameTimerUtils.canUnpauseTimer(true)) {
             if (!(SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) && !timer.isStarted())) {
-                timer.setPause(false);
+                timer.setPause(false, "rendered");
             } else {
                 timer.updateFirstRendered();
             }
@@ -147,7 +147,7 @@ public abstract class MinecraftClientMixin {
     private void unlock() {
         InGameTimer timer = InGameTimer.getInstance();
         if (InGameTimerUtils.canUnpauseTimer(false)) {
-            timer.setPause(false);
+            timer.setPause(false, "moved mouse");
         }
         if (Display.isActive() && !MinecraftClient.getInstance().isPaused() && Mouse.isGrabbed()) {
             timer.updateFirstInput();
