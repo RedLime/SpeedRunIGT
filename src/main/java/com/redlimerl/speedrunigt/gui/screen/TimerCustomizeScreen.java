@@ -197,17 +197,18 @@ public class TimerCustomizeScreen extends Screen {
 
     @Override
     protected void keyPressed(char character, int keyCode) {
-        if (keyCode >= 262 && keyCode <= 265 && client != null && !drawer.isLocked()) {
-            int moveX = keyCode == 262 ? 1 : keyCode == 263 ? -1 : 0;
-            int moveY = keyCode == 265 ? -1 : keyCode == 264 ? 1 : 0;
+        if (hasControlDown() && keyCode >= 200 && keyCode <= 208 && client != null && !drawer.isLocked()) {
+            int moveX = keyCode == 205 ? 1 : keyCode == 203 ? -1 : 0;
+            int moveY = keyCode == 200 ? -1 : keyCode == 208 ? 1 : 0;
+            Window window = new Window(client, client.width, client.height);
             if (!igtButton.active) {
-                drawer.setIGT_XPos(MathHelper.clamp(drawer.getIGT_XPos() + moveX * drawer.getIGTScale() / client.width, 0, 1));
-                drawer.setIGT_YPos(MathHelper.clamp(drawer.getIGT_YPos() + moveY * drawer.getIGTScale() / client.height, 0, 1));
+                drawer.setIGT_XPos(MathHelper.clamp(drawer.getIGT_XPos() + moveX * drawer.getIGTScale() / (float) window.getScaledWidth(), 0, 1));
+                drawer.setIGT_YPos(MathHelper.clamp(drawer.getIGT_YPos() + moveY * drawer.getIGTScale() / (float) window.getScaledHeight(), 0, 1));
                 changed = true;
             }
             if (!rtaButton.active) {
-                drawer.setRTA_XPos(MathHelper.clamp(drawer.getRTA_XPos() + moveX * drawer.getRTAScale() / client.width, 0, 1));
-                drawer.setRTA_YPos(MathHelper.clamp(drawer.getRTA_YPos() + moveY * drawer.getRTAScale() / client.height, 0, 1));
+                drawer.setRTA_XPos(MathHelper.clamp(drawer.getRTA_XPos() + moveX * drawer.getRTAScale() / (float) window.getScaledWidth(), 0, 1));
+                drawer.setRTA_YPos(MathHelper.clamp(drawer.getRTA_YPos() + moveY * drawer.getRTAScale() / (float) window.getScaledHeight(), 0, 1));
                 changed = true;
             }
         }
