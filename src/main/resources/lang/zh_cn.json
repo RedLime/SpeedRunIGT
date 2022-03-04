@@ -66,7 +66,7 @@
   "speedrunigt.option.auto_toggle_coop.description": "当加入或玩家进入服务器时，\n计时器会自动调到Co-op模式\n然后各玩家的计时器会共享",
   "speedrunigt.option.start_old_worlds": "从旧的世界开始",
   "speedrunigt.option.start_old_worlds.description": "当进入旧的世界时\n如果没有以前的计时器数据，会启动新的计时器\n适用于Perfect Seed类别。",
-  "speedrunigt.option.global_options": "设置到全局",
+  "speedrunigt.option.global_options": "设置保存到全局",
   "speedrunigt.option.global_options.description": "如果开启了这个选项，\n计时器设置将自动保存到一个全局文件夹\n否则，将保存到实例文件夹\n当前路径：%s",
   "speedrunigt.option.delete_timer_cache": "删除所有计时器缓存",
   "speedrunigt.option.reload": "重载设置",
