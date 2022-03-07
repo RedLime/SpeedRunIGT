@@ -9,7 +9,6 @@ import net.minecraft.class_3295;
 import net.minecraft.class_3328;
 import net.minecraft.network.packet.c2s.play.AdvancementUpdatePacket;
 import net.minecraft.util.Identifier;
-import net.minecraft.world.dimension.DimensionType;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -51,16 +50,14 @@ public abstract class ClientAdvancementManagerMixin {
 
             // For Timelines
             if (timer.getCategory() == RunCategories.ANY) {
-                if (Objects.equals(advancement.getId().getPath(), "story/follow_ender_eye")) {
+                if (Objects.equals(advancement.getIdentifier().getPath(), "story/follow_ender_eye")) {
                     timer.tryInsertNewTimeline("enter_stronghold");
-                } else if (Objects.equals(advancement.getId().getPath(), "nether/find_bastion")) {
-                    timer.tryInsertNewTimeline("enter_bastion");
-                } else if (Objects.equals(advancement.getId().getPath(), "nether/find_fortress")) {
+                } else if (Objects.equals(advancement.getIdentifier().getPath(), "nether/find_fortress")) {
                     timer.tryInsertNewTimeline("enter_fortress");
                 }
             }
             if (timer.getCategory() == RunCategories.ALL_ADVANCEMENTS || timer.getCategory() == RunCategories.HALF || timer.getCategory() == RunCategories.POGLOOT_QUATER) {
-                timer.tryInsertNewTimeline(advancement.getId().getPath());
+                timer.tryInsertNewTimeline(advancement.getIdentifier().getPath());
             }
         }
         return entry.getValue();
