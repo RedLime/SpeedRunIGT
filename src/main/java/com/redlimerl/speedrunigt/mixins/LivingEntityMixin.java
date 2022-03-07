@@ -23,9 +23,6 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Shadow protected boolean dead;
 
-
-    @Shadow private LivingEntity attacker;
-
     @Shadow protected PlayerEntity attackingPlayer;
 
     public LivingEntityMixin(World world) {
