@@ -92,6 +92,8 @@ public abstract class MinecraftClientMixin {
         if (timer.getCategory() == RunCategories.ENTER_END && targetWorld.dimension.getDimensionType() == DimensionType.THE_END) {
             InGameTimer.complete();
         }
+
+        RunCategories.checkAllBossesCompleted();
     }
 
     @Inject(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/MetricsData;pushSample(J)V", shift = At.Shift.BEFORE))
