@@ -63,8 +63,8 @@ public abstract class LivingEntityMixin extends Entity {
 
         // For Timelines
         if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {
-            if (this.getType() == EntityType.WITHER) timer.tryInsertNewTimeline("kill_wither");
-            if (this.getType() == EntityType.ELDER_GUARDIAN) timer.tryInsertNewTimeline("kill_elder_guardian");
+            if (Objects.equals(EntityType.getEntityName(this), "WitherBoss")) timer.tryInsertNewTimeline("kill_wither");
+            if (Objects.equals(EntityType.getEntityName(this), "ElderGuardian")) timer.tryInsertNewTimeline("kill_elder_guardian");
         }
     }
 }
