@@ -90,6 +90,8 @@ public abstract class MinecraftClientMixin {
         if (timer.getCategory() == RunCategories.ENTER_END && targetWorld.dimension.method_11789() == class_3793.field_18956) {
             InGameTimer.complete();
         }
+
+        RunCategories.checkAllBossesCompleted();
     }
 
     @Inject(method = "method_18228", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Util;method_20230()J", shift = At.Shift.AFTER))
