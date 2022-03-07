@@ -173,7 +173,7 @@ public class InGameTimer {
                 resultLog.append(", Excluded RTA Time: ").append(timeToStringFormat(timer.excludedTime));
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy.MM.dd HH:mm:ss");
-            String logInfo = "MC Version : " + SharedConstants.getGameVersion().getName() + "\r\n"
+            String logInfo = "MC Version : " + InGameTimerUtils.getMinecraftVersion() + "\r\n"
                     + "Timer Version : " + SpeedRunIGT.MOD_VERSION + "\r\n"
                     + "Run Date : " + simpleDateFormat.format(new Date()) + "\r\n"
                     + "====================\r\n";
