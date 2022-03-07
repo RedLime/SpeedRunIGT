@@ -1,8 +1,16 @@
 package com.redlimerl.speedrunigt.timer;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.mixins.access.ServerStatHandlerAccessor;
 import com.redlimerl.speedrunigt.mixins.access.WorldRendererAccessor;
+import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import com.redlimerl.speedrunigt.utils.MixinValues;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.stat.ServerStatHandler;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
@@ -11,6 +19,7 @@ import java.util.ArrayList;
 
 public class InGameTimerUtils {
     public static boolean IS_CHANGING_DIMENSION = false;
+    public static boolean LATEST_SEED_IS_RANDOM = false;
 
     public static Path getWorldSavePath(String name) {
         return MinecraftClient.getInstance().getCurrentSave().method_11957(name, "./").toPath();
@@ -58,4 +67,44 @@ public class InGameTimerUtils {
         }
     }
 
+    public static JsonObject convertTimelineJson(InGameTimer timer) {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("seed", timer.getSeedName());
+        jsonObject.addProperty("is_set_seed", timer.isSetSeed());
+        jsonObject.addProperty("category", timer.getCategory().getID());
+        jsonObject.addProperty("is_coop", timer.isCoop());
+        jsonObject.addProperty("is_hardcore", timer.isHardcore());
+        jsonObject.addProperty("is_legacy_igt", timer.isLegacyIGT());
+        jsonObject.addProperty("date", System.currentTimeMillis());
+        jsonObject.addProperty("final_igt", timer.getInGameTime(false));
+        jsonObject.addProperty("final_rta", timer.getRealTimeAttack());
+        JsonArray timelineArr = new JsonArray();
+        for (TimerTimeline timeline : timer.getTimelines()) {
+            JsonObject timelineObj = new JsonObject();
+            timelineObj.addProperty("name", timeline.getName());
+            timelineObj.addProperty("igt", timeline.getIGT());
+            timelineObj.addProperty("rta", timeline.getRTA());
+            timelineArr.add(timelineObj);
+        }
+        jsonObject.add("timeline", timelineArr);
+        jsonObject.add("stats", getStatsJson(timer));
+
+        return jsonObject;
+    }
+
+    public static JsonObject getStatsJson(InGameTimer timer) {
+        JsonObject jsonObject = new JsonObject();
+        MinecraftServer server = MinecraftClient.getInstance().getServer();
+        if (timer.isServerIntegrated && server != null && server.getPlayerManager() != null) {
+            for (ServerPlayerEntity serverPlayerEntity : server.getPlayerManager().getPlayers()) {
+                jsonObject.add(serverPlayerEntity.getUuid().toString(), SpeedRunIGT.GSON.fromJson(ServerStatHandler.method_8272(((ServerStatHandlerAccessor) serverPlayerEntity.getStatHandler()).getStatMap()), JsonObject.class));
+            }
+        }
+        return jsonObject;
+    }
+
+    public static boolean isHardcoreWorld() {
+        MinecraftClient client = MinecraftClient.getInstance();
+        return client.player != null && client.player.world.getLevelProperties().isHardcore();
+    }
 }
