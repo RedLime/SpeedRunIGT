@@ -4,7 +4,6 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import net.minecraft.client.gui.screen.CreditsScreen;
-import net.minecraft.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
