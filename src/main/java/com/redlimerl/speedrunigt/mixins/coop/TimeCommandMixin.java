@@ -3,7 +3,6 @@ package com.redlimerl.speedrunigt.mixins.coop;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerPacketHandler;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
-import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.TimeCommand;
 import org.spongepowered.asm.mixin.Mixin;

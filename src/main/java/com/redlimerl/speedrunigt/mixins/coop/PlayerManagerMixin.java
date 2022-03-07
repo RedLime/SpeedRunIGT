@@ -5,7 +5,6 @@ import com.redlimerl.speedrunigt.timer.TimerPacketHandler;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.PlayerManager;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
