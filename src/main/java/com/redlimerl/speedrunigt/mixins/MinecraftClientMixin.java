@@ -77,9 +77,9 @@ public abstract class MinecraftClientMixin {
 
         // For Timelines
         if (timer.getCategory() == RunCategories.ANY) {
-            if (targetWorld.dimension.method_11789() == class_3793.field_18955) {
+            if (targetWorld.dimension instanceof TheNetherDimension) {
                 timer.tryInsertNewTimeline("enter_nether");
-            } else if (targetWorld.dimension.method_11789() == class_3793.field_18956) {
+            } else if (targetWorld.dimension instanceof TheEndDimension) {
                 timer.tryInsertNewTimeline("enter_end");
             }
         }

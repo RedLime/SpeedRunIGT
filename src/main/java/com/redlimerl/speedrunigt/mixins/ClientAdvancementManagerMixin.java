@@ -41,14 +41,14 @@ public abstract class ClientAdvancementManagerMixin {
 
             // For Timelines
             if (timer.getCategory() == RunCategories.ANY) {
-                if (Objects.equals(advancement.getIdentifier().getPath(), "story/follow_ender_eye")) {
+                if (Objects.equals(advancement.method_14801().getPath(), "story/follow_ender_eye")) {
                     timer.tryInsertNewTimeline("enter_stronghold");
-                } else if (Objects.equals(advancement.getIdentifier().getPath(), "nether/find_fortress")) {
+                } else if (Objects.equals(advancement.method_14801().getPath(), "nether/find_fortress")) {
                     timer.tryInsertNewTimeline("enter_fortress");
                 }
             }
             if (timer.getCategory() == RunCategories.ALL_ADVANCEMENTS || timer.getCategory() == RunCategories.HALF || timer.getCategory() == RunCategories.POGLOOT_QUATER) {
-                timer.tryInsertNewTimeline(advancement.getIdentifier().getPath());
+                timer.tryInsertNewTimeline(advancement.method_14801().getPath());
             }
         }
         return entry.getValue();
