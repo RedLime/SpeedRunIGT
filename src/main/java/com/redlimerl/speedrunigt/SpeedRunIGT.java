@@ -40,6 +40,7 @@ public class SpeedRunIGT implements ClientModInitializer {
     public static String MOD_VERSION;
 
     public static final Gson GSON = new GsonBuilder().create();
+    public static final Gson PRETTY_GSON = new GsonBuilder().setPrettyPrinting().create();
     public static final Path WORLDS_PATH = FabricLoader.getInstance().getGameDir().resolve("saves");
     public static final Path FONT_PATH = getGlobalPath().resolve("fonts");
 
@@ -47,12 +48,14 @@ public class SpeedRunIGT implements ClientModInitializer {
         return FabricLoader.getInstance().getGameDir().resolve(MOD_ID);
     }
     public static Path getGlobalPath() { return new File(System.getProperty("user.home").replace("\\", "/"), SpeedRunIGT.MOD_ID).toPath(); }
+    public static Path getRecordsPath() { return getGlobalPath().resolve("records"); }
 
     public static final ArrayList<ModContainer> API_PROVIDERS = new ArrayList<>();
 
     static {
         getMainPath().toFile().mkdirs();
         getGlobalPath().toFile().mkdirs();
+        getRecordsPath().toFile().mkdirs();
         FONT_PATH.toFile().mkdirs();
 
         //Delete all old timer data
