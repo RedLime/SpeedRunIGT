@@ -60,8 +60,6 @@ public abstract class ClientAdvancementManagerMixin {
             if (timer.getCategory() == RunCategories.ANY) {
                 if (Objects.equals(advancement.getId().getPath(), "story/follow_ender_eye")) {
                     timer.tryInsertNewTimeline("enter_stronghold");
-                } else if (Objects.equals(advancement.getId().getPath(), "nether/find_bastion")) {
-                    timer.tryInsertNewTimeline("enter_bastion");
                 } else if (Objects.equals(advancement.getId().getPath(), "nether/find_fortress")) {
                     timer.tryInsertNewTimeline("enter_fortress");
                 }
