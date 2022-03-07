@@ -68,6 +68,8 @@ public class InGameTimerUtils {
 
     public static JsonObject convertTimelineJson(InGameTimer timer) {
         JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("mc_version", getMinecraftVersion());
+        jsonObject.addProperty("speedrunigt_version", SpeedRunIGT.MOD_VERSION);
         jsonObject.addProperty("seed", timer.getSeedName());
         jsonObject.addProperty("is_set_seed", timer.isSetSeed());
         jsonObject.addProperty("category", timer.getCategory().getID());
@@ -106,5 +108,9 @@ public class InGameTimerUtils {
     public static boolean isHardcoreWorld() {
         MinecraftClient client = MinecraftClient.getInstance();
         return client.field_3805 != null && client.field_3805.world.getLevelProperties().isHardcore();
+    }
+
+    public static String getMinecraftVersion() {
+        return MinecraftClient.getInstance().getGameVersion();
     }
 }
