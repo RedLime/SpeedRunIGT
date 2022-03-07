@@ -60,10 +60,10 @@ public abstract class ClientAdvancementManagerMixin {
             if (timer.getCategory() == RunCategories.ANY) {
                 if (Objects.equals(advancement.getId().getPath(), "story/follow_ender_eye")) {
                     timer.tryInsertNewTimeline("enter_stronghold");
-                } else if (Objects.equals(advancement.getId().getPath(), "nether/find_bastion")) {
-                    timer.tryInsertNewTimeline("enter_bastion");
                 } else if (Objects.equals(advancement.getId().getPath(), "nether/find_fortress")) {
                     timer.tryInsertNewTimeline("enter_fortress");
+                } else if (Objects.equals(advancement.getId().getPath(), "adventure/trade")) {
+                    timer.tryInsertNewTimeline("trade_with_villager");
                 }
             }
             if (timer.getCategory() == RunCategories.ALL_ADVANCEMENTS || timer.getCategory() == RunCategories.HALF || timer.getCategory() == RunCategories.POGLOOT_QUATER) {

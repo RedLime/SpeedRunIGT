@@ -9,6 +9,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MovementType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -124,6 +125,16 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         if (timer.getCategory() == RunCategories.STACK_OF_LIME_WOOL) {
             for (ItemStack itemStack : this.inventory.main) {
                 if (itemStack != null && itemStack.getItem() == Items.LIME_WOOL && itemStack.getCount() == 64) InGameTimer.complete();
+            }
+        }
+
+        // For Timelines
+        if (timer.getCategory() == RunCategories.ANY) {
+            for (ItemStack itemStack : this.inventory.main) {
+                if (itemStack != null) {
+                    if (itemStack.getItem() == Items.GOLD_BLOCK) timer.tryInsertNewTimeline("pick_gold_block");
+                    if (itemStack.getItem() == Items.ENDER_EYE) timer.tryInsertNewTimeline("crafted_ender_eye");
+                }
             }
         }
     }
