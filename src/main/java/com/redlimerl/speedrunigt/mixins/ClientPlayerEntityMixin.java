@@ -14,6 +14,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.DyeColor;
+import net.minecraft.util.math.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,7 +32,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     @Shadow public abstract boolean isSneaking();
     @Shadow protected MinecraftClient client;
 
-    @Shadow public float timeInPortal;
+    @Shadow public abstract BlockPos getBlockPos();
 
     public ClientPlayerEntityMixin(ClientWorld world, GameProfile profile) {
         super(world, profile);
@@ -123,6 +124,10 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                 if (itemStack != null && itemStack.getItem() == Item.fromBlock(Blocks.WOOL) && itemStack.getDamage() == 5 && itemStack.count == 64) InGameTimer.complete();
             }
         }
+
+        //For Timelines
+        if (timer.getCategory() == RunCategories.ANY && this.y >= 100 && this.isSleeping())
+            timer.tryInsertNewTimeline("sleep_on_tower");
     }
 
 

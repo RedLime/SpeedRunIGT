@@ -60,5 +60,13 @@ public abstract class LivingEntityMixin extends Entity {
         if (timer.getCategory() == RunCategories.KILL_ELDER_GUARDIAN && Objects.equals(EntityType.getEntityName(this), "ElderGuardian")) {
             InGameTimer.complete();
         }
+
+        // For Timelines
+        if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {
+            if (Objects.equals(EntityType.getEntityName(this), "WitherBoss")) timer.tryInsertNewTimeline("kill_wither");
+            if (Objects.equals(EntityType.getEntityName(this), "ElderGuardian")) timer.tryInsertNewTimeline("kill_elder_guardian");
+        }
+        if (timer.getCategory() == RunCategories.ANY && Objects.equals(EntityType.getEntityName(this), "Blaze"))
+            timer.tryInsertNewTimeline("killed_blaze");
     }
 }
