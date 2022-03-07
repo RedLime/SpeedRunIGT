@@ -92,6 +92,8 @@ public abstract class MinecraftClientMixin {
         if (timer.getCategory() == RunCategories.ENTER_END && targetWorld.dimension.dimensionType == 1) {
             InGameTimer.complete();
         }
+
+        RunCategories.checkAllBossesCompleted();
     }
 
     @Inject(method = "runGameLoop", at = @At("TAIL"))

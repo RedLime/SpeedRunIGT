@@ -7,6 +7,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,6 +24,8 @@ public abstract class LivingEntityMixin extends Entity {
     @Shadow protected boolean dead;
 
 
+    @Shadow private LivingEntity attacker;
+
     public LivingEntityMixin(World world) {
         super(world);
     }
@@ -35,25 +38,26 @@ public abstract class LivingEntityMixin extends Entity {
     public void onDeath(DamageSource source, CallbackInfo ci) {
         @NotNull InGameTimer timer = InGameTimer.getInstance();
 
-        if (this.removed || this.dead || timer.getStatus() == TimerStatus.NONE) return;
+        if (this.removed || this.dead || timer.getStatus() == TimerStatus.NONE || !(this.attacker instanceof PlayerEntity)) return;
 
         //Kill All Bosses
         if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {
+            if (Objects.equals(EntityType.getEntityName(this), "EnderDragon")) {
+                timer.updateMoreData(0, 1);
+            }
             if (Objects.equals(EntityType.getEntityName(this), "WitherBoss")) {//Wither
                 timer.updateMoreData(1, 1);
+                RunCategories.checkAllBossesCompleted();
             }
             if (Objects.equals(EntityType.getEntityName(this), "ElderGuardian")) { //Elder Guardian
                 timer.updateMoreData(2, 1);
+                RunCategories.checkAllBossesCompleted();
             }
-            if (timer.getMoreData(0) == 1 && timer.getMoreData(1) == 1 && timer.getMoreData(2) == 1)
-                InGameTimer.complete();
-            return;
         }
 
         //Kill Wither
         if (timer.getCategory() == RunCategories.KILL_WITHER && Objects.equals(EntityType.getEntityName(this), "WitherBoss")) {
             InGameTimer.complete();
-            return;
         }
 
         //Kill Elder Guardian
@@ -65,6 +69,7 @@ public abstract class LivingEntityMixin extends Entity {
         if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {
             if (Objects.equals(EntityType.getEntityName(this), "WitherBoss")) timer.tryInsertNewTimeline("kill_wither");
             if (Objects.equals(EntityType.getEntityName(this), "ElderGuardian")) timer.tryInsertNewTimeline("kill_elder_guardian");
+            if (Objects.equals(EntityType.getEntityName(this), "EnderDragon")) timer.tryInsertNewTimeline("kill_ender_dragon");
         }
         if (timer.getCategory() == RunCategories.ANY && Objects.equals(EntityType.getEntityName(this), "Blaze"))
             timer.tryInsertNewTimeline("killed_blaze");
