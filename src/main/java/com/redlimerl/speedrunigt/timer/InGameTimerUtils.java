@@ -15,7 +15,6 @@ import java.util.ArrayList;
 
 public class InGameTimerUtils {
     public static boolean IS_CHANGING_DIMENSION = false;
-    public static boolean LATEST_SEED_IS_RANDOM = false;
 
     public static Path getWorldSavePath(String name) {
         return MinecraftClient.getInstance().getCurrentSave().method_17969(name);
@@ -66,8 +65,6 @@ public class InGameTimerUtils {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("mc_version", getMinecraftVersion());
         jsonObject.addProperty("speedrunigt_version", SpeedRunIGT.MOD_VERSION);
-        jsonObject.addProperty("seed", timer.getSeedName());
-        jsonObject.addProperty("is_set_seed", timer.isSetSeed());
         jsonObject.addProperty("category", timer.getCategory().getID());
         jsonObject.addProperty("is_coop", timer.isCoop());
         jsonObject.addProperty("is_hardcore", timer.isHardcore());
