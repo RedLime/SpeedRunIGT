@@ -23,8 +23,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Shadow protected boolean dead;
 
-
-    @Shadow private LivingEntity attacker;
+    @Shadow protected PlayerEntity attackingPlayer;
 
     public LivingEntityMixin(World world) {
         super(world);
@@ -38,7 +37,7 @@ public abstract class LivingEntityMixin extends Entity {
     public void onDeath(DamageSource source, CallbackInfo ci) {
         @NotNull InGameTimer timer = InGameTimer.getInstance();
 
-        if (this.removed || this.dead || timer.getStatus() == TimerStatus.NONE || !(this.attacker instanceof PlayerEntity)) return;
+        if (this.removed || this.dead || timer.getStatus() == TimerStatus.NONE || this.attackingPlayer == null) return;
 
         //Kill All Bosses
         if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {
