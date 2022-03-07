@@ -8,6 +8,7 @@ import com.redlimerl.speedrunigt.mixins.access.LevelStorageAccessor;
 import com.redlimerl.speedrunigt.mixins.access.WorldRendererAccessor;
 import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.realms.RealmsSharedConstants;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.ServerStatHandler;
@@ -111,6 +112,6 @@ public class InGameTimerUtils {
     }
 
     public static String getMinecraftVersion() {
-        return MinecraftClient.getInstance().getGameVersion();
+        return RealmsSharedConstants.VERSION_STRING;
     }
 }
