@@ -8,6 +8,7 @@ import com.redlimerl.speedrunigt.mixins.access.WorldRendererAccessor;
 import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.realms.RealmsSharedConstants;
 import net.minecraft.server.MinecraftServer;
 
 import java.nio.file.Path;
@@ -103,6 +104,6 @@ public class InGameTimerUtils {
     }
 
     public static String getMinecraftVersion() {
-        return MinecraftClient.getInstance().getGameVersion();
+        return RealmsSharedConstants.VERSION_STRING;
     }
 }
