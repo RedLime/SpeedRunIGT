@@ -21,12 +21,7 @@ public class CreditsScreenMixin {
             if (timer.getCategory() == RunCategories.ANY) {
                 InGameTimer.complete();
             }
-            if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {
-                timer.updateMoreData(0, 1);
-                timer.tryInsertNewTimeline("kill_dragon");
-                if (timer.getMoreData(0) == 1 && timer.getMoreData(1) == 1 && timer.getMoreData(2) == 1)
-                    InGameTimer.complete();
-            }
+            RunCategories.checkAllBossesCompleted();
         }
     }
 }
