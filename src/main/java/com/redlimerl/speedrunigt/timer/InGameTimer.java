@@ -7,6 +7,7 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.logs.TimerPauseLog;
 import com.redlimerl.speedrunigt.timer.logs.TimerTickLog;
+import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import com.redlimerl.speedrunigt.timer.running.RunCategory;
 import net.minecraft.SharedConstants;
@@ -22,9 +23,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -39,9 +38,9 @@ import static com.redlimerl.speedrunigt.timer.InGameTimerUtils.timeToStringForma
 public class InGameTimer {
 
     @NotNull
-    private static InGameTimer INSTANCE = new InGameTimer("");
+    private static InGameTimer INSTANCE = new InGameTimer("", "", false);
     @NotNull
-    private static InGameTimer COMPLETED_INSTANCE = new InGameTimer("");
+    private static InGameTimer COMPLETED_INSTANCE = new InGameTimer("", "", false);
 
     private static final String cryptKey = "faRQOs2GK5j863eP";
 
@@ -54,11 +53,13 @@ public class InGameTimer {
         onCompleteConsumers.add(supplier);
     }
 
-    public InGameTimer(String worldName) {
-        this(worldName, true);
+    public InGameTimer(String worldName, String seedName, boolean isSetSeed) {
+        this(worldName, true, seedName, isSetSeed);
     }
-    public InGameTimer(String worldName, boolean isResettable) {
+    public InGameTimer(String worldName, boolean isResettable, String seedName, boolean isSetSeed) {
         this.worldName = worldName;
+        this.seedName = seedName;
+        this.isSetSeed = isSetSeed;
         this.isResettable = isResettable;
     }
 
@@ -94,6 +95,12 @@ public class InGameTimer {
     private long loggerPausedTime = 0;
     private String prevPauseReason = "";
 
+    //For record
+    private final String seedName;
+    private final boolean isSetSeed;
+    private final ArrayList<TimerTimeline> timelines = new ArrayList<>();
+    private boolean isHardcore = false;
+
     @NotNull
     private TimerStatus status = TimerStatus.NONE;
 
@@ -102,8 +109,8 @@ public class InGameTimer {
     /**
      * Start the Timer, Trigger when player to join(created) the world
      */
-    public static void start(String worldName) {
-        INSTANCE = new InGameTimer(worldName);
+    public static void start(String worldName, String seedName, boolean isSetSeed) {
+        INSTANCE = new InGameTimer(worldName, seedName, isSetSeed);
         INSTANCE.setCategory(SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY));
         INSTANCE.setPause(true, TimerStatus.IDLE, "startup");
         INSTANCE.isGlitched = SpeedRunOption.getOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE);
@@ -115,7 +122,7 @@ public class InGameTimer {
     public static void reset() {
         if (INSTANCE.isCompleted || INSTANCE.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
 
-        INSTANCE = new InGameTimer(INSTANCE.worldName, false);
+        INSTANCE = new InGameTimer(INSTANCE.worldName, false, INSTANCE.seedName, INSTANCE.isSetSeed);
         INSTANCE.setCategory(RunCategories.CUSTOM);
         INSTANCE.setPause(true, TimerStatus.IDLE, "reset");
         INSTANCE.setPause(false, "reset");
@@ -141,6 +148,10 @@ public class InGameTimer {
      */
     static void complete(long endTime) {
         if (INSTANCE.isCompleted || !INSTANCE.isStarted()) return;
+
+        // Init additional data
+        INSTANCE.isHardcore = InGameTimerUtils.isHardcoreWorld();
+
         COMPLETED_INSTANCE = new Gson().fromJson(new Gson().toJson(INSTANCE) + "", InGameTimer.class);
         INSTANCE.isCompleted = true;
         InGameTimer timer = COMPLETED_INSTANCE;
@@ -178,6 +189,17 @@ public class InGameTimer {
                 }
             });
         }
+
+        String recordString = SpeedRunIGT.PRETTY_GSON.toJson(InGameTimerUtils.convertTimelineJson(INSTANCE));
+        saveManagerThread.submit(() -> {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy-MM-dd-HH-mm-ss");
+            try {
+                FileUtils.writeStringToFile(new File(SpeedRunIGT.getRecordsPath().toFile(), simpleDateFormat.format(new Date()) + ".json"), recordString, StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                e.printStackTrace();
+                SpeedRunIGT.error("Failed to write timer record :(");
+            }
+        });
 
         for (Consumer<InGameTimer> onCompleteConsumer : onCompleteConsumers) {
             try {
@@ -259,7 +281,7 @@ public class InGameTimer {
                     isOld = ".old";
                 }
             } else if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_START_GENERATED_WORLD) && isOld.isEmpty()) {
-                InGameTimer.start(name);
+                InGameTimer.start(name, name, true);
                 return true;
             } else return false;
         }
@@ -446,5 +468,32 @@ public class InGameTimer {
         if (server != null && server.getCurrentPlayerCount() > 1) {
             TimerPacketHandler.sendInitC2S(this);
         }
+    }
+
+    public boolean tryInsertNewTimeline(String name) {
+        for (TimerTimeline timeline : timelines) {
+            if (Objects.equals(timeline.getName(), name)) return false;
+        }
+        return timelines.add(new TimerTimeline(name, getInGameTime(false), getRealTimeAttack()));
+    }
+
+    public List<TimerTimeline> getTimelines() {
+        return timelines;
+    }
+
+    public String getSeedName() {
+        return seedName;
+    }
+
+    public boolean isSetSeed() {
+        return isSetSeed;
+    }
+
+    public boolean isHardcore() {
+        return isHardcore;
+    }
+
+    public boolean isLegacyIGT() {
+        return isGlitched;
     }
 }

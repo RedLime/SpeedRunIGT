@@ -1,9 +1,9 @@
 package com.redlimerl.speedrunigt.utils;
 
 import com.google.gson.*;
+import com.redlimerl.speedrunigt.SpeedRunIGT;
 
 public class FontConfigure {
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public float size;
     public float oversample;
@@ -42,6 +42,6 @@ public class FontConfigure {
 
     @Override
     public String toString() {
-        return GSON.toJson(this);
+        return SpeedRunIGT.PRETTY_GSON.toJson(this);
     }
 }
