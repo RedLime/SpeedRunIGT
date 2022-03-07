@@ -67,7 +67,7 @@ public abstract class MinecraftClientMixin {
 
     @Inject(at = @At("HEAD"), method = "method_29607(Ljava/lang/String;Lnet/minecraft/world/level/LevelInfo;Lnet/minecraft/util/registry/RegistryTracker$Modifiable;Lnet/minecraft/world/gen/GeneratorOptions;)V")
     public void onCreate(String worldName, LevelInfo levelInfo, RegistryTracker.Modifiable registryTracker, GeneratorOptions generatorOptions, CallbackInfo ci) {
-        InGameTimer.start(worldName);
+        InGameTimer.start(worldName, String.valueOf(generatorOptions.getSeed()), !InGameTimerUtils.LATEST_SEED_IS_RANDOM);
         InGameTimerUtils.IS_CHANGING_DIMENSION = true;
     }
 
