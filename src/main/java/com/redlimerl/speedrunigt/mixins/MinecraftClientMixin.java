@@ -27,6 +27,7 @@ import net.minecraft.resource.SinglePreparationResourceReloadListener;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.profiler.Profiler;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.RegistryTracker;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.GeneratorOptions;
@@ -93,6 +94,15 @@ public abstract class MinecraftClientMixin {
 
         if (timer.getStatus() != TimerStatus.NONE) {
             timer.setPause(true, TimerStatus.IDLE, "changed dimension");
+        }
+
+        // For Timelines
+        if (timer.getCategory() == RunCategories.ANY) {
+            if (targetWorld.getDimensionRegistryKey() == DimensionType.THE_NETHER_REGISTRY_KEY) {
+                timer.tryInsertNewTimeline("enter_nether");
+            } else if (targetWorld.getDimensionRegistryKey() == DimensionType.THE_END_REGISTRY_KEY) {
+                timer.tryInsertNewTimeline("enter_end");
+            }
         }
 
         //Enter Nether
