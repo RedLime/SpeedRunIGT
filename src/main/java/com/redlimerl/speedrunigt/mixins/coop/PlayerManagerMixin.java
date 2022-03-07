@@ -24,7 +24,7 @@ public abstract class PlayerManagerMixin {
     @Inject(method = "onPlayerConnect", at = @At("TAIL"))
     public void onPlayerConnectInject(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
         if (InGameTimer.getInstance().isStarted() && !InGameTimer.getInstance().isCompleted() && this.getCurrentPlayerCount() > 1) {
-            TimerPacketHandler.sendInitS2C(this.players, InGameTimer.getInstance().getStartTime(), InGameTimer.getInstance().getCategory(), InGameTimer.getInstance().getSeedName(), InGameTimer.getInstance().isSetSeed());
+            TimerPacketHandler.sendInitS2C(this.players, InGameTimer.getInstance().getStartTime(), InGameTimer.getInstance().getCategory());
         }
     }
 }
