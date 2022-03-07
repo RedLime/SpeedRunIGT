@@ -95,7 +95,7 @@ public class InGameTimerUtils {
         MinecraftServer server = MinecraftClient.getInstance().getServer();
         if (timer.isServerIntegrated && server != null && server.getPlayerManager() != null) {
             for (ServerPlayerEntity serverPlayerEntity : server.getPlayerManager().getPlayers()) {
-                jsonObject.add(serverPlayerEntity.method_12993(), SpeedRunIGT.GSON.fromJson(ServerStatHandler.method_8272(((ServerStatHandlerAccessor) serverPlayerEntity.getStatHandler()).getStatMap()), JsonObject.class));
+                jsonObject.add(serverPlayerEntity.getUuid().toString(), SpeedRunIGT.GSON.fromJson(ServerStatHandler.method_8272(((ServerStatHandlerAccessor) serverPlayerEntity.getStatHandler()).getStatMap()), JsonObject.class));
             }
         }
         return jsonObject;
