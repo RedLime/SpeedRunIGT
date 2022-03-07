@@ -4,7 +4,6 @@
   "package": "com.redlimerl.speedrunigt.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "timeline.NetherTravelConditionsMixin"
   ],
   "client": [
     "ClientAdvancementManagerMixin",
@@ -30,7 +29,7 @@
     "screen.DownloadingTerrainScreenMixin",
     "screen.GameMenuScreenMixin",
     "screen.OptionsScreenMixin",
-    "screen.SeedInjectMixin",
+    "timeline.NetherTravelConditionsMixin",
     "translate.I18nMixin",
     "translate.TranslatableTextMixin"
   ],
