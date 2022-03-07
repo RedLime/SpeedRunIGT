@@ -74,6 +74,15 @@ public abstract class MinecraftClientMixin {
             timer.setPause(true, TimerStatus.IDLE, "changed dimension");
         }
 
+        // For Timelines
+        if (timer.getCategory() == RunCategories.ANY) {
+            if (targetWorld.dimension.getDimensionType() == DimensionType.NETHER) {
+                timer.tryInsertNewTimeline("enter_nether");
+            } else if (targetWorld.dimension.getDimensionType() == DimensionType.THE_END) {
+                timer.tryInsertNewTimeline("enter_end");
+            }
+        }
+
         //Enter Nether
         if (timer.getCategory() == RunCategories.ENTER_NETHER && targetWorld.dimension.getDimensionType() == DimensionType.NETHER) {
             InGameTimer.complete();

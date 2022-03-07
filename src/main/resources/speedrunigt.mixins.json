@@ -27,6 +27,7 @@
     "screen.GameMenuScreenMixin",
     "screen.OptionsScreenMixin",
     "screen.SeedInjectMixin",
+    "timeline.VillagerEntityMixin",
     "translate.I18nMixin",
     "translate.TranslatableTextMixin"
   ],

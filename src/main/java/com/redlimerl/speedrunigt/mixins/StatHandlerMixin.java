@@ -25,18 +25,25 @@ public abstract class StatHandlerMixin {
     @Inject(method = "method_8302", at = @At("HEAD"))
     public void onComplete(PlayerEntity playerEntity, Stat stat, int i, CallbackInfo ci){
         if(stat.isAchievement()){
-            getCompleteAdvancementsCount();
             InGameTimer timer = InGameTimer.getInstance();
 
+            if (timer.getStatus() == TimerStatus.NONE) return;
+
             //All Advancements
-            if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategories.ALL_ACHIEVEMENTS) {
+            if (timer.getCategory() == RunCategories.ALL_ACHIEVEMENTS) {
                 if (getCompleteAdvancementsCount()+1 >= 34) InGameTimer.complete();
             }
 
             //Half%
-            if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategories.HALF) {
+            if (timer.getCategory() == RunCategories.HALF) {
                 if (getCompleteAdvancementsCount()+1 >= 17) InGameTimer.complete();
             }
+
+            //For Timelines
+            if (timer.getCategory() == RunCategories.ALL_ACHIEVEMENTS || timer.getCategory() == RunCategories.HALF) {
+                timer.tryInsertNewTimeline(stat.name);
+            }
+
         }
 
     }
