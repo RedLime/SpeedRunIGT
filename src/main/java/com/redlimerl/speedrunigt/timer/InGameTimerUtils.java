@@ -3,12 +3,13 @@ package com.redlimerl.speedrunigt.timer;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
-import com.redlimerl.speedrunigt.mixins.access.ServerStatHandlerAccessor;
 import com.redlimerl.speedrunigt.mixins.access.LevelStorageAccessor;
+import com.redlimerl.speedrunigt.mixins.access.ServerStatHandlerAccessor;
 import com.redlimerl.speedrunigt.mixins.access.WorldRendererAccessor;
 import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import com.redlimerl.speedrunigt.utils.MixinValues;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.realms.RealmsSharedConstants;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.ServerStatHandler;
@@ -110,6 +111,6 @@ public class InGameTimerUtils {
     }
 
     public static String getMinecraftVersion() {
-        return MinecraftClient.getInstance().getGameVersion();
+        return RealmsSharedConstants.VERSION_STRING;
     }
 }
