@@ -18,6 +18,7 @@
     "access.FontStorageAccessor",
     "access.MinecraftClientAccessor",
     "access.TextRendererAccessor",
+    "access.ServerStatHandlerAccessor",
     "access.WorldRendererAccessor",
     "coop.PlayerManagerMixin",
     "coop.TimeCommandMixin",
@@ -30,6 +31,7 @@
     "screen.DownloadingTerrainScreenMixin",
     "screen.GameMenuScreenMixin",
     "screen.OptionsScreenMixin",
+    "screen.SeedInjectMixin",
     "translate.I18nMixin",
     "translate.TranslatableTextMixin"
   ],
