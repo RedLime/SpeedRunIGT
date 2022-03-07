@@ -10,7 +10,6 @@ import com.redlimerl.speedrunigt.timer.logs.TimerTickLog;
 import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import com.redlimerl.speedrunigt.timer.running.RunCategory;
-import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stat.Stats;
