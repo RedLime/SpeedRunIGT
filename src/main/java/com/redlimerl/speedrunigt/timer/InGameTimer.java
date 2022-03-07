@@ -37,9 +37,9 @@ import static com.redlimerl.speedrunigt.timer.InGameTimerUtils.timeToStringForma
 public class InGameTimer {
 
     @NotNull
-    private static InGameTimer INSTANCE = new InGameTimer("", "", false);
+    private static InGameTimer INSTANCE = new InGameTimer("");
     @NotNull
-    private static InGameTimer COMPLETED_INSTANCE = new InGameTimer("", "", false);
+    private static InGameTimer COMPLETED_INSTANCE = new InGameTimer("");
 
     private static final String cryptKey = "faRQOs2GK5j863eP";
 
@@ -52,13 +52,11 @@ public class InGameTimer {
         onCompleteConsumers.add(supplier);
     }
 
-    public InGameTimer(String worldName, String seedName, boolean isSetSeed) {
-        this(worldName, true, seedName, isSetSeed);
+    public InGameTimer(String worldName) {
+        this(worldName, true);
     }
-    public InGameTimer(String worldName, boolean isResettable, String seedName, boolean isSetSeed) {
+    public InGameTimer(String worldName, boolean isResettable) {
         this.worldName = worldName;
-        this.seedName = seedName;
-        this.isSetSeed = isSetSeed;
         this.isResettable = isResettable;
     }
 
@@ -95,8 +93,6 @@ public class InGameTimer {
     private String prevPauseReason = "";
 
     //For record
-    private final String seedName;
-    private final boolean isSetSeed;
     private final ArrayList<TimerTimeline> timelines = new ArrayList<>();
     private boolean isHardcore = false;
 
@@ -108,8 +104,8 @@ public class InGameTimer {
     /**
      * Start the Timer, Trigger when player to join(created) the world
      */
-    public static void start(String worldName, String seedName, boolean isSetSeed) {
-        INSTANCE = new InGameTimer(worldName, seedName, isSetSeed);
+    public static void start(String worldName) {
+        INSTANCE = new InGameTimer(worldName);
         INSTANCE.setCategory(SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY));
         INSTANCE.setPause(true, TimerStatus.IDLE, "startup");
         INSTANCE.isGlitched = SpeedRunOption.getOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE);
@@ -121,7 +117,7 @@ public class InGameTimer {
     public static void reset() {
         if (INSTANCE.isCompleted || INSTANCE.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
 
-        INSTANCE = new InGameTimer(INSTANCE.worldName, false, INSTANCE.seedName, INSTANCE.isSetSeed);
+        INSTANCE = new InGameTimer(INSTANCE.worldName, false);
         INSTANCE.setCategory(RunCategories.CUSTOM);
         INSTANCE.setPause(true, TimerStatus.IDLE, "reset");
         INSTANCE.setPause(false, "reset");
@@ -280,7 +276,7 @@ public class InGameTimer {
                     isOld = ".old";
                 }
             } else if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_START_GENERATED_WORLD) && isOld.isEmpty()) {
-                InGameTimer.start(name, name, true);
+                InGameTimer.start(name);
                 return true;
             } else return false;
         }
@@ -478,14 +474,6 @@ public class InGameTimer {
 
     public List<TimerTimeline> getTimelines() {
         return timelines;
-    }
-
-    public String getSeedName() {
-        return seedName;
-    }
-
-    public boolean isSetSeed() {
-        return isSetSeed;
     }
 
     public boolean isHardcore() {
