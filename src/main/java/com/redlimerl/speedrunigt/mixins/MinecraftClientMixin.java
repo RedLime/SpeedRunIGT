@@ -92,6 +92,15 @@ public abstract class MinecraftClientMixin {
             timer.setPause(true, TimerStatus.IDLE, "changed dimension");
         }
 
+        // For Timelines
+        if (timer.getCategory() == RunCategories.ANY) {
+            if (Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionType.THE_NETHER_ID.toString())) {
+                timer.tryInsertNewTimeline("enter_nether");
+            } else if (Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionType.THE_END_ID.toString())) {
+                timer.tryInsertNewTimeline("enter_end");
+            }
+        }
+
         //Enter Nether
         if (timer.getCategory() == RunCategories.ENTER_NETHER && Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionType.THE_NETHER_ID.toString())) {
             InGameTimer.complete();

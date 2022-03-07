@@ -15,6 +15,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Objects;
+
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
 
@@ -52,6 +54,12 @@ public abstract class LivingEntityMixin extends Entity {
         //Kill Elder Guardian
         if (timer.getCategory() == RunCategories.KILL_ELDER_GUARDIAN && this.getType() == EntityType.ELDER_GUARDIAN) {
             InGameTimer.complete();
+        }
+
+        // For Timelines
+        if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {
+            if (this.getType() == EntityType.WITHER) timer.tryInsertNewTimeline("kill_wither");
+            if (this.getType() == EntityType.ELDER_GUARDIAN) timer.tryInsertNewTimeline("kill_elder_guardian");
         }
     }
 }

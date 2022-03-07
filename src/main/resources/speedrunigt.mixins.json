@@ -4,6 +4,7 @@
   "package": "com.redlimerl.speedrunigt.mixins",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "timeline.NetherTravelConditionsMixin"
   ],
   "client": [
     "ClientAdvancementManagerMixin",
