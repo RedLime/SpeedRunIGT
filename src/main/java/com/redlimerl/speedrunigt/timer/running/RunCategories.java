@@ -1,5 +1,7 @@
 package com.redlimerl.speedrunigt.timer.running;
 
+import com.redlimerl.speedrunigt.timer.InGameTimer;
+
 public class RunCategories {
 
     public static RunCategory ERROR_CATEGORY = new RunCategory("unknown","mc");
@@ -25,4 +27,12 @@ public class RunCategories {
     public static RunCategory FULL_INV = new RunCategory("FULL_INV","mcce#Full_Inventory");
     public static RunCategory STACK_OF_LIME_WOOL = new RunCategory("STACK_OF_LIME_WOOL","mcce#Stack_of_Lime_Wool");
 
+    public static void checkAllBossesCompleted() {
+        InGameTimer timer = InGameTimer.getInstance();
+        if (timer.getCategory() == KILL_ALL_BOSSES) {
+            if (timer.getMoreData(0) + timer.getMoreData(1) + timer.getMoreData(2) == 3) {
+                InGameTimer.complete();
+            }
+        }
+    }
 }
