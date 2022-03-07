@@ -1,6 +1,5 @@
 package com.redlimerl.speedrunigt.mixins.timeline;
 
-import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import net.minecraft.advancement.criterion.NetherTravelCriterion;
