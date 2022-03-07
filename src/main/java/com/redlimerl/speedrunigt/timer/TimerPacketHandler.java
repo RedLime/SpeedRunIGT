@@ -25,14 +25,16 @@ public class TimerPacketHandler {
     Timer init packets
      */
     public static void sendInitC2S(InGameTimer timer) {
-        sendInitC2S(timer.startTime, timer.getCategory());
+        sendInitC2S(timer.startTime, timer.getCategory(), timer.getSeedName(), timer.isSetSeed());
     }
 
-    public static void sendInitC2S(long time, RunCategory category) {
+    public static void sendInitC2S(long time, RunCategory category, String seedName, boolean isSetSeed) {
         if (!SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) return;
         PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
         passedData.writeLong(time);
         passedData.writeString(category.getID());
+        passedData.writeString(seedName);
+        passedData.writeBoolean(isSetSeed);
 
         if (client.getNetworkHandler() != null)
             client.getNetworkHandler().getClientConnection().send(new CustomPayloadC2SPacket(PACKET_TIMER_INIT_ID, passedData));
@@ -41,19 +43,23 @@ public class TimerPacketHandler {
     public static void receiveInitC2S(MinecraftServer server, PacketByteBuf buffer) {
         try {
             long startTime = buffer.readLong();
-            RunCategory category = RunCategory.getCategory(buffer.readString(64).trim());
+            RunCategory category = RunCategory.getCategory(buffer.readString(128).trim());
+            String seedName = buffer.readString(256).trim();
+            boolean isSetSeed = buffer.readBoolean();
 
-            sendInitS2C(server.getPlayerManager().getPlayers(), startTime, category);
+            sendInitS2C(server.getPlayerManager().getPlayers(), startTime, category, seedName, isSetSeed);
             SpeedRunIGT.debug("server received init: " + startTime + " / " + category.getID());
         } catch (Exception e) {
             SpeedRunIGT.error("Failed read packets, probably SpeedRunIGT version different between players");
         }
     }
 
-    public static void sendInitS2C(List<ServerPlayerEntity> players, long startTime, RunCategory category) {
+    public static void sendInitS2C(List<ServerPlayerEntity> players, long startTime, RunCategory category, String seedName, boolean isSetSeed) {
         PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
         passedData.writeLong(startTime);
         passedData.writeString(category.getID());
+        passedData.writeString(seedName);
+        passedData.writeBoolean(isSetSeed);
 
         CustomPayloadS2CPacket s2CPacket = new CustomPayloadS2CPacket(PACKET_TIMER_INIT_ID, passedData);
 
@@ -66,10 +72,12 @@ public class TimerPacketHandler {
         try {
             if (!SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) return;
             long startTime = buffer.readLong();
-            RunCategory category = RunCategory.getCategory(buffer.readString(64).trim());
+            RunCategory category = RunCategory.getCategory(buffer.readString(128).trim());
+            String seedName = buffer.readString(256).trim();
+            boolean isSetSeed = buffer.readBoolean();
 
             if (InGameTimer.getInstance().startTime != startTime) {
-                InGameTimer.start("");
+                InGameTimer.start("", seedName, isSetSeed);
                 InGameTimer.getInstance().startTime = startTime;
                 InGameTimer.getInstance().setCategory(category);
             }
