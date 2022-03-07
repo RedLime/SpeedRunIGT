@@ -6,6 +6,7 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.mixins.access.ServerStatHandlerAccessor;
 import com.redlimerl.speedrunigt.mixins.access.WorldRendererAccessor;
 import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
+import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -64,6 +65,8 @@ public class InGameTimerUtils {
 
     public static JsonObject convertTimelineJson(InGameTimer timer) {
         JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("mc_version", getMinecraftVersion());
+        jsonObject.addProperty("speedrunigt_version", SpeedRunIGT.MOD_VERSION);
         jsonObject.addProperty("seed", timer.getSeedName());
         jsonObject.addProperty("is_set_seed", timer.isSetSeed());
         jsonObject.addProperty("category", timer.getCategory().getID());
@@ -101,5 +104,9 @@ public class InGameTimerUtils {
     public static boolean isHardcoreWorld() {
         MinecraftClient client = MinecraftClient.getInstance();
         return client.player != null && client.player.world.getLevelProperties().isHardcore();
+    }
+
+    public static String getMinecraftVersion() {
+        return SharedConstants.getGameVersion().getName();
     }
 }
