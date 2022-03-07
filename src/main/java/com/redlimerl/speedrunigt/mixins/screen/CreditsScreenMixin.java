@@ -4,6 +4,7 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import net.minecraft.client.gui.screen.CreditsScreen;
+import net.minecraft.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,6 +24,7 @@ public class CreditsScreenMixin {
             }
             if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {
                 timer.updateMoreData(0, 1);
+                timer.tryInsertNewTimeline("kill_dragon");
                 if (timer.getMoreData(0) == 1 && timer.getMoreData(1) == 1 && timer.getMoreData(2) == 1)
                     InGameTimer.complete();
             }
