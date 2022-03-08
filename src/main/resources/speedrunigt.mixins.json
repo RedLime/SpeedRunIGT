@@ -14,6 +14,7 @@
     "MinecraftClientMixin",
     "MouseMixin",
     "access.ButtonWidgetAccessor",
+    "access.ClientChunkProviderAccessor",
     "access.ServerStatHandlerAccessor",
     "access.WorldRendererAccessor",
     "coop.PlayerManagerMixin",
