@@ -121,6 +121,9 @@ public abstract class MinecraftClientMixin {
 
         if (timer.getStatus() == TimerStatus.RUNNING && this.paused) {
             timer.setPause(true, TimerStatus.PAUSED, "player");
+            if (InGameTimerUtils.getGeneratedChunkRatio() < 0.1f) {
+                InGameTimerUtils.RETIME_IS_WAITING_LOAD = true;
+            }
         } else if (timer.getStatus() == TimerStatus.PAUSED && !this.paused) {
             timer.setPause(false, "player");
         }
