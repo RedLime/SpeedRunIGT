@@ -2,6 +2,7 @@ package com.redlimerl.speedrunigt.option;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
+import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
@@ -93,6 +94,7 @@ public class SpeedRunOption {
             StringBuilder stringBuilder = new StringBuilder();
             options.forEach((key, value) -> stringBuilder.append(key.toString()).append(":").append(value).append("\n"));
             FileUtils.writeStringToFile(config, stringBuilder.length() == 0 ? "" : stringBuilder.substring(0, stringBuilder.length()-1), StandardCharsets.UTF_8);
+            InGameTimerUtils.RETIME_IS_CHANGED_OPTION = true;
         } catch (IOException e) {
             e.printStackTrace();
         }
