@@ -55,7 +55,7 @@ public class InGameTimerUtils {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.world != null && client.player != null) {
             int chunks = (client.options.viewDistance * 2 + 1)^2;
-            return (float) ((ClientChunkProviderAccessor) client.world.method_3586()).getChunkMap().size() / chunks;
+            return (float) ((ClientChunkProviderAccessor) client.world.getChunkProvider()).getChunkMap().size() / chunks;
         }
         return 0;
     }
