@@ -3,6 +3,7 @@ package com.redlimerl.speedrunigt.timer;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.mixins.access.ClientChunkProviderAccessor;
 import com.redlimerl.speedrunigt.mixins.access.ServerStatHandlerAccessor;
 import com.redlimerl.speedrunigt.mixins.access.WorldRendererAccessor;
 import com.redlimerl.speedrunigt.timer.logs.TimerPauseLog;
@@ -54,7 +55,7 @@ public class InGameTimerUtils {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.world != null && client.player != null) {
             int chunks = (client.options.viewDistance * 2 + 1)^2;
-            return (float) 0 / chunks;
+            return (float) ((ClientChunkProviderAccessor) client.world.method_3586()).getChunkMap().size() / chunks;
         }
         return 0;
     }
