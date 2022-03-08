@@ -73,6 +73,7 @@ public class InGameTimer {
     long startTime = 0;
     long endTime = 0;
     private long endIGTTime = 0;
+    private long retimedIGTTime = 0;
     private long rebaseIGTime = 0;
     private long excludedTime = 0; //for AA
     private long activateTicks = 0;
@@ -159,11 +160,12 @@ public class InGameTimer {
 
         if (INSTANCE.isServerIntegrated) {
             StringBuilder resultLog = new StringBuilder();
-            resultLog.append("Result > IGT ").append(timeToStringFormat(timer.getInGameTime()))
-                    .append(", RTA ").append(timeToStringFormat(timer.getRealTimeAttack()))
+            resultLog.append("Result > IGT: ").append(timeToStringFormat(timer.getInGameTime(false)))
+                    .append(", Auto-Retimed IGT: ").append(timeToStringFormat(timer.getRetimedInGameTime()))
+                    .append(", RTA: ").append(timeToStringFormat(timer.getRealTimeAttack()))
                     .append(", Counted Ticks: ").append(timer.activateTicks)
                     .append(", Total Ticks: ").append(timer.loggerTicks)
-                    .append(", Rebased IGT Time: ").append(timeToStringFormat(timer.rebaseIGTime));
+                    .append(", Auto-Retimed IGT Length: ").append(timeToStringFormat(timer.retimedIGTTime));
             if (timer.getCategory() == RunCategories.CUSTOM)
                 resultLog.append(", Excluded RTA Time: ").append(timeToStringFormat(timer.excludedTime));
 
@@ -176,11 +178,11 @@ public class InGameTimer {
             String worldName = INSTANCE.worldName;
             saveManagerThread.submit(() -> {
                 try {
-                    FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(worldName).toFile(), "igt_timer" + (timer.completeCount == 0 ? "" : "_"+timer.completeCount) + ".log"), logInfo + timer.firstInput + "\n" + InGameTimerUtils.logListToString(timer.pauseLogList) + resultLog, StandardCharsets.UTF_8);
+                    FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(worldName).toFile(), "igt_timer" + (timer.completeCount == 0 ? "" : "_"+timer.completeCount) + ".log"), logInfo + timer.firstInput + "\n" + InGameTimerUtils.pauseLogListToString(timer.pauseLogList) + resultLog, StandardCharsets.UTF_8);
                     FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(worldName).toFile(), "igt_freeze" + (timer.completeCount == 0 ? "" : "_"+timer.completeCount) + ".log"), logInfo + InGameTimerUtils.logListToString(timer.freezeLogList), StandardCharsets.UTF_8);
                 } catch (IOException e) {
                     e.printStackTrace();
-                    SpeedRunIGT.error("Failed to save timer logs :( RTA : " + timeToStringFormat(timer.getRealTimeAttack()) + " / IGT : " + timeToStringFormat(timer.getInGameTime()));
+                    SpeedRunIGT.error("Failed to save timer logs :( RTA : " + timeToStringFormat(timer.getRealTimeAttack()) + " / IGT : " + timeToStringFormat(timer.getInGameTime(false)));
                 }
             });
         }
@@ -324,7 +326,7 @@ public class InGameTimer {
     }
 
     public boolean isCompleted() {
-        return this.isCompleted && this.getStatus() != TimerStatus.COMPLETED_LEGACY;
+        return this.isCompleted || this.getStatus() == TimerStatus.COMPLETED_LEGACY;
     }
 
     public int getPauseCount() {
@@ -366,12 +368,21 @@ public class InGameTimer {
                     .getStatHandler().method_1729(Stats.MINUTES_PLAYED) * 50L;
         }
 
+        if (smooth && this.isCompleted() && SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE) && this.getCategory() == RunCategories.ANY)
+            return getRetimedInGameTime();
+
         long ms = System.currentTimeMillis();
         return !isStarted() ? 0 :
                 (this.getTicks() * 50L) // Tick Based
                         + Math.min(50, smooth && isPlaying() && this.leastTickTime != 0 ? ms - this.leastTickTime : 0) // More smooth timer in playing
                         - this.rebaseIGTime // Subtract Rebased time
                         + this.endIGTTime;
+    }
+
+    private static final int RETIME_MINUTES = 13;
+    public long getRetimedInGameTime() {
+        long base = getInGameTime(false);
+        return base + ((this.isGlitched && this.isServerIntegrated) || base >= 60000 * RETIME_MINUTES ? 0 : this.retimedIGTTime);
     }
 
     private long firstRenderedTime = 0;
@@ -430,14 +441,26 @@ public class InGameTimer {
                     prevPauseReason = reason;
                     pauseCount++;
                 }
+                InGameTimerUtils.RETIME_IS_CHANGED_OPTION = false;
+                InGameTimerUtils.RETIME_IS_WAITING_LOAD = false;
                 this.setStatus(toStatus);
                 if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE) == SpeedRunOptions.TimerSaveInterval.PAUSE && status != TimerStatus.LEAVE && this.isStarted()) save();
             }
         } else {
             if (this.isStarted()) {
+                long nowTime = getRealTimeAttack();
+                long beforeRetime = retimedIGTTime;
+                if (this.getStatus() == TimerStatus.PAUSED) {
+                    if (this.getCategory() == RunCategories.ANY && !InGameTimerUtils.RETIME_IS_WAITING_LOAD) {
+                        if (InGameTimerUtils.RETIME_IS_CHANGED_OPTION) {
+                            retimedIGTTime += Math.max(nowTime - loggerPausedTime - 5000, 0);
+                        } else {
+                            retimedIGTTime += nowTime - loggerPausedTime;
+                        }
+                    }
+                }
                 if (isPaused()) {
-                    long nowTime = getRealTimeAttack();
-                    this.pauseLogList.add(new TimerPauseLog(prevPauseReason, reason, getInGameTime(false), getRealTimeAttack(), nowTime - loggerPausedTime, pauseCount));
+                    this.pauseLogList.add(new TimerPauseLog(prevPauseReason, reason, getInGameTime(false), getRealTimeAttack(), nowTime - loggerPausedTime, pauseCount, retimedIGTTime - beforeRetime));
                     if (this.getCategory() == RunCategories.ALL_ACHIEVEMENTS && leaveTime != 0) excludedTime = System.currentTimeMillis() - leaveTime;
                     leaveTime = 0;
                 }
@@ -465,6 +488,7 @@ public class InGameTimer {
         }
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public boolean tryInsertNewTimeline(String name) {
         for (TimerTimeline timeline : timelines) {
             if (Objects.equals(timeline.getName(), name)) return false;
