@@ -21,6 +21,7 @@
       "com.redlimerl.speedrunigt.SpeedRunIGT"
     ]
   },
+
   "mixins": [
     "speedrunigt.mixins.json"
   ],

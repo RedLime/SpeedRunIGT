@@ -1,7 +1,5 @@
 package com.redlimerl.speedrunigt.timer.logs;
 
-import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
-
 public class TimerPauseLog {
 
     // Pause reason
@@ -15,22 +13,46 @@ public class TimerPauseLog {
     // Pause length
     private final long pt;
     // Pause count
-    private final long n;
+    private final int n;
+    // retimed amount
+    private final long r;
 
 
-    public TimerPauseLog(String pauseReason, String unpauseReason, long currentIGT, long currentRTA, long pauseLength, long pauseCount) {
+    public TimerPauseLog(String pauseReason, String unpauseReason, long currentIGT, long currentRTA, long pauseLength, int pauseCount, long retimed) {
         this.rp = pauseReason;
         this.ru = unpauseReason;
         this.igt = currentIGT;
         this.ct = currentRTA;
         this.pt = pauseLength;
         this.n = pauseCount;
+        this.r = retimed;
     }
 
-    @Override
-    public String toString() {
-        return String.format("#%s) IGT %s, RTA %s-%s (%s ms), Paused by %s, Unpause by %s",
-                n, InGameTimerUtils.timeToStringFormat(igt), InGameTimerUtils.timeToStringFormat(ct - pt),
-                InGameTimerUtils.timeToStringFormat(ct), pt, rp, ru);
+    public String getPauseReason() {
+        return rp;
+    }
+
+    public String getUnpauseReason() {
+        return ru;
+    }
+
+    public long getIGT() {
+        return igt;
+    }
+
+    public long getUnpauseRTA() {
+        return ct;
+    }
+
+    public long getPauseLength() {
+        return pt;
+    }
+
+    public int getPauseCount() {
+        return n;
+    }
+
+    public long getRetimeNeedAmount() {
+        return r;
     }
 }
