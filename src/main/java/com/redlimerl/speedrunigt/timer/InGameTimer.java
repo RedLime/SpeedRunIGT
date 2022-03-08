@@ -379,7 +379,7 @@ public class InGameTimer {
                         + this.endIGTTime;
     }
 
-    private static final int RETIME_MINUTES = 13;
+    private static final int RETIME_MINUTES = 20;
     public long getRetimedInGameTime() {
         long base = getInGameTime(false);
         return base + ((this.isGlitched && this.isServerIntegrated) || base >= 60000 * RETIME_MINUTES ? 0 : this.retimedIGTTime);
