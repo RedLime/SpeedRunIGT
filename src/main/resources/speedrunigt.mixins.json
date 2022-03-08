@@ -23,6 +23,7 @@
     "network.ClientPlayNetworkHandlerMixin",
     "network.CustomPayloadC2SPacketAccessor",
     "network.ServerPlayNetworkHandlerMixin",
+    "retime.OptionButtonWidgetMixin",
     "screen.CreditsScreenMixin",
     "screen.DownloadingTerrainScreenMixin",
     "screen.GameMenuScreenMixin",
