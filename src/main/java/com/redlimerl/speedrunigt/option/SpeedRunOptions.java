@@ -189,6 +189,18 @@ public class SpeedRunOptions {
         }
     };
 
+    public static final OptionArgument<Boolean> AUTO_RETIME_FOR_GUIDELINE = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "auto_retime"), false) {
+        @Override
+        public Boolean valueFromString(String string) {
+            return Objects.equals(string, "true");
+        }
+
+        @Override
+        public String valueToString(Boolean value) {
+            return value.toString();
+        }
+    };
+
     public static final OptionArgument<Float> TIMER_RTA_POSITION_X = new OptionArgument<Float>(new Identifier(SpeedRunIGT.MOD_ID, "timer_rta_pos_x"), 0.983f) {
         @Override
         public Float valueFromString(String string) {
