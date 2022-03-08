@@ -89,6 +89,8 @@
   "speedrunigt.option.category.timer": "Timer",
   "speedrunigt.option.current_extensions": "Timer Extensions",
   "speedrunigt.option.current_extensions.description": "Currently using SpeedRunIGT extensions: %s",
+  "speedrunigt.option.auto_retime": "Auto Retime for SRC",
+  "speedrunigt.option.auto_retime.description": "Any%% runs which are sub-13 in 1.16+, sub-20 in 1.9-1.15, and sub-23 in pre1.9\nwill auto retimed by SRC retime rules.\nIf you are playing set seed Any%%, disable it.",
   "speedrunigt.controls.start_timer": "Restart Timer (for 'Custom' Category)",
   "speedrunigt.controls.stop_timer": "Stop Timer (for 'Custom' Category)",
   "speedrunigt.message.update.unknown": "Failed to get latest version of information.",

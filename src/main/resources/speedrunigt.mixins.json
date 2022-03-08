@@ -21,6 +21,7 @@
     "keybinding.KeyBindingAccessor",
     "network.ClientPlayNetworkHandlerMixin",
     "network.ServerPlayNetworkHandlerMixin",
+    "retime.OptionButtonWidgetMixin",
     "screen.CreditsScreenMixin",
     "screen.DownloadingTerrainScreenMixin",
     "screen.GameMenuScreenMixin",
