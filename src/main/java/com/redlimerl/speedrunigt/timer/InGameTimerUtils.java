@@ -55,8 +55,8 @@ public class InGameTimerUtils {
     public static float getGeneratedChunkRatio() {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.world != null && client.field_6279 != null) {
-            int chunks = (client.options.viewDistance * 2 + 1)^2;
-            return (float) ((ClientChunkProviderAccessor) client.world.getChunkProvider()).getChunkMap().getUsedEntriesCount() / chunks;
+            int chunks = client.options.viewDistance * 2 + 1;
+            return (float) ((ClientChunkProviderAccessor) client.world.getChunkProvider()).getChunkMap().getUsedEntriesCount() / (chunks * chunks);
         }
         return 0;
     }
