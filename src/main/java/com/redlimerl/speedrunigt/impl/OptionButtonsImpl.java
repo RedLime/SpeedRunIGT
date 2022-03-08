@@ -218,6 +218,18 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                 .setCategory("speedrunigt.option.category.timer")
         );
 
+        factories.add(screen -> new OptionButtonFactory.Builder()
+                .setButtonWidget(
+                        new ButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.auto_retime").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE) ? ScreenTexts.ON : ScreenTexts.OFF),
+                                (ButtonWidget button) -> {
+                                    SpeedRunOption.setOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE, !SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE));
+                                    button.setMessage(new TranslatableText("speedrunigt.option.auto_retime").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE) ? ScreenTexts.ON : ScreenTexts.OFF));
+                                })
+                )
+                .setToolTip(() -> I18n.translate("speedrunigt.option.auto_retime.description"))
+                .setCategory("speedrunigt.option.category.timer")
+        );
+
         return factories;
     }
 }
