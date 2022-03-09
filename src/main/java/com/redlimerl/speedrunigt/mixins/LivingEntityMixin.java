@@ -31,7 +31,14 @@ public abstract class LivingEntityMixin extends Entity {
     public void onDeath(DamageSource source, CallbackInfo ci) {
         @NotNull InGameTimer timer = InGameTimer.getInstance();
 
-        if (this.removed || this.dead || timer.getStatus() == TimerStatus.NONE || this.attackingPlayer == null) return;
+        if (this.removed || this.dead || timer.getStatus() == TimerStatus.NONE) return;
+
+        // For Timelines
+        if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {
+            if (this.method_15557() == class_3460.field_16737 && this.attackingPlayer != null) timer.tryInsertNewTimeline("kill_wither");
+            if (this.method_15557() == class_3460.field_16798 && this.attackingPlayer != null) timer.tryInsertNewTimeline("kill_elder_guardian");
+            if (this.method_15557() == class_3460.field_16800) timer.tryInsertNewTimeline("kill_ender_dragon");
+        }
 
         //Kill All Bosses
         if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {
@@ -56,13 +63,6 @@ public abstract class LivingEntityMixin extends Entity {
         //Kill Elder Guardian
         if (timer.getCategory() == RunCategories.KILL_ELDER_GUARDIAN && this.method_15557() == class_3460.field_16798) {
             InGameTimer.complete();
-        }
-
-        // For Timelines
-        if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {
-            if (this.method_15557() == class_3460.field_16737) timer.tryInsertNewTimeline("kill_wither");
-            if (this.method_15557() == class_3460.field_16798) timer.tryInsertNewTimeline("kill_elder_guardian");
-            if (this.method_15557() == class_3460.field_16800) timer.tryInsertNewTimeline("kill_ender_dragon");
         }
     }
 }

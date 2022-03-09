@@ -38,16 +38,6 @@ public abstract class ClientAdvancementManagerMixin {
 
         if (advancementProgress.method_14833() && timer.getStatus() != TimerStatus.NONE) {
 
-            //How Did We Get Here
-            if (timer.getCategory() == RunCategories.HOW_DID_WE_GET_HERE && Objects.equals(advancement.getIdentifier().toString(), new Identifier("nether/all_effects").toString())) {
-                InGameTimer.complete();
-            }
-
-            //Arbalistic
-            if (timer.getCategory() == RunCategories.ARBALISTIC && Objects.equals(advancement.getIdentifier().toString(), new Identifier("adventure/arbalistic").toString())) {
-                InGameTimer.complete();
-            }
-
             // For Timelines
             if (timer.getCategory() == RunCategories.ANY) {
                 if (Objects.equals(advancement.getIdentifier().getPath(), "story/follow_ender_eye")) {
@@ -56,8 +46,16 @@ public abstract class ClientAdvancementManagerMixin {
                     timer.tryInsertNewTimeline("enter_fortress");
                 }
             }
-            if (timer.getCategory() == RunCategories.ALL_ADVANCEMENTS || timer.getCategory() == RunCategories.HALF || timer.getCategory() == RunCategories.POGLOOT_QUATER) {
-                timer.tryInsertNewTimeline(advancement.getIdentifier().getPath());
+            if (advancement.getDisplay() != null) timer.tryInsertNewAdvancement(advancement.getIdentifier().toString(), null);
+
+            //How Did We Get Here
+            if (timer.getCategory() == RunCategories.HOW_DID_WE_GET_HERE && Objects.equals(advancement.getIdentifier().toString(), new Identifier("nether/all_effects").toString())) {
+                InGameTimer.complete();
+            }
+
+            //Arbalistic
+            if (timer.getCategory() == RunCategories.ARBALISTIC && Objects.equals(advancement.getIdentifier().toString(), new Identifier("adventure/arbalistic").toString())) {
+                InGameTimer.complete();
             }
         }
         return entry.getValue();
