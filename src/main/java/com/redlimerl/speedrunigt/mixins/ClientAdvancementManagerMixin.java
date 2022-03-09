@@ -34,11 +34,6 @@ public abstract class ClientAdvancementManagerMixin {
 
         if (advancementProgress.method_14833() && timer.getStatus() != TimerStatus.NONE) {
 
-            //How Did We Get Here
-            if (timer.getCategory() == RunCategories.HOW_DID_WE_GET_HERE && Objects.equals(advancement.method_14801().toString(), new Identifier("nether/all_effects").toString())) {
-                InGameTimer.complete();
-            }
-
             // For Timelines
             if (timer.getCategory() == RunCategories.ANY) {
                 if (Objects.equals(advancement.method_14801().getPath(), "story/follow_ender_eye")) {
@@ -47,8 +42,11 @@ public abstract class ClientAdvancementManagerMixin {
                     timer.tryInsertNewTimeline("enter_fortress");
                 }
             }
-            if (timer.getCategory() == RunCategories.ALL_ADVANCEMENTS || timer.getCategory() == RunCategories.HALF || timer.getCategory() == RunCategories.POGLOOT_QUATER) {
-                timer.tryInsertNewTimeline(advancement.method_14801().getPath());
+            if (advancement.method_14796() != null) timer.tryInsertNewAdvancement(advancement.method_14801().toString(), null);
+
+            //How Did We Get Here
+            if (timer.getCategory() == RunCategories.HOW_DID_WE_GET_HERE && Objects.equals(advancement.method_14801().toString(), new Identifier("nether/all_effects").toString())) {
+                InGameTimer.complete();
             }
         }
         return entry.getValue();
@@ -77,7 +75,7 @@ public abstract class ClientAdvancementManagerMixin {
     private int getCompleteAdvancementsCount() {
         int count = 0;
         for (class_3326 advancement : this.field_16128.method_14816()) {
-            if (this.field_16129.containsKey(advancement) && advancement.method_14796() != null && !advancement.method_14801().getNamespace().startsWith("recipes")) {
+            if (this.field_16129.containsKey(advancement) && advancement.method_14796() != null && !advancement.method_14801().getPath().startsWith("recipes")) {
                 class_3334 advancementProgress = this.field_16129.get(advancement);
 
                 advancementProgress.method_14836(advancement.method_14799(), advancement.method_14802());

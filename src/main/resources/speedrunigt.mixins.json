@@ -12,6 +12,7 @@
     "KeyBindingMixin",
     "LivingEntityMixin",
     "MinecraftClientMixin",
+    "PlayerAdvancementTrackerMixin",
     "access.ButtonWidgetAccessor",
     "access.ClientChunkProviderAccessor",
     "access.ServerStatHandlerAccessor",
