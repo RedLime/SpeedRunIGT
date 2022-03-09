@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.timer;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.mixins.access.ClientChunkProviderAccessor;
@@ -20,6 +21,7 @@ import org.lwjgl.opengl.Display;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -75,6 +77,23 @@ public class InGameTimerUtils {
         return text + empty;
     }
 
+    public static String advancementTrackerToString(JsonObject jsonObject) {
+        JsonObject tracker = SpeedRunIGT.GSON.fromJson(SpeedRunIGT.GSON.toJson(jsonObject) + "", JsonObject.class);
+        for (Map.Entry<String, JsonElement> stringJsonElementEntry : tracker.entrySet()) {
+            JsonObject adv = tracker.getAsJsonObject(stringJsonElementEntry.getKey());
+            if (adv.has("criteria")) {
+                for (Map.Entry<String, JsonElement> jsonElementEntry : adv.getAsJsonObject("criteria").entrySet()) {
+                    JsonObject crt = adv.getAsJsonObject("criteria").getAsJsonObject(jsonElementEntry.getKey());
+                    crt.addProperty("igt", timeToStringFormat(crt.get("igt").getAsLong()));
+                    crt.addProperty("rta", timeToStringFormat(crt.get("rta").getAsLong()));
+                }
+            }
+            adv.addProperty("igt", timeToStringFormat(adv.get("igt").getAsLong()));
+            adv.addProperty("rta", timeToStringFormat(adv.get("rta").getAsLong()));
+        }
+        return SpeedRunIGT.PRETTY_GSON.toJson(tracker);
+    }
+
     public static String pauseLogListToString(List<TimerPauseLog> arrayList) {
         if (arrayList.size() == 0) return "";
 
@@ -84,8 +103,8 @@ public class InGameTimerUtils {
                 .append(makeLogText(15, "Start RTA"))
                 .append(makeLogText(15, "End RTA"))
                 .append(makeLogText(11, "Length"))
-                .append(makeLogText(11, "Retime"))
-                .append("Reason")
+                .append(makeLogText(11, "Retime?"))
+                .append("Reason / Notice")
                 .append("\n");
 
         for (TimerPauseLog pause : arrayList) {
@@ -95,8 +114,8 @@ public class InGameTimerUtils {
                     .append(makeLogText(15, timeToStringFormat(pause.getUnpauseRTA() - pause.getPauseLength())))
                     .append(makeLogText(15, timeToStringFormat(pause.getUnpauseRTA())))
                     .append(makeLogText(11, millisecondToStringFormat(pause.getPauseLength())))
-                    .append(makeLogText(11, pause.getRetimeNeedAmount() == 0 ? "" : millisecondToStringFormat(pause.getRetimeNeedAmount())))
-                    .append(String.format("Paused by %s, Unpause by %s", pause.getPauseReason(), pause.getUnpauseReason()))
+                    .append(makeLogText(11, pause.getRetimeData().getRetimeNeedAmount() == 0 ? "" : millisecondToStringFormat(pause.getRetimeData().getRetimeNeedAmount())))
+                    .append(String.format("Paused by %s, Unpause by %s%s", pause.getPauseReason(), pause.getUnpauseReason(), pause.getRetimeData().getNoticeInfo().isEmpty() ? "" : " / "+pause.getRetimeData().getNoticeInfo()))
                     .append("\n");
         }
         return stringBuilder.toString();
@@ -124,9 +143,11 @@ public class InGameTimerUtils {
         jsonObject.addProperty("mc_version", getMinecraftVersion());
         jsonObject.addProperty("speedrunigt_version", SpeedRunIGT.MOD_VERSION);
         jsonObject.addProperty("category", timer.getCategory().getID());
+        jsonObject.addProperty("is_completed", timer.isCompleted());
         jsonObject.addProperty("is_coop", timer.isCoop());
         jsonObject.addProperty("is_hardcore", timer.isHardcore());
         jsonObject.addProperty("is_legacy_igt", timer.isLegacyIGT());
+        jsonObject.addProperty("world_name", timer.worldName);
         jsonObject.addProperty("date", System.currentTimeMillis());
         jsonObject.addProperty("retimed_igt", timer.getRetimedInGameTime());
         jsonObject.addProperty("final_igt", timer.getInGameTime(false));
@@ -139,7 +160,8 @@ public class InGameTimerUtils {
             timelineObj.addProperty("rta", timeline.getRTA());
             timelineArr.add(timelineObj);
         }
-        jsonObject.add("timeline", timelineArr);
+        jsonObject.add("timelines", timelineArr);
+        jsonObject.add("advancements", timer.getAdvancementsTracker());
         jsonObject.add("stats", getStatsJson(timer));
 
         return jsonObject;
