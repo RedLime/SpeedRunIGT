@@ -31,38 +31,38 @@ public abstract class LivingEntityMixin extends Entity {
     public void onDeath(DamageSource source, CallbackInfo ci) {
         @NotNull InGameTimer timer = InGameTimer.getInstance();
 
-        if (this.removed || this.dead || timer.getStatus() == TimerStatus.NONE || this.attackingPlayer == null) return;
+        if (this.removed || this.dead || timer.getStatus() == TimerStatus.NONE) return;
+
+        // For Timelines
+        if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {
+            if (this.getType() == EntityType.WITHER && this.attackingPlayer != null) timer.tryInsertNewTimeline("kill_wither");
+            if (this.getType() == EntityType.ELDER_GUARDIAN && this.attackingPlayer != null) timer.tryInsertNewTimeline("kill_elder_guardian");
+            if (this.getType() == EntityType.ENDER_DRAGON) timer.tryInsertNewTimeline("kill_ender_dragon");
+        }
 
         //Kill All Bosses
         if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {
             if (this.getType() == EntityType.ENDER_DRAGON) {
                 timer.updateMoreData(0, 1);
             }
-            if (this.getType() == EntityType.WITHER) {
+            if (this.getType() == EntityType.WITHER && this.attackingPlayer != null) {
                 timer.updateMoreData(1, 1);
                 RunCategories.checkAllBossesCompleted();
             }
-            if (this.getType() == EntityType.ELDER_GUARDIAN) {
+            if (this.getType() == EntityType.ELDER_GUARDIAN && this.attackingPlayer != null) {
                 timer.updateMoreData(2, 1);
                 RunCategories.checkAllBossesCompleted();
             }
         }
 
         //Kill Wither
-        if (timer.getCategory() == RunCategories.KILL_WITHER && this.getType() == EntityType.WITHER) {
+        if (timer.getCategory() == RunCategories.KILL_WITHER && this.getType() == EntityType.WITHER && this.attackingPlayer != null) {
             InGameTimer.complete();
         }
 
         //Kill Elder Guardian
-        if (timer.getCategory() == RunCategories.KILL_ELDER_GUARDIAN && this.getType() == EntityType.ELDER_GUARDIAN) {
+        if (timer.getCategory() == RunCategories.KILL_ELDER_GUARDIAN && this.getType() == EntityType.ELDER_GUARDIAN && this.attackingPlayer != null) {
             InGameTimer.complete();
-        }
-
-        // For Timelines
-        if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {
-            if (this.getType() == EntityType.WITHER) timer.tryInsertNewTimeline("kill_wither");
-            if (this.getType() == EntityType.ELDER_GUARDIAN) timer.tryInsertNewTimeline("kill_elder_guardian");
-            if (this.getType() == EntityType.ENDER_DRAGON) timer.tryInsertNewTimeline("kill_ender_dragon");
         }
     }
 }

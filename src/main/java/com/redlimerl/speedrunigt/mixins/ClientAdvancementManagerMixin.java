@@ -40,6 +40,18 @@ public abstract class ClientAdvancementManagerMixin {
 
         if (advancementProgress.isDone() && timer.getStatus() != TimerStatus.NONE) {
 
+            // For Timelines
+            if (timer.getCategory() == RunCategories.ANY) {
+                if (Objects.equals(advancement.getId().getPath(), "story/follow_ender_eye")) {
+                    timer.tryInsertNewTimeline("enter_stronghold");
+                } else if (Objects.equals(advancement.getId().getPath(), "nether/find_fortress")) {
+                    timer.tryInsertNewTimeline("enter_fortress");
+                } else if (Objects.equals(advancement.getId().getPath(), "adventure/trade")) {
+                    timer.tryInsertNewTimeline("trade_with_villager");
+                }
+            }
+            if (advancement.getDisplay() != null) timer.tryInsertNewAdvancement(advancement.getId().toString(), null);
+
             //How Did We Get Here
             if (timer.getCategory() == RunCategories.HOW_DID_WE_GET_HERE && Objects.equals(advancement.getId().toString(), new Identifier("nether/all_effects").toString())) {
                 InGameTimer.complete();
@@ -53,20 +65,6 @@ public abstract class ClientAdvancementManagerMixin {
             //Arbalistic
             if (timer.getCategory() == RunCategories.ARBALISTIC && Objects.equals(advancement.getId().toString(), new Identifier("adventure/arbalistic").toString())) {
                 InGameTimer.complete();
-            }
-
-            // For Timelines
-            if (timer.getCategory() == RunCategories.ANY) {
-                if (Objects.equals(advancement.getId().getPath(), "story/follow_ender_eye")) {
-                    timer.tryInsertNewTimeline("enter_stronghold");
-                } else if (Objects.equals(advancement.getId().getPath(), "nether/find_fortress")) {
-                    timer.tryInsertNewTimeline("enter_fortress");
-                } else if (Objects.equals(advancement.getId().getPath(), "adventure/trade")) {
-                    timer.tryInsertNewTimeline("trade_with_villager");
-                }
-            }
-            if (timer.getCategory() == RunCategories.ALL_ADVANCEMENTS || timer.getCategory() == RunCategories.HALF || timer.getCategory() == RunCategories.POGLOOT_QUATER) {
-                timer.tryInsertNewTimeline(advancement.getId().getPath());
             }
         }
         return entry.getValue();
@@ -95,7 +93,7 @@ public abstract class ClientAdvancementManagerMixin {
     private int getCompleteAdvancementsCount() {
         int count = 0;
         for (Advancement advancement : this.getManager().getAdvancements()) {
-            if (this.advancementProgresses.containsKey(advancement) && advancement.getDisplay() != null && !advancement.getId().getNamespace().startsWith("recipes")) {
+            if (this.advancementProgresses.containsKey(advancement) && advancement.getDisplay() != null && !advancement.getId().getPath().startsWith("recipes")) {
                 AdvancementProgress advancementProgress = this.advancementProgresses.get(advancement);
 
                 advancementProgress.init(advancement.getCriteria(), advancement.getRequirements());

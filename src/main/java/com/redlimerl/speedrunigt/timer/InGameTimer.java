@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.timer;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.crypt.Crypto;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
@@ -42,6 +43,7 @@ public class InGameTimer {
     private static InGameTimer COMPLETED_INSTANCE = new InGameTimer("");
 
     private static final String cryptKey = "faRQOs2GK5j863eP";
+    private static final int DATA_VERSION = 1;
 
     @NotNull
     public static InGameTimer getInstance() { return INSTANCE; }
@@ -60,7 +62,7 @@ public class InGameTimer {
         this.isResettable = isResettable;
     }
 
-    private final String worldName;
+    final String worldName;
     private String category = RunCategories.ANY.getID();
     private final boolean isResettable;
     private boolean isCompleted = false;
@@ -95,7 +97,10 @@ public class InGameTimer {
 
     //For record
     private final ArrayList<TimerTimeline> timelines = new ArrayList<>();
+    private final JsonObject advancementsTracker = new JsonObject();
     private boolean isHardcore = false;
+
+    private final Integer dataVersion = DATA_VERSION;
 
     @NotNull
     private TimerStatus status = TimerStatus.NONE;
@@ -106,6 +111,9 @@ public class InGameTimer {
      * Start the Timer, Trigger when player to join(created) the world
      */
     public static void start(String worldName) {
+        if (!INSTANCE.worldName.isEmpty()) {
+            INSTANCE.writeRecordFile();
+        }
         INSTANCE = new InGameTimer(worldName);
         INSTANCE.setCategory(SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY));
         INSTANCE.setPause(true, TimerStatus.IDLE, "startup");
@@ -178,6 +186,7 @@ public class InGameTimer {
             String worldName = INSTANCE.worldName;
             saveManagerThread.submit(() -> {
                 try {
+                    FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(worldName).toFile(), "igt_advancement" + (timer.completeCount == 0 ? "" : "_"+timer.completeCount) + ".log"), InGameTimerUtils.advancementTrackerToString(timer.advancementsTracker), StandardCharsets.UTF_8);
                     FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(worldName).toFile(), "igt_timer" + (timer.completeCount == 0 ? "" : "_"+timer.completeCount) + ".log"), logInfo + timer.firstInput + "\n" + InGameTimerUtils.pauseLogListToString(timer.pauseLogList) + resultLog, StandardCharsets.UTF_8);
                     FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(worldName).toFile(), "igt_freeze" + (timer.completeCount == 0 ? "" : "_"+timer.completeCount) + ".log"), logInfo + InGameTimerUtils.logListToString(timer.freezeLogList), StandardCharsets.UTF_8);
                 } catch (IOException e) {
@@ -187,16 +196,7 @@ public class InGameTimer {
             });
         }
 
-        String recordString = SpeedRunIGT.PRETTY_GSON.toJson(InGameTimerUtils.convertTimelineJson(INSTANCE));
-        saveManagerThread.submit(() -> {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy-MM-dd-HH-mm-ss");
-            try {
-                FileUtils.writeStringToFile(new File(SpeedRunIGT.getRecordsPath().toFile(), simpleDateFormat.format(new Date()) + ".json"), recordString, StandardCharsets.UTF_8);
-            } catch (IOException e) {
-                e.printStackTrace();
-                SpeedRunIGT.error("Failed to write timer record :(");
-            }
-        });
+        INSTANCE.writeRecordFile();
 
         for (Consumer<InGameTimer> onCompleteConsumer : onCompleteConsumers) {
             try {
@@ -221,7 +221,7 @@ public class InGameTimer {
     private static final ExecutorService saveManagerThread = Executors.newFixedThreadPool(2);
     private static void save() { save(false); }
     private static void save(boolean withLeave) {
-        if (waitingSaveTask || saveManagerThread.isShutdown() || saveManagerThread.isTerminated() || !INSTANCE.isServerIntegrated) return;
+        if (waitingSaveTask || saveManagerThread.isShutdown() || saveManagerThread.isTerminated() || !INSTANCE.isServerIntegrated || INSTANCE.worldName.isEmpty()) return;
 
         String worldName = INSTANCE.worldName, timerData = SpeedRunIGT.GSON.toJson(INSTANCE) + "", completeData = SpeedRunIGT.GSON.toJson(COMPLETED_INSTANCE) + "";
         File worldDir = InGameTimerUtils.getWorldSavePath(worldName).toFile();
@@ -272,6 +272,14 @@ public class InGameTimer {
                     if (completeFile.exists()) COMPLETED_INSTANCE = SpeedRunIGT.GSON.fromJson(Crypto.decrypt(FileUtils.readFileToString(completeFile, StandardCharsets.UTF_8), cryptKey), InGameTimer.class);
                     SpeedRunIGT.debug("Loaded Timer Saved Data! " + isOld);
                     INSTANCE.setStatus(TimerStatus.LEAVE);
+
+                    //noinspection ConstantConditions
+                    if (INSTANCE.dataVersion == null || INSTANCE.dataVersion == 0 || INSTANCE.dataVersion != DATA_VERSION) {
+                        FileUtils.moveFile(file, new File(worldPath.toFile(), "timer.igt.backup"));
+                        SpeedRunIGT.error("The timer data has found, but it is an old version. timer file is renamed to \"*.igt.backup\"");
+                        InGameTimer.start(name);
+                    }
+
                     return true;
                 } catch (Throwable e) {
                     if (!isOld.isEmpty()) return false;
@@ -284,7 +292,18 @@ public class InGameTimer {
         }
     }
 
-
+    public void writeRecordFile() {
+        String recordString = SpeedRunIGT.PRETTY_GSON.toJson(InGameTimerUtils.convertTimelineJson(this));
+        saveManagerThread.submit(() -> {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy-MM-dd-HH-mm-ss");
+            try {
+                FileUtils.writeStringToFile(new File(SpeedRunIGT.getRecordsPath().toFile(), simpleDateFormat.format(new Date()) + ".json"), recordString, StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                e.printStackTrace();
+                SpeedRunIGT.error("Failed to write timer record :(");
+            }
+        });
+    }
 
     public @NotNull RunCategory getCategory() {
         return RunCategory.getCategory(category);
@@ -450,17 +469,24 @@ public class InGameTimer {
             if (this.isStarted()) {
                 long nowTime = getRealTimeAttack();
                 long beforeRetime = retimedIGTTime;
+                TimerPauseLog.Retime retime = new TimerPauseLog.Retime(0, "");
                 if (this.getStatus() == TimerStatus.PAUSED) {
-                    if (this.getCategory() == RunCategories.ANY && !InGameTimerUtils.RETIME_IS_WAITING_LOAD) {
-                        if (InGameTimerUtils.RETIME_IS_CHANGED_OPTION) {
-                            retimedIGTTime += Math.max(nowTime - loggerPausedTime - 5000, 0);
+                    if (this.getCategory() == RunCategories.ANY) {
+                        if (InGameTimerUtils.RETIME_IS_WAITING_LOAD) {
+                            retime = new TimerPauseLog.Retime(retimedIGTTime - beforeRetime, "prob. world load pause");
                         } else {
-                            retimedIGTTime += nowTime - loggerPausedTime;
+                            if (InGameTimerUtils.RETIME_IS_CHANGED_OPTION) {
+                                retimedIGTTime += Math.max(nowTime - loggerPausedTime - 5000, 0);
+                                retime = new TimerPauseLog.Retime(retimedIGTTime - beforeRetime, "changed option(s)");
+                            } else {
+                                retimedIGTTime += nowTime - loggerPausedTime;
+                                retime = new TimerPauseLog.Retime(retimedIGTTime - beforeRetime, "");
+                            }
                         }
                     }
                 }
                 if (isPaused()) {
-                    this.pauseLogList.add(new TimerPauseLog(prevPauseReason, reason, getInGameTime(false), getRealTimeAttack(), nowTime - loggerPausedTime, pauseCount, retimedIGTTime - beforeRetime));
+                    this.pauseLogList.add(new TimerPauseLog(prevPauseReason, reason, getInGameTime(false), getRealTimeAttack(), nowTime - loggerPausedTime, pauseCount, retime));
                     if (this.getCategory() == RunCategories.ALL_ADVANCEMENTS && leaveTime != 0) excludedTime = System.currentTimeMillis() - leaveTime;
                     leaveTime = 0;
                 }
@@ -496,8 +522,40 @@ public class InGameTimer {
         return timelines.add(new TimerTimeline(name, getInGameTime(false), getRealTimeAttack()));
     }
 
+    private JsonObject jsonObjectGetOrCreate(JsonObject jsonObject, String key) {
+        if (jsonObject.has(key)) return jsonObject.getAsJsonObject(key);
+        JsonObject jsonObject1 = new JsonObject();
+        jsonObject.add(key, jsonObject1);
+        return jsonObject1;
+    }
+    public void tryInsertNewAdvancement(String advancementID, String criteriaKey) {
+        JsonObject advancement = jsonObjectGetOrCreate(advancementsTracker, advancementID);
+        if (criteriaKey == null) {
+            if (advancement.get("complete").getAsBoolean()) return;
+            advancement.addProperty("complete", true);
+            advancement.addProperty("igt", getInGameTime(false));
+            advancement.addProperty("rta", getRealTimeAttack());
+        } else {
+            JsonObject criteria = jsonObjectGetOrCreate(advancement, "criteria");
+            if (criteria.has(criteriaKey)) return;
+            JsonObject criteriaObject = new JsonObject();
+            criteriaObject.addProperty("igt", getInGameTime(false));
+            criteriaObject.addProperty("rta", getRealTimeAttack());
+            criteria.add(criteriaKey, criteriaObject);
+            if (!advancement.has("complete")) {
+                advancement.addProperty("complete", false);
+                advancement.addProperty("igt", 0);
+                advancement.addProperty("rta", 0);
+            }
+        }
+    }
+
     public List<TimerTimeline> getTimelines() {
         return timelines;
+    }
+
+    public JsonObject getAdvancementsTracker() {
+        return advancementsTracker;
     }
 
     public boolean isHardcore() {
