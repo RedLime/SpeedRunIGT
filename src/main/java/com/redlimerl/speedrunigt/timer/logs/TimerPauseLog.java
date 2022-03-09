@@ -15,17 +15,17 @@ public class TimerPauseLog {
     // Pause count
     private final int n;
     // retimed amount
-    private final long r;
+    private final Retime r;
 
 
-    public TimerPauseLog(String pauseReason, String unpauseReason, long currentIGT, long currentRTA, long pauseLength, int pauseCount, long retimed) {
+    public TimerPauseLog(String pauseReason, String unpauseReason, long currentIGT, long currentRTA, long pauseLength, int pauseCount, Retime retime) {
         this.rp = pauseReason;
         this.ru = unpauseReason;
         this.igt = currentIGT;
         this.ct = currentRTA;
         this.pt = pauseLength;
         this.n = pauseCount;
-        this.r = retimed;
+        this.r = retime;
     }
 
     public String getPauseReason() {
@@ -52,7 +52,24 @@ public class TimerPauseLog {
         return n;
     }
 
-    public long getRetimeNeedAmount() {
+    public Retime getRetimeData() {
         return r;
+    }
+
+    public static class Retime {
+        private final long i;
+        private final String t;
+        public Retime(long retimed, String notice) {
+            this.i = retimed;
+            this.t = notice;
+        }
+
+        public long getRetimeNeedAmount() {
+            return i;
+        }
+
+        public String getNoticeInfo() {
+            return t;
+        }
     }
 }
