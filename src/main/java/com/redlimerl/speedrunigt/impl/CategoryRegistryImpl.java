@@ -13,8 +13,8 @@ public class CategoryRegistryImpl implements SpeedRunIGTApi {
     public Collection<RunCategory> registerCategories() {
         ArrayList<RunCategory> list = new ArrayList<>();
         list.add(ANY);list.add(CUSTOM);list.add(HIGH);list.add(KILL_ALL_BOSSES);list.add(KILL_WITHER);list.add(KILL_ELDER_GUARDIAN);list.add(ALL_ADVANCEMENTS);
-        list.add(HALF);list.add(POGLOOT_QUATER);list.add(HOW_DID_WE_GET_HERE);list.add(HERO_OF_VILLAGE);list.add(ARBALISTIC);list.add(ENTER_NETHER);list.add(ENTER_END);
-        list.add(ALL_SWORDS);list.add(ALL_MINERALS);list.add(FULL_IA_15_LVL);list.add(ALL_WORKSTATIONS);list.add(FULL_INV);list.add(STACK_OF_LIME_WOOL);
+        list.add(HALF);list.add(POGLOOT_QUATER);list.add(HOW_DID_WE_GET_HERE);list.add(ENTER_NETHER);list.add(ENTER_END);
+        list.add(ALL_SWORDS);list.add(ALL_MINERALS);list.add(FULL_IA_15_LVL);list.add(FULL_INV);list.add(STACK_OF_LIME_WOOL);
         return list;
     }
 }

@@ -52,11 +52,6 @@ public abstract class ClientAdvancementManagerMixin {
             if (timer.getCategory() == RunCategories.HOW_DID_WE_GET_HERE && Objects.equals(advancement.getIdentifier().toString(), new Identifier("nether/all_effects").toString())) {
                 InGameTimer.complete();
             }
-
-            //Arbalistic
-            if (timer.getCategory() == RunCategories.ARBALISTIC && Objects.equals(advancement.getIdentifier().toString(), new Identifier("adventure/arbalistic").toString())) {
-                InGameTimer.complete();
-            }
         }
         return entry.getValue();
     }
