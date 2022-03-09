@@ -13,6 +13,7 @@
     "LivingEntityMixin",
     "MinecraftClientMixin",
     "MouseMixin",
+    "PlayerAdvancementTrackerMixin",
     "access.AbstractButtonWidgetAccessor",
     "access.FontManagerAccessor",
     "access.FontStorageAccessor",
