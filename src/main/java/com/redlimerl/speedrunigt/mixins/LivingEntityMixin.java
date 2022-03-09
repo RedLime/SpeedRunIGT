@@ -37,7 +37,16 @@ public abstract class LivingEntityMixin extends Entity {
     public void onDeath(DamageSource source, CallbackInfo ci) {
         @NotNull InGameTimer timer = InGameTimer.getInstance();
 
-        if (this.removed || this.dead || timer.getStatus() == TimerStatus.NONE || this.attackingPlayer == null) return;
+        if (this.removed || this.dead || timer.getStatus() == TimerStatus.NONE) return;
+
+        // For Timelines
+        if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {
+            if (Objects.equals(EntityType.getEntityName(this), "WitherBoss") && this.attackingPlayer != null) timer.tryInsertNewTimeline("kill_wither");
+            if (Objects.equals(EntityType.getEntityName(this), "ElderGuardian") && this.attackingPlayer != null) timer.tryInsertNewTimeline("kill_elder_guardian");
+            if (Objects.equals(EntityType.getEntityName(this), "EnderDragon")) timer.tryInsertNewTimeline("kill_ender_dragon");
+        }
+        if (timer.getCategory() == RunCategories.ANY && Objects.equals(EntityType.getEntityName(this), "Blaze"))
+            timer.tryInsertNewTimeline("killed_blaze");
 
         //Kill All Bosses
         if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {
@@ -63,14 +72,5 @@ public abstract class LivingEntityMixin extends Entity {
         if (timer.getCategory() == RunCategories.KILL_ELDER_GUARDIAN && Objects.equals(EntityType.getEntityName(this), "ElderGuardian")) {
             InGameTimer.complete();
         }
-
-        // For Timelines
-        if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {
-            if (Objects.equals(EntityType.getEntityName(this), "WitherBoss")) timer.tryInsertNewTimeline("kill_wither");
-            if (Objects.equals(EntityType.getEntityName(this), "ElderGuardian")) timer.tryInsertNewTimeline("kill_elder_guardian");
-            if (Objects.equals(EntityType.getEntityName(this), "EnderDragon")) timer.tryInsertNewTimeline("kill_ender_dragon");
-        }
-        if (timer.getCategory() == RunCategories.ANY && Objects.equals(EntityType.getEntityName(this), "Blaze"))
-            timer.tryInsertNewTimeline("killed_blaze");
     }
 }
