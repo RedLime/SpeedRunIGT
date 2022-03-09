@@ -29,6 +29,9 @@ public abstract class StatHandlerMixin {
 
             if (timer.getStatus() == TimerStatus.NONE) return;
 
+            // For Timeline
+            timer.tryInsertNewAdvancement(stat.name, null);
+
             //All Advancements
             if (timer.getCategory() == RunCategories.ALL_ACHIEVEMENTS) {
                 if (getCompleteAdvancementsCount()+1 >= 34) InGameTimer.complete();
@@ -38,12 +41,6 @@ public abstract class StatHandlerMixin {
             if (timer.getCategory() == RunCategories.HALF) {
                 if (getCompleteAdvancementsCount()+1 >= 17) InGameTimer.complete();
             }
-
-            //For Timelines
-            if (timer.getCategory() == RunCategories.ALL_ACHIEVEMENTS || timer.getCategory() == RunCategories.HALF) {
-                timer.tryInsertNewTimeline(stat.name);
-            }
-
         }
 
     }
