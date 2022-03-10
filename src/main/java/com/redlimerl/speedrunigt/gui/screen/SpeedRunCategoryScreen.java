@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
+import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.running.RunCategory;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.fabricmc.api.EnvType;
@@ -118,7 +119,8 @@ public class SpeedRunCategoryScreen extends Screen {
 
                 @Override
                 public boolean isChecked() {
-                    return SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY) == category;
+                    return (InGameTimer.getInstance().getStatus() != TimerStatus.NONE ? InGameTimer.getInstance().getCategory()
+                            : SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY)) == category;
                 }
 
                 @Override
