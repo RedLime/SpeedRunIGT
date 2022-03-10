@@ -4,6 +4,7 @@ import com.redlimerl.speedrunigt.gui.ConsumerButtonWidget;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
+import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.running.RunCategory;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.fabricmc.api.EnvType;
@@ -37,7 +38,7 @@ public class SpeedRunCategoryScreen extends Screen {
         buttons.add(new ConsumerButtonWidget(width / 2 - 100, height - 35, 200, 20, ScreenTexts.CANCEL, (button) -> onClose()));
         this.listWidget = new CategorySelectionListWidget(this.client);
     }
-    
+
     public void onClose() {
         if (this.client != null) this.client.openScreen(parent);
     }
@@ -110,7 +111,7 @@ public class SpeedRunCategoryScreen extends Screen {
             public void method_6700(int index, int x, int y, int rowWidth, int rowHeight, Tessellator tessellator, int mouseX, int mouseY, boolean hovered) {
                 this.checkBox.x = x + 34;
                 this.checkBox.y = y;
-                this.checkBox.message = SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY) == this.category ? new LiteralText("█").setStyle(new Style().setBold(true)).asFormattedString() : "";
+                this.checkBox.message = (InGameTimer.getInstance().getStatus() != TimerStatus.NONE ? InGameTimer.getInstance().getCategory() : SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY)) == this.category ? new LiteralText("█").setStyle(new Style().setBold(true)).asFormattedString() : "";
                 this.checkBox.render(MinecraftClient.getInstance(), mouseX, mouseY);
                 drawWithShadow(SpeedRunCategoryScreen.this.textRenderer, category.getText().asFormattedString(), this.checkBox.x + 24, this.checkBox.y + 6,14737632 | 255 << 24);
             }
