@@ -4,6 +4,7 @@ import com.redlimerl.speedrunigt.gui.ConsumerButtonWidget;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
+import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.running.RunCategory;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.fabricmc.api.EnvType;
@@ -101,7 +102,7 @@ public class SpeedRunCategoryScreen extends Screen {
                 int m = this.method_18403();
                 this.checkBox.x = n + 34;
                 this.checkBox.y = m;
-                this.checkBox.message = SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY) == this.category ? new LiteralText("█").setStyle(new Style().setBold(true)).asFormattedString() : "";
+                this.checkBox.message = (InGameTimer.getInstance().getStatus() != TimerStatus.NONE ? InGameTimer.getInstance().getCategory() : SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY)) == this.category ? new LiteralText("█").setStyle(new Style().setBold(true)).asFormattedString() : "";
                 this.checkBox.method_891(k, l, f);
                 drawWithShadow(SpeedRunCategoryScreen.this.textRenderer, category.getText().asFormattedString(), this.checkBox.x + 24, this.checkBox.y + 6,14737632 | 255 << 24);
             }
