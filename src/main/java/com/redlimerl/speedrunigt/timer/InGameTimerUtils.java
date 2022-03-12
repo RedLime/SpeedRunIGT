@@ -13,8 +13,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -196,10 +195,10 @@ public class InGameTimerUtils {
         return SharedConstants.getGameVersion().getName();
     }
 
-    public static boolean isLoadableBlind(RegistryKey<World> worldKey, Vec3d netherPos, Vec3d overPos) {
+    public static boolean isLoadableBlind(DimensionType dimensionType, Vec3d netherPos, Vec3d overPos) {
         InGameTimer timer = InGameTimer.getInstance();
-        ArrayList<Vec3d> arrayList = worldKey == World.NETHER ? timer.lastNetherPortalPos : worldKey == World.OVERWORLD ? timer.lastOverWorldPortalPos : null;
-        Vec3d targetPos = worldKey == World.NETHER ? netherPos : worldKey == World.OVERWORLD ? overPos : null;
+        ArrayList<Vec3d> arrayList = dimensionType == DimensionType.THE_NETHER ? timer.lastNetherPortalPos : dimensionType == DimensionType.OVERWORLD ? timer.lastOverWorldPortalPos : null;
+        Vec3d targetPos = dimensionType == DimensionType.THE_NETHER ? netherPos : dimensionType == DimensionType.OVERWORLD ? overPos : null;
         if (arrayList == null || targetPos == null) return true;
         for (Vec3d portalPos : arrayList) {
             if (portalPos.squaredDistanceTo(targetPos) < 16) return false;
