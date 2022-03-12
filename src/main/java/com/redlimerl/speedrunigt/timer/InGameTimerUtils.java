@@ -12,8 +12,10 @@ import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.dimension.DimensionType;
 
-import java.nio.file.Path;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,11 +24,14 @@ import java.util.stream.IntStream;
 
 public class InGameTimerUtils {
     public static boolean IS_CHANGING_DIMENSION = false;
+    public static boolean IS_CAN_WAIT_WORLD_LOAD = false;
     public static boolean RETIME_IS_CHANGED_OPTION = false;
     public static boolean RETIME_IS_WAITING_LOAD = false;
 
-    public static Path getWorldSavePath(String name) {
-        return MinecraftClient.getInstance().getLevelStorage().getSavesDirectory().resolve(name);
+    public static File getTimerLogDir(String name, String pathName) {
+        File file = MinecraftClient.getInstance().getLevelStorage().getSavesDirectory().resolve(name).resolve(SpeedRunIGT.MOD_ID).resolve(pathName).toFile();
+        if (!file.exists()) SpeedRunIGT.debug(file.mkdirs() ? "make timer dirs" : "failed to make timer dirs");
+        return file;
     }
 
     public static boolean canUnpauseTimer(boolean checkRender) {
@@ -58,9 +63,12 @@ public class InGameTimerUtils {
         return 0;
     }
 
-    public static String logListToString(ArrayList<?> arrayList) {
+    public static String logListToString(ArrayList<?> arrayList, int completeCount) {
         if (arrayList.size() == 0) return "";
         StringBuilder stringBuilder = new StringBuilder();
+        if (completeCount > 0) {
+            stringBuilder.append("/* The timer/log is segmented. If you need previous logs, check the igt_freeze").append(InGameTimer.getLogSuffix(completeCount)).append(" file.").append(" */\n");
+        }
         for (Object o : arrayList) {
             stringBuilder.append(o.toString()).append("\n");
         }
@@ -89,18 +97,23 @@ public class InGameTimerUtils {
         return SpeedRunIGT.PRETTY_GSON.toJson(tracker);
     }
 
-    public static String pauseLogListToString(List<TimerPauseLog> arrayList) {
+    public static String pauseLogListToString(List<TimerPauseLog> arrayList, boolean makeHeader, int completeCount) {
         if (arrayList.size() == 0) return "";
 
-        StringBuilder stringBuilder = new StringBuilder()
-                .append(makeLogText(5, "No"))
-                .append(makeLogText(15, "IGT"))
-                .append(makeLogText(15, "Start RTA"))
-                .append(makeLogText(15, "End RTA"))
-                .append(makeLogText(11, "Length"))
-                .append(makeLogText(11, "Retime?"))
-                .append("Reason / Notice")
-                .append("\n");
+        StringBuilder stringBuilder = new StringBuilder();
+        if (completeCount > 0) {
+            stringBuilder.append("/* The timer/log is segmented. If you need previous logs, check the igt_timer").append(InGameTimer.getLogSuffix(completeCount)).append(" file.").append(" */\n");
+        }
+        if (makeHeader) {
+            stringBuilder.append(makeLogText(5, "No"))
+                    .append(makeLogText(15, "IGT"))
+                    .append(makeLogText(15, "Start RTA"))
+                    .append(makeLogText(15, "End RTA"))
+                    .append(makeLogText(11, "Length"))
+                    .append(makeLogText(11, "Retime?"))
+                    .append("Reason / Notice")
+                    .append("\n");
+        }
 
         for (TimerPauseLog pause : arrayList) {
             stringBuilder
@@ -130,7 +143,7 @@ public class InGameTimerUtils {
 
     public static String millisecondToStringFormat(long time) {
         int seconds = (int) (time / 1000);
-        return String.format("%d.%d", seconds, time % 1000);
+        return String.format("%d.%03d", seconds, time % 1000);
     }
 
     public static JsonObject convertTimelineJson(InGameTimer timer) {
@@ -180,5 +193,26 @@ public class InGameTimerUtils {
 
     public static String getMinecraftVersion() {
         return SharedConstants.getGameVersion().getName();
+    }
+
+    public static boolean isLoadableBlind(DimensionType dimensionType, Vec3d netherPos, Vec3d overPos) {
+        InGameTimer timer = InGameTimer.getInstance();
+        ArrayList<Vec3d> arrayList = dimensionType == DimensionType.THE_NETHER ? timer.lastNetherPortalPos : dimensionType == DimensionType.OVERWORLD ? timer.lastOverWorldPortalPos : null;
+        Vec3d targetPos = dimensionType == DimensionType.THE_NETHER ? netherPos : dimensionType == DimensionType.OVERWORLD ? overPos : null;
+        if (arrayList == null || targetPos == null) return true;
+        for (Vec3d portalPos : arrayList) {
+            if (portalPos.squaredDistanceTo(targetPos) < 16) return false;
+        }
+        timer.lastNetherPortalPos.add(netherPos);
+        timer.lastOverWorldPortalPos.add(overPos);
+        return true;
+    }
+
+    public static boolean isBlindTraveled(Vec3d netherPos) {
+        InGameTimer timer = InGameTimer.getInstance();
+        for (Vec3d portalPos : timer.lastNetherPortalPos) {
+            if (portalPos.squaredDistanceTo(netherPos) < 16) return false;
+        }
+        return true;
     }
 }
