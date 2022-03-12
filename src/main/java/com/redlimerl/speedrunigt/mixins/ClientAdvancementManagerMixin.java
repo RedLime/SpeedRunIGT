@@ -42,7 +42,7 @@ public abstract class ClientAdvancementManagerMixin {
                     timer.tryInsertNewTimeline("enter_fortress");
                 }
             }
-            if (advancement.method_14796() != null) timer.tryInsertNewAdvancement(advancement.method_14801().toString(), null);
+            timer.tryInsertNewAdvancement(advancement.method_14801().toString(), null);
 
             //How Did We Get Here
             if (timer.getCategory() == RunCategories.HOW_DID_WE_GET_HERE && Objects.equals(advancement.method_14801().toString(), new Identifier("nether/all_effects").toString())) {
