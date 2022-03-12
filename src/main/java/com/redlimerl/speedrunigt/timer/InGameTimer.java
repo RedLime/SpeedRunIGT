@@ -15,13 +15,13 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -34,7 +34,6 @@ import static com.redlimerl.speedrunigt.timer.InGameTimerUtils.timeToStringForma
  * In-game Timer class.
  * {@link TimerStatus}
  */
-@SuppressWarnings("unused")
 public class InGameTimer {
 
     @NotNull
@@ -50,6 +49,7 @@ public class InGameTimer {
 
     private static final ArrayList<Consumer<InGameTimer>> onCompleteConsumers = new ArrayList<>();
 
+    @SuppressWarnings("unused")
     public static void onComplete(Consumer<InGameTimer> supplier) {
         onCompleteConsumers.add(supplier);
     }
@@ -94,6 +94,10 @@ public class InGameTimer {
     private int loggerTicks = 0;
     private long loggerPausedTime = 0;
     private String prevPauseReason = "";
+
+    //For checking blind
+    ArrayList<Vec3d> lastOverWorldPortalPos = new ArrayList<>();
+    ArrayList<Vec3d> lastNetherPortalPos = new ArrayList<>();
 
     //For record
     private final ArrayList<TimerTimeline> timelines = new ArrayList<>();
@@ -178,17 +182,28 @@ public class InGameTimer {
                 resultLog.append(", Excluded RTA Time: ").append(timeToStringFormat(timer.excludedTime));
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy.MM.dd HH:mm:ss");
-            String logInfo = "MC Version : " + InGameTimerUtils.getMinecraftVersion() + "\r\n"
+            String logInfo = "====================\r\n"
+                    + resultLog + "\r\n"
+                    + timer.firstInput + "\r\n"
+                    + "MC Version : " + InGameTimerUtils.getMinecraftVersion() + "\r\n"
                     + "Timer Version : " + SpeedRunIGT.MOD_VERSION + "\r\n"
-                    + "Run Date : " + simpleDateFormat.format(new Date()) + "\r\n"
-                    + "====================\r\n";
+                    + "Run Date : " + simpleDateFormat.format(new Date());
 
             String worldName = INSTANCE.worldName;
+            File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "logs");
+            File advancementFile = new File(worldDir, "igt_advancement" + timer.getLogSuffix()),
+                    pauseFile = new File(worldDir, "igt_timer" + timer.getLogSuffix()),
+                    tickFile = new File(worldDir, "igt_freeze" + timer.getLogSuffix());
+            String advancementLog = InGameTimerUtils.advancementTrackerToString(timer.advancementsTracker),
+                    pauseLog = InGameTimerUtils.pauseLogListToString(timer.pauseLogList, !pauseFile.exists(), pauseFile.exists() ? 0 : timer.completeCount) + logInfo,
+                    freezeLog = InGameTimerUtils.logListToString(timer.freezeLogList, tickFile.exists() ? 0 : timer.completeCount);
+            timer.freezeLogList.clear();
+            timer.pauseLogList.clear();
             saveManagerThread.submit(() -> {
                 try {
-                    FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(worldName).toFile(), "igt_advancement" + (timer.completeCount == 0 ? "" : "_"+timer.completeCount) + ".log"), InGameTimerUtils.advancementTrackerToString(timer.advancementsTracker), StandardCharsets.UTF_8);
-                    FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(worldName).toFile(), "igt_timer" + (timer.completeCount == 0 ? "" : "_"+timer.completeCount) + ".log"), logInfo + timer.firstInput + "\n" + InGameTimerUtils.pauseLogListToString(timer.pauseLogList) + resultLog, StandardCharsets.UTF_8);
-                    FileUtils.writeStringToFile(new File(SpeedRunIGT.WORLDS_PATH.resolve(worldName).toFile(), "igt_freeze" + (timer.completeCount == 0 ? "" : "_"+timer.completeCount) + ".log"), logInfo + InGameTimerUtils.logListToString(timer.freezeLogList), StandardCharsets.UTF_8);
+                    FileUtils.writeStringToFile(advancementFile, advancementLog, StandardCharsets.UTF_8);
+                    FileUtils.writeStringToFile(pauseFile, pauseLog, StandardCharsets.UTF_8, true);
+                    FileUtils.writeStringToFile(tickFile, freezeLog, StandardCharsets.UTF_8, true);
                 } catch (IOException e) {
                     e.printStackTrace();
                     SpeedRunIGT.error("Failed to save timer logs :( RTA : " + timeToStringFormat(timer.getRealTimeAttack()) + " / IGT : " + timeToStringFormat(timer.getInGameTime(false)));
@@ -196,6 +211,7 @@ public class InGameTimer {
             });
         }
 
+        INSTANCE.recordString = SpeedRunIGT.PRETTY_GSON.toJson(InGameTimerUtils.convertTimelineJson(INSTANCE));
         INSTANCE.writeRecordFile();
 
         for (Consumer<InGameTimer> onCompleteConsumer : onCompleteConsumers) {
@@ -210,6 +226,7 @@ public class InGameTimer {
     public static void leave() {
         if (!INSTANCE.isServerIntegrated) return;
 
+        INSTANCE.recordString = SpeedRunIGT.PRETTY_GSON.toJson(InGameTimerUtils.convertTimelineJson(INSTANCE));
         INSTANCE.leaveTime = System.currentTimeMillis();
         INSTANCE.pauseCount = 0;
         INSTANCE.setPause(true, TimerStatus.LEAVE, "leave the world");
@@ -224,7 +241,8 @@ public class InGameTimer {
         if (waitingSaveTask || saveManagerThread.isShutdown() || saveManagerThread.isTerminated() || !INSTANCE.isServerIntegrated || INSTANCE.worldName.isEmpty()) return;
 
         String worldName = INSTANCE.worldName, timerData = SpeedRunIGT.GSON.toJson(INSTANCE) + "", completeData = SpeedRunIGT.GSON.toJson(COMPLETED_INSTANCE) + "";
-        File worldDir = InGameTimerUtils.getWorldSavePath(worldName).toFile();
+        File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "data");
+
         if (withLeave) end();
 
         waitingSaveTask = true;
@@ -261,11 +279,12 @@ public class InGameTimer {
     }
 
     public static boolean load(String name) {
-        Path worldPath = InGameTimerUtils.getWorldSavePath(name);
+        File worldDir = InGameTimerUtils.getTimerLogDir(name, "data");
+
         String isOld = "";
         while (true) {
-            File file = new File(worldPath.toFile(), "timer.igt"+isOld);
-            File completeFile = new File(worldPath.toFile(), "timer.c.igt"+isOld);
+            File file = new File(worldDir, "timer.igt"+isOld);
+            File completeFile = new File(worldDir, "timer.c.igt"+isOld);
             if (file.exists()) {
                 try {
                     INSTANCE = SpeedRunIGT.GSON.fromJson(Crypto.decrypt(FileUtils.readFileToString(file, StandardCharsets.UTF_8), cryptKey), InGameTimer.class);
@@ -275,7 +294,7 @@ public class InGameTimer {
 
                     //noinspection ConstantConditions
                     if (INSTANCE.dataVersion == null || INSTANCE.dataVersion == 0 || INSTANCE.dataVersion != DATA_VERSION) {
-                        FileUtils.moveFile(file, new File(worldPath.toFile(), "timer.igt.backup"));
+                        FileUtils.moveFile(file, new File(worldDir, "timer.igt.backup"));
                         SpeedRunIGT.error("The timer data has found, but it is an old version. timer file is renamed to \"*.igt.backup\"");
                         InGameTimer.start(name);
                     }
@@ -292,12 +311,14 @@ public class InGameTimer {
         }
     }
 
+    private String recordString = "";
     public void writeRecordFile() {
-        String recordString = SpeedRunIGT.PRETTY_GSON.toJson(InGameTimerUtils.convertTimelineJson(this));
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy-MM-dd-HH-mm-ss");
+        File recordFile = new File(SpeedRunIGT.getRecordsPath().toFile(), simpleDateFormat.format(new Date()) + ".json");
+        String resultRecord = recordString;
         saveManagerThread.submit(() -> {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy-MM-dd-HH-mm-ss");
             try {
-                FileUtils.writeStringToFile(new File(SpeedRunIGT.getRecordsPath().toFile(), simpleDateFormat.format(new Date()) + ".json"), recordString, StandardCharsets.UTF_8);
+                FileUtils.writeStringToFile(recordFile, resultRecord, StandardCharsets.UTF_8);
             } catch (IOException e) {
                 e.printStackTrace();
                 SpeedRunIGT.error("Failed to write timer record :(");
@@ -444,6 +465,20 @@ public class InGameTimer {
         if (tickDelays != currentTime && Math.abs(50 - tickDelays) > 4 && !this.isCoop()) {
             this.freezeLogList.add(new TimerTickLog(activateTicks, loggerTicks, getRealTimeAttack(),
                     tickDelays, getInGameTime(false), this.getStatus() == TimerStatus.IDLE));
+            if (this.freezeLogList.size() >= 1000) {
+                File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "logs");
+                File tickFile = new File(worldDir, "igt_freeze" + this.getLogSuffix());
+                String freezeLog = InGameTimerUtils.logListToString(this.freezeLogList, tickFile.exists() ? 0 : this.completeCount);
+                this.freezeLogList.clear();
+                saveManagerThread.submit(() -> {
+                    try {
+                        FileUtils.writeStringToFile(tickFile, freezeLog, StandardCharsets.UTF_8, true);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        SpeedRunIGT.error("Failed to clear freeze logs and saves");
+                    }
+                });
+            }
         }
 
         if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE) == SpeedRunOptions.TimerSaveInterval.TICKS) save();
@@ -472,7 +507,7 @@ public class InGameTimer {
                 TimerPauseLog.Retime retime = new TimerPauseLog.Retime(0, "");
                 if (this.getStatus() == TimerStatus.PAUSED) {
                     if (this.getCategory() == RunCategories.ANY) {
-                        if (InGameTimerUtils.RETIME_IS_WAITING_LOAD) {
+                        if (InGameTimerUtils.RETIME_IS_WAITING_LOAD && InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD) {
                             retime = new TimerPauseLog.Retime(retimedIGTTime - beforeRetime, "prob. world load pause");
                         } else {
                             if (InGameTimerUtils.RETIME_IS_CHANGED_OPTION) {
@@ -487,6 +522,20 @@ public class InGameTimer {
                 }
                 if (isPaused()) {
                     this.pauseLogList.add(new TimerPauseLog(prevPauseReason, reason, getInGameTime(false), getRealTimeAttack(), nowTime - loggerPausedTime, pauseCount, retime));
+                    if (this.pauseLogList.size() >= 10) {
+                        File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "logs");
+                        File pauseFile = new File(worldDir, "igt_timer" + this.getLogSuffix());
+                        String pauseLog = InGameTimerUtils.pauseLogListToString(this.pauseLogList, !pauseFile.exists(), pauseFile.exists() ? 0 : this.completeCount);
+                        this.pauseLogList.clear();
+                        saveManagerThread.submit(() -> {
+                            try {
+                                FileUtils.writeStringToFile(pauseFile, pauseLog, StandardCharsets.UTF_8, true);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                SpeedRunIGT.error("Failed to write pause log for clearing logs");
+                            }
+                        });
+                    }
                     if (this.getCategory() == RunCategories.ALL_ACHIEVEMENTS && leaveTime != 0) excludedTime = System.currentTimeMillis() - leaveTime;
                     leaveTime = 0;
                 }
@@ -564,5 +613,13 @@ public class InGameTimer {
 
     public boolean isLegacyIGT() {
         return isGlitched;
+    }
+
+    String getLogSuffix() {
+        return getLogSuffix(this.completeCount);
+    }
+
+    static String getLogSuffix(int count) {
+        return (count == 0 ? "" : "_"+count) + ".log";
     }
 }
