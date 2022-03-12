@@ -15,6 +15,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -94,6 +95,10 @@ public class InGameTimer {
     private int loggerTicks = 0;
     private long loggerPausedTime = 0;
     private String prevPauseReason = "";
+
+    //For checking blind
+    ArrayList<Vec3d> lastOverWorldPortalPos = new ArrayList<>();
+    ArrayList<Vec3d> lastNetherPortalPos = new ArrayList<>();
 
     //For record
     private final ArrayList<TimerTimeline> timelines = new ArrayList<>();
@@ -472,7 +477,7 @@ public class InGameTimer {
                 TimerPauseLog.Retime retime = new TimerPauseLog.Retime(0, "");
                 if (this.getStatus() == TimerStatus.PAUSED) {
                     if (this.getCategory() == RunCategories.ANY) {
-                        if (InGameTimerUtils.RETIME_IS_WAITING_LOAD) {
+                        if (InGameTimerUtils.RETIME_IS_WAITING_LOAD && InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD) {
                             retime = new TimerPauseLog.Retime(retimedIGTTime - beforeRetime, "prob. world load pause");
                         } else {
                             if (InGameTimerUtils.RETIME_IS_CHANGED_OPTION) {

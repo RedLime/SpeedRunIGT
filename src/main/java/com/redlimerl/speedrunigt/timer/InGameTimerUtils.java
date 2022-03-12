@@ -12,6 +12,10 @@ import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.World;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -22,6 +26,7 @@ import java.util.stream.IntStream;
 
 public class InGameTimerUtils {
     public static boolean IS_CHANGING_DIMENSION = false;
+    public static boolean IS_CAN_WAIT_WORLD_LOAD = false;
     public static boolean RETIME_IS_CHANGED_OPTION = false;
     public static boolean RETIME_IS_WAITING_LOAD = false;
 
@@ -180,5 +185,26 @@ public class InGameTimerUtils {
 
     public static String getMinecraftVersion() {
         return SharedConstants.getGameVersion().getName();
+    }
+
+    public static boolean isLoadableBlind(RegistryKey<World> worldKey, Vec3d netherPos, Vec3d overPos) {
+        InGameTimer timer = InGameTimer.getInstance();
+        ArrayList<Vec3d> arrayList = worldKey == World.NETHER ? timer.lastNetherPortalPos : worldKey == World.OVERWORLD ? timer.lastOverWorldPortalPos : null;
+        Vec3d targetPos = worldKey == World.NETHER ? netherPos : worldKey == World.OVERWORLD ? overPos : null;
+        if (arrayList == null || targetPos == null) return true;
+        for (Vec3d portalPos : arrayList) {
+            if (portalPos.squaredDistanceTo(targetPos) < 16) return false;
+        }
+        timer.lastNetherPortalPos.add(netherPos);
+        timer.lastOverWorldPortalPos.add(overPos);
+        return true;
+    }
+
+    public static boolean isBlindTraveled(Vec3d netherPos) {
+        InGameTimer timer = InGameTimer.getInstance();
+        for (Vec3d portalPos : timer.lastNetherPortalPos) {
+            if (portalPos.squaredDistanceTo(netherPos) < 16) return false;
+        }
+        return true;
     }
 }
