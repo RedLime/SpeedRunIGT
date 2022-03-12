@@ -35,14 +35,14 @@ public abstract class ServerPlayerEntityMixin {
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() != TimerStatus.NONE && !timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY) {
             if (oldDimension == class_3793.field_18955 && newDimension == class_3793.field_18954) {
-                InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(class_3793.field_18955, serverPlayerEntity.method_10787().add(0, 0, 0), lastPortalPos.add(0, 0, 0));
+                InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(class_3793.field_18954, serverPlayerEntity.method_10787().add(0, 0, 0), lastPortalPos.add(0, 0, 0));
             }
 
             if (oldDimension == class_3793.field_18954 && newDimension == class_3793.field_18955) {
                 if (InGameTimerUtils.isBlindTraveled(lastPortalPos)) {
                     InGameTimer.getInstance().tryInsertNewTimeline("nether_travel");
                 }
-                InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(class_3793.field_18954, lastPortalPos.add(0, 0, 0), serverPlayerEntity.method_10787().add(0, 0, 0));
+                InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(class_3793.field_18955, lastPortalPos.add(0, 0, 0), serverPlayerEntity.method_10787().add(0, 0, 0));
             }
         }
     }
