@@ -27,7 +27,7 @@ public abstract class ServerPlayerEntityMixin {
         InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = !InGameTimer.getInstance().isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY;
     }
 
-    @Inject(method = "method_1984", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerManager;method_1986(Lnet/minecraft/entity/player/ServerPlayerEntity;Lnet/minecraft/server/world/ServerWorld;)V", shift = At.Shift.BEFORE))
+    @Inject(method = "method_1984", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerManager;method_1986(Lnet/minecraft/entity/player/ServerPlayerEntity;Lnet/minecraft/server/world/ServerWorld;)V", shift = At.Shift.AFTER))
     public void onChangedDimension(ServerPlayerEntity serverPlayerEntity, class_3793 arg, CallbackInfo ci) {
         class_3793 oldDimension = beforeWorld.dimension.method_11789();
         class_3793 newDimension = serverPlayerEntity.world.dimension.method_11789();
