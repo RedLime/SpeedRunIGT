@@ -35,7 +35,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
     public void onChangeDimension(ServerWorld destination, CallbackInfoReturnable<Entity> cir) {
         beforeWorld = this.getServerWorld();
         lastPortalPos = this.getPos();
-        InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = !InGameTimer.getInstance().isCoop();
+        InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = !InGameTimer.getInstance().isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY;
     }
 
     @Inject(method = "changeDimension", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;onPlayerChangeDimension(Lnet/minecraft/server/network/ServerPlayerEntity;)V", shift = At.Shift.AFTER))
@@ -44,16 +44,14 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         RegistryKey<World> newRegistryKey = world.getRegistryKey();
 
         InGameTimer timer = InGameTimer.getInstance();
-        if (timer.getStatus() != TimerStatus.NONE && !timer.isCoop()) {
+        if (timer.getStatus() != TimerStatus.NONE && !timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY) {
             if (oldRegistryKey == World.OVERWORLD && newRegistryKey == World.NETHER) {
                 InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.NETHER, this.getPos().add(0, 0, 0), lastPortalPos.add(0, 0, 0));
             }
 
             if (oldRegistryKey == World.NETHER && newRegistryKey == World.OVERWORLD) {
-                if (InGameTimer.getInstance().getCategory() == RunCategories.ANY) {
-                    if (InGameTimerUtils.isBlindTraveled(lastPortalPos)) {
-                        InGameTimer.getInstance().tryInsertNewTimeline("nether_travel");
-                    }
+                if (InGameTimerUtils.isBlindTraveled(lastPortalPos)) {
+                    InGameTimer.getInstance().tryInsertNewTimeline("nether_travel");
                 }
                 InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.OVERWORLD, lastPortalPos.add(0, 0, 0), this.getPos().add(0, 0, 0));
             }
