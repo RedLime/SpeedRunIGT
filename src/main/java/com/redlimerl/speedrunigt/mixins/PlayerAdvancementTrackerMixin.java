@@ -16,7 +16,7 @@ public class PlayerAdvancementTrackerMixin {
     private void getCriteria(Args args) {
         SimpleAdvancement advancement = args.get(1);
         String criteriaKey = args.get(2);
-        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE && advancement.getDisplay() != null) {
+        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) {
             InGameTimer.getInstance().tryInsertNewAdvancement(advancement.getIdentifier().toString(), criteriaKey);
         }
     }

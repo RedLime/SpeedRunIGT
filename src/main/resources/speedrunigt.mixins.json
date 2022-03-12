@@ -30,7 +30,7 @@
     "screen.DownloadingTerrainScreenMixin",
     "screen.GameMenuScreenMixin",
     "screen.OptionsScreenMixin",
-    "timeline.NetherTravelConditionsMixin",
+    "timeline.ServerPlayerEntityMixin",
     "translate.I18nMixin",
     "translate.TranslatableTextMixin"
   ],
