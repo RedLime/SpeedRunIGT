@@ -201,6 +201,7 @@ public class InGameTimer {
             });
         }
 
+        INSTANCE.recordString = SpeedRunIGT.PRETTY_GSON.toJson(InGameTimerUtils.convertTimelineJson(INSTANCE));
         INSTANCE.writeRecordFile();
 
         for (Consumer<InGameTimer> onCompleteConsumer : onCompleteConsumers) {
@@ -215,6 +216,7 @@ public class InGameTimer {
     public static void leave() {
         if (!INSTANCE.isServerIntegrated) return;
 
+        INSTANCE.recordString = SpeedRunIGT.PRETTY_GSON.toJson(InGameTimerUtils.convertTimelineJson(INSTANCE));
         INSTANCE.leaveTime = System.currentTimeMillis();
         INSTANCE.pauseCount = 0;
         INSTANCE.setPause(true, TimerStatus.LEAVE, "leave the world");
@@ -297,8 +299,8 @@ public class InGameTimer {
         }
     }
 
+    private String recordString = "";
     public void writeRecordFile() {
-        String recordString = SpeedRunIGT.PRETTY_GSON.toJson(InGameTimerUtils.convertTimelineJson(this));
         saveManagerThread.submit(() -> {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy-MM-dd-HH-mm-ss");
             try {
