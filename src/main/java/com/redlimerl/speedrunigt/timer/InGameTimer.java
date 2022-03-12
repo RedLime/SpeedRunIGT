@@ -507,7 +507,6 @@ public class InGameTimer {
                 TimerPauseLog.Retime retime = new TimerPauseLog.Retime(0, "");
                 if (this.getStatus() == TimerStatus.PAUSED) {
                     if (this.getCategory() == RunCategories.ANY) {
-                        System.out.println(InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD);
                         if (InGameTimerUtils.RETIME_IS_WAITING_LOAD && InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD) {
                             retime = new TimerPauseLog.Retime(retimedIGTTime - beforeRetime, "prob. world load pause");
                         } else {

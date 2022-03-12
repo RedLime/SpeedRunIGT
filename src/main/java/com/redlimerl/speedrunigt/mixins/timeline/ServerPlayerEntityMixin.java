@@ -32,8 +32,6 @@ public abstract class ServerPlayerEntityMixin {
         class_3793 oldDimension = beforeWorld.dimension.method_11789();
         class_3793 newDimension = serverPlayerEntity.world.dimension.method_11789();
 
-        System.out.println(oldDimension.method_17202() + " / " + newDimension.method_17202());
-
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() != TimerStatus.NONE && !timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY) {
             if (oldDimension == class_3793.field_18955 && newDimension == class_3793.field_18954) {
