@@ -27,7 +27,7 @@ public class SpeedRunOption {
     static {
         File globalDir = new File(System.getProperty("user.home").replace("\\", "/"), SpeedRunIGT.MOD_ID);
         if (!globalDir.exists() && !globalDir.mkdirs()) {
-            System.out.println("Failed make global config path");
+            SpeedRunIGT.error("Failed make global config path");
         }
         globalConfigPath = globalDir.toPath().resolve("options.txt");
     }
