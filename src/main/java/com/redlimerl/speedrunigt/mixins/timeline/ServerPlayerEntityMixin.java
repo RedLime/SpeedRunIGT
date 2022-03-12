@@ -45,11 +45,11 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() != TimerStatus.NONE && !timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY) {
-            if (oldDimension ==DimensionType.THE_NETHER && newDimension == DimensionType.OVERWORLD) {
+            if (oldDimension ==DimensionType.OVERWORLD && newDimension == DimensionType.THE_NETHER) {
                 InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(DimensionType.THE_NETHER, this.getPos().add(0, 0, 0), lastPortalPos.add(0, 0, 0));
             }
 
-            if (oldDimension == DimensionType.OVERWORLD && newDimension == DimensionType.THE_NETHER) {
+            if (oldDimension == DimensionType.THE_NETHER && newDimension == DimensionType.OVERWORLD) {
                 if (InGameTimerUtils.isBlindTraveled(lastPortalPos)) {
                     InGameTimer.getInstance().tryInsertNewTimeline("nether_travel");
                 }
