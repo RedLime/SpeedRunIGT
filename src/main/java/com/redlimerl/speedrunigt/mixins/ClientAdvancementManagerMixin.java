@@ -50,7 +50,7 @@ public abstract class ClientAdvancementManagerMixin {
                     timer.tryInsertNewTimeline("enter_fortress");
                 }
             }
-            if (advancement.getDisplay() != null) timer.tryInsertNewAdvancement(advancement.getId().toString(), null);
+            timer.tryInsertNewAdvancement(advancement.getId().toString(), null);
 
             //How Did We Get Here
             if (timer.getCategory() == RunCategories.HOW_DID_WE_GET_HERE && Objects.equals(advancement.getId().toString(), new Identifier("nether/all_effects").toString())) {
