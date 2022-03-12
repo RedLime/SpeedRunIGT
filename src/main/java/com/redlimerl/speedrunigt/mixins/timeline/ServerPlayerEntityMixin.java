@@ -9,7 +9,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
@@ -38,18 +37,18 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = !InGameTimer.getInstance().isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY;
     }
 
-    @Inject(method = "changeDimension", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;onPlayerChangeDimension(Lnet/minecraft/server/network/ServerPlayerEntity;)V", shift = At.Shift.AFTER))
+    @Inject(method = "changeDimension", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;setWorld(Lnet/minecraft/world/World;)V", shift = At.Shift.AFTER))
     public void onChangedDimension(DimensionType d, CallbackInfoReturnable<Entity> cir) {
         DimensionType oldDimension = beforeWorld.dimension.getType();
         DimensionType newDimension = world.dimension.getType();
 
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() != TimerStatus.NONE && !timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY) {
-            if (oldDimension ==DimensionType.THE_NETHER && newDimension == DimensionType.OVERWORLD) {
+            if (oldDimension ==DimensionType.OVERWORLD && newDimension == DimensionType.THE_NETHER) {
                 InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(DimensionType.THE_NETHER, this.getPos().add(0, 0, 0), lastPortalPos.add(0, 0, 0));
             }
 
-            if (oldDimension == DimensionType.OVERWORLD && newDimension == DimensionType.THE_NETHER) {
+            if (oldDimension == DimensionType.THE_NETHER && newDimension == DimensionType.OVERWORLD) {
                 if (InGameTimerUtils.isBlindTraveled(lastPortalPos)) {
                     InGameTimer.getInstance().tryInsertNewTimeline("nether_travel");
                 }
