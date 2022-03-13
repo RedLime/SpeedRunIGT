@@ -10,8 +10,11 @@ import com.redlimerl.speedrunigt.timer.logs.TimerPauseLog;
 import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.stat.ServerStatHandler;
+import net.minecraft.stat.Stats;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
@@ -215,5 +218,15 @@ public class InGameTimerUtils {
             if (portalPos.squaredDistanceTo(netherPos) < 16) return false;
         }
         return true;
+    }
+
+    public static Long getPlayerTime() {
+        MinecraftServer server = MinecraftClient.getInstance().getServer();
+        PlayerEntity player = MinecraftClient.getInstance().player;
+        if (server != null && player != null) {
+            ServerStatHandler statHandler = server.getPlayerManager().createStatHandler(player);
+            return statHandler == null ? null : statHandler.getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_ONE_MINUTE)) * 50L;
+        }
+        return null;
     }
 }
