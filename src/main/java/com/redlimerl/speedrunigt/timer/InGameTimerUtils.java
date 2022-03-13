@@ -13,7 +13,10 @@ import net.minecraft.class_3793;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.realms.RealmsSharedConstants;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.stat.ServerStatHandler;
+import net.minecraft.stat.Stats;
 import net.minecraft.util.math.Vec3d;
 
 import java.io.File;
@@ -215,5 +218,15 @@ public class InGameTimerUtils {
             if (portalPos.squaredDistanceTo(netherPos) < 16) return false;
         }
         return true;
+    }
+
+    public static Long getPlayerTime() {
+        MinecraftServer server = MinecraftClient.getInstance().getServer();
+        PlayerEntity player = MinecraftClient.getInstance().player;
+        if (server != null && player != null) {
+            ServerStatHandler statHandler = server.getPlayerManager().createStatHandler(player);
+            return statHandler == null ? null : statHandler.method_21434(Stats.CUSTOM.method_21429(Stats.PLAY_ONE_MINUTE)) * 50L;
+        }
+        return null;
     }
 }
