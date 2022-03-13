@@ -207,4 +207,10 @@ public abstract class MinecraftClientMixin {
     public void onCrash(CrashReport report, CallbackInfoReturnable<CrashReport> cir) {
         if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) InGameTimer.leave();
     }
+
+    // Record save
+    @Inject(method = "stop", at = @At("HEAD"))
+    public void onStop(CallbackInfo ci) {
+        InGameTimer.getInstance().writeRecordFile();
+    }
 }
