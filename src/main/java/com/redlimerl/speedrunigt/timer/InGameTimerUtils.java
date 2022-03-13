@@ -228,7 +228,7 @@ public class InGameTimerUtils {
 
     public static Long getPlayerTime() {
         MinecraftServer server = MinecraftClient.getInstance().getServer();
-        PlayerEntity player = MinecraftClient.getInstance().player;
+        PlayerEntity player = MinecraftClient.getInstance().field_3805;
         if (server != null && player != null) {
             ServerStatHandler statHandler = server.getPlayerManager().createStatHandler(player);
             return statHandler == null ? null : statHandler.method_1729(Stats.MINUTES_PLAYED) * 50L;
