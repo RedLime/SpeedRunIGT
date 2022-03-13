@@ -13,7 +13,6 @@ import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import com.redlimerl.speedrunigt.timer.running.RunCategory;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -317,6 +316,9 @@ public class InGameTimer {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy-MM-dd-HH-mm-ss");
         File recordFile = new File(SpeedRunIGT.getRecordsPath().toFile(), simpleDateFormat.format(new Date()) + ".json");
         String resultRecord = recordString;
+        if (resultRecord.isEmpty()) return;
+        recordString = "";
+
         saveManagerThread.submit(() -> {
             try {
                 FileUtils.writeStringToFile(recordFile, resultRecord, StandardCharsets.UTF_8);
@@ -405,8 +407,8 @@ public class InGameTimer {
         if (this.isCoop) return getRealTimeAttack();
 
         if (this.isGlitched && this.isServerIntegrated && MinecraftClient.getInstance().getServer() != null) {
-            ServerPlayerEntity player = (ServerPlayerEntity) MinecraftClient.getInstance().getServer().getPlayerManager().players.get(0);
-            return player.getStatHandler().method_1729(Stats.MINUTES_PLAYED) * 50L;
+            Long inGameTime = InGameTimerUtils.getPlayerTime();
+            if (inGameTime != null) return inGameTime;
         }
 
         if (smooth && this.isCompleted() && SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE) && this.getCategory() == RunCategories.ANY)

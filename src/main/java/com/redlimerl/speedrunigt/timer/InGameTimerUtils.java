@@ -11,6 +11,7 @@ import com.redlimerl.speedrunigt.mixins.access.WorldRendererAccessor;
 import com.redlimerl.speedrunigt.timer.logs.TimerPauseLog;
 import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.realms.RealmsSharedConstants;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -18,9 +19,10 @@ import net.minecraft.stat.ServerStatHandler;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.OverworldDimension;
 import net.minecraft.world.dimension.TheNetherDimension;
+import net.minecraft.stat.Stats;
+import net.minecraft.util.math.Vec3d;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import net.minecraft.util.math.Vec3d;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -222,5 +224,15 @@ public class InGameTimerUtils {
             if (portalPos.squaredDistanceTo(netherPos) < 16) return false;
         }
         return true;
+    }
+
+    public static Long getPlayerTime() {
+        MinecraftServer server = MinecraftClient.getInstance().getServer();
+        PlayerEntity player = MinecraftClient.getInstance().player;
+        if (server != null && player != null) {
+            ServerStatHandler statHandler = server.getPlayerManager().createStatHandler(player);
+            return statHandler == null ? null : statHandler.method_1729(Stats.MINUTES_PLAYED) * 50L;
+        }
+        return null;
     }
 }
