@@ -60,8 +60,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         if (timer.getCategory() == RunCategories.FULL_INV) {
             ArrayList<String> itemList = new ArrayList<>();
             int slot = 0;
-            for (int i = 0; i < this.inventory.main.length; i++) {
-                ItemStack itemStack = this.inventory.main[i];
+            for (ItemStack itemStack : this.inventory.field_15082) {
                 if (itemStack == null || itemStack.isEmpty()) continue;
                 String itemId = Item.getRawId(itemStack.getItem()) + (itemStack.isDamaged() ? (":" + itemStack.getMeta()) : "");
                 if (!itemList.contains(itemId)) {
@@ -76,7 +75,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
         //All Swords
         if (timer.getCategory() == RunCategories.ALL_SWORDS) {
-            List<Item> items = Arrays.stream(this.inventory.main).filter(itemStack -> itemStack != null && !itemStack.isEmpty()).map(ItemStack::getItem).collect(Collectors.toList());
+            List<Item> items = this.inventory.field_15082.stream().filter(itemStack -> itemStack != null && !itemStack.isEmpty()).map(ItemStack::getItem).collect(Collectors.toList());
             if (items.contains(Items.STONE_SWORD) &&
                     items.contains(Items.DIAMOND_SWORD) &&
                     items.contains(Items.GOLDEN_SWORD) &&
@@ -88,7 +87,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
         //All Minerals
         if (timer.getCategory() == RunCategories.ALL_MINERALS) {
-            List<Item> items = Arrays.stream(this.inventory.main).filter(itemStack -> itemStack != null && !itemStack.isEmpty()).map(ItemStack::getItem).collect(Collectors.toList());
+            List<Item> items = this.inventory.field_15082.stream().filter(itemStack -> itemStack != null && !itemStack.isEmpty()).map(ItemStack::getItem).collect(Collectors.toList());
             if (items.contains(Items.COAL) &&
                     items.contains(Items.IRON_INGOT) &&
                     items.contains(Items.GOLD_INGOT) &&
@@ -97,19 +96,17 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                     items.contains(Items.EMERALD) &&
                     items.contains(Items.QUARTZ)
             ) {
-                for (int i = 0; i < this.inventory.main.length; i++) {
-                    ItemStack item = this.inventory.main[i];
+                for (ItemStack item : this.inventory.field_15082) {
                     if (item != null && !item.isEmpty() && item.getItem().equals(Items.DYE) && DyeColor.getById(item.getMeta()) == DyeColor.BLUE) {
                         InGameTimer.complete();
                     }
                 }
-
             }
         }
 
         //Iron Armors & lvl 15
         if (timer.getCategory() == RunCategories.FULL_IA_15_LVL) {
-            List<Item> items = Arrays.stream(this.inventory.armor).filter(itemStack -> itemStack != null && !itemStack.isEmpty()).map(ItemStack::getItem).collect(Collectors.toList());
+            List<Item> items = this.inventory.field_15083.stream().filter(itemStack -> itemStack != null && !itemStack.isEmpty()).map(ItemStack::getItem).collect(Collectors.toList());
             if (items.contains(Items.IRON_HELMET) &&
                     items.contains(Items.IRON_CHESTPLATE) &&
                     items.contains(Items.IRON_BOOTS) &&
@@ -120,8 +117,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
         //Stack of Lime Wool
         if (timer.getCategory() == RunCategories.STACK_OF_LIME_WOOL) {
-            for (ItemStack itemStack : this.inventory.main) {
-                if (itemStack != null && itemStack.getItem() == Item.fromBlock(Blocks.WOOL) && itemStack.getDamage() == 5 && itemStack.count == 64) InGameTimer.complete();
+            for (ItemStack itemStack : this.inventory.field_15082) {
+                if (itemStack != null && itemStack.getItem() == Item.fromBlock(Blocks.WOOL) && itemStack.getDamage() == 5 && itemStack.getCount() == 64) InGameTimer.complete();
             }
         }
 
