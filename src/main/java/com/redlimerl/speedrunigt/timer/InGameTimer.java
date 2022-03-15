@@ -61,7 +61,7 @@ public class InGameTimer {
         this.isResettable = isResettable;
     }
 
-    final String worldName;
+    String worldName;
     private String category = RunCategories.ANY.getID();
     private final boolean isResettable;
     private boolean isCompleted = false;
@@ -296,7 +296,11 @@ public class InGameTimer {
                         FileUtils.moveFile(file, new File(worldDir, "timer.igt.backup"));
                         SpeedRunIGT.error("The timer data has found, but it is an old version. timer file is renamed to \"*.igt.backup\"");
                         InGameTimer.start(name);
+                        return true;
                     }
+
+                    INSTANCE.worldName = name;
+                    COMPLETED_INSTANCE.worldName = name;
 
                     return true;
                 } catch (Throwable e) {
