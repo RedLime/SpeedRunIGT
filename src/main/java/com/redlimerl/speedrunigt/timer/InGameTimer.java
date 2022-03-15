@@ -317,7 +317,7 @@ public class InGameTimer {
     private String recordString = "";
     public void writeRecordFile() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy-MM-dd-HH-mm-ss");
-        File recordFile = new File(SpeedRunIGT.getRecordsPath().toFile(), simpleDateFormat.format(new Date()) + ".json");
+        File recordFile = new File(SpeedRunIGT.getRecordsPath().toFile(), simpleDateFormat.format(new Date()) + "-" + this.hashCode() + ".json");
         String resultRecord = recordString;
         if (resultRecord.isEmpty()) return;
         recordString = "";
