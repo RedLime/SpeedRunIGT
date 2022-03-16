@@ -41,7 +41,7 @@ public class InGameTimer {
     private static InGameTimer COMPLETED_INSTANCE = new InGameTimer("");
 
     private static final String cryptKey = "faRQOs2GK5j863eP";
-    private static final int DATA_VERSION = 1;
+    private static final int DATA_VERSION = 2;
 
     @NotNull
     public static InGameTimer getInstance() { return INSTANCE; }
