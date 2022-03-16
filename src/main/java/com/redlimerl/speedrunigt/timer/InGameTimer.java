@@ -586,7 +586,7 @@ public class InGameTimer {
     public void tryInsertNewAdvancement(String advancementID, String criteriaKey) {
         JsonObject advancement = jsonObjectGetOrCreate(advancementsTracker, advancementID);
         if (criteriaKey == null) {
-            if (advancement.get("complete").getAsBoolean()) return;
+            if (advancement.has("complete") && advancement.get("complete").getAsBoolean()) return;
             advancement.addProperty("complete", true);
             advancement.addProperty("igt", getInGameTime(false));
             advancement.addProperty("rta", getRealTimeAttack());
