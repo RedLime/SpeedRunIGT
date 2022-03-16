@@ -13,7 +13,6 @@ import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import com.redlimerl.speedrunigt.timer.running.RunCategory;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.stat.Stats;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.apache.commons.io.FileUtils;
@@ -587,7 +586,7 @@ public class InGameTimer {
     public void tryInsertNewAdvancement(String advancementID, String criteriaKey) {
         JsonObject advancement = jsonObjectGetOrCreate(advancementsTracker, advancementID);
         if (criteriaKey == null) {
-            if (advancement.get("complete").getAsBoolean()) return;
+            if (advancement.has("complete") && advancement.get("complete").getAsBoolean()) return;
             advancement.addProperty("complete", true);
             advancement.addProperty("igt", getInGameTime(false));
             advancement.addProperty("rta", getRealTimeAttack());
