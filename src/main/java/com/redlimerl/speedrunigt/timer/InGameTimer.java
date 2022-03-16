@@ -63,6 +63,7 @@ public class InGameTimer {
     }
 
     String worldName;
+    private final UUID uuid = UUID.randomUUID();
     private String category = RunCategories.ANY.getID();
     private final boolean isResettable;
     private boolean isCompleted = false;
@@ -317,8 +318,7 @@ public class InGameTimer {
 
     private String recordString = "";
     public void writeRecordFile() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy-MM-dd-HH-mm-ss");
-        File recordFile = new File(SpeedRunIGT.getRecordsPath().toFile(), simpleDateFormat.format(new Date()) + "-" + this.hashCode() + ".json");
+        File recordFile = new File(SpeedRunIGT.getRecordsPath().toFile(), uuid + ".json");
         String resultRecord = recordString;
         if (resultRecord.isEmpty()) return;
         recordString = "";
