@@ -2,9 +2,9 @@ package com.redlimerl.speedrunigt.mixins.coop;
 
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerPacketHandler;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.PlayerManager;
-import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -19,7 +19,7 @@ public abstract class PlayerManagerMixin {
 
     @Shadow public abstract int getCurrentPlayerCount();
 
-    @Shadow @Final public List<ServerPlayerEntity> players;
+    @Shadow @Final private List<ServerPlayerEntity> players;
 
     @Inject(method = "onPlayerConnect", at = @At("TAIL"))
     public void onPlayerConnectInject(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {

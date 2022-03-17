@@ -13,9 +13,9 @@ import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import com.redlimerl.speedrunigt.utils.MixinValues;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.realms.RealmsSharedConstants;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.ServerStatHandler;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.OverworldDimension;
@@ -190,9 +190,8 @@ public class InGameTimerUtils {
         JsonObject jsonObject = new JsonObject();
         MinecraftServer server = MinecraftClient.getInstance().getServer();
         if (timer.isServerIntegrated && server != null && server.getPlayerManager() != null) {
-            for (Object obj : server.getPlayerManager().players) {
-                ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) obj;
-                jsonObject.add(serverPlayerEntity.getUuid().toString(), SpeedRunIGT.GSON.fromJson(ServerStatHandler.method_8272(((ServerStatHandlerAccessor) serverPlayerEntity.getStatHandler()).getStatMap()), JsonObject.class));
+            for (ServerPlayerEntity obj : server.getPlayerManager().getPlayers()) {
+                jsonObject.add(obj.getUuid().toString(), SpeedRunIGT.GSON.fromJson(ServerStatHandler.method_8272(((ServerStatHandlerAccessor) obj.getStatHandler()).getStatMap()), JsonObject.class));
             }
         }
         return jsonObject;

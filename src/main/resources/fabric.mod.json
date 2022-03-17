@@ -28,7 +28,7 @@
 
   "depends": {
     "fabricloader": ">=0.12.2",
-    "minecraft": "1.8"
+    "minecraft": "1.8.4-alpha.15.14.a+loveandhugs"
   },
 
   "breaks": {

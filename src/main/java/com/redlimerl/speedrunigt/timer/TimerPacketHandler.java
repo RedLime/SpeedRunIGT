@@ -6,10 +6,10 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.running.RunCategory;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.PacketByteBuf;
 
 import java.util.List;
@@ -43,7 +43,7 @@ public class TimerPacketHandler {
             long startTime = buffer.readLong();
             RunCategory category = RunCategory.getCategory(buffer.readString(128).trim());
 
-            sendInitS2C(server.getPlayerManager().players, startTime, category);
+            sendInitS2C(server.getPlayerManager().getPlayers(), startTime, category);
             SpeedRunIGT.debug("server received init: " + startTime + " / " + category.getID());
         } catch (Exception e) {
             SpeedRunIGT.error("Failed read packets, probably SpeedRunIGT version different between players");
@@ -100,7 +100,7 @@ public class TimerPacketHandler {
         try {
             long endTime = buffer.readLong();
 
-            sendCompleteS2C(server.getPlayerManager().players, endTime);
+            sendCompleteS2C(server.getPlayerManager().getPlayers(), endTime);
             SpeedRunIGT.debug("hello server complete: " + endTime);
         } catch (Exception e) {
             SpeedRunIGT.error("Failed read packets, probably SpeedRunIGT version different between players");

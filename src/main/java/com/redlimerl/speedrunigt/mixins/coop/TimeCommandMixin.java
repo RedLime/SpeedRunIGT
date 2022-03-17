@@ -21,7 +21,7 @@ public abstract class TimeCommandMixin {
     private void onExecute(TimeCommand instance, CommandSource i1, int i2) {
         this.method_14(i1, i2);
         if (i2 == 0 && InGameTimer.getInstance().getStatus() != TimerStatus.NONE && InGameTimer.getInstance().isCoop()) {
-            TimerPacketHandler.sendInitS2C(MinecraftServer.getServer().getPlayerManager().players, System.currentTimeMillis(), InGameTimer.getInstance().getCategory());
+            TimerPacketHandler.sendInitS2C(MinecraftServer.getServer().getPlayerManager().getPlayers(), System.currentTimeMillis(), InGameTimer.getInstance().getCategory());
         }
     }
 }
