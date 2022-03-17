@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.impl;
 
+import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.api.SpeedRunIGTApi;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunCategoryScreen;
@@ -15,6 +16,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Util;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -228,6 +230,27 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                 )
                 .setToolTip(() -> I18n.translate("speedrunigt.option.auto_retime.description"))
                 .setCategory("speedrunigt.option.category.timer")
+        );
+
+        factories.add(screen -> new OptionButtonFactory.Builder()
+                .setButtonWidget(
+                        new ButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.generate_record").append(" : ").append(new TranslatableText("speedrunigt.option.generate_record." + SpeedRunOption.getOption(SpeedRunOptions.GENERATE_RECORD_FILE).name().toLowerCase(Locale.ROOT))).asFormattedString(),
+                                (ButtonWidget button) -> {
+                                    int order = SpeedRunOption.getOption(SpeedRunOptions.GENERATE_RECORD_FILE).ordinal() + 1;
+                                    SpeedRunOptions.RecordGenerateType[] intervals = SpeedRunOptions.RecordGenerateType.values();
+                                    SpeedRunOption.setOption(SpeedRunOptions.GENERATE_RECORD_FILE, intervals[order % intervals.length]);
+                                    button.setMessage(new TranslatableText("speedrunigt.option.generate_record").append(" : ").append(new TranslatableText("speedrunigt.option.generate_record." + SpeedRunOption.getOption(SpeedRunOptions.GENERATE_RECORD_FILE).name().toLowerCase(Locale.ROOT))).asFormattedString());
+                                })
+                )
+                .setCategory("speedrunigt.option.category.records")
+        );
+
+        factories.add(screen -> new OptionButtonFactory.Builder()
+                .setButtonWidget(
+                        new ButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.open_records_folder").asFormattedString(),
+                                (ButtonWidget button) -> Util.getOperatingSystem().open(SpeedRunIGT.getRecordsPath().toFile()))
+                )
+                .setCategory("speedrunigt.option.category.records")
         );
 
         return factories;
