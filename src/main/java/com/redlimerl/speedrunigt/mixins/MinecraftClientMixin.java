@@ -11,6 +11,7 @@ import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
+import net.minecraft.client.gui.screen.ProgressScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.options.GameOptions;
 import net.minecraft.client.world.ClientWorld;
@@ -46,6 +47,8 @@ public abstract class MinecraftClientMixin {
 
     @Shadow private boolean paused;
 
+    private boolean disconnectCheck = false;
+
     @Inject(at = @At("HEAD"), method = "startGame")
     public void onCreate(String name, String displayName, LevelInfo levelInfo, CallbackInfo ci) {
         try {
@@ -61,6 +64,14 @@ public abstract class MinecraftClientMixin {
             e.printStackTrace();
         }
         InGameTimerUtils.IS_CHANGING_DIMENSION = true;
+        disconnectCheck = false;
+    }
+
+    @Inject(method = "openScreen", at = @At("RETURN"))
+    public void onSetScreen(Screen screen, CallbackInfo ci) {
+        if (screen instanceof ProgressScreen) {
+            disconnectCheck = true;
+        }
     }
 
     @Inject(at = @At("HEAD"), method = "connect(Lnet/minecraft/client/world/ClientWorld;Ljava/lang/String;)V")
@@ -184,6 +195,6 @@ public abstract class MinecraftClientMixin {
     // Disconnecting fix
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resource/ResourcePackLoader;method_7040()V", shift = At.Shift.BEFORE), method = "connect(Lnet/minecraft/client/world/ClientWorld;Ljava/lang/String;)V")
     public void disconnect(CallbackInfo ci) {
-        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) InGameTimer.leave();
+        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE && disconnectCheck) InGameTimer.leave();
     }
 }
