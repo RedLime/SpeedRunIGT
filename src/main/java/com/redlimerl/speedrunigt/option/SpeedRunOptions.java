@@ -187,6 +187,19 @@ public class SpeedRunOptions {
         }
     };
 
+    public enum RecordGenerateType { EVERYTHING, COMPLETE_ONLY, NONE }
+    public static final OptionArgument<RecordGenerateType> GENERATE_RECORD_FILE = new OptionArgument<RecordGenerateType>(new Identifier(SpeedRunIGT.MOD_ID, "generate_record"), RecordGenerateType.EVERYTHING) {
+        @Override
+        public RecordGenerateType valueFromString(String string) {
+            return RecordGenerateType.valueOf(string);
+        }
+
+        @Override
+        public String valueToString(RecordGenerateType value) {
+            return value.name();
+        }
+    };
+
     public static final OptionArgument<Float> TIMER_RTA_POSITION_X = new OptionArgument<Float>(new Identifier(SpeedRunIGT.MOD_ID, "timer_rta_pos_x"), 0.983f) {
         @Override
         public Float valueFromString(String string) {
