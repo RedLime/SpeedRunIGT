@@ -130,6 +130,10 @@ public class SpeedRunIGT implements ClientModInitializer {
         // End initializing
         isInitialized = true;
 
+        // Set properties
+        System.setProperty("speedrunigt.version", MOD_VERSION.split("\\+")[0]);
+        System.setProperty("speedrunigt.record", "");
+
         // Update checking
         SpeedRunIGTInfoScreen.checkUpdate();
     }
