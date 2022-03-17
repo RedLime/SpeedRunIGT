@@ -69,6 +69,7 @@ public abstract class MinecraftClientMixin {
     public void onCreate(String worldName, LevelInfo levelInfo, DynamicRegistryManager.Impl registryTracker, GeneratorOptions generatorOptions, CallbackInfo ci) {
         InGameTimer.start(worldName);
         InGameTimerUtils.IS_CHANGING_DIMENSION = true;
+        disconnectCheck = false;
     }
 
     @Inject(at = @At("HEAD"), method = "startIntegratedServer(Ljava/lang/String;)V")
