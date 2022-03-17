@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.utils;
 
+import net.minecraft.class_342;
 import net.minecraft.util.Util;
 import org.lwjgl.Sys;
 
@@ -21,14 +22,14 @@ public class OperatingUtils {
 
     public static void setFile(File file) {
         String string = file.getAbsolutePath();
-        if (Util.getOperatingSystem() == Util.OperatingSystem.MACOS) {
+        if (Util.method_6318() == class_342.field_9090) {
             try {
                 Runtime.getRuntime().exec(new String[]{"/usr/bin/open", string});
                 return;
             } catch (IOException var7) {
                 var7.printStackTrace();
             }
-        } else if (Util.getOperatingSystem() == Util.OperatingSystem.WINDOWS) {
+        } else if (Util.method_6318() == class_342.field_925) {
             String string2 = String.format("cmd.exe /C start \"Open file\" \"%s\"", string);
 
             try {
