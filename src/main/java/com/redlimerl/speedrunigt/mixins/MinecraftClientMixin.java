@@ -18,6 +18,7 @@ import net.minecraft.client.font.FontStorage;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
+import net.minecraft.client.gui.screen.LevelLoadingScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.options.GameOptions;
 import net.minecraft.client.world.ClientWorld;
@@ -62,6 +63,8 @@ public abstract class MinecraftClientMixin {
 
     @Shadow private boolean paused;
 
+    private boolean disconnectCheck = false;
+
     @Inject(at = @At("HEAD"), method = "startIntegratedServer")
     public void onCreate(String name, String displayName, LevelInfo levelInfo, CallbackInfo ci) {
         try {
@@ -77,6 +80,14 @@ public abstract class MinecraftClientMixin {
             e.printStackTrace();
         }
         InGameTimerUtils.IS_CHANGING_DIMENSION = true;
+        disconnectCheck = false;
+    }
+
+    @Inject(method = "openScreen", at = @At("RETURN"))
+    public void onSetScreen(Screen screen, CallbackInfo ci) {
+        if (screen instanceof LevelLoadingScreen) {
+            disconnectCheck = true;
+        }
     }
 
     @Inject(at = @At("HEAD"), method = "joinWorld")
@@ -214,6 +225,6 @@ public abstract class MinecraftClientMixin {
     // Disconnecting fix
     @Inject(at = @At("HEAD"), method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V")
     public void disconnect(CallbackInfo ci) {
-        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) InGameTimer.leave();
+        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE && disconnectCheck) InGameTimer.leave();
     }
 }
