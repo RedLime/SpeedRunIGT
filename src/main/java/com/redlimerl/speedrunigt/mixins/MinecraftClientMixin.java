@@ -85,7 +85,7 @@ public abstract class MinecraftClientMixin {
         disconnectCheck = false;
     }
 
-    @Inject(method = "openScreen", at = @At("RETURN"))
+    @Inject(method = "setScreen", at = @At("RETURN"))
     public void onSetScreen(Screen screen, CallbackInfo ci) {
         if (screen instanceof LevelLoadingScreen) {
             disconnectCheck = true;
