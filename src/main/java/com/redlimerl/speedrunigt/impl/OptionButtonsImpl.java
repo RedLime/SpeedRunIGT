@@ -1,5 +1,7 @@
 package com.redlimerl.speedrunigt.impl;
 
+import com.mojang.blaze3d.platform.GLX;
+import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.api.SpeedRunIGTApi;
 import com.redlimerl.speedrunigt.gui.ConsumerButtonWidget;
@@ -227,6 +229,27 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                 )
                 .setToolTip(() -> I18n.translate("speedrunigt.option.auto_retime.description"))
                 .setCategory("speedrunigt.option.category.timer")
+        );
+
+        factories.add(screen -> new OptionButtonFactory.Builder()
+                .setButtonWidget(
+                        new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.generate_record").append(" : ").append(new TranslatableText("speedrunigt.option.generate_record." + SpeedRunOption.getOption(SpeedRunOptions.GENERATE_RECORD_FILE).name().toLowerCase(Locale.ROOT))).asFormattedString(),
+                                (button) -> {
+                                    int order = SpeedRunOption.getOption(SpeedRunOptions.GENERATE_RECORD_FILE).ordinal() + 1;
+                                    SpeedRunOptions.RecordGenerateType[] intervals = SpeedRunOptions.RecordGenerateType.values();
+                                    SpeedRunOption.setOption(SpeedRunOptions.GENERATE_RECORD_FILE, intervals[order % intervals.length]);
+                                    button.message = (new TranslatableText("speedrunigt.option.generate_record").append(" : ").append(new TranslatableText("speedrunigt.option.generate_record." + SpeedRunOption.getOption(SpeedRunOptions.GENERATE_RECORD_FILE).name().toLowerCase(Locale.ROOT))).asFormattedString());
+                                })
+                )
+                .setCategory("speedrunigt.option.category.records")
+        );
+
+        factories.add(screen -> new OptionButtonFactory.Builder()
+                .setButtonWidget(
+                        new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.open_records_folder").asFormattedString(),
+                                (button) -> GLX.method_12553(SpeedRunIGT.getRecordsPath().toFile()))
+                )
+                .setCategory("speedrunigt.option.category.records")
         );
 
         return factories;
