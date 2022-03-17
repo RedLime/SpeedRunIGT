@@ -322,9 +322,14 @@ public class InGameTimer {
         if (resultRecord.isEmpty()) return;
         recordString = "";
 
+        SpeedRunOptions.RecordGenerateType optionType = SpeedRunOption.getOption(SpeedRunOptions.GENERATE_RECORD_FILE);
+        if (optionType == SpeedRunOptions.RecordGenerateType.NONE
+                || (optionType == SpeedRunOptions.RecordGenerateType.COMPLETE_ONLY && !this.isCompleted())) return;
+
         saveManagerThread.submit(() -> {
             try {
                 FileUtils.writeStringToFile(recordFile, resultRecord, StandardCharsets.UTF_8);
+                System.setProperty("speedrunigt.record", recordFile.getName());
             } catch (IOException e) {
                 e.printStackTrace();
                 SpeedRunIGT.error("Failed to write timer record :(");
