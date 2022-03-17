@@ -234,12 +234,12 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
 
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
-                        new ButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.generate_record").append(" : ").append(new TranslatableText("speedrunigt.option.generate_record." + SpeedRunOption.getOption(SpeedRunOptions.GENERATE_RECORD_FILE).name().toLowerCase(Locale.ROOT))),
+                        new ButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.generate_record").append(" : ").append(new TranslatableText("speedrunigt.option.generate_record." + SpeedRunOption.getOption(SpeedRunOptions.GENERATE_RECORD_FILE).name().toLowerCase(Locale.ROOT))).asFormattedString(),
                                 (ButtonWidget button) -> {
                                     int order = SpeedRunOption.getOption(SpeedRunOptions.GENERATE_RECORD_FILE).ordinal() + 1;
                                     SpeedRunOptions.RecordGenerateType[] intervals = SpeedRunOptions.RecordGenerateType.values();
                                     SpeedRunOption.setOption(SpeedRunOptions.GENERATE_RECORD_FILE, intervals[order % intervals.length]);
-                                    button.setMessage(new TranslatableText("speedrunigt.option.generate_record").append(" : ").append(new TranslatableText("speedrunigt.option.generate_record." + SpeedRunOption.getOption(SpeedRunOptions.GENERATE_RECORD_FILE).name().toLowerCase(Locale.ROOT))));
+                                    button.setMessage(new TranslatableText("speedrunigt.option.generate_record").append(" : ").append(new TranslatableText("speedrunigt.option.generate_record." + SpeedRunOption.getOption(SpeedRunOptions.GENERATE_RECORD_FILE).name().toLowerCase(Locale.ROOT))).asFormattedString());
                                 })
                 )
                 .setCategory("speedrunigt.option.category.records")
@@ -247,7 +247,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
 
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
-                        new ButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.open_records_folder"),
+                        new ButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.open_records_folder").asFormattedString(),
                                 (ButtonWidget button) -> Util.getOperatingSystem().open(SpeedRunIGT.getRecordsPath().toFile()))
                 )
                 .setCategory("speedrunigt.option.category.records")
