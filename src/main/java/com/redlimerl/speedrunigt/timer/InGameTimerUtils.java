@@ -34,6 +34,7 @@ public class InGameTimerUtils {
     public static boolean IS_CAN_WAIT_WORLD_LOAD = false;
     public static boolean RETIME_IS_CHANGED_OPTION = false;
     public static boolean RETIME_IS_WAITING_LOAD = false;
+    public static boolean IS_SET_SEED = false;
 
     public static File getTimerLogDir(String name, String pathName) {
         File file = MinecraftClient.getInstance().getCurrentSave().method_11957(name, "./").toPath().resolve(SpeedRunIGT.MOD_ID).resolve(pathName).toFile();
@@ -159,6 +160,7 @@ public class InGameTimerUtils {
         jsonObject.addProperty("mc_version", getMinecraftVersion());
         jsonObject.addProperty("speedrunigt_version", SpeedRunIGT.MOD_VERSION);
         jsonObject.addProperty("category", timer.getCategory().getID());
+        jsonObject.addProperty("run_type", timer.getRunType().getContext());
         jsonObject.addProperty("is_completed", timer.isCompleted());
         jsonObject.addProperty("is_coop", timer.isCoop());
         jsonObject.addProperty("is_hardcore", timer.isHardcore());
