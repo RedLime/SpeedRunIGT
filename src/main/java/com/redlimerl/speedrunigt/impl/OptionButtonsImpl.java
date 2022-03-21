@@ -62,7 +62,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                                         SpeedRunOption.reload();
                                     }
                                     MinecraftClient.getInstance().openScreen(screen);
-                                }, new TranslatableText("speedrunigt.message.reload_options").getString(), "", 0)))
+                                }, new TranslatableText("speedrunigt.message.reload_options").asFormattedString(), "", 0)))
                 )
                 .setCategory("speedrunigt.option.category.general")
         );
@@ -77,7 +77,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                                             SpeedRunOption.reload();
                                         }
                                         MinecraftClient.getInstance().openScreen(screen);
-                                    }, new TranslatableText("speedrunigt.message.reload_options").getString(), "", 0));
+                                    }, new TranslatableText("speedrunigt.message.reload_options").asFormattedString(), "", 0));
                                 })
                 )
                 .setToolTip(() -> I18n.translate("speedrunigt.option.global_options.description", SpeedRunOption.getConfigPath()))
@@ -175,7 +175,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
 
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
-                        new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.current_extensions").getString(), (buttonWidget) -> {})
+                        new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.current_extensions").asFormattedString(), (buttonWidget) -> {})
                 )
                 .setToolTip(() -> {
                     StringBuilder extension = new StringBuilder(I18n.translate("speedrunigt.option.current_extensions.description", SpeedRunIGTApi.getProviders().length));
