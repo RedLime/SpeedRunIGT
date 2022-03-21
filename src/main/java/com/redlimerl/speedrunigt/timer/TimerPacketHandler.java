@@ -4,6 +4,7 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.running.RunCategory;
+import com.redlimerl.speedrunigt.timer.running.RunType;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -26,14 +27,15 @@ public class TimerPacketHandler {
     Timer init packets
      */
     public static void sendInitC2S(InGameTimer timer) {
-        sendInitC2S(timer.startTime, timer.getCategory());
+        sendInitC2S(timer.startTime, timer.getCategory(), timer.getRunType().getCode());
     }
 
-    public static void sendInitC2S(long time, RunCategory category) {
+    public static void sendInitC2S(long time, RunCategory category, int runType) {
         if (!SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) return;
         PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
         passedData.writeLong(time);
         passedData.writeString(category.getID());
+        passedData.writeInt(runType);
 
         if (client.getNetworkHandler() != null)
             client.getNetworkHandler().getClientConnection().send(new CustomPayloadC2SPacket(PACKET_TIMER_INIT_ID, passedData));
@@ -43,18 +45,20 @@ public class TimerPacketHandler {
         try {
             long startTime = buffer.readLong();
             RunCategory category = RunCategory.getCategory(buffer.readString(128).trim());
+            int runType = buffer.isReadable() ? buffer.readInt() : 0;
 
-            sendInitS2C(server.getPlayerManager().getPlayers(), startTime, category);
+            sendInitS2C(server.getPlayerManager().getPlayers(), startTime, category, runType);
             SpeedRunIGT.debug("server received init: " + startTime + " / " + category.getID());
         } catch (Exception e) {
             SpeedRunIGT.error("Failed read packets, probably SpeedRunIGT version different between players");
         }
     }
 
-    public static void sendInitS2C(List<ServerPlayerEntity> players, long startTime, RunCategory category) {
+    public static void sendInitS2C(List<ServerPlayerEntity> players, long startTime, RunCategory category, int runType) {
         PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
         passedData.writeLong(startTime);
         passedData.writeString(category.getID());
+        passedData.writeInt(runType);
 
         CustomPayloadS2CPacket s2CPacket = new CustomPayloadS2CPacket(PACKET_TIMER_INIT_ID, passedData);
 
@@ -68,9 +72,10 @@ public class TimerPacketHandler {
             if (!SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) return;
             long startTime = buffer.readLong();
             RunCategory category = RunCategory.getCategory(buffer.readString(128).trim());
+            int runType = buffer.isReadable() ? buffer.readInt() : 0;
 
             if (InGameTimer.getInstance().startTime != startTime) {
-                InGameTimer.start("");
+                InGameTimer.start("", RunType.fromInt(runType));
                 InGameTimer.getInstance().startTime = startTime;
                 InGameTimer.getInstance().setCategory(category);
             }
