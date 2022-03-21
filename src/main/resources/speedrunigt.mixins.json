@@ -30,6 +30,7 @@
     "screen.DownloadingTerrainScreenMixin",
     "screen.GameMenuScreenMixin",
     "screen.OptionsScreenMixin",
+    "screen.WorldOptionsScreenMixin",
     "timeline.VillagerEntityMixin",
     "timeline.ServerPlayerEntityMixin",
     "translate.I18nMixin",
