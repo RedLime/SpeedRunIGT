@@ -11,6 +11,7 @@ import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
+import com.redlimerl.speedrunigt.timer.running.RunType;
 import com.redlimerl.speedrunigt.utils.FontUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
@@ -70,7 +71,7 @@ public abstract class MinecraftClientMixin {
 
     @Inject(at = @At("HEAD"), method = "method_29607(Ljava/lang/String;Lnet/minecraft/world/level/LevelInfo;Lnet/minecraft/util/registry/RegistryTracker$Modifiable;Lnet/minecraft/world/gen/GeneratorOptions;)V")
     public void onCreate(String worldName, LevelInfo levelInfo, RegistryTracker.Modifiable registryTracker, GeneratorOptions generatorOptions, CallbackInfo ci) {
-        InGameTimer.start(worldName);
+        InGameTimer.start(worldName, RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
         InGameTimerUtils.IS_CHANGING_DIMENSION = true;
         disconnectCheck = false;
     }
