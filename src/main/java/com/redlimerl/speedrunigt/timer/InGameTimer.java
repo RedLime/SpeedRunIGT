@@ -11,6 +11,7 @@ import com.redlimerl.speedrunigt.timer.logs.TimerTickLog;
 import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import com.redlimerl.speedrunigt.timer.running.RunCategory;
+import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.MathHelper;
@@ -68,6 +69,7 @@ public class InGameTimer {
     private boolean isCompleted = false;
     boolean isServerIntegrated = true;
     boolean isCoop = false;
+    RunType runType = RunType.RANDOM_SEED;
     private boolean isGlitched = false;
     private int completeCount = 0;
 
@@ -114,7 +116,7 @@ public class InGameTimer {
     /**
      * Start the Timer, Trigger when player to join(created) the world
      */
-    public static void start(String worldName) {
+    public static void start(String worldName, RunType runType) {
         if (!INSTANCE.worldName.isEmpty()) {
             INSTANCE.writeRecordFile();
         }
@@ -122,6 +124,7 @@ public class InGameTimer {
         INSTANCE.setCategory(SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY));
         INSTANCE.setPause(true, TimerStatus.IDLE, "startup");
         INSTANCE.isGlitched = SpeedRunOption.getOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE);
+        INSTANCE.runType = runType;
     }
 
     /**
@@ -129,9 +132,15 @@ public class InGameTimer {
      */
     public static void reset() {
         if (INSTANCE.isCompleted || INSTANCE.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
+        RunType runType = INSTANCE.getRunType();
+        boolean isGlitched = INSTANCE.isGlitched;
+        boolean isHardcore = INSTANCE.isHardcore;
 
         INSTANCE = new InGameTimer(INSTANCE.worldName, false);
         INSTANCE.setCategory(RunCategories.CUSTOM);
+        INSTANCE.runType = runType;
+        INSTANCE.isGlitched = isGlitched;
+        INSTANCE.isHardcore = isHardcore;
         INSTANCE.setPause(true, TimerStatus.IDLE, "reset");
         INSTANCE.setPause(false, "reset");
         TimerPacketHandler.sendInitC2S(INSTANCE);
@@ -232,6 +241,8 @@ public class InGameTimer {
         INSTANCE.setPause(true, TimerStatus.LEAVE, "leave the world");
 
         save(true);
+
+        INSTANCE.setStatus(TimerStatus.NONE);
     }
 
     private static boolean waitingSaveTask = false;
@@ -296,7 +307,7 @@ public class InGameTimer {
                     if (INSTANCE.dataVersion == null || INSTANCE.dataVersion == 0 || INSTANCE.dataVersion != DATA_VERSION) {
                         FileUtils.moveFile(file, new File(worldDir, "timer.igt.backup"));
                         SpeedRunIGT.error("The timer data has found, but it is an old version. timer file is renamed to \"*.igt.backup\"");
-                        InGameTimer.start(name);
+                        InGameTimer.start(name, RunType.OLD_WORLD);
                         return true;
                     }
 
@@ -309,7 +320,7 @@ public class InGameTimer {
                     isOld = ".old";
                 }
             } else if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_START_GENERATED_WORLD) && isOld.isEmpty()) {
-                InGameTimer.start(name);
+                InGameTimer.start(name, RunType.OLD_WORLD);
                 return true;
             } else return false;
         }
@@ -318,6 +329,7 @@ public class InGameTimer {
     private String recordString = "";
     public void writeRecordFile() {
         File recordFile = new File(SpeedRunIGT.getRecordsPath().toFile(), uuid + ".json");
+        File worldRecordFile = new File(InGameTimerUtils.getTimerLogDir(this.worldName, ""), "record.json");
         String resultRecord = recordString;
         if (resultRecord.isEmpty()) return;
         recordString = "";
@@ -329,6 +341,7 @@ public class InGameTimer {
         saveManagerThread.submit(() -> {
             try {
                 FileUtils.writeStringToFile(recordFile, resultRecord, StandardCharsets.UTF_8);
+                FileUtils.writeStringToFile(worldRecordFile, resultRecord, StandardCharsets.UTF_8);
                 System.setProperty("speedrunigt.record", recordFile.getName());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -620,6 +633,10 @@ public class InGameTimer {
 
     public boolean isHardcore() {
         return isHardcore;
+    }
+
+    public RunType getRunType() {
+        return runType;
     }
 
     public boolean isLegacyIGT() {
