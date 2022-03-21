@@ -8,6 +8,7 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
+import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
@@ -54,7 +55,7 @@ public abstract class MinecraftClientMixin {
     public void onCreate(String name, String displayName, LevelInfo levelInfo, CallbackInfo ci) {
         try {
             if (levelInfo != null) {
-                InGameTimer.start(name);
+                InGameTimer.start(name, RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
             } else {
                 boolean loaded = InGameTimer.load(name);
                 if (!loaded) InGameTimer.end();
