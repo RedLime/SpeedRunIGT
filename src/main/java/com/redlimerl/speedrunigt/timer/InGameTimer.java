@@ -132,9 +132,15 @@ public class InGameTimer {
      */
     public static void reset() {
         if (INSTANCE.isCompleted || INSTANCE.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
+        RunType runType = INSTANCE.getRunType();
+        boolean isGlitched = INSTANCE.isGlitched;
+        boolean isHardcore = INSTANCE.isHardcore;
 
         INSTANCE = new InGameTimer(INSTANCE.worldName, false);
         INSTANCE.setCategory(RunCategories.CUSTOM);
+        INSTANCE.runType = runType;
+        INSTANCE.isGlitched = isGlitched;
+        INSTANCE.isHardcore = isHardcore;
         INSTANCE.setPause(true, TimerStatus.IDLE, "reset");
         INSTANCE.setPause(false, "reset");
         TimerPacketHandler.sendInitC2S(INSTANCE);
