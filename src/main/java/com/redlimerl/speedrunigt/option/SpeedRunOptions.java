@@ -1,8 +1,10 @@
 package com.redlimerl.speedrunigt.option;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
 import com.redlimerl.speedrunigt.timer.running.RunCategory;
+import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
@@ -79,15 +81,24 @@ public class SpeedRunOptions {
         }
     };
 
-    public static final OptionArgument<Boolean> WAITING_FIRST_INPUT = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "waiting_first_input"), false) {
+    public enum TimerStartType {
+        FIRST_INPUT, WORLD_LOAD, AUTOMATIC;
+        public boolean isFirstInput(InGameTimer timer) {
+            return this == FIRST_INPUT || (this == AUTOMATIC && timer.getRunType() != RunType.RANDOM_SEED);
+        }
+        public boolean isWorldLoad(InGameTimer timer) {
+            return this == WORLD_LOAD || (this == AUTOMATIC && timer.getRunType() == RunType.RANDOM_SEED);
+        }
+    }
+    public static final OptionArgument<TimerStartType> WAITING_FIRST_INPUT = new OptionArgument<TimerStartType>(new Identifier(SpeedRunIGT.MOD_ID, "waiting_first_input_v2"), TimerStartType.AUTOMATIC) {
         @Override
-        public Boolean valueFromString(String string) {
-            return Objects.equals(string, "true");
+        public TimerStartType valueFromString(String string) {
+            return TimerStartType.valueOf(string);
         }
 
         @Override
-        public String valueToString(Boolean value) {
-            return value.toString();
+        public String valueToString(TimerStartType value) {
+            return value.name();
         }
     };
 
