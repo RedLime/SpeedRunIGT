@@ -16,6 +16,6 @@ public class WorldOptionsScreenMixin {
 
     @Inject(method = "buttonClicked", at = @At("HEAD"))
     public void onGenerate(CallbackInfo ci) {
-        InGameTimerUtils.IS_SET_SEED = this.seedField.getText().isEmpty();
+        InGameTimerUtils.IS_SET_SEED = !this.seedField.getText().isEmpty();
     }
 }
