@@ -7,6 +7,8 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.mixins.access.ClientChunkProviderAccessor;
 import com.redlimerl.speedrunigt.mixins.access.ServerStatHandlerAccessor;
 import com.redlimerl.speedrunigt.mixins.access.WorldRendererAccessor;
+import com.redlimerl.speedrunigt.option.SpeedRunOption;
+import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.logs.TimerPauseLog;
 import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import com.redlimerl.speedrunigt.utils.MixinValues;
@@ -61,6 +63,10 @@ public class InGameTimerUtils {
             return true;
         }
         return false;
+    }
+
+    public static boolean isWaitingFirstInput() {
+        return SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT).isFirstInput(InGameTimer.getInstance());
     }
 
     public static float getGeneratedChunkRatio() {
