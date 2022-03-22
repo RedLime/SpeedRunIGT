@@ -149,7 +149,7 @@ public abstract class MinecraftClientMixin {
         InGameTimer timer = InGameTimer.getInstance();
 
         if (InGameTimerUtils.canUnpauseTimer(true)) {
-            if (!(SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) && !timer.isStarted())) {
+            if (!(InGameTimerUtils.isWaitingFirstInput() && !timer.isStarted())) {
                 timer.setPause(false, "rendered");
             } else {
                 timer.updateFirstRendered();
