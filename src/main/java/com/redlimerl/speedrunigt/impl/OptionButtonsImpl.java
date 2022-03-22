@@ -120,13 +120,15 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
 
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
-                        new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.waiting_first_input").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString(),
+                        new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.timer_start_type").append(" : ").append(new TranslatableText("speedrunigt.option.timer_start_type." + SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT).name().toLowerCase(Locale.ROOT))).asFormattedString(),
                                 (button) -> {
-                                    SpeedRunOption.setOption(SpeedRunOptions.WAITING_FIRST_INPUT, !SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT));
-                                    button.message = (new TranslatableText("speedrunigt.option.waiting_first_input").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
+                                    int order = SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT).ordinal() + 1;
+                                    SpeedRunOptions.TimerStartType[] intervals = SpeedRunOptions.TimerStartType.values();
+                                    SpeedRunOption.setOption(SpeedRunOptions.WAITING_FIRST_INPUT, intervals[order % intervals.length]);
+                                    button.message = (new TranslatableText("speedrunigt.option.timer_start_type").append(" : ").append(new TranslatableText("speedrunigt.option.timer_start_type." + SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT).name().toLowerCase(Locale.ROOT))).asFormattedString());
                                 })
                 )
-                .setToolTip(() -> I18n.translate("speedrunigt.option.waiting_first_input.description"))
+                .setToolTip(() -> I18n.translate("speedrunigt.option.timer_start_type.description"))
                 .setCategory("speedrunigt.option.category.timing")
         );
 
