@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
-import static com.redlimerl.speedrunigt.timer.InGameTimerUtils.timeToStringFormat;
+import static com.redlimerl.speedrunigt.timer.InGameTimerUtils.*;
 
 /**
  * In-game Timer class.
@@ -181,13 +181,14 @@ public class InGameTimer {
 
         if (INSTANCE.isServerIntegrated) {
             StringBuilder resultLog = new StringBuilder();
-            resultLog.append("Result > IGT: ").append(timeToStringFormat(timer.getInGameTime(false)))
-                    .append(", Auto-Retimed IGT: ").append(timeToStringFormat(timer.getRetimedInGameTime()))
-                    .append(", RTA: ").append(timeToStringFormat(timer.getRealTimeAttack()))
+            boolean isRetimed = timer.getRetimedInGameTime() != timer.getInGameTime(false);
+            resultLog.append("Result > IGT: ").append(timeToStringFormat(timer.getInGameTime(false)));
+            if (isRetimed) resultLog.append(", Auto-Retimed IGT: ").append(timeToStringFormat(timer.getRetimedInGameTime()));
+            resultLog.append(", RTA: ").append(timeToStringFormat(timer.getRealTimeAttack()))
                     .append(", Counted Ticks: ").append(timer.activateTicks)
-                    .append(", Total Ticks: ").append(timer.loggerTicks)
-                    .append(", Auto-Retimed IGT Length: ").append(timeToStringFormat(timer.retimedIGTTime));
-            if (timer.getCategory() == RunCategories.CUSTOM)
+                    .append(", Total Ticks: ").append(timer.loggerTicks);
+            if (isRetimed) resultLog.append(", Auto-Retimed IGT Length: ").append(timeToStringFormat(timer.retimedIGTTime));
+            if (timer.getCategory() == RunCategories.ALL_ADVANCEMENTS)
                 resultLog.append(", Excluded RTA Time: ").append(timeToStringFormat(timer.excludedTime));
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy.MM.dd HH:mm:ss");
@@ -432,7 +433,7 @@ public class InGameTimer {
             if (inGameTime != null) return inGameTime;
         }
 
-        if (smooth && this.isCompleted() && SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE) && this.getCategory() == RunCategories.ANY)
+        if (smooth && this.isCompleted() && SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE) && this.getCategory() == RunCategories.ANY && this.getRunType() == RunType.RANDOM_SEED)
             return getRetimedInGameTime();
 
         long ms = System.currentTimeMillis();
@@ -446,21 +447,21 @@ public class InGameTimer {
     private static final int RETIME_MINUTES = 13;
     public long getRetimedInGameTime() {
         long base = getInGameTime(false);
-        return base + ((this.isGlitched && this.isServerIntegrated) || base >= 60000 * RETIME_MINUTES ? 0 : this.retimedIGTTime);
+        return base + ((this.isGlitched && this.isServerIntegrated) || (base >= 60000 * RETIME_MINUTES && this.getCategory() == RunCategories.ANY && this.getRunType() == RunType.RANDOM_SEED) ? 0 : this.retimedIGTTime);
     }
 
     private long firstRenderedTime = 0;
     public void updateFirstInput() {
-        if (firstInput.isEmpty() && !SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT)) {
+        if (firstInput.isEmpty() && SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT).isWorldLoad(this)) {
             firstInput = "First Input: IGT " + timeToStringFormat(getInGameTime(false)) + (leastTickTime == 0 ? "" : " (+ " + (System.currentTimeMillis() - this.leastTickTime) + "ms)") + ", RTA " + timeToStringFormat(getRealTimeAttack());
         }
         if (firstRenderedTime != 0) {
-            firstInput = "First World Rendered: " + (System.currentTimeMillis() - this.firstRenderedTime) + "ms before first input";
+            firstInput = "First World Rendered: " + millisecondToStringFormat(System.currentTimeMillis() - this.firstRenderedTime) + "ms before first input";
         }
     }
 
     public void updateFirstRendered() {
-        if (firstInput.isEmpty() && firstRenderedTime == 0 && SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT)) {
+        if (firstInput.isEmpty() && firstRenderedTime == 0 && SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT).isFirstInput(this)) {
             firstRenderedTime = System.currentTimeMillis();
         }
     }
