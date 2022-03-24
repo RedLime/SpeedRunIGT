@@ -1,6 +1,5 @@
 package com.redlimerl.speedrunigt.impl;
 
-import com.mojang.blaze3d.platform.GLX;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.api.SpeedRunIGTApi;
