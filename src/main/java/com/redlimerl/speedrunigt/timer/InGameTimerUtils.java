@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.timer;
 
+import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -198,8 +199,9 @@ public class InGameTimerUtils {
         JsonObject jsonObject = new JsonObject();
         MinecraftServer server = MinecraftClient.getInstance().getServer();
         if (timer.isServerIntegrated && server != null && server.getPlayerManager() != null) {
-            for (ServerPlayerEntity obj : server.getPlayerManager().getPlayers()) {
-                jsonObject.add(obj.getUuid().toString(), SpeedRunIGT.GSON.fromJson(ServerStatHandler.method_8272(((ServerStatHandlerAccessor) obj.getStatHandler()).getStatMap()), JsonObject.class));
+            ArrayList<ServerPlayerEntity> serverPlayerEntities = Lists.newArrayList(server.getPlayerManager().getPlayers());
+            for (ServerPlayerEntity serverPlayerEntity : serverPlayerEntities) {
+                jsonObject.add(serverPlayerEntity.getUuid().toString(), SpeedRunIGT.GSON.fromJson(ServerStatHandler.method_8272(((ServerStatHandlerAccessor) serverPlayerEntity.getStatHandler()).getStatMap()), JsonObject.class));
             }
         }
         return jsonObject;
