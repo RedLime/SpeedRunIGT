@@ -14,14 +14,14 @@ import com.redlimerl.speedrunigt.timer.logs.TimerPauseLog;
 import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import com.redlimerl.speedrunigt.utils.MixinValues;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.realms.RealmsSharedConstants;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stat.ServerStatHandler;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.dimension.DimensionType;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
