@@ -11,7 +11,6 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.logs.TimerPauseLog;
 import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
-import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
