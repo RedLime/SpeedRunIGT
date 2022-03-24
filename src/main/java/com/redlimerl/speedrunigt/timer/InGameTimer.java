@@ -28,7 +28,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
-import static com.redlimerl.speedrunigt.timer.InGameTimerUtils.*;
+import static com.redlimerl.speedrunigt.timer.InGameTimerUtils.millisecondToStringFormat;
+import static com.redlimerl.speedrunigt.timer.InGameTimerUtils.timeToStringFormat;
 
 /**
  * In-game Timer class.
