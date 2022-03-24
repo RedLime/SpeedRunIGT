@@ -19,11 +19,11 @@ import net.minecraft.realms.RealmsSharedConstants;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.ServerStatHandler;
+import net.minecraft.stat.Stats;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.OverworldDimension;
 import net.minecraft.world.dimension.TheNetherDimension;
-import net.minecraft.stat.Stats;
-import net.minecraft.util.math.Vec3d;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
