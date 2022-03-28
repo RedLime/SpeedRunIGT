@@ -84,6 +84,7 @@ public class InGameTimer {
     private long activateTicks = 0;
     private long leastTickTime = 0;
     private long leastStartTime = 0;
+    Long lanOpenedTime = null;
 
     private long leaveTime = 0;
     private int pauseCount = 0;
@@ -562,7 +563,7 @@ public class InGameTimer {
                             }
                         });
                     }
-                    if (this.getCategory() == RunCategories.ALL_ACHIEVEMENTS && leaveTime != 0) excludedTime = System.currentTimeMillis() - leaveTime;
+                    if (this.getCategory() == RunCategories.ALL_ACHIEVEMENTS && leaveTime != 0 && leaveTime > startTime) excludedTime = System.currentTimeMillis() - leaveTime;
                     leaveTime = 0;
                 }
                 if (this.getStatus() == TimerStatus.IDLE && loggerTicks != 0) {
@@ -651,5 +652,9 @@ public class InGameTimer {
 
     static String getLogSuffix(int count) {
         return (count == 0 ? "" : "_"+count) + ".log";
+    }
+
+    public void openedLanIntegratedServer() {
+        this.lanOpenedTime = getRealTimeAttack();
     }
 }
