@@ -46,7 +46,7 @@ public class SpeedRunIGT implements ClientModInitializer {
     public static HashMap<Identifier, FontIdentifier> FONT_MAPS = new HashMap<>();
 
     public static final Gson GSON = new GsonBuilder().create();
-    public static final Gson PRETTY_GSON = new GsonBuilder().setPrettyPrinting().create();
+    public static final Gson PRETTY_GSON = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
     public static final Path FONT_PATH = getGlobalPath().resolve("fonts");
 
     public static Path getMainPath() {
