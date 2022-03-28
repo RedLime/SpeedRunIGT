@@ -3,6 +3,7 @@ package com.redlimerl.speedrunigt.timer;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.mixins.access.ClientChunkProviderAccessor;
@@ -177,6 +178,8 @@ public class InGameTimerUtils {
         jsonObject.addProperty("retimed_igt", timer.getRetimedInGameTime());
         jsonObject.addProperty("final_igt", timer.getInGameTime(false));
         jsonObject.addProperty("final_rta", timer.getRealTimeAttack());
+        if (timer.lanOpenedTime == null) jsonObject.add("open_lan", JsonNull.INSTANCE);
+        else jsonObject.addProperty("open_lan", timer.lanOpenedTime);
         JsonArray timelineArr = new JsonArray();
         for (TimerTimeline timeline : timer.getTimelines()) {
             JsonObject timelineObj = new JsonObject();
