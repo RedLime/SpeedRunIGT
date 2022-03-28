@@ -31,6 +31,7 @@
     "screen.GameMenuScreenMixin",
     "screen.OptionsScreenMixin",
     "screen.WorldOptionsScreenMixin",
+    "server.IntegratedServerMixin",
     "timeline.ServerPlayerEntityMixin",
     "timeline.VillagerEntityMixin",
     "translate.I18nMixin",
