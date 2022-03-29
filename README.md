@@ -22,8 +22,8 @@ The **Timer** Mod for Minecraft Speedrun
 ### Stable Versions
 - 1.16.1, 1.17.1, 1.15.2, 1.14.4
 - 20w14∞, 1.16.5, 1.18.2
-- 1.8.9, 1.7.10 (with Legacy Fabric)
-- 1.8.0, 1.9.4, 1.12.2, 1.13.2 (with Legacy Fabric)
+- 1.8.9, 1.7.10, 1.7.4 (with Legacy Fabric)
+- 1.8.0, 15w14a, 1.9.4, 1.12.2, 1.13.2 (with Legacy Fabric)
 ### Unsupported Versions (No longer any update)
 - 1.18.1
 
