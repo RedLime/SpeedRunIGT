@@ -15,7 +15,7 @@ public interface OptionButtonFactory {
 
         public Builder setButtonWidget(ButtonWidget buttonWidget) {
             ButtonWidgetAccessor buttonWidgetAccessor = (ButtonWidgetAccessor) buttonWidget;
-            if (buttonWidget.getWidth() != 150 || buttonWidgetAccessor.getHeight() != 20) throw new IllegalArgumentException("ButtonWidget should be width 150, height 20");
+            if (buttonWidget.method_21890() != 150 || buttonWidgetAccessor.getHeight() != 20) throw new IllegalArgumentException("ButtonWidget should be width 150, height 20");
             if (buttonWidget.getClass().getTypeName().equals(ButtonWidget.class.getTypeName())) throw new IllegalArgumentException("yeah you can use ButtonWidget extends class, but you can't use ButtonWidget. try use ConsumerButtonWidget.");
             this.buttonWidget = buttonWidget;
             return this;

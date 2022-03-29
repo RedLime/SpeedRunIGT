@@ -274,11 +274,11 @@ public class TimerDrawer {
             int opacity = ColorMixer.getArgb((int) (bgOpacity * 255), 0, 0, 0);
             if (rtaMin.getX() < igtMax.getX() && rtaMin.getY() < igtMax.getY() &&
                     igtMin.getX() < rtaMax.getX() && igtMin.getY() < rtaMax.getY()) {
-                DrawableHelper.fill(Math.min(rtaMin.getX(), igtMin.getX()), Math.min(rtaMin.getY(), igtMin.getY()),
+                DrawableHelper.method_21878(Math.min(rtaMin.getX(), igtMin.getX()), Math.min(rtaMin.getY(), igtMin.getY()),
                         Math.max(rtaMax.getX(), igtMax.getX()), Math.max(rtaMax.getY(), igtMax.getY()), opacity);
             } else {
-                if (rtaScale != 0) DrawableHelper.fill(rtaMin.getX(), rtaMin.getY(), rtaMax.getX(), rtaMax.getY(), opacity);
-                if (igtScale != 0) DrawableHelper.fill(igtMin.getX(), igtMin.getY(), igtMax.getX(), igtMax.getY(), opacity);
+                if (rtaScale != 0) DrawableHelper.method_21878(rtaMin.getX(), rtaMin.getY(), rtaMax.getX(), rtaMax.getY(), opacity);
+                if (igtScale != 0) DrawableHelper.method_21878(igtMin.getX(), igtMin.getY(), igtMax.getX(), igtMax.getY(), opacity);
             }
         }
 

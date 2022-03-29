@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Screen.class)
 public class OptionButtonWidgetMixin {
 
-    @Inject(method = "buttonClicked", at = @At("RETURN"))
+    @Inject(method = "method_21930", at = @At("RETURN"))
     public void onClickOption(ButtonWidget button, CallbackInfo ci) {
         if (button instanceof OptionButtonWidget || button instanceof OptionSliderWidget) {
             InGameTimerUtils.RETIME_IS_CHANGED_OPTION = true;

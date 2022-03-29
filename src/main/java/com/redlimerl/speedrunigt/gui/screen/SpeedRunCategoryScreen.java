@@ -34,61 +34,61 @@ public class SpeedRunCategoryScreen extends Screen {
     }
 
     @Override
-    public void init() {
-        buttons.add(new ConsumerButtonWidget(width / 2 - 100, height - 35, 200, 20, ScreenTexts.CANCEL, (button) -> onClose()));
-        this.listWidget = new CategorySelectionListWidget(this.client);
+    public void method_21947() {
+        field_22537.add(new ConsumerButtonWidget(field_22535 / 2 - 100, field_22536 - 35, 200, 20, ScreenTexts.CANCEL, (button) -> onClose()));
+        this.listWidget = new CategorySelectionListWidget(this.field_22534);
     }
 
     public void onClose() {
-        if (this.client != null) this.client.openScreen(parent);
+        if (this.field_22534 != null) this.field_22534.openScreen(parent);
     }
 
     @Override
-    protected void buttonClicked(ButtonWidget button) {
+    protected void method_21930(ButtonWidget button) {
         if (button instanceof ConsumerButtonWidget) {
             ((ConsumerButtonWidget) button).onClick();
         }
-        super.buttonClicked(button);
+        super.method_21930(button);
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int button) {
+    protected void method_21926(int mouseX, int mouseY, int button) {
         ArrayList<ButtonWidget> widgets = new ArrayList<>(widgetButtons);
-        buttons.addAll(widgets);
-        super.mouseClicked(mouseX, mouseY, button);
-        buttons.removeAll(widgets);
+        field_22537.addAll(widgets);
+        super.method_21926(mouseX, mouseY, button);
+        field_22537.removeAll(widgets);
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float delta) {
-        this.listWidget.render(mouseX, mouseY, delta);
-        this.drawCenteredString(this.textRenderer, new TranslatableText("speedrunigt.option.timer_category").asFormattedString(), this.width / 2, 16, 16777215);
-        this.drawCenteredString(this.textRenderer, "(" + I18n.translate("speedrunigt.option.timer_category.warning") + ")", this.width / 2, this.height - 46, 8421504);
-        super.render(mouseX, mouseY, delta);
+    public void method_21925(int mouseX, int mouseY, float delta) {
+        this.listWidget.method_21897(mouseX, mouseY, delta);
+        this.method_21881(this.field_22540, new TranslatableText("speedrunigt.option.timer_category").asFormattedString(), this.field_22535 / 2, 16, 16777215);
+        this.method_21881(this.field_22540, "(" + I18n.translate("speedrunigt.option.timer_category.warning") + ")", this.field_22535 / 2, this.field_22536 - 46, 8421504);
+        super.method_21925(mouseX, mouseY, delta);
     }
 
     @Environment(EnvType.CLIENT)
     class CategorySelectionListWidget extends EntryListWidget {
         private final ArrayList<CategoryEntry> entries = new ArrayList<>();
         public CategorySelectionListWidget(MinecraftClient minecraft) {
-            super(minecraft, SpeedRunCategoryScreen.this.width, SpeedRunCategoryScreen.this.height, 32, SpeedRunCategoryScreen.this.height - 55, 24);
+            super(minecraft, SpeedRunCategoryScreen.this.field_22535, SpeedRunCategoryScreen.this.field_22536, 32, SpeedRunCategoryScreen.this.field_22536 - 55, 24);
             entries.addAll(RunCategory.getCategories().values().stream().map(CategoryEntry::new).collect(Collectors.toList()));
             widgetButtons.addAll(entries.stream().map(entry -> entry.checkBox).collect(Collectors.toList()));
         }
 
         @Override
-        protected int getEntryCount() {
+        public class_1803 method_6697(int i) {
+            return entries.get(i);
+        }
+
+        @Override
+        protected int method_21905() {
             return entries.size();
         }
 
         @Override
-        protected int getScrollbarPosition() {
-            return super.getScrollbarPosition() + 30;
-        }
-
-        @Override
-        public class_1803 method_6697(int i) {
-            return entries.get(i);
+        protected int method_21912() {
+            return super.method_21912() + 30;
         }
 
         @Environment(EnvType.CLIENT)
@@ -99,7 +99,7 @@ public class SpeedRunCategoryScreen extends Screen {
 
             public CategoryEntry(RunCategory category) {
                 this.checkBox = new ConsumerButtonWidget(0, 0, 20, 20, "", (button) -> {
-                    button.playDownSound(SpeedRunCategoryScreen.this.client.getSoundManager());
+                    button.method_21888(SpeedRunCategoryScreen.this.field_22534.getSoundManager());
                     SpeedRunOption.setOption(SpeedRunOptions.TIMER_CATEGORY, category);
                     InGameTimer.getInstance().setCategory(category);
                     InGameTimer.getInstance().setUncompleted();
@@ -111,9 +111,9 @@ public class SpeedRunCategoryScreen extends Screen {
             public void method_6700(int index, int x, int y, int rowWidth, int rowHeight, Tessellator tessellator, int mouseX, int mouseY, boolean hovered) {
                 this.checkBox.x = x + 34;
                 this.checkBox.y = y;
-                this.checkBox.message = (InGameTimer.getInstance().getStatus() != TimerStatus.NONE ? InGameTimer.getInstance().getCategory() : SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY)) == this.category ? new LiteralText("█").setStyle(new Style().setBold(true)).asFormattedString() : "";
-                this.checkBox.render(MinecraftClient.getInstance(), mouseX, mouseY);
-                drawWithShadow(SpeedRunCategoryScreen.this.textRenderer, category.getText().asFormattedString(), this.checkBox.x + 24, this.checkBox.y + 6,14737632 | 255 << 24);
+                this.checkBox.field_22510 = (InGameTimer.getInstance().getStatus() != TimerStatus.NONE ? InGameTimer.getInstance().getCategory() : SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY)) == this.category ? new LiteralText("█").setStyle(new Style().setBold(true)).asFormattedString() : "";
+                this.checkBox.method_21887(MinecraftClient.getInstance(), mouseX, mouseY);
+                SpeedRunCategoryScreen.this.field_22540.method_956(category.getText().asFormattedString(), this.checkBox.x + 24, this.checkBox.y + 6,14737632 | 255 << 24);
             }
 
             @Override

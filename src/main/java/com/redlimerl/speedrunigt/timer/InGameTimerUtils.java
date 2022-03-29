@@ -15,10 +15,10 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.logs.TimerPauseLog;
 import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ServerInfo;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.realms.RealmsSharedConstants;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.ServerStatHandler;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.math.Vec3d;
@@ -215,7 +215,7 @@ public class InGameTimerUtils {
     }
 
     public static String getMinecraftVersion() {
-        return RealmsSharedConstants.VERSION_STRING;
+        return new ServerInfo("a", "b").version;
     }
 
     public static boolean isLoadableBlind(Dimension dimensionType, Vec3d netherPos, Vec3d overPos) {
@@ -243,7 +243,7 @@ public class InGameTimerUtils {
         MinecraftServer server = MinecraftClient.getInstance().getServer();
         PlayerEntity player = MinecraftClient.getInstance().field_3805;
         if (server != null && player != null) {
-            ServerStatHandler statHandler = server.getPlayerManager().createStatHandler(player);
+            ServerStatHandler statHandler = server.getPlayerManager().method_8224(player.getTranslationKey());
             return statHandler == null ? null : statHandler.method_1729(Stats.MINUTES_PLAYED) * 50L;
         }
         return null;

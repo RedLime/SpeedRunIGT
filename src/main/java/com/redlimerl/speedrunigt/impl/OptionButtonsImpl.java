@@ -4,6 +4,7 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.api.SpeedRunIGTApi;
 import com.redlimerl.speedrunigt.gui.ConsumerButtonWidget;
+import com.redlimerl.speedrunigt.gui.ConsumerConfirmScreen;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunCategoryScreen;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunIGTInfoScreen;
 import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
@@ -13,7 +14,6 @@ import com.redlimerl.speedrunigt.utils.OperatingUtils;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ConfirmScreen;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
@@ -57,7 +57,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
                         new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.reload").asFormattedString(),
-                                (button) -> MinecraftClient.getInstance().openScreen(new ConfirmScreen((boolean1, i) -> {
+                                (button) -> MinecraftClient.getInstance().openScreen(new ConsumerConfirmScreen((boolean1, i) -> {
                                     if (boolean1) {
                                         SpeedRunOption.reload();
                                     }
@@ -72,7 +72,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                         new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.global_options").append(" : ").append(SpeedRunOption.isUsingGlobalConfig() ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString(),
                                 (button) -> {
                                     SpeedRunOption.setUseGlobalConfig(!SpeedRunOption.isUsingGlobalConfig());
-                                    MinecraftClient.getInstance().openScreen(new ConfirmScreen((boolean1, i) -> {
+                                    MinecraftClient.getInstance().openScreen(new ConsumerConfirmScreen((boolean1, i) -> {
                                         if (boolean1) {
                                             SpeedRunOption.reload();
                                         }
@@ -90,7 +90,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                                 (button) -> {
                                     TIMER_DRAWER.setToggle(!TIMER_DRAWER.isToggle());
                                     SpeedRunOption.setOption(SpeedRunOptions.TOGGLE_TIMER, TIMER_DRAWER.isToggle());
-                                    button.message = (new TranslatableText("speedrunigt.option.timer_position.toggle_timer").append(" : ").append(TIMER_DRAWER.isToggle() ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
+                                    button.field_22510 = (new TranslatableText("speedrunigt.option.timer_position.toggle_timer").append(" : ").append(TIMER_DRAWER.isToggle() ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
                                 })
                 )
                 .setCategory("speedrunigt.option.category.timer")
@@ -101,7 +101,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                         new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.hide_timer_in_options").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString(),
                                 (button) -> {
                                     SpeedRunOption.setOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS, !SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS));
-                                    button.message = (new TranslatableText("speedrunigt.option.hide_timer_in_options").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
+                                    button.field_22510 = (new TranslatableText("speedrunigt.option.hide_timer_in_options").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
                                 })
                 )
                 .setCategory("speedrunigt.option.category.timer")
@@ -112,7 +112,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                         new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.hide_timer_in_debugs").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString(),
                                 (button) -> {
                                     SpeedRunOption.setOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS, !SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS));
-                                    button.message = (new TranslatableText("speedrunigt.option.hide_timer_in_debugs").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
+                                    button.field_22510 = (new TranslatableText("speedrunigt.option.hide_timer_in_debugs").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
                                 })
                 )
                 .setCategory("speedrunigt.option.category.timer")
@@ -125,7 +125,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                                     int order = SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT).ordinal() + 1;
                                     SpeedRunOptions.TimerStartType[] intervals = SpeedRunOptions.TimerStartType.values();
                                     SpeedRunOption.setOption(SpeedRunOptions.WAITING_FIRST_INPUT, intervals[order % intervals.length]);
-                                    button.message = (new TranslatableText("speedrunigt.option.timer_start_type").append(" : ").append(new TranslatableText("speedrunigt.option.timer_start_type." + SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT).name().toLowerCase(Locale.ROOT))).asFormattedString());
+                                    button.field_22510 = (new TranslatableText("speedrunigt.option.timer_start_type").append(" : ").append(new TranslatableText("speedrunigt.option.timer_start_type." + SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT).name().toLowerCase(Locale.ROOT))).asFormattedString());
                                 })
                 )
                 .setToolTip(() -> I18n.translate("speedrunigt.option.timer_start_type.description"))
@@ -137,7 +137,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                         new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.auto_toggle_coop").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString(),
                                 (button) -> {
                                     SpeedRunOption.setOption(SpeedRunOptions.AUTOMATIC_COOP_MODE, !SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE));
-                                    button.message = (new TranslatableText("speedrunigt.option.auto_toggle_coop").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
+                                    button.field_22510 = (new TranslatableText("speedrunigt.option.auto_toggle_coop").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
                                 })
                 )
                 .setToolTip(() -> I18n.translate("speedrunigt.option.auto_toggle_coop.description"))
@@ -149,7 +149,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                         new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.start_old_worlds").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.TIMER_START_GENERATED_WORLD) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString(),
                                 (button) -> {
                                     SpeedRunOption.setOption(SpeedRunOptions.TIMER_START_GENERATED_WORLD, !SpeedRunOption.getOption(SpeedRunOptions.TIMER_START_GENERATED_WORLD));
-                                    button.message = (new TranslatableText("speedrunigt.option.start_old_worlds").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.TIMER_START_GENERATED_WORLD) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
+                                    button.field_22510 = (new TranslatableText("speedrunigt.option.start_old_worlds").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.TIMER_START_GENERATED_WORLD) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
                                 })
                 )
                 .setToolTip(() -> I18n.translate("speedrunigt.option.start_old_worlds.description"))
@@ -161,7 +161,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                         new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.limitless_reset").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.TIMER_LIMITLESS_RESET) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString(),
                                 (button) -> {
                                     SpeedRunOption.setOption(SpeedRunOptions.TIMER_LIMITLESS_RESET, !SpeedRunOption.getOption(SpeedRunOptions.TIMER_LIMITLESS_RESET));
-                                    button.message = (new TranslatableText("speedrunigt.option.limitless_reset").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.TIMER_LIMITLESS_RESET) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
+                                    button.field_22510 = (new TranslatableText("speedrunigt.option.limitless_reset").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.TIMER_LIMITLESS_RESET) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
                                 })
                 )
                 .setToolTip(() -> I18n.translate("speedrunigt.option.limitless_reset.description"))
@@ -200,7 +200,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                         new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.legacy_igt_mode").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString(),
                                 (button) -> {
                                     SpeedRunOption.setOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE, !SpeedRunOption.getOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE));
-                                    button.message = (new TranslatableText("speedrunigt.option.legacy_igt_mode").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
+                                    button.field_22510 = (new TranslatableText("speedrunigt.option.legacy_igt_mode").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
                                 })
                 )
                 .setToolTip(() -> I18n.translate("speedrunigt.option.legacy_igt_mode.description"))
@@ -214,7 +214,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                                     int order = SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE).ordinal() + 1;
                                     SpeedRunOptions.TimerSaveInterval[] intervals = SpeedRunOptions.TimerSaveInterval.values();
                                     SpeedRunOption.setOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE, intervals[order % intervals.length]);
-                                    button.message = (new TranslatableText("speedrunigt.option.auto_save_interval").append(" : ").append(new TranslatableText("speedrunigt.option.auto_save_interval." + SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE).name().toLowerCase(Locale.ROOT)).asFormattedString()).asFormattedString());
+                                    button.field_22510 = (new TranslatableText("speedrunigt.option.auto_save_interval").append(" : ").append(new TranslatableText("speedrunigt.option.auto_save_interval." + SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE).name().toLowerCase(Locale.ROOT)).asFormattedString()).asFormattedString());
                                 })
                 )
                 .setToolTip(() -> I18n.translate("speedrunigt.option.auto_save_interval.description"))
@@ -226,7 +226,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                         new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.auto_retime").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString(),
                                 (button) -> {
                                     SpeedRunOption.setOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE, !SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE));
-                                    button.message = (new TranslatableText("speedrunigt.option.auto_retime").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
+                                    button.field_22510 = (new TranslatableText("speedrunigt.option.auto_retime").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
                                 })
                 )
                 .setToolTip(() -> I18n.translate("speedrunigt.option.auto_retime.description"))
@@ -240,7 +240,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                                     int order = SpeedRunOption.getOption(SpeedRunOptions.GENERATE_RECORD_FILE).ordinal() + 1;
                                     SpeedRunOptions.RecordGenerateType[] intervals = SpeedRunOptions.RecordGenerateType.values();
                                     SpeedRunOption.setOption(SpeedRunOptions.GENERATE_RECORD_FILE, intervals[order % intervals.length]);
-                                    button.message = (new TranslatableText("speedrunigt.option.generate_record").append(" : ").append(new TranslatableText("speedrunigt.option.generate_record." + SpeedRunOption.getOption(SpeedRunOptions.GENERATE_RECORD_FILE).name().toLowerCase(Locale.ROOT))).asFormattedString());
+                                    button.field_22510 = (new TranslatableText("speedrunigt.option.generate_record").append(" : ").append(new TranslatableText("speedrunigt.option.generate_record." + SpeedRunOption.getOption(SpeedRunOptions.GENERATE_RECORD_FILE).name().toLowerCase(Locale.ROOT))).asFormattedString());
                                 })
                 )
                 .setCategory("speedrunigt.option.category.records")

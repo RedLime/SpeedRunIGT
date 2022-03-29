@@ -14,7 +14,7 @@ public class WorldOptionsScreenMixin {
 
     @Shadow private TextFieldWidget seedField;
 
-    @Inject(method = "buttonClicked", at = @At("HEAD"))
+    @Inject(method = "method_21930", at = @At("HEAD"))
     public void onGenerate(CallbackInfo ci) {
         InGameTimerUtils.IS_SET_SEED = !this.seedField.getText().isEmpty();
     }

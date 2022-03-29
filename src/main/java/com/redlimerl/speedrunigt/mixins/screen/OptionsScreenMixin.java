@@ -19,27 +19,27 @@ public class OptionsScreenMixin extends Screen {
 
     private ButtonWidget timerButton;
 
-    @Inject(method = "init", at = @At("TAIL"))
+    @Inject(method = "method_21947", at = @At("TAIL"))
     private void onInit(CallbackInfo ci) {
-        timerButton = new ButtonWidget(123456, this.width / 2 - 180, this.height / 6 - 12, 20, 20, "");
-        buttons.add(timerButton);
+        timerButton = new ButtonWidget(123456, this.field_22535 / 2 - 180, this.field_22536 / 6 - 12, 20, 20, "");
+        field_22537.add(timerButton);
     }
 
-    @Inject(method = "buttonClicked", at = @At("TAIL"))
+    @Inject(method = "method_21930", at = @At("TAIL"))
     private void onButtonClicked(ButtonWidget button, CallbackInfo ci) {
         if (button == timerButton) {
-            if (this.client != null) {
-                this.client.openScreen(new SpeedRunOptionScreen(this));
+            if (this.field_22534 != null) {
+                this.field_22534.openScreen(new SpeedRunOptionScreen(this));
             }
         }
     }
 
-    @Inject(method = "render", at = @At("TAIL"))
+    @Inject(method = "method_21925", at = @At("TAIL"))
     private void renderEnderPearl(int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        if (this.client != null) {
-            this.client.getTextureManager().bindTexture(timerButton.isHovered() ? ENDER_EYE :
+        if (this.field_22534 != null) {
+            this.field_22534.getTextureManager().bindTexture(timerButton.method_21885() ? ENDER_EYE :
                     SpeedRunIGTInfoScreen.UPDATE_STATUS == SpeedRunIGTInfoScreen.UpdateStatus.OUTDATED ? BLAZE_POWDER : ENDER_PEARL);
-            drawTexture(timerButton.x + 2, timerButton.y + 2, 0.0F, 0.0F, 16, 16, 16, 16);
+            method_21875(timerButton.x + 2, timerButton.y + 2, 0.0F, 0.0F, 16, 16, 16, 16);
         }
     }
 }

@@ -17,9 +17,9 @@ public class CustomSliderWidget extends ButtonWidget {
 
     public CustomSliderWidget(int x, int y, int width, int height, float f, SliderWorker onSlide) {
         super(99999, x, y, width, height, "");
-        this.width = width;
-        this.height = height;
-        this.message = onSlide.updateMessage();
+        this.field_22508 = width;
+        this.field_22509 = height;
+        this.field_22510 = onSlide.updateMessage();
         this.progress = f;
         this.onChange = onSlide;
     }
@@ -28,35 +28,35 @@ public class CustomSliderWidget extends ButtonWidget {
         return this.progress;
     }
 
-    public int getYImage(boolean isHovered) {
+    protected int method_21889(boolean bl) {
         return 0;
     }
 
-    protected void renderBg(MinecraftClient client, int mouseX, int mouseY) {
-        if (this.visible) {
+    protected void method_21892(MinecraftClient minecraftClient, int i, int j) {
+        if (this.field_22512) {
             if (this.dragging) {
-                this.progress = (float)(mouseX - (this.x + 4)) / (float)(this.width - 8);
-                if (this.progress < 0) {
-                    this.progress = 0;
+                this.progress = (float)(i - (this.x + 4)) / (float)(this.field_22508 - 8);
+                if (this.progress < 0.0F) {
+                    this.progress = 0.0F;
                 }
 
-                if (this.progress > 1) {
-                    this.progress = 1;
+                if (this.progress > 1.0F) {
+                    this.progress = 1.0F;
                 }
 
                 this.onChange.applyValue(this.getSliderValue());
-                this.message = onChange.updateMessage();
+                this.field_22510 = onChange.updateMessage();
             }
 
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-            this.drawTexture(this.x + (int)(this.progress * (float)(this.width - 8)), this.y, 0, 66, 4, 20);
-            this.drawTexture(this.x + (int)(this.progress * (float)(this.width - 8)) + 4, this.y, 196, 66, 4, 20);
+            this.method_21883(this.x + (int)(this.progress * (float)(this.field_22508 - 8)), this.y, 0, 66, 4, 20);
+            this.method_21883(this.x + (int)(this.progress * (float)(this.field_22508 - 8)) + 4, this.y, 196, 66, 4, 20);
         }
     }
 
-    public boolean isMouseOver(MinecraftClient client, int mouseX, int mouseY) {
-        if (super.isMouseOver(client, mouseX, mouseY)) {
-            this.progress = (float)(mouseX - (this.x + 4)) / (float)(this.width - 8);
+    public boolean method_21893(MinecraftClient minecraftClient, int i, int j) {
+        if (super.method_21893(minecraftClient, i, j)) {
+            this.progress = (float)(i - (this.x + 4)) / (float)(this.field_22508 - 8);
             if (this.progress < 0.0F) {
                 this.progress = 0.0F;
             }
@@ -65,8 +65,8 @@ public class CustomSliderWidget extends ButtonWidget {
                 this.progress = 1.0F;
             }
 
-            this.message = onChange.updateMessage();
             this.onChange.applyValue(this.getSliderValue());
+            this.field_22510 = onChange.updateMessage();
             this.dragging = true;
             return true;
         } else {
@@ -74,7 +74,7 @@ public class CustomSliderWidget extends ButtonWidget {
         }
     }
 
-    public void mouseReleased(int mouseX, int mouseY) {
+    public void method_21886(int i, int j) {
         this.dragging = false;
     }
 }
