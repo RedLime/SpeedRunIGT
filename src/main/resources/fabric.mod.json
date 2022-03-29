@@ -28,7 +28,7 @@
 
   "depends": {
     "fabricloader": ">=0.12.2",
-    "minecraft": "1.7.4"
+    "minecraft": "1.7.2"
   },
 
   "breaks": {
