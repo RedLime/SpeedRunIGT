@@ -36,6 +36,7 @@ public class InGameTimerUtils {
     public static boolean RETIME_IS_CHANGED_OPTION = false;
     public static boolean RETIME_IS_WAITING_LOAD = false;
     public static boolean IS_SET_SEED = false;
+    public static boolean CAN_DISCONNECT = false;
 
     public static File getTimerLogDir(String name, String pathName) {
         File file = MinecraftClient.getInstance().getLevelStorage().getSavesDirectory().resolve(name).resolve(SpeedRunIGT.MOD_ID).resolve(pathName).toFile();
@@ -70,7 +71,7 @@ public class InGameTimerUtils {
     public static float getGeneratedChunkRatio() {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.world != null && client.player != null) {
-            int chunks = client.options.viewDistance * 2 + 1;
+            int chunks = client.options.getViewDistance().getValue() * 2 + 1;
             return (float) client.world.getChunkManager().getLoadedChunkCount() / (chunks*chunks);
         }
         return 0;

@@ -15,7 +15,7 @@ public class WorldOptionsScreenMixin {
 
     @Shadow private TextFieldWidget seedTextField;
 
-    @Inject(method = "getGeneratorOptions", at = @At("HEAD"))
+    @Inject(method = "getGeneratorOptionsHolder", at = @At("HEAD"))
     public void onGenerate(CallbackInfoReturnable<GeneratorOptions> cir) {
         InGameTimerUtils.IS_SET_SEED = !this.seedTextField.getText().isEmpty();
     }

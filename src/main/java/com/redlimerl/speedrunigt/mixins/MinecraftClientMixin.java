@@ -11,7 +11,6 @@ import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.running.RunCategories;
-import com.redlimerl.speedrunigt.timer.running.RunType;
 import com.redlimerl.speedrunigt.utils.FontUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
@@ -29,10 +28,7 @@ import net.minecraft.resource.SinglePreparationResourceReloader;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.profiler.Profiler;
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.gen.GeneratorOptions;
-import net.minecraft.world.level.LevelInfo;
+import net.minecraft.world.dimension.DimensionTypes;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -64,33 +60,10 @@ public abstract class MinecraftClientMixin {
 
     @Shadow private boolean paused;
 
-    private boolean disconnectCheck = false;
-
-    @Inject(at = @At("HEAD"), method = "createWorld")
-    public void onCreate(String worldName, LevelInfo levelInfo, DynamicRegistryManager dynamicRegistryManager, GeneratorOptions generatorOptions, CallbackInfo ci) {
-        InGameTimer.start(worldName, RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
-        InGameTimerUtils.IS_CHANGING_DIMENSION = true;
-        disconnectCheck = false;
-    }
-
-    @Inject(at = @At("HEAD"), method = "startIntegratedServer(Ljava/lang/String;)V")
-    public void onWorldOpen(String worldName, CallbackInfo ci) {
-        try {
-            boolean loaded = InGameTimer.load(worldName);
-            if (!loaded) InGameTimer.end();
-        } catch (Exception e) {
-            InGameTimer.end();
-            SpeedRunIGT.error("Exception in timer load, can't load the timer.");
-            e.printStackTrace();
-        }
-        InGameTimerUtils.IS_CHANGING_DIMENSION = true;
-        disconnectCheck = false;
-    }
-
     @Inject(method = "setScreen", at = @At("RETURN"))
     public void onSetScreen(Screen screen, CallbackInfo ci) {
         if (screen instanceof LevelLoadingScreen) {
-            disconnectCheck = true;
+            InGameTimerUtils.CAN_DISCONNECT = true;
         }
     }
 
@@ -107,21 +80,21 @@ public abstract class MinecraftClientMixin {
 
         // For Timelines
         if (timer.getCategory() == RunCategories.ANY) {
-            if (Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionType.THE_NETHER_ID.toString())) {
+            if (Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionTypes.THE_NETHER_ID.toString())) {
                 timer.tryInsertNewTimeline("enter_nether");
-            } else if (Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionType.THE_END_ID.toString())) {
+            } else if (Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionTypes.THE_END_ID.toString())) {
                 timer.tryInsertNewTimeline("enter_end");
             }
         }
 
         //Enter Nether
-        if (timer.getCategory() == RunCategories.ENTER_NETHER && Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionType.THE_NETHER_ID.toString())) {
+        if (timer.getCategory() == RunCategories.ENTER_NETHER && Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionTypes.THE_NETHER_ID.toString())) {
             InGameTimer.complete();
             return;
         }
 
         //Enter End
-        if (timer.getCategory() == RunCategories.ENTER_END && Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionType.THE_END_ID.toString())) {
+        if (timer.getCategory() == RunCategories.ENTER_END && Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionTypes.THE_END_ID.toString())) {
             InGameTimer.complete();
         }
 
@@ -229,6 +202,6 @@ public abstract class MinecraftClientMixin {
     // Disconnecting fix
     @Inject(at = @At("HEAD"), method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V")
     public void disconnect(CallbackInfo ci) {
-        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE && disconnectCheck) InGameTimer.leave();
+        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE && InGameTimerUtils.CAN_DISCONNECT) InGameTimer.leave();
     }
 }

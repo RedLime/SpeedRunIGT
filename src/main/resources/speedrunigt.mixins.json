@@ -4,6 +4,7 @@
   "package": "com.redlimerl.speedrunigt.mixins",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "IntegratedServerLoaderMixin"
   ],
   "client": [
     "ClientAdvancementManagerMixin",
@@ -15,7 +16,6 @@
     "MouseMixin",
     "PlayerAdvancementTrackerMixin",
     "access.FontManagerAccessor",
-    "access.FontStorageAccessor",
     "access.MinecraftClientAccessor",
     "access.ServerStatHandlerAccessor",
     "access.WorldRendererAccessor",
