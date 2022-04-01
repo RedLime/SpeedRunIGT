@@ -180,7 +180,7 @@ public class TimerCustomizeScreen extends Screen {
             }
         }
         if (button == 0 && !drawer.isLocked()&&!isButtonClick) {
-            Window window = new Window(field_22534, field_22534.width, field_22534.height);
+            Window window = new Window(field_22534.options, field_22534.width, field_22534.height);
             if (!this.igtButton.field_22511) {
                 drawer.setIGT_XPos((float) MathHelper.clamp(mouseX / window.getScaledWidth(), 0, 1));
                 drawer.setIGT_YPos((float) MathHelper.clamp(mouseY / window.getScaledHeight(), 0, 1));
@@ -200,7 +200,7 @@ public class TimerCustomizeScreen extends Screen {
         if (method_21944() && keyCode >= 200 && keyCode <= 208 && field_22534 != null && !drawer.isLocked()) {
             int moveX = keyCode == 205 ? 1 : keyCode == 203 ? -1 : 0;
             int moveY = keyCode == 200 ? -1 : keyCode == 208 ? 1 : 0;
-            Window window = new Window(field_22534, field_22534.width, field_22534.height);
+            Window window = new Window(field_22534.options, field_22534.width, field_22534.height);
             if (!igtButton.field_22511) {
                 drawer.setIGT_XPos(MathHelper.clamp(drawer.getIGT_XPos() + moveX * drawer.getIGTScale() / (float) window.getScaledWidth(), 0, 1));
                 drawer.setIGT_YPos(MathHelper.clamp(drawer.getIGT_YPos() + moveY * drawer.getIGTScale() / (float) window.getScaledHeight(), 0, 1));

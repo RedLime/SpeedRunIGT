@@ -20,7 +20,7 @@ public class TimerElement {
     private Integer color;
     private TimerDecoration decoration;
     private float fontHeight = 8;
-    private final Window window = new Window(client, client.width, client.height);
+    private final Window window = new Window(client.options, client.width, client.height);
 
     public void init(float xPos, float yPos, float scale, String text, Integer color, TimerDecoration decoration, float fontHeight) {
         this.scale = scale;
