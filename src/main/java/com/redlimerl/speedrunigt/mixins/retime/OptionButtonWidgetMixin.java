@@ -15,7 +15,7 @@ public class OptionButtonWidgetMixin {
     @Inject(method = "onPress", at = @At("TAIL"))
     public void onClickOption(CallbackInfo ci) {
         if (((Object) this) instanceof CyclingButtonWidget) {
-            InGameTimerUtils.RETIME_CHANGED_OPTION_COUNT++;
+            InGameTimerUtils.RETIME_IS_CHANGED_OPTION = true;
         }
     }
 }

@@ -33,7 +33,7 @@ import java.util.stream.IntStream;
 public class InGameTimerUtils {
     public static boolean IS_CHANGING_DIMENSION = false;
     public static boolean IS_CAN_WAIT_WORLD_LOAD = false;
-    public static int RETIME_CHANGED_OPTION_COUNT = 0;
+    public static boolean RETIME_IS_CHANGED_OPTION = false;
     public static boolean RETIME_IS_WAITING_LOAD = false;
     public static boolean IS_SET_SEED = false;
 

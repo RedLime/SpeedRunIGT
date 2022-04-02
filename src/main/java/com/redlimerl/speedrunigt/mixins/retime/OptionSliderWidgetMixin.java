@@ -15,7 +15,7 @@ public class OptionSliderWidgetMixin {
     @Inject(method = "setValueFromMouse", at = @At("TAIL"))
     public void onClickOption(double mouseX, CallbackInfo ci) {
         if (((Object) this) instanceof OptionSliderWidget) {
-            InGameTimerUtils.RETIME_CHANGED_OPTION_COUNT++;
+            InGameTimerUtils.RETIME_IS_CHANGED_OPTION = true;
         }
     }
 }
