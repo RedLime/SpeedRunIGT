@@ -14,6 +14,6 @@ public class SodiumOptionsGUIMixin {
 
     @Inject(method = "applyChanges", at = @At("TAIL"), remap = false)
     public void onChanges(CallbackInfo ci) {
-        InGameTimerUtils.RETIME_IS_CHANGED_OPTION = true;
+        InGameTimerUtils.RETIME_CHANGED_OPTION_COUNT++;
     }
 }

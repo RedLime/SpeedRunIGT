@@ -94,7 +94,7 @@ public class SpeedRunOption {
             StringBuilder stringBuilder = new StringBuilder();
             options.forEach((key, value) -> stringBuilder.append(key.toString()).append(":").append(value).append("\n"));
             FileUtils.writeStringToFile(config, stringBuilder.length() == 0 ? "" : stringBuilder.substring(0, stringBuilder.length()-1), StandardCharsets.UTF_8);
-            InGameTimerUtils.RETIME_IS_CHANGED_OPTION = true;
+            InGameTimerUtils.RETIME_CHANGED_OPTION_COUNT++;
         } catch (IOException e) {
             e.printStackTrace();
         }
