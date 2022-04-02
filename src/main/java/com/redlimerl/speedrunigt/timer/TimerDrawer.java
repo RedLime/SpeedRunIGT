@@ -263,6 +263,8 @@ public class TimerDrawer {
     }
 
     public MutableText getIGTText() {
+        if (InGameTimer.getInstance().isCompleted() && (System.currentTimeMillis() / 2000) % 2 == 0)
+            return new LiteralText("OMG YOU DID IT!!");
         return new LiteralText((this.simply ? "" : "IGT: ") + getTimeFormat(InGameTimer.getInstance().getInGameTime()));
     }
 
