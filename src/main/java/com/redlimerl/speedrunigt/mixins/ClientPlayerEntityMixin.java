@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.mixins;
 
 import com.mojang.authlib.GameProfile;
+import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
@@ -27,8 +28,6 @@ import java.util.stream.Collectors;
 @Mixin(ClientPlayerEntity.class)
 public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
 
-    @Shadow public float nextNauseaStrength;
-
     @Shadow @Final protected MinecraftClient client;
 
     public ClientPlayerEntityMixin(ClientWorld world, GameProfile profile) {
@@ -42,7 +41,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
         if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
 
-        if (timer.getStatus() == TimerStatus.IDLE && (vec3d.x != 0 || vec3d.z != 0 || this.jumping || this.isSneaking())) {
+        if (timer.getStatus() == TimerStatus.IDLE && !InGameTimerUtils.IS_CHANGING_DIMENSION && (vec3d.x != 0 || vec3d.z != 0 || this.jumping || this.isSneaking())) {
             timer.setPause(false, "moved player");
         }
         if (vec3d.x != 0 || vec3d.z != 0 || this.jumping) {
@@ -136,7 +135,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     public void updateNausea(CallbackInfo ci) {
         // Portal time update
         if (this.inNetherPortal) {
-            if (++portalTick >= 81) {
+            if (++portalTick >= 21 && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
                 portalTick = 0;
                 if (InGameTimer.getInstance().getStatus() != TimerStatus.IDLE && client.isInSingleplayer()) {
                     InGameTimerUtils.IS_CHANGING_DIMENSION = true;
