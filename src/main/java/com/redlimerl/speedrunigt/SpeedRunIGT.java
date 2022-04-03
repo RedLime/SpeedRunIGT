@@ -9,7 +9,7 @@ import com.redlimerl.speedrunigt.impl.CategoryRegistryImpl;
 import com.redlimerl.speedrunigt.impl.OptionButtonsImpl;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
-import com.redlimerl.speedrunigt.timer.running.RunCategory;
+import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.utils.FontIdentifier;
 import com.redlimerl.speedrunigt.utils.FontUtils;
 import com.redlimerl.speedrunigt.utils.KeyBindingRegistry;
