@@ -95,6 +95,11 @@ public abstract class MinecraftClientMixin {
         if (screen instanceof LevelLoadingScreen) {
             disconnectCheck = true;
         }
+        if (InGameTimerUtils.FAILED_CATEGORY_INIT_SCREEN != null) {
+            Screen screen1 = InGameTimerUtils.FAILED_CATEGORY_INIT_SCREEN;
+            InGameTimerUtils.FAILED_CATEGORY_INIT_SCREEN = null;
+            MinecraftClient.getInstance().openScreen(screen1);
+        }
     }
 
     @Inject(at = @At("HEAD"), method = "joinWorld")

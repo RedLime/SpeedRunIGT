@@ -23,14 +23,8 @@ public class ServerPlayNetworkHandlerMixin {
     public void onCustom(CustomPayloadC2SPacket packet, CallbackInfo ci) {
         CustomPayloadC2SPacketAccessor customPacket = (CustomPayloadC2SPacketAccessor) packet;
         if (Objects.equals(customPacket.getChannel().getNamespace(), SpeedRunIGT.MOD_ID)) {
-            SpeedRunIGT.debug("Server Side : " + customPacket.getChannel().toString());
-
-            if (Objects.equals(customPacket.getChannel().getPath(), TimerPacketHandler.PACKET_TIMER_INIT_ID.getPath())) {
-                TimerPacketHandler.receiveInitC2S(this.server, customPacket.getData());
-            }
-
-            if (Objects.equals(customPacket.getChannel().getPath(), TimerPacketHandler.PACKET_TIMER_COMPLETE_ID.getPath())) {
-                TimerPacketHandler.receiveCompleteC2S(this.server, customPacket.getData());
+            if (Objects.equals(customPacket.getChannel().getPath(), TimerPacketHandler.PACKET_TIMER_ID.getPath())) {
+                TimerPacketHandler.serverReceiveAndSend(this.server, customPacket.getData());
             }
         }
     }

@@ -3,8 +3,12 @@ package com.redlimerl.speedrunigt.mixins;
 import com.mojang.authlib.GameProfile;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
+import com.redlimerl.speedrunigt.timer.TimerPacketHandler;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
+import com.redlimerl.speedrunigt.timer.category.condition.AdvancementCategoryCondition;
+import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
+import com.redlimerl.speedrunigt.timer.category.condition.ObtainItemCategoryCondition;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -20,6 +24,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.include.com.google.common.collect.Lists;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,6 +50,21 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         }
         if (vec3d.x != 0 || vec3d.z != 0 || this.jumping) {
             timer.updateFirstInput();
+        }
+
+        // Custom Json category
+        if (timer.getCategory().getConditionJson() != null) {
+            List<ItemStack> itemStacks = Lists.newArrayList();
+            itemStacks.addAll(this.inventory.armor);
+            itemStacks.addAll(this.inventory.offHand);
+            itemStacks.addAll(this.inventory.main);
+            for (CategoryCondition.Condition<?> condition : timer.getCustomCondition().getConditionList()) {
+                if (condition instanceof ObtainItemCategoryCondition) {
+                    if (timer.updateCondition((ObtainItemCategoryCondition) condition, itemStacks) && timer.isCoop())
+                        TimerPacketHandler.clientSend(InGameTimer.getInstance(), InGameTimer.getCompletedInstance());
+                }
+            }
+            timer.checkConditions();
         }
 
         //HIGH%

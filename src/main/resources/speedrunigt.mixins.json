@@ -14,6 +14,7 @@
     "MinecraftClientMixin",
     "MouseMixin",
     "PlayerAdvancementTrackerMixin",
+    "ServerStatHandlerMixin",
     "access.FontManagerAccessor",
     "access.FontStorageAccessor",
     "access.MinecraftClientAccessor",
