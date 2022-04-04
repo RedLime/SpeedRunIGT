@@ -343,7 +343,7 @@ public class InGameTimer implements Serializable {
     private String recordString = "";
     public void writeRecordFile() {
         File recordFile = new File(SpeedRunIGT.getRecordsPath().toFile(), uuid + ".json");
-        File worldRecordFile = new File(InGameTimerUtils.getTimerLogDir(this.worldName, ""), "record.json");
+        File worldRecordFile = isCoop() ? null : new File(InGameTimerUtils.getTimerLogDir(this.worldName, ""), "record.json");
         String resultRecord = recordString;
         if (resultRecord.isEmpty()) return;
         recordString = "";
@@ -355,7 +355,7 @@ public class InGameTimer implements Serializable {
         saveManagerThread.submit(() -> {
             try {
                 FileUtils.writeStringToFile(recordFile, resultRecord, StandardCharsets.UTF_8);
-                FileUtils.writeStringToFile(worldRecordFile, resultRecord, StandardCharsets.UTF_8);
+                if (worldRecordFile != null) FileUtils.writeStringToFile(worldRecordFile, resultRecord, StandardCharsets.UTF_8);
                 System.setProperty("speedrunigt.record", recordFile.getName());
             } catch (IOException e) {
                 e.printStackTrace();
