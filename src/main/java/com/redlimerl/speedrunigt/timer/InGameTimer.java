@@ -156,6 +156,13 @@ public class InGameTimer implements Serializable {
         sendTimerPacket();
     }
 
+    public static void restart(long time, boolean isCoop) {
+        start(InGameTimer.getInstance().worldName, InGameTimer.getInstance().runType);
+        InGameTimer.getInstance().startTime = time;
+        InGameTimer.getInstance().isCoop = isCoop;
+        sendTimerPacket();
+    }
+
     /**
      * End the Timer, Trigger when player leave
      */

@@ -38,6 +38,7 @@ public class InGameTimerUtils {
     public static boolean RETIME_IS_CHANGED_OPTION = false;
     public static boolean RETIME_IS_WAITING_LOAD = false;
     public static boolean IS_SET_SEED = false;
+    public static boolean IS_SHARING_ADVANCEMENT = false;
 
     public static File getTimerLogDir(String name, String pathName) {
         File file = MinecraftClient.getInstance().getLevelStorage().getSavesDirectory().resolve(name).resolve(SpeedRunIGT.MOD_ID).resolve(pathName).toFile();

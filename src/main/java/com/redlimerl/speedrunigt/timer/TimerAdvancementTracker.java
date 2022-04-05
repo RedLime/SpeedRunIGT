@@ -37,6 +37,10 @@ public class TimerAdvancementTracker implements Serializable {
             criteria.put(string, new Track(igt, rta));
         }
 
+        public boolean isCompletedCriteria(String string) {
+            return criteria.containsKey(string);
+        }
+
         public void setComplete(boolean b) {
             this.complete = b;
         }

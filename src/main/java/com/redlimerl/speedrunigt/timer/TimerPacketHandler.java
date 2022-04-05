@@ -35,7 +35,8 @@ public class TimerPacketHandler {
         try {
             PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer())
                     .writeByteArray(buffer.readByteArray())
-                    .writeByteArray(buffer.readByteArray());
+                    .writeByteArray(buffer.readByteArray())
+                    .writeString(InGameTimer.getInstance().uuid.toString());
 
             CustomPayloadS2CPacket s2CPacket = new CustomPayloadS2CPacket(PACKET_TIMER_ID, passedData);
 
@@ -52,7 +53,8 @@ public class TimerPacketHandler {
         try {
             PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer())
                     .writeByteArray(InGameTimerUtils.serializeTimer(instance))
-                    .writeByteArray(InGameTimerUtils.serializeTimer(completeInstance));
+                    .writeByteArray(InGameTimerUtils.serializeTimer(completeInstance))
+                    .writeString(InGameTimer.getInstance().uuid.toString());
 
             CustomPayloadS2CPacket s2CPacket = new CustomPayloadS2CPacket(PACKET_TIMER_ID, passedData);
 
@@ -71,11 +73,12 @@ public class TimerPacketHandler {
 
             InGameTimer instance = InGameTimerUtils.deserializeTimer(buffer.readByteArray());
             InGameTimer completeInstance = InGameTimerUtils.deserializeTimer(buffer.readByteArray());
+            String uuidString = InGameTimer.getInstance().uuid.toString();
 
             boolean isCompletedBefore = InGameTimer.getInstance().isCompleted();
-            boolean isServerMember = !Objects.equals(InGameTimer.getInstance().uuid.toString(), instance.uuid.toString());
+            boolean isServerMember = !Objects.equals(uuidString, instance.uuid.toString());
             if (isServerMember) {
-                instance.uuid = UUID.randomUUID();
+                instance.uuid = UUID.fromString(uuidString);
                 completeInstance.uuid = instance.uuid;
                 InGameTimer.INSTANCE = instance;
                 InGameTimer.COMPLETED_INSTANCE = completeInstance;
