@@ -20,6 +20,9 @@ public class ClientPlayNetworkHandlerMixin {
             if (Objects.equals(packet.getChannel().getPath(), TimerPacketHandler.PACKET_TIMER_ID.getPath())) {
                 TimerPacketHandler.clientReceive(packet.getData());
             }
+            if (Objects.equals(packet.getChannel().getPath(), TimerPacketHandler.PACKET_ADVANCEMENT_ID.getPath())) {
+                TimerPacketHandler.clientAdvancementReceive(packet.getData());
+            }
         }
     }
 }

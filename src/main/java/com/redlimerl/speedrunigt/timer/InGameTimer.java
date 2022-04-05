@@ -133,6 +133,7 @@ public class InGameTimer implements Serializable {
         INSTANCE.setPause(true, TimerStatus.IDLE, "startup");
         INSTANCE.isGlitched = SpeedRunOption.getOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE);
         INSTANCE.runType = runType;
+        InGameTimerUtils.COMPLETED_ADVANCEMENTS.clear();
     }
 
     /**

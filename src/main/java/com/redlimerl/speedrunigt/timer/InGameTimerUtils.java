@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.timer;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
@@ -28,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -38,7 +40,7 @@ public class InGameTimerUtils {
     public static boolean RETIME_IS_CHANGED_OPTION = false;
     public static boolean RETIME_IS_WAITING_LOAD = false;
     public static boolean IS_SET_SEED = false;
-    public static boolean IS_SHARING_ADVANCEMENT = false;
+    public static final HashSet<String> COMPLETED_ADVANCEMENTS = Sets.newHashSet();
 
     public static File getTimerLogDir(String name, String pathName) {
         File file = MinecraftClient.getInstance().getLevelStorage().getSavesDirectory().resolve(name).resolve(SpeedRunIGT.MOD_ID).resolve(pathName).toFile();

@@ -1,10 +1,14 @@
 package com.redlimerl.speedrunigt.timer;
 
+import com.google.common.collect.Maps;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import io.netty.buffer.Unpooled;
+import net.minecraft.advancement.Advancement;
+import net.minecraft.advancement.AdvancementDisplay;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.toast.AdvancementToast;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
@@ -13,12 +17,14 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
 public class TimerPacketHandler {
 
     public static final Identifier PACKET_TIMER_ID = new Identifier(SpeedRunIGT.MOD_ID, "timer");
+    public static final Identifier PACKET_ADVANCEMENT_ID = new Identifier(SpeedRunIGT.MOD_ID, "advancement");
 
 
     public static void clientSend(InGameTimer instance, InGameTimer completeInstance) {
@@ -89,6 +95,47 @@ public class TimerPacketHandler {
             SpeedRunIGT.debug("Client Side Received : " + InGameTimer.getInstance().isServerIntegrated);
             if (!isCompletedBefore && InGameTimer.getInstance().isCompleted())
                 InGameTimer.complete(InGameTimer.getCompletedInstance().endTime);
+        } catch (Exception e) {
+            e.printStackTrace();
+            SpeedRunIGT.error("Failed read packets, probably SpeedRunIGT version different between players");
+        }
+    }
+
+    public static void serverAdvancementSend(ServerPlayerEntity player, Advancement advancement) {
+        try {
+            PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer())
+                    .writeIdentifier(advancement.getId());
+            advancement.createTask().toPacket(passedData);
+
+            CustomPayloadS2CPacket s2CPacket = new CustomPayloadS2CPacket(PACKET_ADVANCEMENT_ID, passedData);
+
+            player.networkHandler.sendPacket(s2CPacket);
+        } catch (Exception e) {
+            e.printStackTrace();
+            SpeedRunIGT.error("Failed read packets, probably SpeedRunIGT version different between players");
+        }
+    }
+
+    public static void clientAdvancementReceive(PacketByteBuf buffer) {
+        try {
+            if (!SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) return;
+
+            Identifier identifier = buffer.readIdentifier();
+            if (buffer.readBoolean()) buffer.readIdentifier();
+            AdvancementDisplay advancementDisplay = buffer.readBoolean() ? AdvancementDisplay.fromPacket(buffer) : null;
+            if (advancementDisplay != null && identifier != null) {
+                Advancement advancement = new Advancement(identifier, null, advancementDisplay, null, Maps.newHashMap(), null);
+
+                if (advancementDisplay.shouldShowToast() && !InGameTimer.getInstance().getAdvancementsTracker().getAdvancements().containsKey(identifier.toString())) {
+                    MinecraftClient.getInstance().getToastManager().add(new AdvancementToast(advancement));
+                }
+
+                for (Map.Entry<String, TimerAdvancementTracker.AdvancementTrack> track : InGameTimer.getInstance().getAdvancementsTracker().getAdvancements().entrySet()) {
+                    if (track.getValue().isComplete() && track.getValue().isAdvancement()) InGameTimerUtils.COMPLETED_ADVANCEMENTS.add(advancement.getId().toString());
+                }
+                InGameTimerUtils.COMPLETED_ADVANCEMENTS.add(identifier.toString());
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
             SpeedRunIGT.error("Failed read packets, probably SpeedRunIGT version different between players");
