@@ -32,7 +32,7 @@ public class CustomCategoryManager {
             if (!file.getName().endsWith(".json")) continue;
 
             try {
-                JsonObject jsonObject = new JsonParser().parse(FileUtils.readFileToString(file, StandardCharsets.UTF_8)).getAsJsonObject();
+                JsonObject jsonObject = JsonParser.parseString(FileUtils.readFileToString(file, StandardCharsets.UTF_8)).getAsJsonObject();
 
                 if (!VersionPredicateParser.parse(jsonObject.get("version").getAsString()).test(SemanticVersion.parse(InGameTimerUtils.getMinecraftVersion())))
                     throw new InvalidCategoryException(InvalidCategoryException.Reason.UNSUPPORTED_CATEGORY_VERSION, "");

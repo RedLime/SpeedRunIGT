@@ -2,13 +2,13 @@ package com.redlimerl.speedrunigt.gui.screen;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
-import net.minecraft.client.gui.hud.BackgroundHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.math.ColorHelper;
 
 import java.util.Locale;
 
@@ -29,11 +29,11 @@ public class FailedCategoryInitScreen extends Screen {
 
     @Override
     protected void init() {
-        addDrawableChild(new ButtonWidget(width / 2 - 100, height / 2 + 15, 200, 20, ScreenTexts.DONE, button -> onClose()));
+        addDrawableChild(new ButtonWidget(width / 2 - 100, height / 2 + 15, 200, 20, ScreenTexts.DONE, button -> close()));
     }
 
-    private static final int TEXT_WHITE = BackgroundHelper.ColorMixer.getArgb(255, 255, 255, 255);
-    private static final int TEXT_RED = BackgroundHelper.ColorMixer.getArgb(255, 255, 70, 70);
+    private static final int TEXT_WHITE = ColorHelper.Argb.getArgb(255, 255, 255, 255);
+    private static final int TEXT_RED = ColorHelper.Argb.getArgb(255, 255, 70, 70);
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         renderBackground(matrices);
