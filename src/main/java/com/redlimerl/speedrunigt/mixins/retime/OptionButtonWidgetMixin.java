@@ -21,6 +21,5 @@ public class OptionButtonWidgetMixin {
     @Inject(method = "cycle", at = @At("TAIL"))
     public void onClickOption(CallbackInfo ci) {
         InGameTimerUtils.CHANGED_OPTIONS.add(this.valueToText);
-        SpeedRunIGT.debug(InGameTimerUtils.CHANGED_OPTIONS.size());
     }
 }
