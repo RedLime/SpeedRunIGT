@@ -4,7 +4,9 @@ import com.mojang.authlib.GameProfile;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
-import com.redlimerl.speedrunigt.timer.running.RunCategories;
+import com.redlimerl.speedrunigt.timer.category.RunCategories;
+import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
+import com.redlimerl.speedrunigt.timer.category.condition.ObtainItemCategoryCondition;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -20,14 +22,13 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.include.com.google.common.collect.Lists;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Mixin(ClientPlayerEntity.class)
 public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
-
-    @Shadow public float nextNauseaStrength;
 
     @Shadow @Final protected MinecraftClient client;
 
@@ -42,11 +43,25 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
         if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
 
-        if (timer.getStatus() == TimerStatus.IDLE && (vec3d.x != 0 || vec3d.z != 0 || this.jumping || this.isSneaking())) {
+        if (timer.getStatus() == TimerStatus.IDLE && !InGameTimerUtils.IS_CHANGING_DIMENSION && (vec3d.x != 0 || vec3d.z != 0 || this.jumping || this.isSneaking())) {
             timer.setPause(false, "moved player");
         }
         if (vec3d.x != 0 || vec3d.z != 0 || this.jumping) {
             timer.updateFirstInput();
+        }
+
+        // Custom Json category
+        if (timer.getCategory().getConditionJson() != null) {
+            List<ItemStack> itemStacks = Lists.newArrayList();
+            itemStacks.addAll(this.inventory.armor);
+            itemStacks.addAll(this.inventory.offHand);
+            itemStacks.addAll(this.inventory.main);
+            for (CategoryCondition.Condition<?> condition : timer.getCustomCondition().getConditionList()) {
+                if (condition instanceof ObtainItemCategoryCondition) {
+                    timer.updateCondition((ObtainItemCategoryCondition) condition, itemStacks);
+                }
+            }
+            timer.checkConditions();
         }
 
         //HIGH%
@@ -144,7 +159,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     public void updateNausea(CallbackInfo ci) {
         // Portal time update
         if (this.inNetherPortal) {
-            if (++portalTick >= 81) {
+            if (++portalTick >= 21 && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
                 portalTick = 0;
                 if (InGameTimer.getInstance().getStatus() != TimerStatus.IDLE && client.isInSingleplayer()) {
                     InGameTimerUtils.IS_CHANGING_DIMENSION = true;
