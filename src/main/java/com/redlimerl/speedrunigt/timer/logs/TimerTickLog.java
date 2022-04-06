@@ -2,7 +2,9 @@ package com.redlimerl.speedrunigt.timer.logs;
 
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 
-public class TimerTickLog {
+import java.io.Serializable;
+
+public class TimerTickLog implements Serializable {
     // Tick Number
     private final long t;
     // Total Tick Number

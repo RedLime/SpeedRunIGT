@@ -1,12 +1,12 @@
 package com.redlimerl.speedrunigt.impl;
 
 import com.redlimerl.speedrunigt.api.SpeedRunIGTApi;
-import com.redlimerl.speedrunigt.timer.running.RunCategory;
+import com.redlimerl.speedrunigt.timer.category.RunCategory;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static com.redlimerl.speedrunigt.timer.running.RunCategories.*;
+import static com.redlimerl.speedrunigt.timer.category.RunCategories.*;
 
 public class CategoryRegistryImpl implements SpeedRunIGTApi {
     @Override
