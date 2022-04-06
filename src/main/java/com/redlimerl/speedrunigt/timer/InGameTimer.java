@@ -545,7 +545,7 @@ public class InGameTimer implements Serializable {
                     prevPauseReason = reason;
                     pauseCount++;
                 }
-                InGameTimerUtils.RETIME_IS_CHANGED_OPTION = false;
+                InGameTimerUtils.CHANGED_OPTIONS.clear();
                 InGameTimerUtils.RETIME_IS_WAITING_LOAD = false;
                 this.setStatus(toStatus);
                 if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE) == SpeedRunOptions.TimerSaveInterval.PAUSE && status != TimerStatus.LEAVE && this.isStarted()) save();
@@ -560,9 +560,11 @@ public class InGameTimer implements Serializable {
                         if (InGameTimerUtils.RETIME_IS_WAITING_LOAD && InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD) {
                             retime = new TimerPauseLog.Retime(retimedIGTTime - beforeRetime, "prob. world load pause");
                         } else {
-                            if (InGameTimerUtils.RETIME_IS_CHANGED_OPTION) {
-                                retimedIGTTime += Math.max(nowTime - loggerPausedTime - 5000, 0);
-                                retime = new TimerPauseLog.Retime(retimedIGTTime - beforeRetime, "changed option(s)");
+                            if (InGameTimerUtils.CHANGED_OPTIONS.size() > 0) {
+                                int options = InGameTimerUtils.CHANGED_OPTIONS.size();
+                                retimedIGTTime += Math.max(nowTime - loggerPausedTime - (5000L * options), 0);
+                                retime = new TimerPauseLog.Retime(retimedIGTTime - beforeRetime, "changed option" + (options > 1 ? ("s (" + options + ")") : ""));
+                                InGameTimerUtils.CHANGED_OPTIONS.clear();
                             } else {
                                 retimedIGTTime += nowTime - loggerPausedTime;
                                 retime = new TimerPauseLog.Retime(retimedIGTTime - beforeRetime, "");
