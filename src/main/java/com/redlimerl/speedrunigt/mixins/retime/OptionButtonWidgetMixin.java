@@ -1,21 +1,26 @@
 package com.redlimerl.speedrunigt.mixins.retime;
 
+import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.CyclingButtonWidget;
+import net.minecraft.text.Text;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ButtonWidget.class)
+import java.util.function.Function;
+
+@Mixin(CyclingButtonWidget.class)
 public class OptionButtonWidgetMixin {
 
-    @SuppressWarnings("ConstantConditions")
-    @Inject(method = "onPress", at = @At("TAIL"))
+    @Shadow @Final private Function<?, Text> valueToText;
+
+    @Inject(method = "cycle", at = @At("TAIL"))
     public void onClickOption(CallbackInfo ci) {
-        if (((Object) this) instanceof CyclingButtonWidget) {
-            InGameTimerUtils.RETIME_IS_CHANGED_OPTION = true;
-        }
+        InGameTimerUtils.CHANGED_OPTIONS.add(this.valueToText);
+        SpeedRunIGT.debug(InGameTimerUtils.CHANGED_OPTIONS.size());
     }
 }
