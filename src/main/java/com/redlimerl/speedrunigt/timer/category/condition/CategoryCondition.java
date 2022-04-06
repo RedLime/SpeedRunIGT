@@ -32,15 +32,15 @@ public class CategoryCondition implements Serializable {
             this.name = jsonObject.get("name").getAsString();
         }
 
-        public boolean isCompleted() {
+        public final boolean isCompleted() {
             return isCompleted;
         }
 
-        public void setCompleted(boolean completed) {
+        public final void setCompleted(boolean completed) {
             isCompleted = completed;
         }
 
-        public String getName() {
+        public final String getName() {
             return name;
         }
 

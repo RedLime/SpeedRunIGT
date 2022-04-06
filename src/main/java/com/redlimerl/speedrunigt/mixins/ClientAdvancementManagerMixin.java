@@ -1,16 +1,18 @@
 package com.redlimerl.speedrunigt.mixins;
 
-import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
+import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerAdvancementTracker;
-import com.redlimerl.speedrunigt.timer.TimerPacketHandler;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.category.condition.AdvancementCategoryCondition;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
+import com.redlimerl.speedrunigt.timer.packet.TimerPacketUtils;
+import com.redlimerl.speedrunigt.timer.packet.packets.TimerAchieveAdvancementPacket;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementManager;
 import net.minecraft.advancement.AdvancementProgress;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientAdvancementManager;
 import net.minecraft.network.packet.s2c.play.AdvancementUpdateS2CPacket;
 import net.minecraft.util.Identifier;
@@ -29,6 +31,8 @@ import java.util.Objects;
 public abstract class ClientAdvancementManagerMixin {
 
     @Shadow @Final private AdvancementManager manager;
+
+    @Shadow @Final private MinecraftClient client;
 
     @Redirect(method = "onAdvancements", at = @At(value = "INVOKE", target = "Ljava/util/Map$Entry;getValue()Ljava/lang/Object;"))
     public Object advancement(Map.Entry<Identifier, AdvancementProgress> entry) {
@@ -51,14 +55,18 @@ public abstract class ClientAdvancementManagerMixin {
                     timer.tryInsertNewTimeline("enter_fortress");
                 }
             }
-            timer.tryInsertNewAdvancement(advancement.getId().toString(), null, true,advancement.getDisplay() != null);
+            timer.tryInsertNewAdvancement(advancement.getId().toString(), null, advancement.getDisplay() != null);
+            InGameTimerUtils.COMPLETED_ADVANCEMENTS.add(advancement.getId().toString());
+            if (timer.isCoop() && advancement.getDisplay() != null
+                    && (timer.getCategory() == RunCategories.ALL_ADVANCEMENTS || timer.getCategory() == RunCategories.HALF || timer.getCategory() == RunCategories.POGLOOT_QUATER)) {
+                TimerPacketUtils.sendClient2ServerPacket(client, new TimerAchieveAdvancementPacket(advancement));
+            }
 
             // Custom Json category
             if (timer.getCategory().getConditionJson() != null) {
                 for (CategoryCondition.Condition<?> condition : timer.getCustomCondition().getConditionList()) {
                     if (condition instanceof AdvancementCategoryCondition) {
-                        if (timer.updateCondition((AdvancementCategoryCondition) condition, advancement) && timer.isCoop())
-                            TimerPacketHandler.clientSend(InGameTimer.getInstance(), InGameTimer.getCompletedInstance());
+                        timer.updateCondition((AdvancementCategoryCondition) condition, advancement);
                     }
                 }
                 timer.checkConditions();

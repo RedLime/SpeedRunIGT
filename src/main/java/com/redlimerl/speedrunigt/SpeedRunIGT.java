@@ -14,6 +14,7 @@ import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.timer.category.CustomCategoryManager;
 import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
+import com.redlimerl.speedrunigt.timer.packet.TimerPackets;
 import com.redlimerl.speedrunigt.utils.FontIdentifier;
 import com.redlimerl.speedrunigt.utils.FontUtils;
 import com.redlimerl.speedrunigt.utils.KeyBindingRegistry;
@@ -160,6 +161,9 @@ public class SpeedRunIGT implements ClientModInitializer {
 
         // Add default fonts
         FontUtils.copyDefaultFonts();
+
+        // Initializing packets
+        TimerPackets.init();
     }
 
     private static final Logger LOGGER = LogManager.getLogger("SpeedRunIGT");

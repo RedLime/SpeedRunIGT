@@ -12,6 +12,8 @@ import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.logs.TimerPauseLog;
 import com.redlimerl.speedrunigt.timer.logs.TimerTickLog;
 import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
+import com.redlimerl.speedrunigt.timer.packet.TimerPacketUtils;
+import com.redlimerl.speedrunigt.timer.packet.packets.*;
 import com.redlimerl.speedrunigt.timer.running.RunPortalPos;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.minecraft.client.MinecraftClient;
@@ -49,9 +51,6 @@ public class InGameTimer implements Serializable {
 
     @NotNull
     public static InGameTimer getInstance() { return INSTANCE; }
-
-    @NotNull
-    public static InGameTimer getCompletedInstance() { return COMPLETED_INSTANCE; }
 
     private static final ArrayList<Consumer<InGameTimer>> onCompleteConsumers = new ArrayList<>();
 
@@ -143,25 +142,16 @@ public class InGameTimer implements Serializable {
         if (INSTANCE.isCompleted || INSTANCE.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
         RunType runType = INSTANCE.getRunType();
         boolean isGlitched = INSTANCE.isGlitched;
-        boolean isHardcore = INSTANCE.isHardcore;
         boolean isCoop = INSTANCE.isCoop;
 
         INSTANCE = new InGameTimer(INSTANCE.worldName, false);
         INSTANCE.setCategory(RunCategories.CUSTOM);
         INSTANCE.runType = runType;
         INSTANCE.isGlitched = isGlitched;
-        INSTANCE.isHardcore = isHardcore;
         INSTANCE.isCoop = isCoop;
         INSTANCE.setPause(true, TimerStatus.IDLE, "reset");
         INSTANCE.setPause(false, "reset");
-        sendTimerPacket();
-    }
-
-    public static void restart(long time, boolean isCoop) {
-        start(InGameTimer.getInstance().worldName, InGameTimer.getInstance().runType);
-        InGameTimer.getInstance().startTime = time;
-        InGameTimer.getInstance().isCoop = isCoop;
-        sendTimerPacket();
+        if (isCoop) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerInitPacket(INSTANCE, INSTANCE.getStartTime()));
     }
 
     /**
@@ -175,13 +165,13 @@ public class InGameTimer implements Serializable {
      * End the Timer, Trigger when Complete Ender Dragon
      */
     public static void complete() {
-        complete(System.currentTimeMillis());
+        complete(System.currentTimeMillis(), true);
     }
 
     /**
      * End the Timer, Trigger when Complete Ender Dragon
      */
-    static void complete(long endTime) {
+    public static void complete(long endTime, boolean canSendPacket) {
         if (INSTANCE.isCompleted || !INSTANCE.isStarted()) return;
 
         // Init additional data
@@ -194,6 +184,8 @@ public class InGameTimer implements Serializable {
         timer.endTime = endTime;
         timer.endIGTTime = timer.endTime - timer.leastTickTime;
         timer.setStatus(TimerStatus.COMPLETED_LEGACY);
+
+        if (timer.isCoop() && canSendPacket) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerCompletePacket(endTime));
 
         if (INSTANCE.isServerIntegrated) {
             StringBuilder resultLog = new StringBuilder();
@@ -250,8 +242,6 @@ public class InGameTimer implements Serializable {
                 e.printStackTrace();
             }
         }
-
-        if (timer.isCoop) TimerPacketHandler.clientSend(INSTANCE, COMPLETED_INSTANCE);
     }
 
     public static void leave() {
@@ -385,6 +375,7 @@ public class InGameTimer implements Serializable {
                 InGameTimerUtils.setCategoryWarningScreen(category.getConditionFileName(), exception);
             }
         }
+        TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerChangeCategoryPacket(this.category));
     }
 
     public boolean isCoop() {
@@ -400,7 +391,12 @@ public class InGameTimer implements Serializable {
     }
 
     public void updateMoreData(int key, int value) {
+        this.updateMoreData(key, value, true);
+    }
+
+    public void updateMoreData(int key, int value, boolean canSendPacket) {
         moreData.put(key, value);
+        if (this.isCoop() && canSendPacket) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerDataConditionPacket(key, value));
     }
 
     public @NotNull TimerStatus getStatus() {
@@ -412,10 +408,11 @@ public class InGameTimer implements Serializable {
         this.status = status;
     }
 
-    public void setUncompleted() {
-        if (this.isCompleted) this.completeCount++;
+    public void setUncompleted(boolean canSendPacket) {
+        if (!this.isCompleted) return;
+        this.completeCount++;
         this.isCompleted = false;
-        sendTimerPacket();
+        if (canSendPacket && this.isCoop()) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerUncompletedPacket());
     }
 
     public boolean isCompleted() {
@@ -438,7 +435,7 @@ public class InGameTimer implements Serializable {
         return !this.isPaused() && this.getStatus() != TimerStatus.COMPLETED_LEGACY;
     }
 
-    private long getEndTime() {
+    public long getEndTime() {
         return this.getStatus() == TimerStatus.COMPLETED_LEGACY ? this.endTime : System.currentTimeMillis();
     }
 
@@ -599,7 +596,6 @@ public class InGameTimer implements Serializable {
                 startTime = System.currentTimeMillis();
                 if (this.isGlitched) save();
                 if (loggerTicks != 0) leastStartTime = startTime;
-                sendTimerPacket();
             }
             this.setStatus(TimerStatus.RUNNING);
         }
@@ -609,34 +605,30 @@ public class InGameTimer implements Serializable {
         return isResettable || SpeedRunOption.getOption(SpeedRunOptions.TIMER_LIMITLESS_RESET);
     }
 
-    public static void sendTimerPacket() {
-        if (INSTANCE.isCoop) {
-            TimerPacketHandler.clientSend(INSTANCE, COMPLETED_INSTANCE);
-        }
-    }
-
     @SuppressWarnings("UnusedReturnValue")
     public boolean tryInsertNewTimeline(String name) {
+        return tryInsertNewTimeline(name, true);
+    }
+    @SuppressWarnings("UnusedReturnValue")
+    public boolean tryInsertNewTimeline(String name, boolean canSendPacket) {
         for (TimerTimeline timeline : timelines) {
             if (Objects.equals(timeline.getName(), name)) return false;
         }
         timelines.add(new TimerTimeline(name, getInGameTime(false), getRealTimeAttack()));
-        sendTimerPacket();
+        if (canSendPacket && this.isCoop()) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerTimelinePacket(name));
         return true;
     }
 
-    public void tryInsertNewAdvancement(String advancementID, String criteriaKey, boolean isAdvancement, boolean update) {
+    public void tryInsertNewAdvancement(String advancementID, String criteriaKey, boolean isAdvancement) {
         TimerAdvancementTracker.AdvancementTrack advancementTrack = advancementsTracker.getOrCreateTrack(advancementID);
         if (criteriaKey == null) {
             if (advancementTrack.isComplete()) return;
             advancementTrack.setComplete(true);
             advancementTrack.setTime(getInGameTime(false), getRealTimeAttack());
-            advancementTrack.setAdvancement(isAdvancement);
-            if (update) sendTimerPacket();
         } else {
             advancementTrack.addCriteria(criteriaKey, getInGameTime(false), getRealTimeAttack());
-            advancementTrack.setAdvancement(isAdvancement);
         }
+        advancementTrack.setAdvancement(isAdvancement);
     }
 
     public List<TimerTimeline> getTimelines() {
@@ -677,15 +669,14 @@ public class InGameTimer implements Serializable {
         }
     }
 
-    public <T> boolean updateCondition(CategoryCondition.Condition<T> condition, T check) {
-        if (condition.isCompleted()) return false;
+    public <T> void updateCondition(CategoryCondition.Condition<T> condition, T check) {
+        if (condition.isCompleted()) return;
         boolean completed = condition.checkConditionComplete(check);
         if (completed) {
             condition.setCompleted(true);
             tryInsertNewTimeline(condition.getName());
-            return true;
+            if (this.isCoop()) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerCustomConditionPacket(condition));
         }
-        return false;
     }
 
     public CategoryCondition getCustomCondition() {
@@ -699,4 +690,21 @@ public class InGameTimer implements Serializable {
     public List<RunPortalPos> getOverWorldPortalPosList() {
         return lastOverWorldPortalPos;
     }
+
+    public void setServerIntegrated(boolean serverIntegrated) {
+        isServerIntegrated = serverIntegrated;
+    }
+
+    public void setCoop(boolean coop) {
+        isCoop = coop;
+    }
+
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
 }

@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.redlimerl.speedrunigt.api.CategoryConditionRegisterHelper;
 import com.redlimerl.speedrunigt.api.SpeedRunIGTApi;
 import com.redlimerl.speedrunigt.timer.category.condition.AdvancementCategoryCondition;
+import com.redlimerl.speedrunigt.timer.category.condition.DummyCategoryCondition;
 import com.redlimerl.speedrunigt.timer.category.condition.ObtainItemCategoryCondition;
 import com.redlimerl.speedrunigt.timer.category.condition.StatCategoryCondition;
 
@@ -18,6 +19,7 @@ public class ConditionsRegistryImpl implements SpeedRunIGTApi {
         hashMap.put("achieve_advancement", AdvancementCategoryCondition::new);
         hashMap.put("obtain_item", ObtainItemCategoryCondition::new);
         hashMap.put("player_stat", StatCategoryCondition::new);
+        hashMap.put("dummy", DummyCategoryCondition::new);
         return hashMap;
     }
 

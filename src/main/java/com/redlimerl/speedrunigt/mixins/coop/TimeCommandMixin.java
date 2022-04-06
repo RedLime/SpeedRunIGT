@@ -3,6 +3,8 @@ package com.redlimerl.speedrunigt.mixins.coop;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
+import com.redlimerl.speedrunigt.timer.packet.TimerPacketUtils;
+import com.redlimerl.speedrunigt.timer.packet.packets.TimerInitPacket;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.command.TimeCommand;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,7 +20,7 @@ public class TimeCommandMixin {
         try {
             if (time == 0 && InGameTimer.getInstance().getStatus() != TimerStatus.NONE && InGameTimer.getInstance().isCoop()
             && source.getPlayer().getServer() != null) {
-                InGameTimer.restart(System.currentTimeMillis(), true);
+                TimerPacketUtils.sendServer2ClientPacket(source.getPlayer().getServer(), new TimerInitPacket(InGameTimer.getInstance(), System.currentTimeMillis()));
             }
         } catch (CommandSyntaxException ignored) {
         }

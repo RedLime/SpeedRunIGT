@@ -2,19 +2,16 @@ package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerAdvancementTracker;
-import com.redlimerl.speedrunigt.timer.TimerPacketHandler;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
-import com.redlimerl.speedrunigt.timer.category.condition.AdvancementCategoryCondition;
-import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
+import com.redlimerl.speedrunigt.timer.packet.TimerPacketUtils;
+import com.redlimerl.speedrunigt.timer.packet.packets.TimerAchieveCriteriaPacket;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import java.util.LinkedHashMap;
@@ -35,30 +32,11 @@ public abstract class PlayerAdvancementTrackerMixin {
             if (track.isComplete() || track.isCompletedCriteria(criteriaKey)) return;
         }
 
-        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) {
-            InGameTimer.getInstance().tryInsertNewAdvancement(advancement.getId().toString(), criteriaKey, advancement.getDisplay() != null, false);
-        }
-
         InGameTimer timer = InGameTimer.getInstance();
-        // Custom Json category
-        if (timer.getCategory().getConditionJson() != null) {
-            for (CategoryCondition.Condition<?> condition : timer.getCustomCondition().getConditionList()) {
-                if (condition instanceof AdvancementCategoryCondition) {
-                    if (timer.updateCondition((AdvancementCategoryCondition) condition, advancement) && timer.isCoop())
-                        TimerPacketHandler.serverSend(owner.server.getPlayerManager().getPlayerList(), InGameTimer.getInstance(), InGameTimer.getCompletedInstance());
-                }
-            }
-            timer.checkConditions();
-        }
-    }
 
-    @Inject(method = "grantCriterion", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancement/AdvancementRewards;apply(Lnet/minecraft/server/network/ServerPlayerEntity;)V", shift = At.Shift.AFTER))
-    public void onGrant(Advancement advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
-        if (advancement.getDisplay() != null && InGameTimer.getInstance().isCoop() && InGameTimer.getInstance().getStatus() != TimerStatus.NONE) {
-            for (ServerPlayerEntity serverPlayerEntity : owner.server.getPlayerManager().getPlayerList()) {
-                if (this.owner != serverPlayerEntity)
-                    TimerPacketHandler.serverAdvancementSend(serverPlayerEntity, advancement);
-            }
+        if (timer.getStatus() != TimerStatus.NONE) {
+            timer.tryInsertNewAdvancement(advancement.getId().toString(), criteriaKey, advancement.getDisplay() != null);
+            if (timer.isCoop()) TimerPacketUtils.sendServer2ClientPacket(owner.server, new TimerAchieveCriteriaPacket(advancement.getId().toString(), criteriaKey, advancement.getDisplay() != null));
         }
     }
 }

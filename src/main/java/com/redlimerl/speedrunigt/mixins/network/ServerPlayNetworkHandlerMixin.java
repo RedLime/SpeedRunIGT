@@ -1,7 +1,8 @@
 package com.redlimerl.speedrunigt.mixins.network;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
-import com.redlimerl.speedrunigt.timer.TimerPacketHandler;
+import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
+import com.redlimerl.speedrunigt.timer.packet.TimerPacketBuf;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -23,8 +24,14 @@ public class ServerPlayNetworkHandlerMixin {
     public void onCustom(CustomPayloadC2SPacket packet, CallbackInfo ci) {
         CustomPayloadC2SPacketAccessor customPacket = (CustomPayloadC2SPacketAccessor) packet;
         if (Objects.equals(customPacket.getChannel().getNamespace(), SpeedRunIGT.MOD_ID)) {
-            if (Objects.equals(customPacket.getChannel().getPath(), TimerPacketHandler.PACKET_TIMER_ID.getPath())) {
-                TimerPacketHandler.serverReceiveAndSend(this.server, customPacket.getData());
+            TimerPacket timerPacket = TimerPacket.createTimerPacketFromPacket(customPacket.getChannel());
+            TimerPacketBuf buf = TimerPacketBuf.of(customPacket.getData());
+            SpeedRunIGT.debug(String.format("Client->Server Packet: %s bytes, ID : %s", buf.getBuffer().capacity(), customPacket.getChannel()));
+            try {
+                if (timerPacket != null) timerPacket.receiveClient2ServerPacket(buf, server);
+            } catch (Exception e) {
+                e.printStackTrace();
+                SpeedRunIGT.error("Failed to read packet in server side, probably SpeedRunIGT version different between players");
             }
         }
     }
