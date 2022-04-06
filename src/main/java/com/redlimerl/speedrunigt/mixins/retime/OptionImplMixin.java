@@ -9,11 +9,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @SuppressWarnings("UnresolvedMixinReference")
 @Pseudo
-@Mixin(remap = false, targets = "me.jellysquid.mods.sodium.client.gui.SodiumOptionsGUI")
-public class SodiumOptionsGUIMixin {
+@Mixin(targets = "me.jellysquid.mods.sodium.client.gui.options.OptionImpl", remap = false)
+public class OptionImplMixin {
 
-    @Inject(method = "applyChanges", at = @At("TAIL"), remap = false)
-    public void onChanges(CallbackInfo ci) {
-        InGameTimerUtils.RETIME_IS_CHANGED_OPTION = true;
+    @Inject(method = "setValue", remap = false, at = @At("HEAD"))
+    public void onSetValue(CallbackInfo ci) {
+        InGameTimerUtils.CHANGED_OPTIONS.add(this);
     }
 }
