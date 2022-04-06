@@ -3,7 +3,7 @@ package com.redlimerl.speedrunigt.mixins.timeline;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
-import com.redlimerl.speedrunigt.timer.running.RunCategories;
+import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import net.minecraft.class_2750;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;

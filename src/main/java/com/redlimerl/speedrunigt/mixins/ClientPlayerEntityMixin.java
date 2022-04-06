@@ -4,7 +4,10 @@ import com.mojang.authlib.GameProfile;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
-import com.redlimerl.speedrunigt.timer.running.RunCategories;
+import com.redlimerl.speedrunigt.timer.category.RunCategories;
+import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
+import com.redlimerl.speedrunigt.timer.category.condition.ObtainItemCategoryCondition;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -18,6 +21,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.include.com.google.common.collect.Lists;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,8 +34,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     @Shadow public abstract boolean isSneaking();
     @Shadow protected MinecraftClient client;
 
-    @Shadow public float timeInPortal;
-
     public ClientPlayerEntityMixin(ClientWorld world, GameProfile profile) {
         super(world, profile);
     }
@@ -41,14 +43,28 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     private void onMove(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
-        if (timer.getStatus() == TimerStatus.IDLE && (this.velocityX != 0 || this.velocityZ != 0 || this.jumping || this.isSneaking())) {
+        if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
+
+        if (timer.getStatus() == TimerStatus.IDLE && !InGameTimerUtils.IS_CHANGING_DIMENSION && (this.velocityX != 0 || this.velocityZ != 0 || this.jumping || this.isSneaking())) {
             timer.setPause(false, "moved player");
         }
         if (this.velocityX != 0 || this.velocityZ != 0 || this.jumping || this.isSneaking()) {
             timer.updateFirstInput();
         }
 
-        if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
+        // Custom Json category
+        if (timer.getCategory().getConditionJson() != null) {
+            List<ItemStack> itemStacks = Lists.newArrayList();
+            itemStacks.addAll(this.inventory.field_15082);
+            itemStacks.addAll(this.inventory.field_15083);
+            itemStacks.addAll(this.inventory.field_15084);
+            for (CategoryCondition.Condition<?> condition : timer.getCustomCondition().getConditionList()) {
+                if (condition instanceof ObtainItemCategoryCondition) {
+                    timer.updateCondition((ObtainItemCategoryCondition) condition, itemStacks);
+                }
+            }
+            timer.checkConditions();
+        }
 
         //HIGH%
         if (timer.getCategory() == RunCategories.HIGH && this.y >= 420) {
@@ -117,6 +133,13 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                 InGameTimer.complete();
             }
         }
+
+        //Stack of Lime Wool
+        if (timer.getCategory() == RunCategories.STACK_OF_LIME_WOOL) {
+            for (ItemStack itemStack : this.inventory.field_15082) {
+                if (itemStack != null && Item.fromBlock(Blocks.WOOL).equals(itemStack.getItem()) && itemStack.getMeta() == 5 && itemStack.method_13652() == 64) InGameTimer.complete();
+            }
+        }
     }
 
 
@@ -125,7 +148,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     public void updateNausea(CallbackInfo ci) {
         // Portal time update
         if (this.changingDimension) {
-            if (++portalTick >= 81) {
+            if (++portalTick >= 81 && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
                 portalTick = 0;
                 if (InGameTimer.getInstance().getStatus() != TimerStatus.IDLE && client.isInSingleplayer()) {
                     InGameTimerUtils.IS_CHANGING_DIMENSION = true;
