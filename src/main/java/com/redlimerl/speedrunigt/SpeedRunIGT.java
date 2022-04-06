@@ -2,14 +2,19 @@ package com.redlimerl.speedrunigt;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.redlimerl.speedrunigt.api.CategoryConditionRegisterHelper;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.api.SpeedRunIGTApi;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunIGTInfoScreen;
 import com.redlimerl.speedrunigt.impl.CategoryRegistryImpl;
+import com.redlimerl.speedrunigt.impl.ConditionsRegistryImpl;
 import com.redlimerl.speedrunigt.impl.OptionButtonsImpl;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
-import com.redlimerl.speedrunigt.timer.running.RunCategory;
+import com.redlimerl.speedrunigt.timer.category.CustomCategoryManager;
+import com.redlimerl.speedrunigt.timer.category.RunCategory;
+import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
+import com.redlimerl.speedrunigt.timer.packet.TimerPackets;
 import com.redlimerl.speedrunigt.utils.FontIdentifier;
 import com.redlimerl.speedrunigt.utils.FontUtils;
 import com.redlimerl.speedrunigt.utils.KeyBindingRegistry;
@@ -32,6 +37,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class SpeedRunIGT implements ClientModInitializer {
@@ -86,6 +92,7 @@ public class SpeedRunIGT implements ClientModInitializer {
         SpeedRunOption.addOptionButtonFactories(new OptionButtonsImpl().createOptionButtons().toArray(new OptionButtonFactory[0]));
         // init default categories
         new CategoryRegistryImpl().registerCategories().forEach(RunCategory::registerCategory);
+        CategoryCondition.registerCondition(new ConditionsRegistryImpl().registerConditions());
 
 
         // Registry API's
@@ -108,8 +115,15 @@ public class SpeedRunIGT implements ClientModInitializer {
             Collection<RunCategory> multipleCategories = api.registerCategories();
             if (multipleCategories != null) multipleCategories.forEach(RunCategory::registerCategory);
 
+            // Registry multiple conditions
+            Map<String, CategoryConditionRegisterHelper> multipleConditions = api.registerConditions();
+            if (multipleCategories != null) CategoryCondition.registerCondition(multipleConditions);
+
             API_PROVIDERS.add(entryPoint.getProvider());
         }
+
+        // Custom Json Category initialize
+        CustomCategoryManager.init();
 
         // Options initialize
         SpeedRunOption.init();
@@ -147,6 +161,9 @@ public class SpeedRunIGT implements ClientModInitializer {
 
         // Add default fonts
         FontUtils.copyDefaultFonts();
+
+        // Initializing packets
+        TimerPackets.init();
     }
 
     private static final Logger LOGGER = LogManager.getLogger("SpeedRunIGT");
