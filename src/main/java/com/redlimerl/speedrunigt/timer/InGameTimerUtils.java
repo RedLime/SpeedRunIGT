@@ -15,8 +15,7 @@ import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
 import com.redlimerl.speedrunigt.timer.logs.TimerPauseLog;
 import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import com.redlimerl.speedrunigt.timer.running.RunPortalPos;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.SharedConstants;
+import net.fabricmc.loader.impl.FabricLoaderImpl;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
@@ -28,7 +27,7 @@ import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -199,7 +198,7 @@ public class InGameTimerUtils {
     }
 
     public static String getMinecraftVersion() {
-        return SharedConstants.getGameVersion().getName();
+        return FabricLoaderImpl.INSTANCE.getGameProvider().getNormalizedGameVersion();
     }
 
     public static boolean isLoadableBlind(RegistryKey<World> worldKey, Vec3d netherPos, Vec3d overPos) {
@@ -238,47 +237,5 @@ public class InGameTimerUtils {
         if (MinecraftClient.getInstance().currentScreen == null)
             FAILED_CATEGORY_INIT_SCREEN = new FailedCategoryInitScreen(conditionFileName, exception);
         else MinecraftClient.getInstance().setScreen(new FailedCategoryInitScreen(conditionFileName, exception));
-    }
-
-    public static byte[] serializeTimer(InGameTimer timer) {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutputStream out;
-        byte[] result = null;
-        try {
-            out = new ObjectOutputStream(bos);
-            out.writeObject(timer);
-            out.flush();
-            result = bos.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                bos.close();
-            } catch (IOException ex) {
-                // ignore close exception
-            }
-        }
-        return result;
-    }
-
-    public static InGameTimer deserializeTimer(byte[] bytes) {
-        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-        ObjectInput in = null;
-        InGameTimer timer = null;
-        try {
-            in = new ObjectInputStream(bis);
-            timer = (InGameTimer) in.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (in != null) {
-                    in.close();
-                }
-            } catch (IOException ex) {
-                // ignore close exception
-            }
-        }
-        return timer;
     }
 }
