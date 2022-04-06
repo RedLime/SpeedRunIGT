@@ -4,7 +4,7 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
-import com.redlimerl.speedrunigt.timer.running.RunCategories;
+import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import net.minecraft.class_4107;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.KeyBinding;

@@ -1,4 +1,4 @@
-package com.redlimerl.speedrunigt.timer.running;
+package com.redlimerl.speedrunigt.timer.category;
 
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 

@@ -1,12 +1,19 @@
 package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.timer.InGameTimer;
+import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
+import com.redlimerl.speedrunigt.timer.TimerAdvancementTracker;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
-import com.redlimerl.speedrunigt.timer.running.RunCategories;
+import com.redlimerl.speedrunigt.timer.category.RunCategories;
+import com.redlimerl.speedrunigt.timer.category.condition.AdvancementCategoryCondition;
+import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
+import com.redlimerl.speedrunigt.timer.packet.TimerPacketUtils;
+import com.redlimerl.speedrunigt.timer.packet.packets.TimerAchieveAdvancementPacket;
 import net.minecraft.advancement.AdvancementProgress;
 import net.minecraft.advancement.SimpleAdvancement;
 import net.minecraft.class_3295;
 import net.minecraft.class_3328;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.packet.c2s.play.AdvancementUpdatePacket;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
@@ -25,7 +32,7 @@ public abstract class ClientAdvancementManagerMixin {
 
     @Shadow @Final private class_3328 field_16128;
 
-    @Shadow @Final private Map<SimpleAdvancement, AdvancementProgress> field_16129;
+    @Shadow @Final private MinecraftClient field_16127;
 
     @Redirect(method = "onProgressUpdate", at = @At(value = "INVOKE", target = "Ljava/util/Map$Entry;getValue()Ljava/lang/Object;"))
     public Object advancement(Map.Entry<Identifier, AdvancementProgress> entry) {
@@ -46,7 +53,22 @@ public abstract class ClientAdvancementManagerMixin {
                     timer.tryInsertNewTimeline("enter_fortress");
                 }
             }
-            timer.tryInsertNewAdvancement(advancement.getIdentifier().toString(), null);
+            timer.tryInsertNewAdvancement(advancement.getIdentifier().toString(), null, advancement.getDisplay() != null);
+            InGameTimerUtils.COMPLETED_ADVANCEMENTS.add(advancement.getIdentifier().toString());
+            if (timer.isCoop() && advancement.getDisplay() != null
+                    && (timer.getCategory() == RunCategories.ALL_ADVANCEMENTS || timer.getCategory() == RunCategories.HALF || timer.getCategory() == RunCategories.POGLOOT_QUATER)) {
+                TimerPacketUtils.sendClient2ServerPacket(field_16127, new TimerAchieveAdvancementPacket(advancement));
+            }
+
+            // Custom Json category
+            if (timer.getCategory().getConditionJson() != null) {
+                for (CategoryCondition.Condition<?> condition : timer.getCustomCondition().getConditionList()) {
+                    if (condition instanceof AdvancementCategoryCondition) {
+                        timer.updateCondition((AdvancementCategoryCondition) condition, advancement);
+                    }
+                }
+                timer.checkConditions();
+            }
 
             //How Did We Get Here
             if (timer.getCategory() == RunCategories.HOW_DID_WE_GET_HERE && Objects.equals(advancement.getIdentifier().toString(), new Identifier("nether/all_effects").toString())) {
@@ -78,13 +100,8 @@ public abstract class ClientAdvancementManagerMixin {
 
     private int getCompleteAdvancementsCount() {
         int count = 0;
-        for (SimpleAdvancement advancement : this.field_16128.method_20270()) {
-            if (this.field_16129.containsKey(advancement) && advancement.getParent() != null && !advancement.getIdentifier().getPath().startsWith("recipes")) {
-                AdvancementProgress advancementProgress = this.field_16129.get(advancement);
-
-                advancementProgress.method_14836(advancement.getCriteria(), advancement.getRequirements());
-                if (advancementProgress.method_14833()) count++;
-            }
+        for (Map.Entry<String, TimerAdvancementTracker.AdvancementTrack> track : InGameTimer.getInstance().getAdvancementsTracker().getAdvancements().entrySet()) {
+            if (track.getValue().isAdvancement() && track.getValue().isComplete()) count++;
         }
         return count;
     }

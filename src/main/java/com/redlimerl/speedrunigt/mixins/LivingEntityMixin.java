@@ -2,7 +2,7 @@ package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
-import com.redlimerl.speedrunigt.timer.running.RunCategories;
+import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import net.minecraft.class_3460;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;

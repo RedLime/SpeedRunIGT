@@ -7,7 +7,7 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
-import com.redlimerl.speedrunigt.timer.running.RunCategories;
+import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.minecraft.class_3793;
 import net.minecraft.client.MinecraftClient;
@@ -69,6 +69,11 @@ public abstract class MinecraftClientMixin {
     public void onSetScreen(Screen screen, CallbackInfo ci) {
         if (screen instanceof ProgressScreen) {
             disconnectCheck = true;
+        }
+        if (InGameTimerUtils.FAILED_CATEGORY_INIT_SCREEN != null) {
+            Screen screen1 = InGameTimerUtils.FAILED_CATEGORY_INIT_SCREEN;
+            InGameTimerUtils.FAILED_CATEGORY_INIT_SCREEN = null;
+            MinecraftClient.getInstance().openScreen(screen1);
         }
     }
 
@@ -159,6 +164,9 @@ public abstract class MinecraftClientMixin {
     // Disconnecting fix
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resource/ResourcePackLoader;method_7040()V", shift = At.Shift.BEFORE), method = "method_18206")
     public void disconnect(CallbackInfo ci) {
-        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE && disconnectCheck) InGameTimer.leave();
+        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE && disconnectCheck) {
+            InGameTimerUtils.COMPLETED_ADVANCEMENTS.clear();
+            InGameTimer.leave();
+        }
     }
 }

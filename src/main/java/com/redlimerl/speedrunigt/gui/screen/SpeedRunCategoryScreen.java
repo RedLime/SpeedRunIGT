@@ -5,7 +5,7 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
-import com.redlimerl.speedrunigt.timer.running.RunCategory;
+import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -91,7 +91,7 @@ public class SpeedRunCategoryScreen extends Screen {
                     button.playDownSound(SpeedRunCategoryScreen.this.client.getSoundManager());
                     SpeedRunOption.setOption(SpeedRunOptions.TIMER_CATEGORY, category);
                     InGameTimer.getInstance().setCategory(category);
-                    InGameTimer.getInstance().setUncompleted();
+                    InGameTimer.getInstance().setUncompleted(true);
                 });
                 this.category = category;
             }
