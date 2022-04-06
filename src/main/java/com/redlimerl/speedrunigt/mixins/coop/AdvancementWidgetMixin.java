@@ -17,7 +17,7 @@ public class AdvancementWidgetMixin {
 
     @Shadow @Final private Advancement advancement;
 
-    @Redirect(method = "renderWidgets", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/advancement/AdvancementObtainedStatus;getSpriteIndex()I"))
+    @Redirect(method = "method_2325", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/advancement/AdvancementObtainedStatus;getSpriteIndex()I"))
     public int onRender(AdvancementObtainedStatus instance) {
         if (InGameTimer.getInstance().isCoop() && InGameTimer.getInstance().getStatus() != TimerStatus.NONE && InGameTimerUtils.COMPLETED_ADVANCEMENTS.contains(advancement.getId().toString())) {
             return 0;
