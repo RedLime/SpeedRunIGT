@@ -209,7 +209,6 @@ public abstract class MinecraftClientMixin {
     @Inject(at = @At("HEAD"), method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V")
     public void disconnect(CallbackInfo ci) {
         if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE && InGameTimerUtils.CAN_DISCONNECT) {
-            InGameTimerUtils.COMPLETED_ADVANCEMENTS.clear();
             InGameTimer.leave();
         }
     }

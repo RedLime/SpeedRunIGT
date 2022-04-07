@@ -1,7 +1,6 @@
 package com.redlimerl.speedrunigt.timer.packet.packets;
 
 import com.redlimerl.speedrunigt.timer.InGameTimer;
-import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacketBuf;
 import net.minecraft.advancement.Advancement;
@@ -48,6 +47,5 @@ public class TimerAchieveAdvancementPacket extends TimerPacket {
     public void receiveServer2ClientPacket(TimerPacketBuf buf, MinecraftClient client) {
         Identifier identifier = buf.readIdentifier();
         InGameTimer.getInstance().tryInsertNewAdvancement(identifier.toString(), null, true);
-        InGameTimerUtils.COMPLETED_ADVANCEMENTS.add(identifier.toString());
     }
 }
