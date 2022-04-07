@@ -1,7 +1,7 @@
 package com.redlimerl.speedrunigt.mixins.timeline;
 
 import com.redlimerl.speedrunigt.timer.InGameTimer;
-import com.redlimerl.speedrunigt.timer.running.RunCategories;
+import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.village.TradeOffer;
 import org.spongepowered.asm.mixin.Mixin;
