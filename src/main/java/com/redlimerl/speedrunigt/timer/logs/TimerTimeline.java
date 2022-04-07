@@ -1,6 +1,8 @@
 package com.redlimerl.speedrunigt.timer.logs;
 
-public class TimerTimeline {
+import java.io.Serializable;
+
+public class TimerTimeline implements Serializable {
     private final String name;
     private final long igt;
     private final long rta;

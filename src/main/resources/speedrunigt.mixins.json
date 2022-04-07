@@ -6,13 +6,14 @@
   "mixins": [
   ],
   "client": [
+    "AchievementNotificationMixin",
     "ClientPlayerEntityMixin",
     "ClientWorldMixin",
     "GameRendererMixin",
     "KeyBindingMixin",
     "LivingEntityMixin",
     "MinecraftClientMixin",
-    "StatHandlerMixin",
+    "ServerStatHandlerMixin",
     "WorldRendererMixin",
     "access.ButtonWidgetAccessor",
     "access.ClientChunkProviderAccessor",
@@ -26,6 +27,7 @@
     "network.ClientPlayNetworkHandlerMixin",
     "network.ServerPlayNetworkHandlerMixin",
     "retime.OptionButtonWidgetMixin",
+    "retime.accessor.OptionSliderWidgetAccessor",
     "screen.CreditsScreenMixin",
     "screen.DownloadingTerrainScreenMixin",
     "screen.GameMenuScreenMixin",
