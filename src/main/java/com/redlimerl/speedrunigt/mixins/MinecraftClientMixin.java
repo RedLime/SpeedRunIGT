@@ -202,7 +202,6 @@ public abstract class MinecraftClientMixin {
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resource/ResourcePackLoader;method_7040()V", shift = At.Shift.BEFORE), method = "connect(Lnet/minecraft/client/world/ClientWorld;Ljava/lang/String;)V")
     public void disconnect(CallbackInfo ci) {
         if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE && disconnectCheck) {
-            InGameTimerUtils.COMPLETED_ADVANCEMENTS.clear();
             InGameTimer.leave();
         }
     }

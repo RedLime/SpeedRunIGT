@@ -11,7 +11,7 @@
   "speedrunigt.option.check_info": "SpeedRunIGT Info",
   "speedrunigt.option.timer_position": "Timer Display Options",
   "speedrunigt.option.timer_position.description": "§eClick somewhere on the screen to change the timer's position.",
-  "speedrunigt.option.timer_position.description.move": "Press §eCtrl + arrow key to precisely adjust the timer's position.",
+  "speedrunigt.option.timer_position.description.move": "Press §eCtrl + arrow §fkey to precisely adjust the timer's position.",
   "speedrunigt.option.timer_position.description.lock": "§cA The timer's position is locked!",
   "speedrunigt.option.timer_position.scale": "%s Timer Scale",
   "speedrunigt.option.timer_position.show_time_only": "Disable Timer Labels",
