@@ -3,7 +3,7 @@ package com.redlimerl.speedrunigt.mixins;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
-import com.redlimerl.speedrunigt.timer.running.RunCategories;
+import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.util.collection.IntObjectStorage;
 import org.spongepowered.asm.mixin.Final;

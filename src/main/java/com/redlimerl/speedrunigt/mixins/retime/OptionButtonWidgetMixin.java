@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.mixins.retime;
 
+import com.redlimerl.speedrunigt.mixins.retime.accessor.OptionSliderWidgetAccessor;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -13,10 +14,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Screen.class)
 public class OptionButtonWidgetMixin {
 
+    @SuppressWarnings("ConstantConditions")
     @Inject(method = "buttonClicked", at = @At("RETURN"))
     public void onClickOption(ButtonWidget button, CallbackInfo ci) {
-        if (button instanceof OptionButtonWidget || button instanceof OptionSliderWidget) {
-            InGameTimerUtils.RETIME_IS_CHANGED_OPTION = true;
+        if (((Object) this) instanceof OptionButtonWidget) {
+            InGameTimerUtils.CHANGED_OPTIONS.add(((OptionButtonWidget) ((Object) this)).getOption());
+        }
+        if (((Object) this) instanceof OptionSliderWidget) {
+            InGameTimerUtils.CHANGED_OPTIONS.add(((OptionSliderWidgetAccessor) this).getOption());
         }
     }
 }
