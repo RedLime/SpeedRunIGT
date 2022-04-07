@@ -19,7 +19,6 @@
     "access.ClientChunkProviderAccessor",
     "access.ServerStatHandlerAccessor",
     "access.WorldRendererAccessor",
-    "coop.AdvancementWidgetMixin",
     "coop.PlayerManagerMixin",
     "coop.TimeCommandMixin",
     "keybinding.GameOptionsMixin",
