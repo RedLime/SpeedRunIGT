@@ -22,7 +22,6 @@
     "access.ServerStatHandlerAccessor",
     "access.TextRendererAccessor",
     "access.WorldRendererAccessor",
-    "coop.AdvancementWidgetMixin",
     "coop.PlayerManagerMixin",
     "coop.TimeCommandMixin",
     "keybinding.GameOptionsMixin",
