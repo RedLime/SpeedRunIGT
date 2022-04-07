@@ -111,7 +111,7 @@ public class SpeedRunIGT implements ClientModInitializer {
 
             // Registry multiple conditions
             Map<String, CategoryConditionRegisterHelper> multipleConditions = api.registerConditions();
-            if (multipleCategories != null) CategoryCondition.registerCondition(multipleConditions);
+            if (multipleConditions != null) CategoryCondition.registerCondition(multipleConditions);
 
             API_PROVIDERS.add(entryPoint.getProvider());
         }
