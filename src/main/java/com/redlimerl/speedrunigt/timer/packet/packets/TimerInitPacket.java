@@ -1,7 +1,6 @@
 package com.redlimerl.speedrunigt.timer.packet.packets;
 
 import com.redlimerl.speedrunigt.timer.InGameTimer;
-import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacketBuf;
@@ -70,6 +69,5 @@ public class TimerInitPacket extends TimerPacket {
         InGameTimer.getInstance().setCoop(true);
         InGameTimer.getInstance().setServerIntegrated(client.isIntegratedServerRunning());
         InGameTimer.getInstance().setPause(false, "co-op setup");
-        InGameTimerUtils.COMPLETED_ADVANCEMENTS.clear();
     }
 }
