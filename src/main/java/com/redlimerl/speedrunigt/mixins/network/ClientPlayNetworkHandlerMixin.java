@@ -1,34 +1,39 @@
 package com.redlimerl.speedrunigt.mixins.network;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
-import com.redlimerl.speedrunigt.timer.TimerPacketHandler;
+import com.redlimerl.speedrunigt.option.SpeedRunOption;
+import com.redlimerl.speedrunigt.option.SpeedRunOptions;
+import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
+import com.redlimerl.speedrunigt.timer.packet.TimerPacketBuf;
 import io.netty.buffer.Unpooled;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Objects;
-
 @Mixin(ClientPlayNetworkHandler.class)
 public class ClientPlayNetworkHandlerMixin {
 
-    @Inject(method = "onCustomPayload", at = @At("TAIL"), cancellable = true)
+    @Shadow private MinecraftClient client;
+
+    @Inject(method = "onCustomPayload", at = @At("HEAD"), cancellable = true)
     public void onCustom(CustomPayloadS2CPacket packet, CallbackInfo ci) {
         if (packet.getChannel().startsWith(SpeedRunIGT.MOD_ID)) {
-            SpeedRunIGT.debug("Client Side : " + packet.getChannel());
-
-            if (Objects.equals(packet.getChannel(), TimerPacketHandler.PACKET_TIMER_INIT_ID)) {
-                TimerPacketHandler.receiveInitS2C(Unpooled.wrappedBuffer(packet.method_7734()));
+            TimerPacket timerPacket = TimerPacket.createTimerPacketFromPacket(packet.getChannel());
+            TimerPacketBuf buf = TimerPacketBuf.of(Unpooled.wrappedBuffer(packet.method_7734()));
+            SpeedRunIGT.debug(String.format("Server->Client Packet: %s bytes, ID : %s", buf.getBuffer().capacity(), packet.getChannel()));
+            try {
+                if (timerPacket != null && SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) timerPacket.receiveServer2ClientPacket(buf, client);
+            } catch (Exception e) {
+                e.printStackTrace();
+                SpeedRunIGT.error("Failed to read packet in client side, probably SpeedRunIGT version different between players");
+            } finally {
+                ci.cancel();
             }
-
-            if (Objects.equals(packet.getChannel(), TimerPacketHandler.PACKET_TIMER_COMPLETE_ID)) {
-                TimerPacketHandler.receiveCompleteS2C(Unpooled.wrappedBuffer(packet.method_7734()));
-            }
-
-            ci.cancel();
         }
     }
 }
