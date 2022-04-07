@@ -1,22 +1,25 @@
 package com.redlimerl.speedrunigt.timer;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.gui.screen.FailedCategoryInitScreen;
 import com.redlimerl.speedrunigt.mixins.access.ClientChunkProviderAccessor;
 import com.redlimerl.speedrunigt.mixins.access.LevelStorageAccessor;
 import com.redlimerl.speedrunigt.mixins.access.ServerStatHandlerAccessor;
 import com.redlimerl.speedrunigt.mixins.access.WorldRendererAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
+import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
 import com.redlimerl.speedrunigt.timer.logs.TimerPauseLog;
 import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
+import com.redlimerl.speedrunigt.timer.running.RunPortalPos;
+import net.fabricmc.loader.impl.FabricLoaderImpl;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.realms.RealmsSharedConstants;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.ServerStatHandler;
@@ -25,20 +28,21 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.OverworldDimension;
 import net.minecraft.world.dimension.TheNetherDimension;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class InGameTimerUtils {
     public static boolean IS_CHANGING_DIMENSION = false;
     public static boolean IS_CAN_WAIT_WORLD_LOAD = false;
-    public static boolean RETIME_IS_CHANGED_OPTION = false;
+    public static final HashSet<Object> CHANGED_OPTIONS = Sets.newHashSet();
     public static boolean RETIME_IS_WAITING_LOAD = false;
     public static boolean IS_SET_SEED = false;
 
@@ -96,23 +100,6 @@ public class InGameTimerUtils {
     private static String makeLogText(int length, Object text) {
         String empty = IntStream.range(0, Math.max(0, length - text.toString().length())).mapToObj(i -> " ").collect(Collectors.joining());
         return text + empty;
-    }
-
-    public static String advancementTrackerToString(JsonObject jsonObject) {
-        JsonObject tracker = SpeedRunIGT.GSON.fromJson(SpeedRunIGT.GSON.toJson(jsonObject) + "", JsonObject.class);
-        for (Map.Entry<String, JsonElement> stringJsonElementEntry : tracker.entrySet()) {
-            JsonObject adv = tracker.getAsJsonObject(stringJsonElementEntry.getKey());
-            if (adv.has("criteria")) {
-                for (Map.Entry<String, JsonElement> jsonElementEntry : adv.getAsJsonObject("criteria").entrySet()) {
-                    JsonObject crt = adv.getAsJsonObject("criteria").getAsJsonObject(jsonElementEntry.getKey());
-                    crt.addProperty("igt", timeToStringFormat(crt.get("igt").getAsLong()));
-                    crt.addProperty("rta", timeToStringFormat(crt.get("rta").getAsLong()));
-                }
-            }
-            adv.addProperty("igt", timeToStringFormat(adv.get("igt").getAsLong()));
-            adv.addProperty("rta", timeToStringFormat(adv.get("rta").getAsLong()));
-        }
-        return SpeedRunIGT.PRETTY_GSON.toJson(tracker);
     }
 
     public static String pauseLogListToString(List<TimerPauseLog> arrayList, boolean makeHeader, int completeCount) {
@@ -190,7 +177,7 @@ public class InGameTimerUtils {
             timelineArr.add(timelineObj);
         }
         jsonObject.add("timelines", timelineArr);
-        jsonObject.add("advancements", timer.getAdvancementsTracker());
+        jsonObject.add("advancements", SpeedRunIGT.GSON.toJsonTree(timer.getAdvancementsTracker().getAdvancements()));
         jsonObject.add("stats", getStatsJson(timer));
 
         return jsonObject;
@@ -215,25 +202,25 @@ public class InGameTimerUtils {
     }
 
     public static String getMinecraftVersion() {
-        return RealmsSharedConstants.VERSION_STRING;
+        return FabricLoaderImpl.INSTANCE.getGameProvider().getNormalizedGameVersion();
     }
 
     public static boolean isLoadableBlind(Dimension dimensionType, Vec3d netherPos, Vec3d overPos) {
         InGameTimer timer = InGameTimer.getInstance();
-        ArrayList<Vec3d> arrayList = dimensionType instanceof TheNetherDimension ? timer.lastNetherPortalPos : dimensionType instanceof OverworldDimension ? timer.lastOverWorldPortalPos : null;
+        ArrayList<RunPortalPos> arrayList = dimensionType instanceof TheNetherDimension ? timer.lastNetherPortalPos : dimensionType instanceof OverworldDimension ? timer.lastOverWorldPortalPos : null;
         Vec3d targetPos = dimensionType instanceof TheNetherDimension ? netherPos : dimensionType instanceof OverworldDimension ? overPos : null;
         if (arrayList == null || targetPos == null) return true;
-        for (Vec3d portalPos : arrayList) {
+        for (RunPortalPos portalPos : arrayList) {
             if (portalPos.squaredDistanceTo(targetPos) < 16) return false;
         }
-        timer.lastNetherPortalPos.add(netherPos);
-        timer.lastOverWorldPortalPos.add(overPos);
+        timer.lastNetherPortalPos.add(new RunPortalPos(netherPos));
+        timer.lastOverWorldPortalPos.add(new RunPortalPos(overPos));
         return true;
     }
 
     public static boolean isBlindTraveled(Vec3d netherPos) {
         InGameTimer timer = InGameTimer.getInstance();
-        for (Vec3d portalPos : timer.lastNetherPortalPos) {
+        for (RunPortalPos portalPos : timer.lastNetherPortalPos) {
             if (portalPos.squaredDistanceTo(netherPos) < 16) return false;
         }
         return true;
@@ -247,5 +234,12 @@ public class InGameTimerUtils {
             return statHandler == null ? null : statHandler.method_1729(Stats.MINUTES_PLAYED) * 50L;
         }
         return null;
+    }
+
+    public static @Nullable FailedCategoryInitScreen FAILED_CATEGORY_INIT_SCREEN = null;
+    public static void setCategoryWarningScreen(@Nullable String conditionFileName, InvalidCategoryException exception) {
+        if (MinecraftClient.getInstance().currentScreen == null)
+            FAILED_CATEGORY_INIT_SCREEN = new FailedCategoryInitScreen(conditionFileName, exception);
+        else MinecraftClient.getInstance().openScreen(new FailedCategoryInitScreen(conditionFileName, exception));
     }
 }
