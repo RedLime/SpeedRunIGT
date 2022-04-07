@@ -1,7 +1,6 @@
 package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.timer.InGameTimer;
-import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerAdvancementTracker;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
@@ -50,7 +49,6 @@ public abstract class ClientAdvancementManagerMixin {
                 }
             }
             timer.tryInsertNewAdvancement(advancement.method_14801().toString(), null, advancement.method_14796() != null);
-            InGameTimerUtils.COMPLETED_ADVANCEMENTS.add(advancement.method_14801().toString());
             if (timer.isCoop() && advancement.method_14796() != null
                     && (timer.getCategory() == RunCategories.ALL_ADVANCEMENTS || timer.getCategory() == RunCategories.HALF || timer.getCategory() == RunCategories.POGLOOT_QUATER)) {
                 TimerPacketUtils.sendClient2ServerPacket(field_16127, new TimerAchieveAdvancementPacket(advancement));

@@ -42,7 +42,6 @@ public class InGameTimerUtils {
     public static final HashSet<Object> CHANGED_OPTIONS = Sets.newHashSet();
     public static boolean RETIME_IS_WAITING_LOAD = false;
     public static boolean IS_SET_SEED = false;
-    public static final HashSet<String> COMPLETED_ADVANCEMENTS = Sets.newHashSet();
 
     public static File getTimerLogDir(String name, String pathName) {
         File file = MinecraftClient.getInstance().getCurrentSave().method_11957(name, "./").toPath().resolve(SpeedRunIGT.MOD_ID).resolve(pathName).toFile();
