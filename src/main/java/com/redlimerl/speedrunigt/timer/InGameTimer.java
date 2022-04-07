@@ -1,26 +1,29 @@
 package com.redlimerl.speedrunigt.timer;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.crypt.Crypto;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
+import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
+import com.redlimerl.speedrunigt.timer.category.RunCategories;
+import com.redlimerl.speedrunigt.timer.category.RunCategory;
+import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.logs.TimerPauseLog;
 import com.redlimerl.speedrunigt.timer.logs.TimerTickLog;
 import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
-import com.redlimerl.speedrunigt.timer.running.RunCategories;
-import com.redlimerl.speedrunigt.timer.running.RunCategory;
+import com.redlimerl.speedrunigt.timer.packet.TimerPacketUtils;
+import com.redlimerl.speedrunigt.timer.packet.packets.*;
+import com.redlimerl.speedrunigt.timer.running.RunPortalPos;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -35,15 +38,16 @@ import static com.redlimerl.speedrunigt.timer.InGameTimerUtils.timeToStringForma
  * In-game Timer class.
  * {@link TimerStatus}
  */
-public class InGameTimer {
+@SuppressWarnings("unused")
+public class InGameTimer implements Serializable {
 
     @NotNull
-    private static InGameTimer INSTANCE = new InGameTimer("");
+    static InGameTimer INSTANCE = new InGameTimer("");
     @NotNull
-    private static InGameTimer COMPLETED_INSTANCE = new InGameTimer("");
+    static InGameTimer COMPLETED_INSTANCE = new InGameTimer("");
 
     private static final String cryptKey = "faRQOs2GK5j863eP";
-    private static final int DATA_VERSION = 2;
+    private static final int DATA_VERSION = 3;
 
     @NotNull
     public static InGameTimer getInstance() { return INSTANCE; }
@@ -64,7 +68,7 @@ public class InGameTimer {
     }
 
     String worldName;
-    private final UUID uuid = UUID.randomUUID();
+    UUID uuid = UUID.randomUUID();
     private String category = RunCategories.ANY.getID();
     private final boolean isResettable;
     private boolean isCompleted = false;
@@ -100,12 +104,12 @@ public class InGameTimer {
     private String prevPauseReason = "";
 
     //For checking blind
-    ArrayList<Vec3d> lastOverWorldPortalPos = new ArrayList<>();
-    ArrayList<Vec3d> lastNetherPortalPos = new ArrayList<>();
+    ArrayList<RunPortalPos> lastOverWorldPortalPos = new ArrayList<>();
+    ArrayList<RunPortalPos> lastNetherPortalPos = new ArrayList<>();
 
     //For record
     private final ArrayList<TimerTimeline> timelines = new ArrayList<>();
-    private final JsonObject advancementsTracker = new JsonObject();
+    private final TimerAdvancementTracker advancementsTracker = new TimerAdvancementTracker();
     private boolean isHardcore = false;
 
     private final Integer dataVersion = DATA_VERSION;
@@ -114,6 +118,7 @@ public class InGameTimer {
     private TimerStatus status = TimerStatus.NONE;
 
     private final HashMap<Integer, Integer> moreData = new HashMap<>();
+    private CategoryCondition customCondition = null;
 
     /**
      * Start the Timer, Trigger when player to join(created) the world
@@ -136,16 +141,16 @@ public class InGameTimer {
         if (INSTANCE.isCompleted || INSTANCE.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
         RunType runType = INSTANCE.getRunType();
         boolean isGlitched = INSTANCE.isGlitched;
-        boolean isHardcore = INSTANCE.isHardcore;
+        boolean isCoop = INSTANCE.isCoop;
 
         INSTANCE = new InGameTimer(INSTANCE.worldName, false);
         INSTANCE.setCategory(RunCategories.CUSTOM);
         INSTANCE.runType = runType;
         INSTANCE.isGlitched = isGlitched;
-        INSTANCE.isHardcore = isHardcore;
+        INSTANCE.isCoop = isCoop;
         INSTANCE.setPause(true, TimerStatus.IDLE, "reset");
         INSTANCE.setPause(false, "reset");
-        TimerPacketHandler.sendInitC2S(INSTANCE);
+        if (isCoop) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerInitPacket(INSTANCE, INSTANCE.getStartTime()));
     }
 
     /**
@@ -159,13 +164,13 @@ public class InGameTimer {
      * End the Timer, Trigger when Complete Ender Dragon
      */
     public static void complete() {
-        complete(System.currentTimeMillis());
+        complete(System.currentTimeMillis(), true);
     }
 
     /**
      * End the Timer, Trigger when Complete Ender Dragon
      */
-    static void complete(long endTime) {
+    public static void complete(long endTime, boolean canSendPacket) {
         if (INSTANCE.isCompleted || !INSTANCE.isStarted()) return;
 
         // Init additional data
@@ -179,7 +184,7 @@ public class InGameTimer {
         timer.endIGTTime = timer.endTime - timer.leastTickTime;
         timer.setStatus(TimerStatus.COMPLETED_LEGACY);
 
-        if (timer.isCoop) TimerPacketHandler.sendCompleteC2S(timer);
+        if (timer.isCoop() && canSendPacket) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerCompletePacket(endTime));
 
         if (INSTANCE.isServerIntegrated) {
             StringBuilder resultLog = new StringBuilder();
@@ -205,10 +210,12 @@ public class InGameTimer {
             File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "logs");
             File advancementFile = new File(worldDir, "igt_advancement" + timer.getLogSuffix()),
                     pauseFile = new File(worldDir, "igt_timer" + timer.getLogSuffix()),
-                    tickFile = new File(worldDir, "igt_freeze" + timer.getLogSuffix());
-            String advancementLog = InGameTimerUtils.advancementTrackerToString(timer.advancementsTracker),
+                    tickFile = new File(worldDir, "igt_freeze" + timer.getLogSuffix()),
+                    categoryFile = new File(worldDir, "igt_category" + timer.getLogSuffix());
+            String advancementLog = SpeedRunIGT.GSON.toJson(timer.getAdvancementsTracker().getAdvancements()),
                     pauseLog = InGameTimerUtils.pauseLogListToString(timer.pauseLogList, !pauseFile.exists(), pauseFile.exists() ? 0 : timer.completeCount) + logInfo,
-                    freezeLog = InGameTimerUtils.logListToString(timer.freezeLogList, tickFile.exists() ? 0 : timer.completeCount);
+                    freezeLog = InGameTimerUtils.logListToString(timer.freezeLogList, tickFile.exists() ? 0 : timer.completeCount),
+                    categoryRaw = timer.getCategory().getConditionJson() != null ? SpeedRunIGT.PRETTY_GSON.toJson(timer.getCategory().getConditionJson()) : "";
             timer.freezeLogList.clear();
             timer.pauseLogList.clear();
             saveManagerThread.submit(() -> {
@@ -216,6 +223,7 @@ public class InGameTimer {
                     FileUtils.writeStringToFile(advancementFile, advancementLog, StandardCharsets.UTF_8);
                     FileUtils.writeStringToFile(pauseFile, pauseLog, StandardCharsets.UTF_8, true);
                     FileUtils.writeStringToFile(tickFile, freezeLog, StandardCharsets.UTF_8, true);
+                    if (!categoryRaw.isEmpty()) FileUtils.writeStringToFile(categoryFile, categoryRaw, StandardCharsets.UTF_8);
                 } catch (IOException e) {
                     e.printStackTrace();
                     SpeedRunIGT.error("Failed to save timer logs :( RTA : " + timeToStringFormat(timer.getRealTimeAttack()) + " / IGT : " + timeToStringFormat(timer.getInGameTime(false)));
@@ -332,7 +340,7 @@ public class InGameTimer {
     private String recordString = "";
     public void writeRecordFile() {
         File recordFile = new File(SpeedRunIGT.getRecordsPath().toFile(), uuid + ".json");
-        File worldRecordFile = new File(InGameTimerUtils.getTimerLogDir(this.worldName, ""), "record.json");
+        File worldRecordFile = isCoop() ? null : new File(InGameTimerUtils.getTimerLogDir(this.worldName, ""), "record.json");
         String resultRecord = recordString;
         if (resultRecord.isEmpty()) return;
         recordString = "";
@@ -344,7 +352,7 @@ public class InGameTimer {
         saveManagerThread.submit(() -> {
             try {
                 FileUtils.writeStringToFile(recordFile, resultRecord, StandardCharsets.UTF_8);
-                FileUtils.writeStringToFile(worldRecordFile, resultRecord, StandardCharsets.UTF_8);
+                if (worldRecordFile != null) FileUtils.writeStringToFile(worldRecordFile, resultRecord, StandardCharsets.UTF_8);
                 System.setProperty("speedrunigt.record", recordFile.getName());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -354,11 +362,20 @@ public class InGameTimer {
     }
 
     public @NotNull RunCategory getCategory() {
-        return RunCategory.getCategory(category);
+        RunCategory runCategory = RunCategory.getCategory(category);
+        return runCategory == RunCategories.ERROR_CATEGORY ? RunCategories.ANY : runCategory;
     }
 
     public void setCategory(RunCategory category) {
         this.category = category.getID();
+        if (category.getConditionJson() != null) {
+            try {
+                this.customCondition = new CategoryCondition(category.getConditionJson());
+            } catch (InvalidCategoryException exception) {
+                InGameTimerUtils.setCategoryWarningScreen(category.getConditionFileName(), exception);
+            }
+        }
+        TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerChangeCategoryPacket(this.category));
     }
 
     public boolean isCoop() {
@@ -374,7 +391,12 @@ public class InGameTimer {
     }
 
     public void updateMoreData(int key, int value) {
+        this.updateMoreData(key, value, true);
+    }
+
+    public void updateMoreData(int key, int value, boolean canSendPacket) {
         moreData.put(key, value);
+        if (this.isCoop() && canSendPacket) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerDataConditionPacket(key, value));
     }
 
     public @NotNull TimerStatus getStatus() {
@@ -386,10 +408,11 @@ public class InGameTimer {
         this.status = status;
     }
 
-    public void setUncompleted() {
-        if (this.isCompleted) this.completeCount++;
+    public void setUncompleted(boolean canSendPacket) {
+        if (!this.isCompleted) return;
+        this.completeCount++;
         this.isCompleted = false;
-        sendTimerStartPacket();
+        if (canSendPacket && this.isCoop()) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerUncompletedPacket());
     }
 
     public boolean isCompleted() {
@@ -412,7 +435,7 @@ public class InGameTimer {
         return !this.isPaused() && this.getStatus() != TimerStatus.COMPLETED_LEGACY;
     }
 
-    private long getEndTime() {
+    public long getEndTime() {
         return this.getStatus() == TimerStatus.COMPLETED_LEGACY ? this.endTime : System.currentTimeMillis();
     }
 
@@ -522,7 +545,7 @@ public class InGameTimer {
                     prevPauseReason = reason;
                     pauseCount++;
                 }
-                InGameTimerUtils.RETIME_IS_CHANGED_OPTION = false;
+                InGameTimerUtils.CHANGED_OPTIONS.clear();
                 InGameTimerUtils.RETIME_IS_WAITING_LOAD = false;
                 this.setStatus(toStatus);
                 if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE) == SpeedRunOptions.TimerSaveInterval.PAUSE && status != TimerStatus.LEAVE && this.isStarted()) save();
@@ -537,9 +560,11 @@ public class InGameTimer {
                         if (InGameTimerUtils.RETIME_IS_WAITING_LOAD && InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD) {
                             retime = new TimerPauseLog.Retime(retimedIGTTime - beforeRetime, "prob. world load pause");
                         } else {
-                            if (InGameTimerUtils.RETIME_IS_CHANGED_OPTION) {
-                                retimedIGTTime += Math.max(nowTime - loggerPausedTime - 5000, 0);
-                                retime = new TimerPauseLog.Retime(retimedIGTTime - beforeRetime, "changed option(s)");
+                            if (InGameTimerUtils.CHANGED_OPTIONS.size() > 0) {
+                                int options = InGameTimerUtils.CHANGED_OPTIONS.size();
+                                retimedIGTTime += Math.max(nowTime - loggerPausedTime - (5000L * options), 0);
+                                retime = new TimerPauseLog.Retime(retimedIGTTime - beforeRetime, "changed option" + (options > 1 ? ("s (" + options + ")") : ""));
+                                InGameTimerUtils.CHANGED_OPTIONS.clear();
                             } else {
                                 retimedIGTTime += nowTime - loggerPausedTime;
                                 retime = new TimerPauseLog.Retime(retimedIGTTime - beforeRetime, "");
@@ -573,7 +598,6 @@ public class InGameTimer {
                 startTime = System.currentTimeMillis();
                 if (this.isGlitched) save();
                 if (loggerTicks != 0) leastStartTime = startTime;
-                sendTimerStartPacket();
             }
             this.setStatus(TimerStatus.RUNNING);
         }
@@ -583,54 +607,37 @@ public class InGameTimer {
         return isResettable || SpeedRunOption.getOption(SpeedRunOptions.TIMER_LIMITLESS_RESET);
     }
 
-    private void sendTimerStartPacket() {
-        MinecraftServer server = MinecraftClient.getInstance().getServer();
-        if (this.getStatus() != TimerStatus.NONE && server != null && server.getCurrentPlayerCount() > 1) {
-            TimerPacketHandler.sendInitC2S(this);
-        }
-    }
-
     @SuppressWarnings("UnusedReturnValue")
     public boolean tryInsertNewTimeline(String name) {
+        return tryInsertNewTimeline(name, true);
+    }
+    @SuppressWarnings("UnusedReturnValue")
+    public boolean tryInsertNewTimeline(String name, boolean canSendPacket) {
         for (TimerTimeline timeline : timelines) {
             if (Objects.equals(timeline.getName(), name)) return false;
         }
-        return timelines.add(new TimerTimeline(name, getInGameTime(false), getRealTimeAttack()));
+        timelines.add(new TimerTimeline(name, getInGameTime(false), getRealTimeAttack()));
+        if (canSendPacket && this.isCoop()) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerTimelinePacket(name));
+        return true;
     }
 
-    private JsonObject jsonObjectGetOrCreate(JsonObject jsonObject, String key) {
-        if (jsonObject.has(key)) return jsonObject.getAsJsonObject(key);
-        JsonObject jsonObject1 = new JsonObject();
-        jsonObject.add(key, jsonObject1);
-        return jsonObject1;
-    }
-    public void tryInsertNewAdvancement(String advancementID, String criteriaKey) {
-        JsonObject advancement = jsonObjectGetOrCreate(advancementsTracker, advancementID);
+    public void tryInsertNewAdvancement(String advancementID, String criteriaKey, boolean isAdvancement) {
+        TimerAdvancementTracker.AdvancementTrack advancementTrack = advancementsTracker.getOrCreateTrack(advancementID);
         if (criteriaKey == null) {
-            if (advancement.has("complete") && advancement.get("complete").getAsBoolean()) return;
-            advancement.addProperty("complete", true);
-            advancement.addProperty("igt", getInGameTime(false));
-            advancement.addProperty("rta", getRealTimeAttack());
+            if (advancementTrack.isComplete()) return;
+            advancementTrack.setComplete(true);
+            advancementTrack.setTime(getInGameTime(false), getRealTimeAttack());
         } else {
-            JsonObject criteria = jsonObjectGetOrCreate(advancement, "criteria");
-            if (criteria.has(criteriaKey)) return;
-            JsonObject criteriaObject = new JsonObject();
-            criteriaObject.addProperty("igt", getInGameTime(false));
-            criteriaObject.addProperty("rta", getRealTimeAttack());
-            criteria.add(criteriaKey, criteriaObject);
-            if (!advancement.has("complete")) {
-                advancement.addProperty("complete", false);
-                advancement.addProperty("igt", 0);
-                advancement.addProperty("rta", 0);
-            }
+            advancementTrack.addCriteria(criteriaKey, getInGameTime(false), getRealTimeAttack());
         }
+        advancementTrack.setAdvancement(isAdvancement);
     }
 
     public List<TimerTimeline> getTimelines() {
         return timelines;
     }
 
-    public JsonObject getAdvancementsTracker() {
+    public TimerAdvancementTracker getAdvancementsTracker() {
         return advancementsTracker;
     }
 
@@ -657,4 +664,49 @@ public class InGameTimer {
     public void openedLanIntegratedServer() {
         this.lanOpenedTime = getRealTimeAttack();
     }
+
+    public void checkConditions() {
+        if (customCondition != null && customCondition.isDone()) {
+            complete();
+        }
+    }
+
+    public <T> void updateCondition(CategoryCondition.Condition<T> condition, T check) {
+        if (condition.isCompleted()) return;
+        boolean completed = condition.checkConditionComplete(check);
+        if (completed) {
+            condition.setCompleted(true);
+            tryInsertNewTimeline(condition.getName());
+            if (this.isCoop()) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerCustomConditionPacket(condition));
+        }
+    }
+
+    public CategoryCondition getCustomCondition() {
+        return customCondition;
+    }
+
+    public List<RunPortalPos> getNetherPortalPosList() {
+        return lastNetherPortalPos;
+    }
+
+    public List<RunPortalPos> getOverWorldPortalPosList() {
+        return lastOverWorldPortalPos;
+    }
+
+    public void setServerIntegrated(boolean serverIntegrated) {
+        isServerIntegrated = serverIntegrated;
+    }
+
+    public void setCoop(boolean coop) {
+        isCoop = coop;
+    }
+
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
 }

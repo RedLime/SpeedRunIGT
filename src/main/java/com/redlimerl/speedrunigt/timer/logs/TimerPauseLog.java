@@ -1,6 +1,8 @@
 package com.redlimerl.speedrunigt.timer.logs;
 
-public class TimerPauseLog {
+import java.io.Serializable;
+
+public class TimerPauseLog implements Serializable {
 
     // Pause reason
     private final String rp;
@@ -56,7 +58,7 @@ public class TimerPauseLog {
         return r;
     }
 
-    public static class Retime {
+    public static class Retime implements Serializable {
         private final long i;
         private final String t;
         public Retime(long retimed, String notice) {
