@@ -1,7 +1,6 @@
 package com.redlimerl.speedrunigt.timer.packet;
 
 import com.google.common.collect.Maps;
-import com.redlimerl.speedrunigt.SpeedRunIGT;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
