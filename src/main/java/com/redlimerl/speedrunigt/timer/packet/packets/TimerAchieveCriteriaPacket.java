@@ -17,7 +17,7 @@ public class TimerAchieveCriteriaPacket extends TimerPacket {
     private final Boolean serverIsAdvancement;
 
     public TimerAchieveCriteriaPacket() {
-        this("", "", false);
+        this(null, null, null);
     }
 
     public TimerAchieveCriteriaPacket(String advancement, String criteria, Boolean isAdvancement) {
