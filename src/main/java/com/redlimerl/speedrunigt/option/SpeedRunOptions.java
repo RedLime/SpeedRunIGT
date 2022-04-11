@@ -283,7 +283,7 @@ public class SpeedRunOptions {
         }
     };
 
-    public static final OptionArgument<Integer> TIMER_IGT_COLOR = new OptionArgument<Integer>(new Identifier(SpeedRunIGT.MOD_ID, "timer_igt_color"), 16777045) {
+    public static final OptionArgument<Integer> TIMER_IGT_COLOR = new OptionArgument<Integer>(new Identifier(SpeedRunIGT.MOD_ID, "timer_igt_color"), 0xFFFF55) {
         @Override
         public Integer valueFromString(String string) {
             return Integer.parseInt(string);
@@ -295,7 +295,7 @@ public class SpeedRunOptions {
         }
     };
 
-    public static final OptionArgument<Integer> TIMER_RTA_COLOR = new OptionArgument<Integer>(new Identifier(SpeedRunIGT.MOD_ID, "timer_rta_color"), 5636095) {
+    public static final OptionArgument<Integer> TIMER_RTA_COLOR = new OptionArgument<Integer>(new Identifier(SpeedRunIGT.MOD_ID, "timer_rta_color"), 0x55FFFF) {
         @Override
         public Integer valueFromString(String string) {
             return Integer.parseInt(string);
