@@ -20,7 +20,7 @@ public class TimeCommandMixin {
         try {
             if (time == 0 && InGameTimer.getInstance().getStatus() != TimerStatus.NONE && InGameTimer.getInstance().isCoop()
             && source.getPlayer().getServer() != null) {
-                TimerPacketUtils.sendServer2ClientPacket(source.getPlayer().getServer(), new TimerInitPacket(InGameTimer.getInstance(), System.currentTimeMillis()));
+                TimerPacketUtils.sendServer2ClientPacket(source.getPlayer().getServer(), new TimerInitPacket(InGameTimer.getInstance(), 0));
             }
         } catch (CommandSyntaxException ignored) {
         }
