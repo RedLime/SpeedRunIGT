@@ -17,7 +17,7 @@ public class TimerDataConditionPacket extends TimerPacket {
     private final Integer sendValue;
 
     public TimerDataConditionPacket() {
-        this(0, 0);
+        this(null, null);
     }
 
     public TimerDataConditionPacket(Integer key, Integer value) {

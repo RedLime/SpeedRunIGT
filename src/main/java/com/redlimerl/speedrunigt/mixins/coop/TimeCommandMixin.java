@@ -18,7 +18,7 @@ public class TimeCommandMixin {
     private static void onSet(class_3915 source, int time, CallbackInfoReturnable<Integer> cir) {
         if (time == 0 && InGameTimer.getInstance().getStatus() != TimerStatus.NONE && InGameTimer.getInstance().isCoop()
         && source.method_17473() != null) {
-            TimerPacketUtils.sendServer2ClientPacket(source.method_17473(), new TimerInitPacket(InGameTimer.getInstance(), System.currentTimeMillis()));
+            TimerPacketUtils.sendServer2ClientPacket(source.method_17473(), new TimerInitPacket(InGameTimer.getInstance(), 0));
         }
     }
 }
