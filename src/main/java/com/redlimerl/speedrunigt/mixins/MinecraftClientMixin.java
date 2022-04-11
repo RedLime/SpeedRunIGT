@@ -9,7 +9,6 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.*;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
-import com.redlimerl.speedrunigt.timer.running.RunType;
 import com.redlimerl.speedrunigt.utils.FontUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
