@@ -20,7 +20,7 @@ public abstract class TimeCommandMixin {
     private void onExecute(TimeCommand instance, MinecraftServer minecraftServer, int time) {
         this.method_12478(minecraftServer, time);
         if (time == 0 && InGameTimer.getInstance().getStatus() != TimerStatus.NONE && InGameTimer.getInstance().isCoop()) {
-            TimerPacketUtils.sendServer2ClientPacket(minecraftServer, new TimerInitPacket(InGameTimer.getInstance(), System.currentTimeMillis()));
+            TimerPacketUtils.sendServer2ClientPacket(minecraftServer, new TimerInitPacket(InGameTimer.getInstance(), 0));
         }
     }
 }
