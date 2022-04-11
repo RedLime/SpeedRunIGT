@@ -18,7 +18,7 @@ public abstract class TimeCommandMixin {
     @Inject(method = "method_14", at = @At("TAIL"))
     private void onExecute(CommandSource commandSource, int i, CallbackInfo ci) {
         if (i == 0 && InGameTimer.getInstance().getStatus() != TimerStatus.NONE && InGameTimer.getInstance().isCoop()) {
-            TimerPacketUtils.sendServer2ClientPacket(MinecraftServer.getServer(), new TimerInitPacket(InGameTimer.getInstance(), System.currentTimeMillis()));
+            TimerPacketUtils.sendServer2ClientPacket(MinecraftServer.getServer(), new TimerInitPacket(InGameTimer.getInstance(), 0));
         }
     }
 }
