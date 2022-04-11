@@ -49,8 +49,7 @@ public abstract class ClientAdvancementManagerMixin {
                 }
             }
             timer.tryInsertNewAdvancement(advancement.method_14801().toString(), null, advancement.method_14796() != null);
-            if (timer.isCoop() && advancement.method_14796() != null
-                    && (timer.getCategory() == RunCategories.ALL_ADVANCEMENTS || timer.getCategory() == RunCategories.HALF || timer.getCategory() == RunCategories.POGLOOT_QUATER)) {
+            if (timer.isCoop() && advancement.method_14796() != null) {
                 TimerPacketUtils.sendClient2ServerPacket(field_16127, new TimerAchieveAdvancementPacket(advancement));
             }
 

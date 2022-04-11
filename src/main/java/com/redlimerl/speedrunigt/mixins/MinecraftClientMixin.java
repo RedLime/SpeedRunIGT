@@ -1,12 +1,11 @@
 package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.SpeedRunIGTClient;
 import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
-import com.redlimerl.speedrunigt.timer.InGameTimer;
-import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
-import com.redlimerl.speedrunigt.timer.TimerStatus;
+import com.redlimerl.speedrunigt.timer.*;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.minecraft.client.MinecraftClient;
@@ -17,7 +16,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.options.GameOptions;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.crash.CrashReport;
-import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.dimension.TheEndDimension;
 import net.minecraft.world.dimension.TheNetherDimension;
 import net.minecraft.world.level.LevelInfo;
@@ -44,8 +42,6 @@ public abstract class MinecraftClientMixin {
     @Shadow @Nullable public Screen currentScreen;
 
     @Shadow @Nullable public ClientWorld world;
-
-    @Shadow @Final public Profiler profiler;
 
     @Shadow private boolean paused;
 
@@ -74,9 +70,9 @@ public abstract class MinecraftClientMixin {
         if (screen instanceof ProgressScreen) {
             disconnectCheck = true;
         }
-        if (InGameTimerUtils.FAILED_CATEGORY_INIT_SCREEN != null) {
-            Screen screen1 = InGameTimerUtils.FAILED_CATEGORY_INIT_SCREEN;
-            InGameTimerUtils.FAILED_CATEGORY_INIT_SCREEN = null;
+        if (InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN != null) {
+            Screen screen1 = InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN;
+            InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN = null;
             MinecraftClient.getInstance().openScreen(screen1);
         }
     }
@@ -120,7 +116,7 @@ public abstract class MinecraftClientMixin {
 
         if (timer.getStatus() == TimerStatus.RUNNING && this.paused) {
             timer.setPause(true, TimerStatus.PAUSED, "player");
-            if (InGameTimerUtils.getGeneratedChunkRatio() < 0.1f) {
+            if (InGameTimerClientUtils.getGeneratedChunkRatio() < 0.1f) {
                 InGameTimerUtils.RETIME_IS_WAITING_LOAD = true;
             }
         } else if (timer.getStatus() == TimerStatus.PAUSED && !this.paused) {
@@ -131,10 +127,9 @@ public abstract class MinecraftClientMixin {
 
     @Inject(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;render(FJ)V", shift = At.Shift.AFTER))
     private void drawTimer(CallbackInfo ci) {
-        this.profiler.swap("timer");
         InGameTimer timer = InGameTimer.getInstance();
 
-        if (InGameTimerUtils.canUnpauseTimer(true)) {
+        if (InGameTimerClientUtils.canUnpauseTimer(true)) {
             if (!(InGameTimerUtils.isWaitingFirstInput() && !timer.isStarted())) {
                 timer.setPause(false, "rendered");
             } else {
@@ -147,7 +142,7 @@ public abstract class MinecraftClientMixin {
                 && (!this.isPaused() || this.currentScreen instanceof CreditsScreen || this.currentScreen instanceof GameMenuScreen || !SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS))
                 && !(!this.isPaused() && SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) && this.options.debugEnabled)
                 && !(this.currentScreen instanceof TimerCustomizeScreen)) {
-            SpeedRunIGT.TIMER_DRAWER.draw();
+            SpeedRunIGTClient.TIMER_DRAWER.draw();
         }
     }
 
@@ -177,7 +172,7 @@ public abstract class MinecraftClientMixin {
 
     private void unlock() {
         InGameTimer timer = InGameTimer.getInstance();
-        if (InGameTimerUtils.canUnpauseTimer(false)) {
+        if (InGameTimerClientUtils.canUnpauseTimer(false)) {
             timer.setPause(false, "moved mouse");
         }
         if (Display.isActive() && !MinecraftClient.getInstance().isPaused() && Mouse.isGrabbed()) {
