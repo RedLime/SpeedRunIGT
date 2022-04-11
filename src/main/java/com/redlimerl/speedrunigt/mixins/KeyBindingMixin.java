@@ -3,8 +3,6 @@ package com.redlimerl.speedrunigt.mixins;
 import com.redlimerl.speedrunigt.SpeedRunIGTClient;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerClientUtils;
-import com.redlimerl.speedrunigt.timer.TimerStatus;
-import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.util.collection.IntObjectStorage;

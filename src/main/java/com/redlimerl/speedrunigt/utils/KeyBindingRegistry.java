@@ -19,7 +19,6 @@
 package com.redlimerl.speedrunigt.utils;
 
 import com.google.common.collect.Lists;
-import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.SpeedRunIGTClient;
 import net.minecraft.client.options.KeyBinding;
 
