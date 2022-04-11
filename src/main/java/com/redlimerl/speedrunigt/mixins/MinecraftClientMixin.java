@@ -1,15 +1,13 @@
 package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.SpeedRunIGTClient;
 import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
 import com.redlimerl.speedrunigt.mixins.access.FontManagerAccessor;
 import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
-import com.redlimerl.speedrunigt.timer.InGameTimer;
-import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
-import com.redlimerl.speedrunigt.timer.TimerDrawer;
-import com.redlimerl.speedrunigt.timer.TimerStatus;
+import com.redlimerl.speedrunigt.timer.*;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import com.redlimerl.speedrunigt.utils.FontUtils;
@@ -63,8 +61,6 @@ public abstract class MinecraftClientMixin {
 
     @Shadow @Final private ReloadableResourceManager resourceManager;
 
-    @Shadow private Profiler profiler;
-
     @Shadow private boolean paused;
 
     private boolean disconnectCheck = false;
@@ -95,9 +91,9 @@ public abstract class MinecraftClientMixin {
         if (screen instanceof LevelLoadingScreen) {
             disconnectCheck = true;
         }
-        if (InGameTimerUtils.FAILED_CATEGORY_INIT_SCREEN != null) {
-            Screen screen1 = InGameTimerUtils.FAILED_CATEGORY_INIT_SCREEN;
-            InGameTimerUtils.FAILED_CATEGORY_INIT_SCREEN = null;
+        if (InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN != null) {
+            Screen screen1 = InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN;
+            InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN = null;
             MinecraftClient.getInstance().openScreen(screen1);
         }
     }
@@ -142,7 +138,7 @@ public abstract class MinecraftClientMixin {
 
         if (timer.getStatus() == TimerStatus.RUNNING && this.paused) {
             timer.setPause(true, TimerStatus.PAUSED, "player");
-            if (InGameTimerUtils.getGeneratedChunkRatio() < 0.1f) {
+            if (InGameTimerClientUtils.getGeneratedChunkRatio() < 0.1f) {
                 InGameTimerUtils.RETIME_IS_WAITING_LOAD = true;
             }
         } else if (timer.getStatus() == TimerStatus.PAUSED && !this.paused) {
@@ -154,10 +150,9 @@ public abstract class MinecraftClientMixin {
     @Inject(method = "render", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/toast/ToastManager;draw(Lnet/minecraft/client/util/math/MatrixStack;)V", shift = At.Shift.AFTER))
     private void drawTimer(CallbackInfo ci) {
-        this.profiler.swap("timer");
         InGameTimer timer = InGameTimer.getInstance();
 
-        if (InGameTimerUtils.canUnpauseTimer(true)) {
+        if (InGameTimerClientUtils.canUnpauseTimer(true)) {
             if (!(InGameTimerUtils.isWaitingFirstInput() && !timer.isStarted())) {
                 timer.setPause(false, "rendered");
             } else {
@@ -170,7 +165,7 @@ public abstract class MinecraftClientMixin {
                 && (!this.isPaused() || this.currentScreen instanceof CreditsScreen || this.currentScreen instanceof GameMenuScreen || !SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS))
                 && !(!this.isPaused() && SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) && this.options.debugEnabled)
                 && !(this.currentScreen instanceof TimerCustomizeScreen)) {
-            SpeedRunIGT.TIMER_DRAWER.draw();
+            SpeedRunIGTClient.TIMER_DRAWER.draw();
         }
     }
 
