@@ -9,4 +9,5 @@ out/
 *.iws
 # Fabric
 run/
+run_srv/
 minecraft/
