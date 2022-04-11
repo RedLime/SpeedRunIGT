@@ -39,7 +39,7 @@ public class TimerPacketBuf {
     }
 
     public String readString() {
-        return this.buf.readString();
+        return this.buf.readString(Short.MAX_VALUE);
     }
 
     public void writeLong(long l) {
@@ -72,5 +72,9 @@ public class TimerPacketBuf {
 
     public Identifier readIdentifier() {
         return this.buf.readIdentifier();
+    }
+
+    public void release() {
+        this.buf.release();
     }
 }
