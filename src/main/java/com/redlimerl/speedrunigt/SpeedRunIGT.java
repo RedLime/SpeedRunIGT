@@ -6,17 +6,15 @@ import com.redlimerl.speedrunigt.api.CategoryConditionRegisterHelper;
 import com.redlimerl.speedrunigt.api.SpeedRunIGTApi;
 import com.redlimerl.speedrunigt.impl.CategoryRegistryImpl;
 import com.redlimerl.speedrunigt.impl.ConditionsRegistryImpl;
+import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.timer.category.CustomCategoryManager;
 import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.packet.TimerPackets;
-import com.redlimerl.speedrunigt.utils.KeyBindingRegistry;
-import com.redlimerl.speedrunigt.utils.TranslateHelper;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
-import net.minecraft.client.options.KeyBinding;
 import net.minecraft.server.MinecraftServer;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -99,6 +97,9 @@ public class SpeedRunIGT implements ModInitializer {
 
             API_PROVIDERS.add(entryPoint.getProvider());
         }
+
+        // Load speedrun options
+        SpeedRunOption.init();
 
         // Custom Json Category initialize
         CustomCategoryManager.init();

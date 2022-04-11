@@ -7,7 +7,6 @@ import com.redlimerl.speedrunigt.timer.packet.TimerPacketBuf;
 import net.minecraft.class_3326;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
 
 public class TimerAchieveAdvancementPacket extends TimerPacket {
 
