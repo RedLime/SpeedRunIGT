@@ -1,7 +1,7 @@
 package com.redlimerl.speedrunigt.mixins.screen;
 
+import com.redlimerl.speedrunigt.SpeedRunIGTUpdateChecker;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.redlimerl.speedrunigt.gui.screen.SpeedRunIGTInfoScreen;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunOptionScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.OptionsScreen;
@@ -41,7 +41,7 @@ public class OptionsScreenMixin extends Screen {
     private void renderEnderPearl(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         if (this.client != null) {
             RenderSystem.setShaderTexture(0, timerButton.isHovered() ? ENDER_EYE :
-                    SpeedRunIGTInfoScreen.UPDATE_STATUS == SpeedRunIGTInfoScreen.UpdateStatus.OUTDATED ? BLAZE_POWDER : ENDER_PEARL);
+                    SpeedRunIGTUpdateChecker.UPDATE_STATUS == SpeedRunIGTUpdateChecker.UpdateStatus.OUTDATED ? BLAZE_POWDER : ENDER_PEARL);
             drawTexture(matrices, timerButton.x + 2, timerButton.y + 2, 0.0F, 0.0F, 16, 16, 16, 16);
         }
     }

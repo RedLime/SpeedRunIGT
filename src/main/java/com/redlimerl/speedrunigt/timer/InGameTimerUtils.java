@@ -6,22 +6,17 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
-import com.redlimerl.speedrunigt.gui.screen.FailedCategoryInitScreen;
 import com.redlimerl.speedrunigt.mixins.access.ServerStatHandlerAccessor;
-import com.redlimerl.speedrunigt.mixins.access.WorldRendererAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
 import com.redlimerl.speedrunigt.timer.logs.TimerPauseLog;
 import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import com.redlimerl.speedrunigt.timer.running.RunPortalPos;
+import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.impl.FabricLoaderImpl;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.stat.ServerStatHandler;
-import net.minecraft.stat.Stats;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
@@ -42,42 +37,18 @@ public class InGameTimerUtils {
     public static boolean IS_SET_SEED = false;
 
     public static File getTimerLogDir(String name, String pathName) {
-        File file = MinecraftClient.getInstance().getLevelStorage().getSavesDirectory().resolve(name).resolve(SpeedRunIGT.MOD_ID).resolve(pathName).toFile();
+        File file;
+        if (SpeedRunIGT.IS_CLIENT_SIDE) {
+            file = FabricLoader.getInstance().getGameDir().resolve("saves").resolve(name).resolve(SpeedRunIGT.MOD_ID).resolve(pathName).toFile();
+        } else {
+            file = FabricLoader.getInstance().getGameDir().resolve("world").resolve(SpeedRunIGT.MOD_ID).resolve(pathName).toFile();
+        }
         if (!file.exists()) SpeedRunIGT.debug(file.mkdirs() ? "make timer dirs" : "failed to make timer dirs");
         return file;
     }
 
-    public static boolean canUnpauseTimer(boolean checkRender) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        InGameTimer timer = InGameTimer.getInstance();
-
-        if (timer.getStatus() != TimerStatus.IDLE) return false;
-
-        if (!client.isPaused() && client.worldRenderer != null && client.isWindowFocused() && client.mouse.isCursorLocked()
-                && !IS_CHANGING_DIMENSION) {
-            if (checkRender) {
-                WorldRendererAccessor worldRenderer = (WorldRendererAccessor) client.worldRenderer;
-                int chunks = worldRenderer.invokeCompletedChunkCount();
-                int entities = worldRenderer.getRegularEntityCount() - (client.options.getPerspective().isFirstPerson() ? 0 : 1);
-
-                return chunks + entities > 0;
-            }
-            return true;
-        }
-        return false;
-    }
-
     public static boolean isWaitingFirstInput() {
         return SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT).isFirstInput(InGameTimer.getInstance());
-    }
-
-    public static float getGeneratedChunkRatio() {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.world != null && client.player != null) {
-            int chunks = client.options.viewDistance * 2 + 1;
-            return (float) client.world.getChunkManager().getLoadedChunkCount() / (chunks*chunks);
-        }
-        return 0;
     }
 
     public static String logListToString(ArrayList<?> arrayList, int completeCount) {
@@ -180,7 +151,7 @@ public class InGameTimerUtils {
 
     public static JsonObject getStatsJson(InGameTimer timer) {
         JsonObject jsonObject = new JsonObject();
-        MinecraftServer server = MinecraftClient.getInstance().getServer();
+        MinecraftServer server = getServer();
         if (timer.isServerIntegrated && server != null && server.getPlayerManager() != null) {
             ArrayList<ServerPlayerEntity> serverPlayerEntities = Lists.newArrayList(server.getPlayerManager().getPlayerList());
             for (ServerPlayerEntity serverPlayerEntity : serverPlayerEntities) {
@@ -191,8 +162,8 @@ public class InGameTimerUtils {
     }
 
     public static boolean isHardcoreWorld() {
-        MinecraftClient client = MinecraftClient.getInstance();
-        return client.player != null && client.player.world.getLevelProperties().isHardcore();
+        if (SpeedRunIGT.IS_CLIENT_SIDE) return InGameTimerClientUtils.isHardcoreWorld();
+        return SpeedRunIGT.DEDICATED_SERVER.isHardcore();
     }
 
     public static String getMinecraftVersion() {
@@ -220,20 +191,14 @@ public class InGameTimerUtils {
         return true;
     }
 
-    public static Long getPlayerTime() {
-        MinecraftServer server = MinecraftClient.getInstance().getServer();
-        PlayerEntity player = MinecraftClient.getInstance().player;
-        if (server != null && player != null) {
-            ServerStatHandler statHandler = server.getPlayerManager().createStatHandler(player);
-            return statHandler == null ? null : statHandler.getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME)) * 50L;
+    public static void setCategoryWarningScreen(@Nullable String conditionFileName, InvalidCategoryException exception) {
+        if (SpeedRunIGT.IS_CLIENT_SIDE) {
+            InGameTimerClientUtils.setCategoryWarningScreen(conditionFileName, exception);
         }
-        return null;
+        SpeedRunIGT.error(exception.getDetails());
     }
 
-    public static @Nullable FailedCategoryInitScreen FAILED_CATEGORY_INIT_SCREEN = null;
-    public static void setCategoryWarningScreen(@Nullable String conditionFileName, InvalidCategoryException exception) {
-        if (MinecraftClient.getInstance().currentScreen == null)
-            FAILED_CATEGORY_INIT_SCREEN = new FailedCategoryInitScreen(conditionFileName, exception);
-        else MinecraftClient.getInstance().setScreen(new FailedCategoryInitScreen(conditionFileName, exception));
+    public static MinecraftServer getServer() {
+        return SpeedRunIGT.IS_CLIENT_SIDE ? InGameTimerClientUtils.getClientServer() : SpeedRunIGT.DEDICATED_SERVER;
     }
 }
