@@ -18,25 +18,32 @@ public class TimerInitPacket extends TimerPacket {
 
     public static final Identifier IDENTIFIER = TimerPacket.identifier("timer_init");
     private final InGameTimer sendTimer;
-    private final long sendStartTime;
+    private final long sendRTA;
+    private final long delayTime;
 
-    public TimerInitPacket() {
-        this(InGameTimer.getInstance(), InGameTimer.getInstance().getStartTime());
+    private static long getNanoTime() {
+        return System.nanoTime() / 1000000L;
     }
 
-    public TimerInitPacket(InGameTimer timer, long startTime) {
+    public TimerInitPacket() {
+        this(null, InGameTimer.getInstance().getRealTimeAttack());
+    }
+
+    public TimerInitPacket(InGameTimer timer, long rta) {
         super(IDENTIFIER);
         this.sendTimer = timer;
-        this.sendStartTime = startTime;
+        this.sendRTA = rta;
+        this.delayTime = getNanoTime();
     }
 
     @Environment(EnvType.CLIENT)
     @Override
     protected TimerPacketBuf convertClient2ServerPacket(TimerPacketBuf buf, MinecraftClient client) {
         if (sendTimer != null) {
+            buf.writeLong(delayTime);
             buf.writeString(sendTimer.getUuid().toString());
             buf.writeString(sendTimer.getCategory().getID());
-            buf.writeLong(sendStartTime != 0 ? sendStartTime : sendTimer.getStartTime());
+            buf.writeLong(sendRTA);
             buf.writeInt(sendTimer.getRunType().getCode());
         }
         return buf;
@@ -55,9 +62,10 @@ public class TimerInitPacket extends TimerPacket {
     @Override
     protected TimerPacketBuf convertServer2ClientPacket(TimerPacketBuf buf, MinecraftServer server) {
         if (sendTimer != null) {
+            buf.writeLong(delayTime);
             buf.writeString(sendTimer.getUuid().toString());
             buf.writeString(sendTimer.getCategory().getID());
-            buf.writeLong(sendStartTime != 0 ? sendStartTime : sendTimer.getStartTime());
+            buf.writeLong(sendRTA);
             buf.writeInt(sendTimer.getRunType().getCode());
         }
         if (!SpeedRunIGT.IS_CLIENT_SIDE && !InGameTimer.getInstance().isStarted()) {
@@ -75,10 +83,13 @@ public class TimerInitPacket extends TimerPacket {
     }
 
     public void timerInit(TimerPacketBuf buf, boolean isIntegrated) {
+        long delay = getNanoTime() - buf.readLong();
         String uuid = buf.readString();
         RunCategory category = RunCategory.getCategory(buf.readString());
-        long startTime = buf.readLong();
+        long rtaTime = buf.readLong();
         int runType = buf.readInt();
+
+        long startTime = System.currentTimeMillis() - rtaTime - delay;
 
         if (!SpeedRunIGT.IS_CLIENT_SIDE || !Objects.equals(InGameTimer.getInstance().getUuid().toString(), uuid)) {
             InGameTimer.start("", RunType.fromInt(runType));
