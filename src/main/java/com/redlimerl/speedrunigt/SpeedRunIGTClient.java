@@ -42,9 +42,6 @@ public class SpeedRunIGTClient implements ClientModInitializer {
             SpeedRunIGT.API_PROVIDERS.add(entryPoint.getProvider());
         }
 
-        // Options initialize
-        SpeedRunOption.init();
-
         // End initializing
         isInitialized = true;
 
