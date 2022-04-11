@@ -1,8 +1,11 @@
 package com.redlimerl.speedrunigt.timer.packet.packets;
 
+import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacketBuf;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
 
@@ -24,6 +27,7 @@ public class TimerAchieveCriteriaPacket extends TimerPacket {
         this.serverIsAdvancement = isAdvancement;
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     protected TimerPacketBuf convertClient2ServerPacket(TimerPacketBuf buf, MinecraftClient client) {
         if (serverAdvancement != null) buf.writeString(serverAdvancement);
@@ -34,7 +38,12 @@ public class TimerAchieveCriteriaPacket extends TimerPacket {
 
     @Override
     public void receiveClient2ServerPacket(TimerPacketBuf buf, MinecraftServer server) {
-
+        if (!SpeedRunIGT.IS_CLIENT_SIDE) {
+            TimerPacketBuf copiedBuf = buf.copy();
+            InGameTimer.getInstance().tryInsertNewAdvancement(copiedBuf.readString(), copiedBuf.readString(), copiedBuf.readBoolean());
+            copiedBuf.release();
+        }
+        this.sendPacketToPlayers(buf, server);
     }
 
     @Override
@@ -45,11 +54,9 @@ public class TimerAchieveCriteriaPacket extends TimerPacket {
         return buf;
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void receiveServer2ClientPacket(TimerPacketBuf buf, MinecraftClient client) {
-        String advancement = buf.readString();
-        String criteria = buf.readString();
-        boolean isAdvancement = buf.readBoolean();
-        InGameTimer.getInstance().tryInsertNewAdvancement(advancement, criteria, isAdvancement);
+        InGameTimer.getInstance().tryInsertNewAdvancement(buf.readString(), buf.readString(), buf.readBoolean());
     }
 }

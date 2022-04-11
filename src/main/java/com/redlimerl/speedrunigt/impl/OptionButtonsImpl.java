@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
 
-import static com.redlimerl.speedrunigt.SpeedRunIGT.TIMER_DRAWER;
+import static com.redlimerl.speedrunigt.SpeedRunIGTClient.TIMER_DRAWER;
 
 public class OptionButtonsImpl implements SpeedRunIGTApi {
 

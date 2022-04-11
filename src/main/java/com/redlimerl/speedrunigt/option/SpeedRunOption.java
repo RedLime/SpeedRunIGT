@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.option;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.SpeedRunIGTClient;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
@@ -103,7 +104,7 @@ public class SpeedRunOption {
     public static void reload() {
         isInit = false;
         init();
-        SpeedRunIGT.TIMER_DRAWER = new TimerDrawer(true);
+        SpeedRunIGTClient.TIMER_DRAWER = new TimerDrawer(false);
     }
 
     private static final ArrayList<OptionButtonFactory> optionButtonFactories = new ArrayList<>();
@@ -112,7 +113,7 @@ public class SpeedRunOption {
     }
 
     public static void addOptionButtonFactories(OptionButtonFactory... factories) {
-        if (SpeedRunIGT.isInitialized()) return;
+        if (SpeedRunIGTClient.isInitialized) return;
         optionButtonFactories.addAll(Arrays.asList(factories));
     }
 }
