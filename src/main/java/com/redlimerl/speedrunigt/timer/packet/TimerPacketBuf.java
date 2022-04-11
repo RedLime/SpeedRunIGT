@@ -80,4 +80,8 @@ public class TimerPacketBuf {
     public Identifier readIdentifier() {
         return new Identifier(this.readString());
     }
+
+    public void release() {
+        this.buf.release();
+    }
 }

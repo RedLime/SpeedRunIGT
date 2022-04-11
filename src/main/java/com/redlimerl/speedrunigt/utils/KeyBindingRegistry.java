@@ -20,6 +20,7 @@ package com.redlimerl.speedrunigt.utils;
 
 import com.google.common.collect.Lists;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.SpeedRunIGTClient;
 import net.minecraft.client.options.KeyBinding;
 
 import java.util.List;
@@ -38,12 +39,12 @@ public final class KeyBindingRegistry {
      */
     public static KeyBinding[] process(KeyBinding[] keysAll) {
         // Key Bindings initialize
-        SpeedRunIGT.timerResetKeyBinding = registerKeyBinding(new KeyBinding(
+        SpeedRunIGTClient.timerResetKeyBinding = registerKeyBinding(new KeyBinding(
                 "speedrunigt.controls.start_timer",
                 22,
                 "speedrunigt.title.options"
         ));
-        SpeedRunIGT.timerStopKeyBinding = registerKeyBinding(new KeyBinding(
+        SpeedRunIGTClient.timerStopKeyBinding = registerKeyBinding(new KeyBinding(
                 "speedrunigt.controls.stop_timer",
                 23,
                 "speedrunigt.title.options"
