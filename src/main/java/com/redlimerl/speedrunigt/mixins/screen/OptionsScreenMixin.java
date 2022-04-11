@@ -1,7 +1,7 @@
 package com.redlimerl.speedrunigt.mixins.screen;
 
-import com.redlimerl.speedrunigt.SpeedRunIGTUpdateChecker;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.redlimerl.speedrunigt.SpeedRunIGTUpdateChecker;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunOptionScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.OptionsScreen;
