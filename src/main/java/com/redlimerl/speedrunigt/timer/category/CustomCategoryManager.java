@@ -34,8 +34,10 @@ public class CustomCategoryManager {
             try {
                 JsonObject jsonObject = new JsonParser().parse(FileUtils.readFileToString(file, StandardCharsets.UTF_8)).getAsJsonObject();
 
-                if (!VersionPredicateParser.parse(jsonObject.get("version").getAsString()).test(SemanticVersion.parse(InGameTimerUtils.getMinecraftVersion())))
-                    throw new InvalidCategoryException(InvalidCategoryException.Reason.UNSUPPORTED_CATEGORY_VERSION, "");
+                if (!VersionPredicateParser.parse(jsonObject.get("version").getAsString()).test(SemanticVersion.parse(InGameTimerUtils.getMinecraftVersion()))) {
+                    SpeedRunIGT.error(String.format("Failed to add '%s' category file, it doesn't work for this version", file.getName()));
+                    continue;
+                }
 
                 RunCategory runCategory = new RunCategory(jsonObject.get("id").getAsString(),
                         jsonObject.get("src_category").getAsString(),
@@ -48,8 +50,6 @@ public class CustomCategoryManager {
                 } catch (IllegalArgumentException e) {
                     InGameTimerUtils.setCategoryWarningScreen(file.getName(), new InvalidCategoryException(InvalidCategoryException.Reason.DUPLICATED_CATEGORY_ID, ""));
                 }
-            } catch (InvalidCategoryException e) {
-                InGameTimerUtils.setCategoryWarningScreen(file.getName(), e);
             } catch (JsonParseException | IOException e) {
                 InGameTimerUtils.setCategoryWarningScreen(file.getName(), new InvalidCategoryException(InvalidCategoryException.Reason.FAILED_JSON_PARSE, ""));
             } catch (Exception e) {

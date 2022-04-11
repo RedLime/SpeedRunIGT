@@ -3,42 +3,40 @@ package com.redlimerl.speedrunigt;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.redlimerl.speedrunigt.api.CategoryConditionRegisterHelper;
-import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.api.SpeedRunIGTApi;
-import com.redlimerl.speedrunigt.gui.screen.SpeedRunIGTInfoScreen;
 import com.redlimerl.speedrunigt.impl.CategoryRegistryImpl;
 import com.redlimerl.speedrunigt.impl.ConditionsRegistryImpl;
-import com.redlimerl.speedrunigt.impl.OptionButtonsImpl;
-import com.redlimerl.speedrunigt.option.SpeedRunOption;
-import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.timer.category.CustomCategoryManager;
 import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.packet.TimerPackets;
 import com.redlimerl.speedrunigt.utils.TranslateHelper;
-import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.minecraft.client.options.KeyBinding;
+import net.minecraft.server.MinecraftServer;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.spongepowered.include.com.google.common.collect.Sets;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
-public class SpeedRunIGT implements ClientModInitializer {
+public class SpeedRunIGT implements ModInitializer {
 
     public static final String MOD_ID = "speedrunigt";
-    public static TimerDrawer TIMER_DRAWER = new TimerDrawer(true);
     private static boolean isInitialized = false;
     public static boolean isInitialized() { return isInitialized; }
+    public static boolean IS_CLIENT_SIDE = false;
+    public static MinecraftServer DEDICATED_SERVER = null;
 
     public static String DEBUG_DATA = "";
     public static String MOD_VERSION;
@@ -53,7 +51,7 @@ public class SpeedRunIGT implements ClientModInitializer {
     public static Path getGlobalPath() { return new File(System.getProperty("user.home").replace("\\", "/"), SpeedRunIGT.MOD_ID).toPath(); }
     public static Path getRecordsPath() { return getGlobalPath().resolve("records"); }
 
-    public static final ArrayList<ModContainer> API_PROVIDERS = new ArrayList<>();
+    public static final Set<ModContainer> API_PROVIDERS = Sets.newHashSet();
 
     static {
         getMainPath().toFile().mkdirs();
@@ -72,16 +70,11 @@ public class SpeedRunIGT implements ClientModInitializer {
         }
     }
 
-    public static KeyBinding timerResetKeyBinding;
-    public static KeyBinding timerStopKeyBinding;
-
     @Override
-    public void onInitializeClient() {
+    public void onInitialize() {
         MOD_VERSION = (FabricLoader.getInstance().getModContainer(SpeedRunIGT.MOD_ID).isPresent()
                         ? FabricLoader.getInstance().getModContainer(SpeedRunIGT.MOD_ID).get().getMetadata().getVersion().getFriendlyString() : "Unknown+Unknown");
 
-        // init default option buttons
-        SpeedRunOption.addOptionButtonFactories(new OptionButtonsImpl().createOptionButtons().toArray(new OptionButtonFactory[0]));
         // init default categories
         new CategoryRegistryImpl().registerCategories().forEach(RunCategory::registerCategory);
         CategoryCondition.registerCondition(new ConditionsRegistryImpl().registerConditions());
@@ -90,14 +83,6 @@ public class SpeedRunIGT implements ClientModInitializer {
         // Registry API's
         for (EntrypointContainer<SpeedRunIGTApi> entryPoint : FabricLoader.getInstance().getEntrypointContainers("speedrunigt", SpeedRunIGTApi.class)) {
             SpeedRunIGTApi api = entryPoint.getEntrypoint();
-
-            // Registry single option button
-            OptionButtonFactory singleFactory = api.createOptionButton();
-            if (singleFactory != null) SpeedRunOption.addOptionButtonFactories(singleFactory);
-
-            // Registry multiple option buttons
-            Collection<OptionButtonFactory> multipleFactory = api.createOptionButtons();
-            if (multipleFactory != null) SpeedRunOption.addOptionButtonFactories(multipleFactory.toArray(new OptionButtonFactory[0]));
 
             // Registry single category
             RunCategory singleCategory = api.registerCategory();
@@ -117,16 +102,6 @@ public class SpeedRunIGT implements ClientModInitializer {
         // Custom Json Category initialize
         CustomCategoryManager.init();
 
-        // Options initialize
-        SpeedRunOption.init();
-
-        // Translate initialize
-        try {
-            TranslateHelper.init();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-
         // End initializing
         isInitialized = true;
 
@@ -135,7 +110,7 @@ public class SpeedRunIGT implements ClientModInitializer {
         System.setProperty("speedrunigt.record", "");
 
         // Update checking
-        SpeedRunIGTInfoScreen.checkUpdate();
+        SpeedRunIGTUpdateChecker.checkUpdate();
 
         // Initializing packets
         TimerPackets.init();

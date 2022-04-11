@@ -101,7 +101,7 @@ public class SpeedRunCategoryScreen extends Screen {
                 this.checkBox = new ConsumerButtonWidget(0, 0, 20, 20, "", (button) -> {
                     button.method_21888(SpeedRunCategoryScreen.this.field_22534.getSoundManager());
                     SpeedRunOption.setOption(SpeedRunOptions.TIMER_CATEGORY, category);
-                    InGameTimer.getInstance().setCategory(category);
+                    InGameTimer.getInstance().setCategory(category, true);
                     InGameTimer.getInstance().setUncompleted(true);
                 });
                 this.category = category;

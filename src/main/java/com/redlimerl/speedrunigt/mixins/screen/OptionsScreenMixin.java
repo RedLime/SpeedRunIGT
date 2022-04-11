@@ -1,6 +1,6 @@
 package com.redlimerl.speedrunigt.mixins.screen;
 
-import com.redlimerl.speedrunigt.gui.screen.SpeedRunIGTInfoScreen;
+import com.redlimerl.speedrunigt.SpeedRunIGTUpdateChecker;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunOptionScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SettingsScreen;
@@ -38,7 +38,7 @@ public class OptionsScreenMixin extends Screen {
     private void renderEnderPearl(int mouseX, int mouseY, float delta, CallbackInfo ci) {
         if (this.field_22534 != null) {
             this.field_22534.getTextureManager().bindTexture(timerButton.method_21885() ? ENDER_EYE :
-                    SpeedRunIGTInfoScreen.UPDATE_STATUS == SpeedRunIGTInfoScreen.UpdateStatus.OUTDATED ? BLAZE_POWDER : ENDER_PEARL);
+                    SpeedRunIGTUpdateChecker.UPDATE_STATUS == SpeedRunIGTUpdateChecker.UpdateStatus.OUTDATED ? BLAZE_POWDER : ENDER_PEARL);
             method_21875(timerButton.x + 2, timerButton.y + 2, 0.0F, 0.0F, 16, 16, 16, 16);
         }
     }
