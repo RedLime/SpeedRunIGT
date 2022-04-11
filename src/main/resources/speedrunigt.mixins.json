@@ -6,8 +6,8 @@
   "mixins": [
     "LivingEntityMixin",
     "ServerStatHandlerMixin",
-    "access.ServerStatHandlerAccessor",
     "access.LevelStorageAccessor",
+    "access.ServerStatHandlerAccessor",
     "coop.PlayerManagerMixin",
     "coop.TimeCommandMixin",
     "network.ServerPlayNetworkHandlerMixin",
