@@ -13,21 +13,21 @@ import net.minecraft.util.Identifier;
 public class TimerCompletePacket extends TimerPacket {
 
     public static final Identifier IDENTIFIER = TimerPacket.identifier("timer_complete");
-    private final Long endTime;
+    private final Long sendRTA;
 
     public TimerCompletePacket() {
         this(null);
     }
 
-    public TimerCompletePacket(Long time) {
+    public TimerCompletePacket(Long rta) {
         super(IDENTIFIER);
-        this.endTime = time;
+        this.sendRTA = rta;
     }
 
     @Environment(EnvType.CLIENT)
     @Override
     protected TimerPacketBuf convertClient2ServerPacket(TimerPacketBuf buf, MinecraftClient client) {
-        if (endTime != null) buf.writeLong(endTime);
+        if (sendRTA != null) buf.writeLong(sendRTA);
         return buf;
     }
 
@@ -35,7 +35,7 @@ public class TimerCompletePacket extends TimerPacket {
     public void receiveClient2ServerPacket(TimerPacketBuf buf, MinecraftServer server) {
         if (!SpeedRunIGT.IS_CLIENT_SIDE) {
             TimerPacketBuf copiedBuf = buf.copy();
-            InGameTimer.complete(copiedBuf.readLong(), false);
+            InGameTimer.complete(InGameTimer.getInstance().getStartTime() + copiedBuf.readLong(), false);
             copiedBuf.release();
         }
         this.sendPacketToPlayers(buf, server);
@@ -43,13 +43,13 @@ public class TimerCompletePacket extends TimerPacket {
 
     @Override
     protected TimerPacketBuf convertServer2ClientPacket(TimerPacketBuf buf, MinecraftServer server) {
-        if (endTime != null) buf.writeLong(endTime);
+        if (sendRTA != null) buf.writeLong(sendRTA);
         return buf;
     }
 
     @Environment(EnvType.CLIENT)
     @Override
     public void receiveServer2ClientPacket(TimerPacketBuf buf, MinecraftClient client) {
-        InGameTimer.complete(buf.readLong(), false);
+        InGameTimer.complete(InGameTimer.getInstance().getStartTime() + buf.readLong(), false);
     }
 }
