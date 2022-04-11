@@ -15,9 +15,12 @@
   "license": "MIT",
   "icon": "assets/speedrunigt/icon.png",
 
-  "environment": "client",
+  "environment": "*",
   "entrypoints": {
     "client": [
+      "com.redlimerl.speedrunigt.SpeedRunIGTClient"
+    ],
+    "main": [
       "com.redlimerl.speedrunigt.SpeedRunIGT"
     ]
   },

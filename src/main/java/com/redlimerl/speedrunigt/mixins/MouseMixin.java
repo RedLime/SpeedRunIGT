@@ -1,7 +1,7 @@
 package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.timer.InGameTimer;
-import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
+import com.redlimerl.speedrunigt.timer.InGameTimerClientUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import net.minecraft.class_4112;
 import net.minecraft.client.MinecraftClient;
@@ -32,7 +32,7 @@ public abstract class MouseMixin {
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
 
-        if (InGameTimerUtils.canUnpauseTimer(false)) {
+        if (InGameTimerClientUtils.canUnpauseTimer(false)) {
             timer.setPause(false, "moved mouse");
         }
         if (this.method_18252() && !MinecraftClient.getInstance().isPaused()) {

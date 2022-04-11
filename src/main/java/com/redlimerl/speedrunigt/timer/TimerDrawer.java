@@ -4,10 +4,13 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecimals;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import com.redlimerl.speedrunigt.version.ColorMixer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 
+@Environment(EnvType.CLIENT)
 public class TimerDrawer {
 
     private final boolean translateZ;
@@ -250,22 +253,16 @@ public class TimerDrawer {
     public void draw() {
         if (!toggle) return;
 
-        client.profiler.push("timer");
-
         String igtText = getIGTText();
         String rtaText = getRTAText();
 
-        client.profiler.swap("font");
-
         //초기 값 조정
-        client.profiler.swap("init");
         TimerElement igtTimerElement = new TimerElement();
         TimerElement rtaTimerElement = new TimerElement();
         rtaTimerElement.init(rtaXPos, rtaYPos, rtaScale, rtaText, rtaColor, rtaDecoration);
         igtTimerElement.init(igtXPos, igtYPos, igtScale, igtText, igtColor, igtDecoration);
 
         //배경 렌더
-        client.profiler.swap("background");
         if (bgOpacity > 0.01f) {
             Position rtaMin = new Position(rtaTimerElement.getPosition().getX() - rtaPadding, rtaTimerElement.getPosition().getY() - rtaPadding);
             Position rtaMax = new Position(rtaMin.getX() + rtaTimerElement.getScaledTextWidth() + ((rtaPadding - 1) + rtaPadding), rtaMin.getY() + rtaTimerElement.getScaledTextHeight() + ((rtaPadding - 1) + rtaPadding));
@@ -283,11 +280,8 @@ public class TimerDrawer {
         }
 
         //렌더
-        client.profiler.swap("draw");
         if (igtScale != 0) igtTimerElement.draw(translateZ);
         if (rtaScale != 0) rtaTimerElement.draw(translateZ);
-
-        client.profiler.pop();
     }
 
 

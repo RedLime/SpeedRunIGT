@@ -75,4 +75,8 @@ public class TimerPacketBuf {
     public Identifier readIdentifier() {
         return this.buf.readIdentifier();
     }
+
+    public void release() {
+        this.buf.release();
+    }
 }
