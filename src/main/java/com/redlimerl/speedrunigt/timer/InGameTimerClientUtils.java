@@ -4,7 +4,6 @@ import com.redlimerl.speedrunigt.gui.screen.FailedCategoryInitScreen;
 import com.redlimerl.speedrunigt.mixins.access.ClientChunkProviderAccessor;
 import com.redlimerl.speedrunigt.mixins.access.WorldRendererAccessor;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
-import com.redlimerl.speedrunigt.utils.MixinValues;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
