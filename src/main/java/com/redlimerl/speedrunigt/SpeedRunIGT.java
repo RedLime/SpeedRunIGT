@@ -6,6 +6,7 @@ import com.redlimerl.speedrunigt.api.CategoryConditionRegisterHelper;
 import com.redlimerl.speedrunigt.api.SpeedRunIGTApi;
 import com.redlimerl.speedrunigt.impl.CategoryRegistryImpl;
 import com.redlimerl.speedrunigt.impl.ConditionsRegistryImpl;
+import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.timer.category.CustomCategoryManager;
 import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
@@ -100,6 +101,9 @@ public class SpeedRunIGT implements ModInitializer {
 
             API_PROVIDERS.add(entryPoint.getProvider());
         }
+
+        // Load speedrun options
+        SpeedRunOption.init();
 
         // Custom Json Category initialize
         CustomCategoryManager.init();
