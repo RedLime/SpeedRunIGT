@@ -1,6 +1,5 @@
 package com.redlimerl.speedrunigt.gui.screen;
 
-import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.SpeedRunIGTClient;
 import com.redlimerl.speedrunigt.gui.ConsumerButtonWidget;
 import com.redlimerl.speedrunigt.gui.CustomSliderWidget;
