@@ -6,6 +6,8 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecimals;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
@@ -16,6 +18,7 @@ import net.minecraft.util.math.ColorHelper;
 
 import java.util.HashMap;
 
+@Environment(EnvType.CLIENT)
 public class TimerDrawer {
 
     public static final HashMap<String, Float> fontHeightMap = new HashMap<>();
@@ -271,11 +274,9 @@ public class TimerDrawer {
     public void draw() {
         if (!toggle) return;
 
-        client.getProfiler().push("create");
         MutableText igtText = getIGTText();
         MutableText rtaText = getRTAText();
 
-        client.getProfiler().swap("font");
         //폰트 조정
         float fontHeight = 8;
         FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) client).getFontManager();
@@ -292,7 +293,6 @@ public class TimerDrawer {
         }
 
         //초기 값 조정
-        client.getProfiler().swap("init");
         TimerElement igtTimerElement = new TimerElement();
         TimerElement rtaTimerElement = new TimerElement();
         rtaTimerElement.init(rtaXPos, rtaYPos, rtaScale, rtaText, rtaColor, rtaDecoration, fontHeight);
@@ -301,7 +301,6 @@ public class TimerDrawer {
         MatrixStack matrixStack = new MatrixStack();
 
         //배경 렌더
-        client.getProfiler().swap("background");
         if (bgOpacity > 0.01f) {
             Position rtaMin = new Position(rtaTimerElement.getPosition().getX() - rtaPadding, rtaTimerElement.getPosition().getY() - rtaPadding);
             Position rtaMax = new Position(rtaMin.getX() + rtaTimerElement.getScaledTextWidth() + ((rtaPadding - 1) + rtaPadding), rtaMin.getY() + rtaTimerElement.getScaledTextHeight() + ((rtaPadding - 1) + rtaPadding));
@@ -319,11 +318,9 @@ public class TimerDrawer {
         }
 
         //렌더
-        client.getProfiler().swap("draw");
         if (igtScale != 0) igtTimerElement.draw(matrixStack, translateZ);
         if (rtaScale != 0) rtaTimerElement.draw(matrixStack, translateZ);
 
-        client.getProfiler().pop();
     }
 
 

@@ -1,8 +1,8 @@
 package com.redlimerl.speedrunigt.mixins;
 
-import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.SpeedRunIGTClient;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
-import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
+import com.redlimerl.speedrunigt.timer.InGameTimerClientUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import net.minecraft.client.MinecraftClient;
@@ -32,17 +32,17 @@ public abstract class KeyBindingMixin {
             if (keyBinding == MinecraftClient.getInstance().options.advancementsKey // Advancement
                     || Objects.equals(keyBinding.getCategory(), "key.categories.inventory")
                     || Objects.equals(keyBinding.getCategory(), "key.categories.gameplay")) {
-                if (InGameTimerUtils.canUnpauseTimer(false)) {
+                if (InGameTimerClientUtils.canUnpauseTimer(false)) {
                     timer.setPause(false, "pressed key");
                 }
                 timer.updateFirstInput();
             }
-            if (keyBinding == SpeedRunIGT.timerResetKeyBinding) {
+            if (keyBinding == SpeedRunIGTClient.timerResetKeyBinding) {
                 if (timer.getCategory() == RunCategories.CUSTOM && timer.isResettable()) {
                     InGameTimer.reset();
                 }
             }
-            if (keyBinding == SpeedRunIGT.timerStopKeyBinding) {
+            if (keyBinding == SpeedRunIGTClient.timerStopKeyBinding) {
                 if (timer.getCategory() == RunCategories.CUSTOM && timer.isStarted()) {
                     InGameTimer.complete();
                 }
