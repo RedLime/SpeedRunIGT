@@ -15,12 +15,12 @@
     "timeline.VillagerEntityMixin"
   ],
   "client": [
+    "AchievementNotificationMixin",
     "ClientPlayerEntityMixin",
     "ClientWorldMixin",
     "KeyBindingMixin",
     "MinecraftClientMixin",
     "ServerStatHandlerMixin",
-    "AchievementNotificationMixin",
     "WorldRendererMixin",
     "access.ButtonWidgetAccessor",
     "access.ClientChunkProviderAccessor",
