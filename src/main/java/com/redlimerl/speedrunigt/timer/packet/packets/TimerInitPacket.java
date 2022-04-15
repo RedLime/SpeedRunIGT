@@ -68,7 +68,7 @@ public class TimerInitPacket extends TimerPacket {
             buf.writeLong(sendRTA);
             buf.writeInt(sendTimer.getRunType().getCode());
         }
-        if (!SpeedRunIGT.IS_CLIENT_SIDE && !InGameTimer.getInstance().isStarted()) {
+        if (!SpeedRunIGT.IS_CLIENT_SIDE && (sendTimer != null || !InGameTimer.getInstance().isStarted())) {
             TimerPacketBuf copiedBuf = buf.copy();
             timerInit(copiedBuf, true);
             copiedBuf.release();
