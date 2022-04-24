@@ -3,14 +3,14 @@ package com.redlimerl.speedrunigt.api;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 
 import java.util.function.Supplier;
 
 public interface OptionButtonFactory {
     class Builder {
         private String category = null;
-        private ClickableWidget buttonWidget = new ButtonWidget(0, 0, 150, 20, new LiteralText(""), button -> {});
+        private ClickableWidget buttonWidget = new ButtonWidget(0, 0, 150, 20, Text.empty(), button -> {});
         private Supplier<String> tooltip = null;
 
         public Builder setButtonWidget(ClickableWidget buttonWidget) {

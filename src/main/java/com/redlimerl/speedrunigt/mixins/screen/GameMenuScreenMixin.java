@@ -3,7 +3,6 @@ package com.redlimerl.speedrunigt.mixins.screen;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,7 +21,7 @@ public class GameMenuScreenMixin extends Screen {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/GameMenuScreen;drawCenteredText(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/text/Text;III)V"), index = 2)
     public Text onRender(Text string) {
         if (InGameTimer.getInstance().isPaused() && InGameTimer.getInstance().isStarted() && !InGameTimer.getInstance().isCoop()) {
-            return new LiteralText(string.getString() + " (#" + InGameTimer.getInstance().getPauseCount() + ")");
+            return Text.literal(string.getString() + " (#" + InGameTimer.getInstance().getPauseCount() + ")");
         } else {
             return string;
         }

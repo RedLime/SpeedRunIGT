@@ -14,9 +14,7 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Util;
 
 import java.util.*;
@@ -32,7 +30,7 @@ public class SpeedRunOptionScreen extends Screen {
     private String currentSelectCategory = "";
 
     public SpeedRunOptionScreen(Screen parent) {
-        super(new TranslatableText("speedrunigt.title.options"));
+        super(Text.translatable("speedrunigt.title.options"));
         this.parent = parent;
     }
 
@@ -58,7 +56,7 @@ public class SpeedRunOptionScreen extends Screen {
             categorySubButtons.put(category, categoryList);
 
             if (!categorySelectButtons.containsKey(category)) {
-                ButtonWidget buttonWidget = new ButtonWidget(width - 110, 30 + (categoryCount++ * 22), 80, 20, new TranslatableText(category), (ButtonWidget buttonWidget1) -> selectCategory(category));
+                ButtonWidget buttonWidget = new ButtonWidget(width - 110, 30 + (categoryCount++ * 22), 80, 20, Text.translatable(category), (ButtonWidget buttonWidget1) -> selectCategory(category));
                 categorySelectButtons.put(category, buttonWidget);
                 addDrawableChild(buttonWidget);
             }
@@ -66,7 +64,7 @@ public class SpeedRunOptionScreen extends Screen {
 
         addDrawableChild(new ButtonWidget(width - 85, height - 35, 70, 20, ScreenTexts.CANCEL, (ButtonWidget button) -> close()));
 
-        addDrawableChild(new ButtonWidget(15, height - 35, 70, 20, new TranslatableText("speedrunigt.menu.donate"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://ko-fi.com/redlimerl")));
+        addDrawableChild(new ButtonWidget(15, height - 35, 70, 20, Text.translatable("speedrunigt.menu.donate"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://ko-fi.com/redlimerl")));
 
         buttonListWidget = addSelectableChild(new ButtonScrollListWidget());
 
@@ -101,7 +99,7 @@ public class SpeedRunOptionScreen extends Screen {
                 if (tooltips.containsKey(buttonWidget)) {
                     String text = tooltips.get(buttonWidget).get();
                     for (String s : text.split("\n")) {
-                        tooltipList.add(new LiteralText(s));
+                        tooltipList.add(Text.literal(s));
                     }
                     return tooltipList;
                 }
@@ -109,7 +107,7 @@ public class SpeedRunOptionScreen extends Screen {
         }
 
         if (SpeedRunIGTUpdateChecker.UPDATE_STATUS == SpeedRunIGTUpdateChecker.UpdateStatus.OUTDATED) {
-            tooltipList.add(new TranslatableText("speedrunigt.message.update_found"));
+            tooltipList.add(Text.translatable("speedrunigt.message.update_found"));
         }
         return tooltipList;
     }

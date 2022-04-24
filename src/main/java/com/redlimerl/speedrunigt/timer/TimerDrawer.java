@@ -11,8 +11,8 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ColorHelper;
 
@@ -264,11 +264,11 @@ public class TimerDrawer {
     }
 
     public MutableText getIGTText() {
-        return new LiteralText((this.simply ? "" : "IGT: ") + getTimeFormat(InGameTimer.getInstance().getInGameTime()));
+        return Text.literal((this.simply ? "" : "IGT: ") + getTimeFormat(InGameTimer.getInstance().getInGameTime()));
     }
 
     public MutableText getRTAText() {
-        return new LiteralText((this.simply ? "" : "RTA: ") + getTimeFormat(InGameTimer.getInstance().getRealTimeAttack()));
+        return Text.literal((this.simply ? "" : "RTA: ") + getTimeFormat(InGameTimer.getInstance().getRealTimeAttack()));
     }
 
     public void draw() {

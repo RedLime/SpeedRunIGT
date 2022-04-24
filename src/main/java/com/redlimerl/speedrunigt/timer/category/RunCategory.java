@@ -2,7 +2,7 @@ package com.redlimerl.speedrunigt.timer.category;
 
 import com.google.gson.JsonArray;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
@@ -66,8 +66,8 @@ public class RunCategory {
         return "https://www.speedrun.com/" + srcCategory;
     }
 
-    public TranslatableText getText() {
-        return new TranslatableText(translateKey);
+    public Text getText() {
+        return Text.translatable(translateKey);
     }
 
     public @Nullable JsonArray getConditionJson() {

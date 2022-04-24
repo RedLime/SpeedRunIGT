@@ -21,7 +21,7 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
@@ -36,7 +36,7 @@ public class SpeedRunCategoryScreen extends Screen {
     private CategorySelectionListWidget listWidget;
 
     public SpeedRunCategoryScreen(Screen parent) {
-        super(new TranslatableText("speedrunigt.option.timer_category"));
+        super(Text.translatable("speedrunigt.option.timer_category"));
         this.parent = parent;
     }
 
@@ -84,7 +84,7 @@ public class SpeedRunCategoryScreen extends Screen {
 
             public CategoryEntry(RunCategory category) {
                 this.checkBox = new CategoryCheckBoxWidget(category);
-                this.urlButton = new ButtonWidget(0, 0, 30, 20, new TranslatableText("speedrunigt.option.more"), button -> Util.getOperatingSystem().open(category.getSRCLeaderboardUrl()));
+                this.urlButton = new ButtonWidget(0, 0, 30, 20, Text.translatable("speedrunigt.option.more"), button -> Util.getOperatingSystem().open(category.getSRCLeaderboardUrl()));
                 children.add(urlButton);
                 children.add(checkBox);
             }
