@@ -260,16 +260,17 @@ public class InGameTimer implements Serializable {
     private static final ExecutorService saveManagerThread = Executors.newFixedThreadPool(2);
     private static void save() { save(false); }
     private static void save(boolean withLeave) {
-        if (waitingSaveTask || saveManagerThread.isShutdown() || saveManagerThread.isTerminated() || !INSTANCE.isServerIntegrated || INSTANCE.worldName.isEmpty()) return;
-
-        String worldName = INSTANCE.worldName, timerData = SpeedRunIGT.GSON.toJson(INSTANCE) + "", completeData = SpeedRunIGT.GSON.toJson(COMPLETED_INSTANCE) + "";
-        File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "data");
-
-        if (withLeave) end();
-
-        waitingSaveTask = true;
         saveManagerThread.submit(() -> {
             try {
+                if (waitingSaveTask || saveManagerThread.isShutdown() || saveManagerThread.isTerminated() || !INSTANCE.isServerIntegrated || INSTANCE.worldName.isEmpty()) return;
+
+                String worldName = INSTANCE.worldName, timerData = SpeedRunIGT.GSON.toJson(INSTANCE) + "", completeData = SpeedRunIGT.GSON.toJson(COMPLETED_INSTANCE) + "";
+                File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "data");
+
+                if (withLeave) end();
+
+                waitingSaveTask = true;
+
                 if (worldDir.exists()) {
                     File timerFile = new File(worldDir, "timer.igt");
                     File timerCompleteFile = new File(worldDir, "timer.c.igt");
