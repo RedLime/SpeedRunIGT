@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -95,8 +96,8 @@ public class InGameTimer implements Serializable {
 
     //Logs
     private String firstInput = "";
-    private final ArrayList<TimerPauseLog> pauseLogList = new ArrayList<>();
-    private final ArrayList<TimerTickLog> freezeLogList = new ArrayList<>();
+    private final CopyOnWriteArrayList<TimerPauseLog> pauseLogList = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<TimerTickLog> freezeLogList = new CopyOnWriteArrayList<>();
 
     //For logging var
     private int loggerTicks = 0;
@@ -104,11 +105,11 @@ public class InGameTimer implements Serializable {
     private String prevPauseReason = "";
 
     //For checking blind
-    ArrayList<RunPortalPos> lastOverWorldPortalPos = new ArrayList<>();
-    ArrayList<RunPortalPos> lastNetherPortalPos = new ArrayList<>();
+    CopyOnWriteArrayList<RunPortalPos> lastOverWorldPortalPos = new CopyOnWriteArrayList<>();
+    CopyOnWriteArrayList<RunPortalPos> lastNetherPortalPos = new CopyOnWriteArrayList<>();
 
     //For record
-    private final ArrayList<TimerTimeline> timelines = new ArrayList<>();
+    private final CopyOnWriteArrayList<TimerTimeline> timelines = new CopyOnWriteArrayList<>();
     private final TimerAdvancementTracker advancementsTracker = new TimerAdvancementTracker();
     private boolean isHardcore = false;
 

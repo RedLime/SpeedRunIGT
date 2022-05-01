@@ -26,6 +26,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -51,7 +52,7 @@ public class InGameTimerUtils {
         return SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT).isFirstInput(InGameTimer.getInstance());
     }
 
-    public static String logListToString(ArrayList<?> arrayList, int completeCount) {
+    public static String logListToString(CopyOnWriteArrayList<?> arrayList, int completeCount) {
         if (arrayList.size() == 0) return "";
         StringBuilder stringBuilder = new StringBuilder();
         if (completeCount > 0) {
@@ -172,7 +173,7 @@ public class InGameTimerUtils {
 
     public static boolean isLoadableBlind(RegistryKey<World> worldKey, Vec3d netherPos, Vec3d overPos) {
         InGameTimer timer = InGameTimer.getInstance();
-        ArrayList<RunPortalPos> arrayList = worldKey == World.NETHER ? timer.lastNetherPortalPos : worldKey == World.OVERWORLD ? timer.lastOverWorldPortalPos : null;
+        CopyOnWriteArrayList<RunPortalPos> arrayList = worldKey == World.NETHER ? timer.lastNetherPortalPos : worldKey == World.OVERWORLD ? timer.lastOverWorldPortalPos : null;
         Vec3d targetPos = worldKey == World.NETHER ? netherPos : worldKey == World.OVERWORLD ? overPos : null;
         if (arrayList == null || targetPos == null) return true;
         for (RunPortalPos portalPos : arrayList) {
