@@ -198,7 +198,7 @@ public class SpeedRunOptions {
         }
     };
 
-    public static final OptionArgument<Boolean> AUTO_RETIME_FOR_GUIDELINE = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "auto_retime"), false) {
+    public static final OptionArgument<Boolean> AUTO_RETIME_FOR_GUIDELINE = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "auto_retime"), true) {
         @Override
         public Boolean valueFromString(String string) {
             return Objects.equals(string, "true");

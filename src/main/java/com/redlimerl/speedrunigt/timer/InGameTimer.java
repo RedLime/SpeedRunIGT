@@ -458,9 +458,6 @@ public class InGameTimer implements Serializable {
             if (inGameTime != null) return inGameTime;
         }
 
-        if (smooth && this.isCompleted() && SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE) && this.getCategory() == RunCategories.ANY && this.getRunType() == RunType.RANDOM_SEED)
-            return getRetimedInGameTime();
-
         long ms = System.currentTimeMillis();
         return !isStarted() ? 0 :
                 (this.getTicks() * 50L) // Tick Based
@@ -472,7 +469,7 @@ public class InGameTimer implements Serializable {
     private static final int RETIME_MINUTES = 13;
     public long getRetimedInGameTime() {
         long base = getInGameTime(false);
-        return base + ((this.isGlitched && this.isServerIntegrated) || (base >= 60000 * RETIME_MINUTES && this.getCategory() == RunCategories.ANY && this.getRunType() == RunType.RANDOM_SEED) ? 0 : this.retimedIGTTime);
+        return base + (this.isGlitched || this.isCoop || this.getCategory() != RunCategories.ANY || base >= 60000 * RETIME_MINUTES || this.getRunType() != RunType.RANDOM_SEED ? 0 : this.retimedIGTTime);
     }
 
     private long firstRenderedTime = 0;
