@@ -58,6 +58,8 @@
   "speedrunigt.option.timer_category.custom": "自定义",
   "speedrunigt.option.timer_category.stack_of_lime_wool": "一组黄绿色羊毛",
   "speedrunigt.option.timer_category.pogloot_quater": "1/4进度 (Pogloot)",
+  "speedrunigt.option.timer_category.all_portals": "所有传送门",
+  "speedrunigt.option.timer_category.mine_a_chunk": "挖区块",
   "speedrunigt.option.hide_timer_in_options": "在设置中隐藏计时器",
   "speedrunigt.option.hide_timer_in_debugs": "在F3调试中隐藏计时器",
   "speedrunigt.option.waiting_first_input": "从第一个输入开始",
