@@ -31,6 +31,7 @@ import java.util.stream.IntStream;
 
 public class InGameTimerUtils {
     public static boolean IS_CHANGING_DIMENSION = false;
+    public static boolean IS_KILLED_ENDER_DRAGON = false;
     public static boolean IS_CAN_WAIT_WORLD_LOAD = false;
     public static final HashSet<Object> CHANGED_OPTIONS = Sets.newHashSet();
     public static boolean RETIME_IS_WAITING_LOAD = false;
@@ -51,7 +52,7 @@ public class InGameTimerUtils {
         return SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT).isFirstInput(InGameTimer.getInstance());
     }
 
-    public static String logListToString(ArrayList<?> arrayList, int completeCount) {
+    public static String logListToString(List<?> arrayList, int completeCount) {
         if (arrayList.size() == 0) return "";
         StringBuilder stringBuilder = new StringBuilder();
         if (completeCount > 0) {
@@ -172,7 +173,7 @@ public class InGameTimerUtils {
 
     public static boolean isLoadableBlind(class_2750 dimensionType, Vec3d netherPos, Vec3d overPos) {
         InGameTimer timer = InGameTimer.getInstance();
-        ArrayList<RunPortalPos> arrayList = dimensionType == class_2750.field_12921 ? timer.lastNetherPortalPos : dimensionType == class_2750.field_12920 ? timer.lastOverWorldPortalPos : null;
+        List<RunPortalPos> arrayList = dimensionType == class_2750.field_12921 ? timer.lastNetherPortalPos : dimensionType == class_2750.field_12920 ? timer.lastOverWorldPortalPos : null;
         Vec3d targetPos = dimensionType == class_2750.field_12921 ? netherPos : dimensionType == class_2750.field_12920 ? overPos : null;
         if (arrayList == null || targetPos == null) return true;
         for (RunPortalPos portalPos : arrayList) {
