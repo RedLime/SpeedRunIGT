@@ -25,8 +25,9 @@ public abstract class KeyBindingMixin {
         KeyBinding keyBinding = (KeyBinding) KEY_MAP.get(keyCode);
         if(keyBinding!=null && pressed){
             InGameTimer timer = InGameTimer.getInstance();
-            if (Objects.equals(keyBinding.getCategory(), "key.categories.inventory")
-                    || (Objects.equals(keyBinding.getCategory(), "key.categories.gameplay"))) {
+            if (InGameTimerClientUtils.isFocusedClick() &&
+                    (Objects.equals(keyBinding.getCategory(), "key.categories.inventory")
+                    || (Objects.equals(keyBinding.getCategory(), "key.categories.gameplay")))) {
                 if (InGameTimerClientUtils.canUnpauseTimer(false)) {
                     timer.setPause(false, "pressed key");
                 }
