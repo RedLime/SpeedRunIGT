@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.timer.InGameTimer;
+import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import net.minecraft.entity.Entity;
@@ -63,6 +64,10 @@ public abstract class LivingEntityMixin extends Entity {
         //Kill Elder Guardian
         if (timer.getCategory() == RunCategories.KILL_ELDER_GUARDIAN && this.getType() == EntityType.ELDER_GUARDIAN && this.attackingPlayer != null) {
             InGameTimer.complete();
+        }
+
+        if (this.getType() == EntityType.ENDER_DRAGON) {
+            InGameTimerUtils.IS_KILLED_ENDER_DRAGON = true;
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.timer;
 
 import com.redlimerl.speedrunigt.gui.screen.FailedCategoryInitScreen;
+import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessorForAttack;
 import com.redlimerl.speedrunigt.mixins.access.WorldRendererAccessor;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
 import net.fabricmc.api.EnvType;
@@ -68,5 +69,10 @@ public class InGameTimerClientUtils {
 
     static MinecraftServer getClientServer() {
         return MinecraftClient.getInstance().getServer();
+    }
+
+    public static boolean isFocusedClick() {
+        return (MinecraftClient.getInstance().player != null && MinecraftClient.getInstance().player.isUsingItem())
+                || ((MinecraftClientAccessorForAttack) MinecraftClient.getInstance()).getAttackCoolDown() > 0;
     }
 }
