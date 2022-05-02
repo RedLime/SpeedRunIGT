@@ -7,6 +7,7 @@
     "LivingEntityMixin",
     "PlayerAdvancementTrackerMixin",
     "ServerStatHandlerMixin",
+    "WorldMixin",
     "access.ServerStatHandlerAccessor",
     "coop.PlayerManagerMixin",
     "coop.TimeCommandMixin",
