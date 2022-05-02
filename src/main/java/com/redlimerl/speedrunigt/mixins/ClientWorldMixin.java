@@ -49,7 +49,7 @@ public abstract class ClientWorldMixin extends World {
         if (timer.getCategory() == RunCategories.MINE_A_CHUNK) {
             ChunkPos chunkPos = getChunk(pos).getPos();
             for (int x = chunkPos.getStartX(); x < chunkPos.getEndX() + 1; x++) {
-                for (int y = getBedrockMaxHeight(); y < getDimensionHeight(); y++) {
+                for (int y = getBottomY() + 5; y < getLogicalHeight(); y++) {
                     for (int z = chunkPos.getStartZ(); z < chunkPos.getEndZ() + 1; z++) {
                         Block block = getBlockState(new BlockPos(x, y, z)).getBlock();
                         if (block != Blocks.BEDROCK && block != Blocks.AIR) {
@@ -63,6 +63,6 @@ public abstract class ClientWorldMixin extends World {
     }
 
     private int getBedrockMaxHeight() {
-        return 5;
+        return getBottomY() + 5;
     }
 }
