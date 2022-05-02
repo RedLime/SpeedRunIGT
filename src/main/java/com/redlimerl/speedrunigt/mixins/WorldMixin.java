@@ -6,35 +6,40 @@ import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.running.RunPortalPos;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.profiler.Profiler;
+import net.minecraft.world.SaveHandler;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.OverworldDimension;
-import org.spongepowered.asm.mixin.Final;
+import net.minecraft.world.level.LevelInfo;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(World.class)
-public abstract class WorldMixin {
+@Mixin(ServerWorld.class)
+public abstract class WorldMixin extends World {
 
-    @Shadow @Final public Dimension dimension;
+    public WorldMixin(SaveHandler saveHandler, String string, Dimension dimension, LevelInfo levelInfo, Profiler profiler) {
+        super(saveHandler, string, dimension, levelInfo, profiler);
+    }
 
-    @Shadow public boolean isClient;
-
-    @Inject(method = "method_4721", at = @At("TAIL"))
-    public void onUpdateBlockState(int x, int y, int z, Block block, int whatIsIt, int flags, CallbackInfoReturnable<Boolean> cir) {
+    @Override
+    public boolean method_4721(int i, int j, int k, Block block, int l, int m) {
+        boolean result = super.method_4721(i, j, k, block, l, m);
         InGameTimer timer = InGameTimer.getInstance();
-        if (!this.isClient && flags == 2 && block == Blocks.END_PORTAL && timer.getCategory() == RunCategories.ALL_PORTALS && timer.getCategory() == RunCategories.ALL_PORTALS && dimension instanceof OverworldDimension) {
+        if (!this.isClient() && m == 2 && block == Blocks.END_PORTAL && timer.getCategory() == RunCategories.ALL_PORTALS && dimension instanceof OverworldDimension) {
             for (RunPortalPos runPortalPos : timer.getEndPortalPosList()) {
-                if (runPortalPos.squaredDistanceTo(new Vec3i(x, y, z)) < 100) {
-                    return;
+                if (runPortalPos.squaredDistanceTo(new Vec3i(i, j, k)) < 100) {
+                    return result;
                 }
             }
-            timer.getEndPortalPosList().add(new RunPortalPos(new Vec3i(x, y, z)));
+            timer.getEndPortalPosList().add(new RunPortalPos(new Vec3i(i, j, k)));
             InGameTimerUtils.IS_KILLED_ENDER_DRAGON = false;
         }
+        return result;
+    }
+
+    public boolean isClient() {
+        return this.isClient;
     }
 }
