@@ -26,6 +26,7 @@
     "WorldRendererMixin",
     "access.ButtonWidgetAccessor",
     "access.ClientChunkProviderAccessor",
+    "access.MinecraftClientAccessorForAttack",
     "access.WorldRendererAccessor",
     "keybinding.GameOptionsMixin",
     "keybinding.KeyBindingAccessor",
