@@ -28,6 +28,7 @@
     "access.FontManagerAccessor",
     "access.FontStorageAccessor",
     "access.MinecraftClientAccessor",
+    "access.MinecraftClientAccessorForAttack",
     "access.TextRendererAccessor",
     "access.WorldRendererAccessor",
     "keybinding.GameOptionsMixin",

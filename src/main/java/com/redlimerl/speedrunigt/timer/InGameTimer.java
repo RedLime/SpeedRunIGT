@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -95,8 +96,8 @@ public class InGameTimer implements Serializable {
 
     //Logs
     private String firstInput = "";
-    private final ArrayList<TimerPauseLog> pauseLogList = new ArrayList<>();
-    private final ArrayList<TimerTickLog> freezeLogList = new ArrayList<>();
+    private final CopyOnWriteArrayList<TimerPauseLog> pauseLogList = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<TimerTickLog> freezeLogList = new CopyOnWriteArrayList<>();
 
     //For logging var
     private int loggerTicks = 0;
@@ -104,11 +105,12 @@ public class InGameTimer implements Serializable {
     private String prevPauseReason = "";
 
     //For checking blind
-    ArrayList<RunPortalPos> lastOverWorldPortalPos = new ArrayList<>();
-    ArrayList<RunPortalPos> lastNetherPortalPos = new ArrayList<>();
+    CopyOnWriteArrayList<RunPortalPos> lastOverWorldPortalPos = new CopyOnWriteArrayList<>();
+    CopyOnWriteArrayList<RunPortalPos> lastNetherPortalPos = new CopyOnWriteArrayList<>();
+    CopyOnWriteArrayList<RunPortalPos> endPortalPosList = new CopyOnWriteArrayList<>();
 
     //For record
-    private final ArrayList<TimerTimeline> timelines = new ArrayList<>();
+    private final CopyOnWriteArrayList<TimerTimeline> timelines = new CopyOnWriteArrayList<>();
     private final TimerAdvancementTracker advancementsTracker = new TimerAdvancementTracker();
     private boolean isHardcore = false;
 
@@ -457,9 +459,6 @@ public class InGameTimer implements Serializable {
             if (inGameTime != null) return inGameTime;
         }
 
-        if (smooth && this.isCompleted() && SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE) && this.getCategory() == RunCategories.ANY && this.getRunType() == RunType.RANDOM_SEED)
-            return getRetimedInGameTime();
-
         long ms = System.currentTimeMillis();
         return !isStarted() ? 0 :
                 (this.getTicks() * 50L) // Tick Based
@@ -471,7 +470,7 @@ public class InGameTimer implements Serializable {
     private static final int RETIME_MINUTES = 20;
     public long getRetimedInGameTime() {
         long base = getInGameTime(false);
-        return base + ((this.isGlitched && this.isServerIntegrated) || (base >= 60000 * RETIME_MINUTES && this.getCategory() == RunCategories.ANY && this.getRunType() == RunType.RANDOM_SEED) ? 0 : this.retimedIGTTime);
+        return base + (this.isGlitched || this.isCoop || this.getCategory() != RunCategories.ANY || base >= 60000 * RETIME_MINUTES || this.getRunType() != RunType.RANDOM_SEED ? 0 : this.retimedIGTTime);
     }
 
     private long firstRenderedTime = 0;
@@ -708,4 +707,7 @@ public class InGameTimer implements Serializable {
         return uuid;
     }
 
+    public CopyOnWriteArrayList<RunPortalPos> getEndPortalPosList() {
+        return endPortalPosList;
+    }
 }

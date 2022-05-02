@@ -58,6 +58,8 @@
   "speedrunigt.option.timer_category.custom": "Custom",
   "speedrunigt.option.timer_category.stack_of_lime_wool": "Stack of Lime Wool",
   "speedrunigt.option.timer_category.pogloot_quater": "Quater (Pogloot)",
+  "speedrunigt.option.timer_category.all_portals": "All Portals",
+  "speedrunigt.option.timer_category.mine_a_chunk": "Mine a Chunk",
   "speedrunigt.option.hide_timer_in_options": "Hide Timer in Options",
   "speedrunigt.option.hide_timer_in_debugs": "Hide Timer in F3",
   "speedrunigt.option.waiting_first_input": "Start at First Input",
