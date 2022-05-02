@@ -6,6 +6,7 @@
   "mixins": [
     "LivingEntityMixin",
     "ServerStatHandlerMixin",
+    "WorldMixin",
     "access.LevelStorageAccessor",
     "access.ServerStatHandlerAccessor",
     "coop.PlayerManagerMixin",
@@ -26,6 +27,7 @@
     "WorldRendererMixin",
     "access.ButtonWidgetAccessor",
     "access.ClientChunkProviderAccessor",
+    "access.MinecraftClientAccessorForAttack",
     "access.WorldRendererAccessor",
     "keybinding.GameOptionsMixin",
     "keybinding.KeyBindingAccessor",
