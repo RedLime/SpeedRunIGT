@@ -174,7 +174,7 @@ public class SpeedRunOptions {
     };
 
     public enum TimerSaveInterval { NONE, PAUSE, TICKS }
-    public static final OptionArgument<TimerSaveInterval> TIMER_DATA_AUTO_SAVE = new OptionArgument<TimerSaveInterval>(new Identifier(SpeedRunIGT.MOD_ID, "auto_save_interval"), TimerSaveInterval.NONE) {
+    public static final OptionArgument<TimerSaveInterval> TIMER_DATA_AUTO_SAVE = new OptionArgument<TimerSaveInterval>(new Identifier(SpeedRunIGT.MOD_ID, "auto_save_interval"), TimerSaveInterval.PAUSE) {
         @Override
         public TimerSaveInterval valueFromString(String string) {
             return TimerSaveInterval.valueOf(string);
@@ -186,7 +186,7 @@ public class SpeedRunOptions {
         }
     };
 
-    public static final OptionArgument<Boolean> AUTO_RETIME_FOR_GUIDELINE = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "auto_retime"), false) {
+    public static final OptionArgument<Boolean> AUTO_RETIME_FOR_GUIDELINE = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "auto_retime"), true) {
         @Override
         public Boolean valueFromString(String string) {
             return Objects.equals(string, "true");

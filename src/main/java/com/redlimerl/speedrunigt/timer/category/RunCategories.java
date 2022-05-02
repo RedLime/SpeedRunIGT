@@ -23,6 +23,8 @@ public class RunCategories {
     public static RunCategory FULL_IA_15_LVL = new RunCategory("FULL_IA_15_LVL","mcce#Full_Iron_Armor_and_15_Levels");
     public static RunCategory FULL_INV = new RunCategory("FULL_INV","mcce#Full_Inventory");
     public static RunCategory STACK_OF_LIME_WOOL = new RunCategory("STACK_OF_LIME_WOOL","mcce#Stack_of_Lime_Wool");
+    public static RunCategory ALL_PORTALS = new RunCategory("ALL_PORTALS","mcce#All_Portals");
+    public static RunCategory MINE_A_CHUNK = new RunCategory("MINE_A_CHUNK","mcce#Mine_a_Chunk");
 
     public static void checkAllBossesCompleted() {
         InGameTimer timer = InGameTimer.getInstance();

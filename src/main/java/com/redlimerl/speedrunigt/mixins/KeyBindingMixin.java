@@ -29,9 +29,10 @@ public abstract class KeyBindingMixin {
         KeyBinding keyBinding = field_19923.get(key);
         if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
         if (keyBinding != null && bl) {
-            if (keyBinding == MinecraftClient.getInstance().options.field_15880 // Advancement
+            if (InGameTimerClientUtils.isFocusedClick() &&
+                    (keyBinding == MinecraftClient.getInstance().options.field_15880 // Advancement
                     || Objects.equals(keyBinding.getCategory(), "key.categories.inventory")
-                    || Objects.equals(keyBinding.getCategory(), "key.categories.gameplay")) {
+                    || Objects.equals(keyBinding.getCategory(), "key.categories.gameplay"))) {
                 if (InGameTimerClientUtils.canUnpauseTimer(false)) {
                     timer.setPause(false, "pressed key");
                 }
