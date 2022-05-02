@@ -25,6 +25,7 @@
     "MouseMixin",
     "access.FontManagerAccessor",
     "access.MinecraftClientAccessor",
+    "access.MinecraftClientAccessorForAttack",
     "access.WorldRendererAccessor",
     "keybinding.GameOptionsMixin",
     "keybinding.KeyBindingAccessor",
