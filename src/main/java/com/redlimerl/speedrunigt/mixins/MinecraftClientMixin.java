@@ -129,13 +129,6 @@ public abstract class MinecraftClientMixin {
             InGameTimer.complete();
         }
 
-        //All Portals
-        SpeedRunIGT.debug("Current portals : " + timer.getEndPortalPosList().size());
-        if (InGameTimerUtils.IS_KILLED_ENDER_DRAGON && timer.getCategory() == RunCategories.ALL_PORTALS && timer.getEndPortalPosList().size() == 128) {
-            InGameTimer.complete();
-        }
-        InGameTimerUtils.IS_KILLED_ENDER_DRAGON = false;
-
         RunCategories.checkAllBossesCompleted();
     }
 

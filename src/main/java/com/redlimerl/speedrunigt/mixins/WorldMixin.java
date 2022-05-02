@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.timer.InGameTimer;
+import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.running.RunPortalPos;
 import net.minecraft.block.BlockState;
@@ -22,19 +23,19 @@ public abstract class WorldMixin {
 
     @Shadow public abstract RegistryKey<DimensionType> getDimensionRegistryKey();
 
-    @Shadow @Final public boolean isClient;
+    @Shadow public abstract boolean isClient();
 
     @Inject(method = "setBlockState(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;I)Z", at = @At("TAIL"))
     public void onUpdateBlockState(BlockPos pos, BlockState state, int flags, CallbackInfoReturnable<Boolean> cir) {
         InGameTimer timer = InGameTimer.getInstance();
-        //noinspection ConstantConditions
-        if (((Object) this) instanceof ServerWorld && flags == 2 && state.getBlock() == Blocks.END_PORTAL && timer.getCategory() == RunCategories.ALL_PORTALS && getDimensionRegistryKey() == DimensionType.OVERWORLD_REGISTRY_KEY) {
+        if (!this.isClient() && flags == 2 && state.getBlock() == Blocks.END_PORTAL && timer.getCategory() == RunCategories.ALL_PORTALS && getDimensionRegistryKey() == DimensionType.OVERWORLD_REGISTRY_KEY) {
             for (RunPortalPos runPortalPos : timer.getEndPortalPosList()) {
                 if (runPortalPos.squaredDistanceTo(pos) < 100) {
                     return;
                 }
             }
             timer.getEndPortalPosList().add(new RunPortalPos(pos));
+            InGameTimerUtils.IS_KILLED_ENDER_DRAGON = false;
         }
     }
 }
