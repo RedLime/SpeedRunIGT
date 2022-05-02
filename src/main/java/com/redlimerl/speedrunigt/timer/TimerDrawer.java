@@ -7,6 +7,8 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecimals;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
+import com.redlimerl.speedrunigt.timer.category.RunCategories;
+import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -266,7 +268,12 @@ public class TimerDrawer {
     }
 
     public MutableText getIGTText() {
-        return new LiteralText((this.simply ? "" : "IGT: ") + getTimeFormat(InGameTimer.getInstance().getInGameTime()));
+        InGameTimer timer = InGameTimer.getInstance();
+        long igt = timer.isCompleted() && SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE)
+                && timer.getCategory() == RunCategories.ANY && timer.getRunType() == RunType.RANDOM_SEED
+                && (System.currentTimeMillis() / 3000) % 2 == 0
+                ? timer.getRetimedInGameTime() : timer.getInGameTime();
+        return new LiteralText((this.simply ? "" : "IGT: ") + getTimeFormat(igt));
     }
 
     public MutableText getRTAText() {

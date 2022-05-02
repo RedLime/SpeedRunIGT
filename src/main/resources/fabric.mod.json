@@ -3,7 +3,7 @@
   "id": "speedrunigt",
   "version": "${version}",
 
-  "name": "SpeedrunIGT",
+  "name": "SpeedRunIGT",
   "description": "Displays the timer with RTA, IGT in Minecraft",
   "authors": [
     "RedLime"
