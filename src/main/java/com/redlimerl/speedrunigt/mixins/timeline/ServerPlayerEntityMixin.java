@@ -25,9 +25,17 @@ public abstract class ServerPlayerEntityMixin {
 
     @Inject(method = "teleportToDimension", at = @At("HEAD"))
     public void onChangeDimension(ServerPlayerEntity player, int dimension, CallbackInfo ci) {
+        InGameTimer timer = InGameTimer.getInstance();
+
         beforeWorld = player.getServerWorld();
         lastPortalPos = player.getPos();
         InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = !InGameTimer.getInstance().isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY;
+
+        //All Portals
+        SpeedRunIGT.debug("Current portals : " + timer.getEndPortalPosList().size());
+        if (InGameTimerUtils.IS_KILLED_ENDER_DRAGON && timer.getCategory() == RunCategories.ALL_PORTALS && timer.getEndPortalPosList().size() == 3) {
+            InGameTimer.complete();
+        }
     }
 
     @Inject(method = "teleportToDimension", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerManager;method_1986(Lnet/minecraft/entity/player/ServerPlayerEntity;Lnet/minecraft/server/world/ServerWorld;)V", shift = At.Shift.AFTER))
@@ -47,12 +55,6 @@ public abstract class ServerPlayerEntityMixin {
                 }
                 InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(newDimension, lastPortalPos.add(0, 0, 0), player.getPos().add(0, 0, 0));
             }
-        }
-
-        //All Portals
-        SpeedRunIGT.debug("Current portals : " + timer.getEndPortalPosList().size());
-        if (InGameTimerUtils.IS_KILLED_ENDER_DRAGON && timer.getCategory() == RunCategories.ALL_PORTALS && timer.getEndPortalPosList().size() == 3) {
-            InGameTimer.complete();
         }
     }
 }
