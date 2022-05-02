@@ -107,6 +107,7 @@ public class InGameTimer implements Serializable {
     //For checking blind
     CopyOnWriteArrayList<RunPortalPos> lastOverWorldPortalPos = new CopyOnWriteArrayList<>();
     CopyOnWriteArrayList<RunPortalPos> lastNetherPortalPos = new CopyOnWriteArrayList<>();
+    CopyOnWriteArrayList<RunPortalPos> endPortalPosList = new CopyOnWriteArrayList<>();
 
     //For record
     private final CopyOnWriteArrayList<TimerTimeline> timelines = new CopyOnWriteArrayList<>();
@@ -706,4 +707,7 @@ public class InGameTimer implements Serializable {
         return uuid;
     }
 
+    public CopyOnWriteArrayList<RunPortalPos> getEndPortalPosList() {
+        return endPortalPosList;
+    }
 }
