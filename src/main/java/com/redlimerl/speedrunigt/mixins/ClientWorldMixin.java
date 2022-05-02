@@ -2,7 +2,6 @@ package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
-import com.redlimerl.speedrunigt.timer.running.RunPortalPos;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -36,15 +35,6 @@ public abstract class ClientWorldMixin extends World {
     @Inject(method = "updateListeners", at = @At("TAIL"))
     public void onBlockUpdate(BlockPos pos, BlockState oldState, BlockState newState, int flags, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
-        if (flags == 2 && newState.getBlock() == Blocks.END_PORTAL && timer.getCategory() == RunCategories.ALL_PORTALS && getDimensionRegistryKey() == DimensionType.OVERWORLD_REGISTRY_KEY) {
-            for (RunPortalPos runPortalPos : timer.getEndPortalPosList()) {
-                if (runPortalPos.squaredDistanceTo(pos) < 100) {
-                    return;
-                }
-            }
-            timer.getEndPortalPosList().add(new RunPortalPos(pos));
-
-        }
         if (timer.getCategory() == RunCategories.MINE_A_CHUNK) {
             ChunkPos chunkPos = getChunk(pos).getPos();
             for (int x = chunkPos.getStartX(); x < chunkPos.getEndX() + 1; x++) {
