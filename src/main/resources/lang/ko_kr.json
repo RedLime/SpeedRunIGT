@@ -58,6 +58,8 @@
   "speedrunigt.option.timer_category.custom": "커스텀",
   "speedrunigt.option.timer_category.stack_of_lime_wool": "연두색 양털 64개 수집",
   "speedrunigt.option.timer_category.pogloot_quater": "쿼터 (Pogloot)",
+  "speedrunigt.option.timer_category.all_portals": "모든 포탈 채우기",
+  "speedrunigt.option.timer_category.mine_a_chunk": "한 청크 모두 채굴하기",
   "speedrunigt.option.hide_timer_in_options": "설정에서 타이머 숨기기",
   "speedrunigt.option.hide_timer_in_debugs": "디버그에서 타이머 숨기기",
   "speedrunigt.option.waiting_first_input": "첫 입력 때 시작",
