@@ -74,7 +74,7 @@ public abstract class LivingEntityMixin extends Entity {
             InGameTimer.complete();
         }
 
-        if (Objects.equals(EntityType.getEntityName(this), "EnderDragon")) {
+        if (Objects.equals(EntityType.getEntityName(this), "EnderDragon") && !this.world.isClient) {
             InGameTimerUtils.IS_KILLED_ENDER_DRAGON = true;
         }
     }
