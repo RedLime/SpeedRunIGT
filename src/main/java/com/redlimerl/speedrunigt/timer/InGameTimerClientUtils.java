@@ -76,6 +76,6 @@ public class InGameTimerClientUtils {
     }
 
     public static boolean isFocusedClick() {
-        return ((MinecraftClientAccessorForAttack) MinecraftClient.getInstance()).getAttackCoolDown() == 0;
+        return ((MinecraftClientAccessorForAttack) MinecraftClient.getInstance()).getAttackCoolDown() <= 0;
     }
 }
