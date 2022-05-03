@@ -66,7 +66,7 @@ public abstract class LivingEntityMixin extends Entity {
             InGameTimer.complete();
         }
 
-        if (this.method_15557() == class_3460.field_16800) {
+        if (this.method_15557() == class_3460.field_16800 && !this.world.isClient) {
             InGameTimerUtils.IS_KILLED_ENDER_DRAGON = true;
         }
     }
