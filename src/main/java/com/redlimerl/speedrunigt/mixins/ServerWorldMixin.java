@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.mixins;
 
+import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
@@ -17,29 +18,28 @@ import net.minecraft.world.level.LevelProperties;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(ServerWorld.class)
-public abstract class WorldMixin extends World {
+public abstract class ServerWorldMixin extends World {
 
-    protected WorldMixin(SaveHandler handler, LevelProperties properties, Dimension dim, Profiler profiler, boolean isClient) {
+    protected ServerWorldMixin(SaveHandler handler, LevelProperties properties, Dimension dim, Profiler profiler, boolean isClient) {
         super(handler, properties, dim, profiler, isClient);
     }
 
     @Override
     public boolean setBlockState(BlockPos pos, BlockState state, int flags) {
         boolean result = super.setBlockState(pos, state, flags);
+
         InGameTimer timer = InGameTimer.getInstance();
-        if (!this.isClient() && flags == 2 && state.getBlock() == Blocks.END_PORTAL && timer.getCategory() == RunCategories.ALL_PORTALS && dimension instanceof OverworldDimension) {
+        if (!this.isClient && flags == 2 && state.getBlock() == Blocks.END_PORTAL && timer.getCategory() == RunCategories.ALL_PORTALS && dimension instanceof OverworldDimension) {
             for (RunPortalPos runPortalPos : timer.getEndPortalPosList()) {
                 if (runPortalPos.squaredDistanceTo(pos) < 100) {
                     return result;
                 }
             }
+            SpeedRunIGT.debug("Detected serverworld end portal");
             timer.getEndPortalPosList().add(new RunPortalPos(pos));
             InGameTimerUtils.IS_KILLED_ENDER_DRAGON = false;
         }
-        return result;
-    }
 
-    public boolean isClient() {
-        return this.isClient;
+        return result;
     }
 }
