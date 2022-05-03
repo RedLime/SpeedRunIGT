@@ -5,8 +5,9 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "LivingEntityMixin",
+    "EndPortalBlockMixin",
     "ServerStatHandlerMixin",
-    "WorldMixin",
+    "ServerWorldMixin",
     "access.ServerStatHandlerAccessor",
     "coop.PlayerManagerMixin",
     "coop.TimeCommandMixin",
