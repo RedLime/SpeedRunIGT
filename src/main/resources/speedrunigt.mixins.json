@@ -6,8 +6,9 @@
   "mixins": [
     "LivingEntityMixin",
     "PlayerAdvancementTrackerMixin",
+    "EndPortalBlockMixin",
     "ServerStatHandlerMixin",
-    "WorldMixin",
+    "ServerWorldMixin",
     "access.ServerStatHandlerAccessor",
     "coop.PlayerManagerMixin",
     "coop.TimeCommandMixin",
