@@ -48,7 +48,7 @@ public class InGameTimer implements Serializable {
     static InGameTimer COMPLETED_INSTANCE = new InGameTimer("");
 
     private static final String cryptKey = "faRQOs2GK5j863eP";
-    private static final int DATA_VERSION = 3;
+    private static final int DATA_VERSION = 4;
 
     @NotNull
     public static InGameTimer getInstance() { return INSTANCE; }
@@ -69,7 +69,7 @@ public class InGameTimer implements Serializable {
     }
 
     String worldName;
-    UUID uuid = UUID.randomUUID();
+    final UUID uuid = UUID.randomUUID();
     private String category = RunCategories.ANY.getID();
     private final boolean isResettable;
     private boolean isCompleted = false;
@@ -86,9 +86,9 @@ public class InGameTimer implements Serializable {
     private long retimedIGTTime = 0;
     private long rebaseIGTime = 0;
     private long excludedTime = 0; //for AA
-    private long activateTicks = 0;
     private long leastTickTime = 0;
     private long leastStartTime = 0;
+    private int activateTicks = 0;
     Long lanOpenedTime = null;
 
     private long leaveTime = 0;
@@ -102,6 +102,7 @@ public class InGameTimer implements Serializable {
     //For logging var
     private int loggerTicks = 0;
     private long loggerPausedTime = 0;
+    private int pauseTriggerTick = 0;
     private String prevPauseReason = "";
 
     //For checking blind
@@ -210,6 +211,8 @@ public class InGameTimer implements Serializable {
 
             String worldName = INSTANCE.worldName;
             File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "logs");
+            if (worldDir == null) return;
+
             File advancementFile = new File(worldDir, "igt_advancement" + timer.getLogSuffix()),
                     pauseFile = new File(worldDir, "igt_timer" + timer.getLogSuffix()),
                     tickFile = new File(worldDir, "igt_freeze" + timer.getLogSuffix()),
@@ -266,6 +269,7 @@ public class InGameTimer implements Serializable {
 
         String worldName = INSTANCE.worldName, timerData = SpeedRunIGT.GSON.toJson(INSTANCE) + "", completeData = SpeedRunIGT.GSON.toJson(COMPLETED_INSTANCE) + "";
         File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "data");
+        if (worldDir == null) return;
 
         if (withLeave) end();
 
@@ -304,6 +308,7 @@ public class InGameTimer implements Serializable {
 
     public static boolean load(String name) {
         File worldDir = InGameTimerUtils.getTimerLogDir(name, "data");
+        if (worldDir == null) return false;
 
         String isOld = "";
         while (true) {
@@ -342,7 +347,9 @@ public class InGameTimer implements Serializable {
     private String recordString = "";
     public void writeRecordFile() {
         File recordFile = new File(SpeedRunIGT.getRecordsPath().toFile(), uuid + ".json");
-        File worldRecordFile = isCoop() ? null : new File(InGameTimerUtils.getTimerLogDir(this.worldName, ""), "record.json");
+        File worldFile = InGameTimerUtils.getTimerLogDir(this.worldName, "");
+        if (worldFile == null && isServerIntegrated) return;
+        File worldRecordFile = !isServerIntegrated ? null : new File(worldFile, "record.json");
         String resultRecord = recordString;
         if (resultRecord.isEmpty()) return;
         recordString = "";
@@ -514,18 +521,21 @@ public class InGameTimer implements Serializable {
             this.freezeLogList.add(new TimerTickLog(activateTicks, loggerTicks, getRealTimeAttack(),
                     tickDelays, getInGameTime(false), this.getStatus() == TimerStatus.IDLE));
             if (this.freezeLogList.size() >= 1000) {
-                File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "logs");
-                File tickFile = new File(worldDir, "igt_freeze" + this.getLogSuffix());
-                String freezeLog = InGameTimerUtils.logListToString(this.freezeLogList, tickFile.exists() ? 0 : this.completeCount);
+                if (this.isServerIntegrated) {
+                    File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "logs");
+                    if (worldDir == null) return;
+                    File tickFile = new File(worldDir, "igt_freeze" + this.getLogSuffix());
+                    String freezeLog = InGameTimerUtils.logListToString(this.freezeLogList, tickFile.exists() ? 0 : this.completeCount);
+                    saveManagerThread.submit(() -> {
+                        try {
+                            FileUtils.writeStringToFile(tickFile, freezeLog, StandardCharsets.UTF_8, true);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            SpeedRunIGT.error("Failed to clear freeze logs and saves");
+                        }
+                    });
+                }
                 this.freezeLogList.clear();
-                saveManagerThread.submit(() -> {
-                    try {
-                        FileUtils.writeStringToFile(tickFile, freezeLog, StandardCharsets.UTF_8, true);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        SpeedRunIGT.error("Failed to clear freeze logs and saves");
-                    }
-                });
             }
         }
 
@@ -545,8 +555,13 @@ public class InGameTimer implements Serializable {
                 }
                 InGameTimerUtils.CHANGED_OPTIONS.clear();
                 InGameTimerUtils.RETIME_IS_WAITING_LOAD = false;
+                if (pauseTriggerTick == loggerTicks) tick();
+                pauseTriggerTick = loggerTicks;
                 this.setStatus(toStatus);
                 if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE) == SpeedRunOptions.TimerSaveInterval.PAUSE && status != TimerStatus.LEAVE && this.isStarted()) save();
+
+                recordString = SpeedRunIGT.PRETTY_GSON.toJson(InGameTimerUtils.convertTimelineJson(this));
+                writeRecordFile();
             }
         } else {
             if (this.isStarted()) {
@@ -573,18 +588,21 @@ public class InGameTimer implements Serializable {
                 if (isPaused()) {
                     this.pauseLogList.add(new TimerPauseLog(prevPauseReason, reason, getInGameTime(false), getRealTimeAttack(), nowTime - loggerPausedTime, pauseCount, retime));
                     if (this.pauseLogList.size() >= 10) {
-                        File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "logs");
-                        File pauseFile = new File(worldDir, "igt_timer" + this.getLogSuffix());
-                        String pauseLog = InGameTimerUtils.pauseLogListToString(this.pauseLogList, !pauseFile.exists(), pauseFile.exists() ? 0 : this.completeCount);
+                        if (this.isServerIntegrated) {
+                            File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "logs");
+                            if (worldDir == null) return;
+                            File pauseFile = new File(worldDir, "igt_timer" + this.getLogSuffix());
+                            String pauseLog = InGameTimerUtils.pauseLogListToString(this.pauseLogList, !pauseFile.exists(), pauseFile.exists() ? 0 : this.completeCount);
+                            saveManagerThread.submit(() -> {
+                                try {
+                                    FileUtils.writeStringToFile(pauseFile, pauseLog, StandardCharsets.UTF_8, true);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                    SpeedRunIGT.error("Failed to write pause log for clearing logs");
+                                }
+                            });
+                        }
                         this.pauseLogList.clear();
-                        saveManagerThread.submit(() -> {
-                            try {
-                                FileUtils.writeStringToFile(pauseFile, pauseLog, StandardCharsets.UTF_8, true);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                SpeedRunIGT.error("Failed to write pause log for clearing logs");
-                            }
-                        });
                     }
                     if (this.getCategory() == RunCategories.ALL_ADVANCEMENTS && leaveTime != 0 && leaveTime > startTime) excludedTime = System.currentTimeMillis() - leaveTime;
                     leaveTime = 0;
