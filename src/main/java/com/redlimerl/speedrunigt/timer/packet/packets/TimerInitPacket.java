@@ -19,7 +19,6 @@ public class TimerInitPacket extends TimerPacket {
     public static final Identifier IDENTIFIER = TimerPacket.identifier("timer_init");
     private final InGameTimer sendTimer;
     private final long sendRTA;
-    private final long delayTime;
 
     private static long getNanoTime() {
         return System.nanoTime() / 1000000L;
@@ -33,14 +32,12 @@ public class TimerInitPacket extends TimerPacket {
         super(IDENTIFIER);
         this.sendTimer = timer;
         this.sendRTA = rta;
-        this.delayTime = getNanoTime();
     }
 
     @Environment(EnvType.CLIENT)
     @Override
     protected TimerPacketBuf convertClient2ServerPacket(TimerPacketBuf buf, MinecraftClient client) {
         if (sendTimer != null) {
-            buf.writeLong(delayTime);
             buf.writeString(sendTimer.getUuid().toString());
             buf.writeString(sendTimer.getCategory().getID());
             buf.writeLong(sendRTA);
@@ -62,7 +59,6 @@ public class TimerInitPacket extends TimerPacket {
     @Override
     protected TimerPacketBuf convertServer2ClientPacket(TimerPacketBuf buf, MinecraftServer server) {
         if (sendTimer != null) {
-            buf.writeLong(delayTime);
             buf.writeString(sendTimer.getUuid().toString());
             buf.writeString(sendTimer.getCategory().getID());
             buf.writeLong(sendRTA);
@@ -83,13 +79,12 @@ public class TimerInitPacket extends TimerPacket {
     }
 
     public void timerInit(TimerPacketBuf buf, boolean isIntegrated) {
-        long delay = getNanoTime() - buf.readLong();
         String uuid = buf.readString();
         RunCategory category = RunCategory.getCategory(buf.readString());
         long rtaTime = buf.readLong();
         int runType = buf.readInt();
 
-        long startTime = System.currentTimeMillis() - rtaTime - delay;
+        long startTime = System.currentTimeMillis() - rtaTime;
 
         if (!SpeedRunIGT.IS_CLIENT_SIDE || !Objects.equals(InGameTimer.getInstance().getUuid().toString(), uuid)) {
             InGameTimer.start("", RunType.fromInt(runType));
