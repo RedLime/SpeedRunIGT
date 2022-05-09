@@ -23,9 +23,11 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -38,14 +40,25 @@ public class InGameTimerUtils {
     public static boolean IS_SET_SEED = false;
     public static boolean CAN_DISCONNECT = false;
 
-    public static File getTimerLogDir(String name, String pathName) {
-        File file;
+    public static @Nullable File getTimerLogDir(String worldName, String pathName) {
+        Path path;
         if (SpeedRunIGT.IS_CLIENT_SIDE) {
-            file = FabricLoader.getInstance().getGameDir().resolve("saves").resolve(name).resolve(SpeedRunIGT.MOD_ID).resolve(pathName).toFile();
+            if (worldName == null || worldName.isEmpty()) return null;
+            path = FabricLoader.getInstance().getGameDir().resolve("saves").resolve(worldName);
         } else {
-            file = FabricLoader.getInstance().getGameDir().resolve("world").resolve(SpeedRunIGT.MOD_ID).resolve(pathName).toFile();
+            path = FabricLoader.getInstance().getGameDir().resolve("world");
         }
-        if (!file.exists()) SpeedRunIGT.debug(file.mkdirs() ? "make timer dirs" : "failed to make timer dirs");
+
+        File worldFolder = path.toFile();
+        File file = path.resolve(SpeedRunIGT.MOD_ID).resolve(pathName).toFile();
+
+        if (!worldFolder.exists() || !worldFolder.isDirectory()) return null;
+
+        if (!file.exists()) {
+            SpeedRunIGT.debug(file.mkdirs() ? "make timer dirs" : "failed to make timer dirs");
+        } else if (!file.isDirectory() || worldFolder.listFiles() == null || Objects.requireNonNull(worldFolder.listFiles()).length < 3) {
+            return null;
+        }
         return file;
     }
 

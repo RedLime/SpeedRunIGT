@@ -41,6 +41,7 @@ public abstract class ServerWorldMixin extends World {
             }
             SpeedRunIGT.debug("Detected serverworld end portal");
             timer.getEndPortalPosList().add(new RunPortalPos(pos));
+            timer.tryInsertNewTimeline("portal_no_"+timer.getEndPortalPosList().size());
             InGameTimerUtils.IS_KILLED_ENDER_DRAGON = false;
         }
 
