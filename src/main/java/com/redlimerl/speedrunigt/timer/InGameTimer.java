@@ -48,7 +48,7 @@ public class InGameTimer implements Serializable {
     static InGameTimer COMPLETED_INSTANCE = new InGameTimer("");
 
     private static final String cryptKey = "faRQOs2GK5j863eP";
-    private static final int DATA_VERSION = 3;
+    private static final int DATA_VERSION = 4;
 
     @NotNull
     public static InGameTimer getInstance() { return INSTANCE; }
@@ -86,9 +86,9 @@ public class InGameTimer implements Serializable {
     private long retimedIGTTime = 0;
     private long rebaseIGTime = 0;
     private long excludedTime = 0; //for AA
-    private long activateTicks = 0;
     private long leastTickTime = 0;
     private long leastStartTime = 0;
+    private int activateTicks = 0;
     Long lanOpenedTime = null;
 
     private long leaveTime = 0;
@@ -102,6 +102,7 @@ public class InGameTimer implements Serializable {
     //For logging var
     private int loggerTicks = 0;
     private long loggerPausedTime = 0;
+    private int pauseTriggerTick = 0;
     private String prevPauseReason = "";
 
     //For checking blind
@@ -554,6 +555,8 @@ public class InGameTimer implements Serializable {
                 }
                 InGameTimerUtils.CHANGED_OPTIONS.clear();
                 InGameTimerUtils.RETIME_IS_WAITING_LOAD = false;
+                if (pauseTriggerTick == loggerTicks) tick();
+                pauseTriggerTick = loggerTicks;
                 this.setStatus(toStatus);
                 if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE) == SpeedRunOptions.TimerSaveInterval.PAUSE && status != TimerStatus.LEAVE && this.isStarted()) save();
 
