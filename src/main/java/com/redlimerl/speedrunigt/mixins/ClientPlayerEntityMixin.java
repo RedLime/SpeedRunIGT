@@ -63,6 +63,31 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             timer.checkConditions();
         }
 
+        // AA Timeline
+        if (timer.getCategory() == RunCategories.ALL_ADVANCEMENTS) {
+            int shells = 0;
+            for (ItemStack itemStack : this.inventory.field_15082) {
+                if (itemStack == null) continue;
+                if (itemStack.getItem() == Items.TRIDENT) {
+                    timer.tryInsertNewTimeline("got_trident");
+                }
+                if (itemStack.getItem() == Items.NAUTILUS_SHELL) {
+                    shells += itemStack.getCount();
+                }
+                if (itemStack.getItem() == Blocks.SHULKER_BOX.method_16312()) {
+                    shells += InGameTimerUtils.getItemCountFromShulkerBox(itemStack, Items.NAUTILUS_SHELL);
+                }
+            }
+
+            if (shells > timer.getMoreData(1541)) {
+                int i = 1;
+                while (shells >= timer.getMoreData(1541) + i) {
+                    timer.tryInsertNewTimeline("got_shell_" + (timer.getMoreData(1541) + i++));
+                }
+                timer.updateMoreData(1541, shells);
+            }
+        }
+
         //HIGH%
         if (timer.getCategory() == RunCategories.HIGH && this.y >= 420) {
             InGameTimer.complete();

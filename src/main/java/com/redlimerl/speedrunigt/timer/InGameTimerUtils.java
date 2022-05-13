@@ -15,9 +15,16 @@ import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import com.redlimerl.speedrunigt.timer.running.RunPortalPos;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.impl.FabricLoaderImpl;
+import net.minecraft.class_2960;
+import net.minecraft.class_3066;
 import net.minecraft.class_3793;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
@@ -213,5 +220,27 @@ public class InGameTimerUtils {
 
     public static MinecraftServer getServer() {
         return SpeedRunIGT.IS_CLIENT_SIDE ? InGameTimerClientUtils.getClientServer() : SpeedRunIGT.DEDICATED_SERVER;
+    }
+
+    public static int getItemCountFromShulkerBox(ItemStack itemStack, Item targetItem) {
+        int count = 0;
+
+        if (!(itemStack.getItem() instanceof BlockItem) || !(((BlockItem) itemStack.getItem()).getBlock() instanceof class_3066))
+            return 0;
+
+        NbtCompound compoundTag = itemStack.method_13657("BlockEntityTag");
+        if (compoundTag != null) {
+            if (compoundTag.contains("Items", 9)) {
+                DefaultedList<ItemStack> defaultedList = DefaultedList.ofSize(27, ItemStack.EMPTY);
+                class_2960.method_13927(compoundTag, defaultedList);
+                for (ItemStack stack : defaultedList) {
+                    if (stack != null && stack.getItem() == targetItem) {
+                        count += stack.getCount();
+                    }
+                }
+            }
+        }
+
+        return count;
     }
 }
