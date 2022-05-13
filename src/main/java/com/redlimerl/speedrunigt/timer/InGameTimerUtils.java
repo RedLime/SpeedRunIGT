@@ -15,8 +15,19 @@ import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import com.redlimerl.speedrunigt.timer.running.RunPortalPos;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.impl.FabricLoaderImpl;
+import net.minecraft.block.ShulkerBoxBlock;
+import net.minecraft.inventory.Inventories;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.dimension.DimensionType;
 import org.jetbrains.annotations.Nullable;
@@ -213,5 +224,27 @@ public class InGameTimerUtils {
 
     public static MinecraftServer getServer() {
         return SpeedRunIGT.IS_CLIENT_SIDE ? InGameTimerClientUtils.getClientServer() : SpeedRunIGT.DEDICATED_SERVER;
+    }
+
+    public static int getItemCountFromShulkerBox(ItemStack itemStack, Item targetItem) {
+        int count = 0;
+
+        if (!(itemStack.getItem() instanceof BlockItem) || !(((BlockItem) itemStack.getItem()).getBlock() instanceof ShulkerBoxBlock))
+            return 0;
+
+        CompoundTag compoundTag = itemStack.getSubTag("BlockEntityTag");
+        if (compoundTag != null) {
+            if (compoundTag.contains("Items", 9)) {
+                DefaultedList<ItemStack> defaultedList = DefaultedList.ofSize(27, ItemStack.EMPTY);
+                Inventories.fromTag(compoundTag, defaultedList);
+                for (ItemStack stack : defaultedList) {
+                    if (stack != null && stack.getItem() == targetItem) {
+                        count += stack.getCount();
+                    }
+                }
+            }
+        }
+
+        return count;
     }
 }
