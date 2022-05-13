@@ -67,7 +67,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         // AA Timeline
         if (timer.getCategory() == RunCategories.ALL_ADVANCEMENTS) {
             int shells = 0;
-            for (ItemStack itemStack : this.inventory.main) {
+            for (ItemStack itemStack : this.getInventory().main) {
                 if (itemStack == null) continue;
                 if (itemStack.getItem() == Items.TRIDENT) {
                     timer.tryInsertNewTimeline("got_trident");
