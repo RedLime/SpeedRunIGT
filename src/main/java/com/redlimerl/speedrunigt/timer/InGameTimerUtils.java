@@ -229,7 +229,7 @@ public class InGameTimerUtils {
         if (!(itemStack.getItem() instanceof BlockItem) || !(((BlockItem) itemStack.getItem()).getBlock() instanceof ShulkerBoxBlock))
             return 0;
 
-        NbtCompound compoundTag = itemStack.getSubTag("BlockEntityTag");
+        NbtCompound compoundTag = itemStack.getSubNbt("BlockEntityTag");
         if (compoundTag != null) {
             if (compoundTag.contains("Items", 9)) {
                 DefaultedList<ItemStack> defaultedList = DefaultedList.ofSize(27, ItemStack.EMPTY);
