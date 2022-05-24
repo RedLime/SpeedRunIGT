@@ -1,6 +1,5 @@
 package com.redlimerl.speedrunigt.mixins.coop;
 
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacketUtils;
@@ -17,12 +16,9 @@ public class TimeCommandMixin {
 
     @Inject(method = "executeSet", at = @At("RETURN"))
     private static void onSet(ServerCommandSource source, int time, CallbackInfoReturnable<Integer> cir) {
-        try {
-            if (time == 0 && InGameTimer.getInstance().getStatus() != TimerStatus.NONE && InGameTimer.getInstance().isCoop()
-            && source.getPlayer().getServer() != null) {
-                TimerPacketUtils.sendServer2ClientPacket(source.getPlayer().getServer(), new TimerInitPacket(InGameTimer.getInstance(), 0));
-            }
-        } catch (CommandSyntaxException ignored) {
+        if (time == 0 && InGameTimer.getInstance().getStatus() != TimerStatus.NONE && InGameTimer.getInstance().isCoop()
+        && source.getServer() != null) {
+            TimerPacketUtils.sendServer2ClientPacket(source.getServer(), new TimerInitPacket(InGameTimer.getInstance(), 0));
         }
     }
 }
