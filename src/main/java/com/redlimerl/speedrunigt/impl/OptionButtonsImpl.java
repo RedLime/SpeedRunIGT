@@ -258,9 +258,9 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
 
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
-                        new ButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.delete_all_records").asFormattedString(),
-                                (ButtonWidget button) -> {
-                                    MinecraftClient.getInstance().openScreen(new ConfirmScreen(boolean1 -> {
+                        new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.delete_all_records").asFormattedString(),
+                                (button) -> {
+                                    MinecraftClient.getInstance().openScreen(new ConfirmScreen((boolean1, i) -> {
                                         if (boolean1) {
                                             try {
                                                 FileUtils.deleteDirectory(SpeedRunIGT.getRecordsPath().toFile());
@@ -272,7 +272,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                                             }
                                         }
                                         MinecraftClient.getInstance().openScreen(screen);
-                                    }, new TranslatableText("speedrunigt.option.delete_all_records.description"), new LiteralText("")));
+                                    }, new TranslatableText("speedrunigt.option.delete_all_records.description").asFormattedString(), "", 0));
                                 })
                 )
                 .setCategory("speedrunigt.option.category.records")
