@@ -3,6 +3,7 @@ package com.redlimerl.speedrunigt.mixins;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
+import com.redlimerl.speedrunigt.timer.InGameTimerClientUtils;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
@@ -48,7 +49,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
         if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
 
-        if (timer.getStatus() == TimerStatus.IDLE && !InGameTimerUtils.IS_CHANGING_DIMENSION && (this.velocityX != 0 || this.velocityZ != 0 || this.jumping || this.isSneaking())) {
+        if (timer.getStatus() == TimerStatus.IDLE && !InGameTimerUtils.IS_CHANGING_DIMENSION && InGameTimerClientUtils.isFocusedClick() && (this.velocityX != 0 || this.velocityZ != 0 || this.jumping || this.isSneaking())) {
             timer.setPause(false, "moved player");
         }
         if (this.velocityX != 0 || this.velocityZ != 0 || this.jumping) {
