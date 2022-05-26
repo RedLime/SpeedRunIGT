@@ -191,7 +191,7 @@ public abstract class MinecraftClientMixin {
     // Record save
     @Inject(method = "stop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sound/SoundManager;close()V", shift = At.Shift.BEFORE))
     public void onStop(CallbackInfo ci) {
-        InGameTimer.getInstance().writeRecordFile();
+        InGameTimer.getInstance().writeRecordFile(false);
     }
 
     // Disconnecting fix
