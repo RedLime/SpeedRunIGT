@@ -128,7 +128,7 @@ public class InGameTimer implements Serializable {
      */
     public static void start(String worldName, RunType runType) {
         if (!INSTANCE.worldName.isEmpty()) {
-            INSTANCE.writeRecordFile();
+            INSTANCE.writeRecordFile(false);
         }
         INSTANCE = new InGameTimer(worldName);
         INSTANCE.setCategory(SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY), false);
@@ -237,7 +237,7 @@ public class InGameTimer implements Serializable {
         }
 
         INSTANCE.recordString = SpeedRunIGT.PRETTY_GSON.toJson(InGameTimerUtils.convertTimelineJson(INSTANCE));
-        INSTANCE.writeRecordFile();
+        INSTANCE.writeRecordFile(false);
 
         for (Consumer<InGameTimer> onCompleteConsumer : onCompleteConsumers) {
             try {
@@ -345,7 +345,7 @@ public class InGameTimer implements Serializable {
     }
 
     private String recordString = "";
-    public void writeRecordFile() {
+    public void writeRecordFile(boolean worldOnly) {
         File recordFile = new File(SpeedRunIGT.getRecordsPath().toFile(), uuid + ".json");
         File worldFile = InGameTimerUtils.getTimerLogDir(this.worldName, "");
         if (worldFile == null && isServerIntegrated) return;
@@ -360,7 +360,7 @@ public class InGameTimer implements Serializable {
 
         saveManagerThread.submit(() -> {
             try {
-                FileUtils.writeStringToFile(recordFile, resultRecord, StandardCharsets.UTF_8);
+                if (!worldOnly) FileUtils.writeStringToFile(recordFile, resultRecord, StandardCharsets.UTF_8);
                 if (worldRecordFile != null) FileUtils.writeStringToFile(worldRecordFile, resultRecord, StandardCharsets.UTF_8);
                 System.setProperty("speedrunigt.record", recordFile.getName());
             } catch (IOException e) {
@@ -474,7 +474,7 @@ public class InGameTimer implements Serializable {
                         + this.endIGTTime;
     }
 
-    private static final int RETIME_MINUTES = 20;
+    private static final int RETIME_MINUTES = 17;
     public long getRetimedInGameTime() {
         long base = getInGameTime(false);
         return base + (this.isGlitched || this.isCoop || this.getCategory() != RunCategories.ANY || base >= 60000 * RETIME_MINUTES || this.getRunType() != RunType.RANDOM_SEED ? 0 : this.retimedIGTTime);
@@ -561,7 +561,7 @@ public class InGameTimer implements Serializable {
                 if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE) == SpeedRunOptions.TimerSaveInterval.PAUSE && status != TimerStatus.LEAVE && this.isStarted()) save();
 
                 recordString = SpeedRunIGT.PRETTY_GSON.toJson(InGameTimerUtils.convertTimelineJson(this));
-                writeRecordFile();
+                writeRecordFile(true);
             }
         } else {
             if (this.isStarted()) {
