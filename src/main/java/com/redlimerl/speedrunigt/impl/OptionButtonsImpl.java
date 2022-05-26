@@ -17,7 +17,9 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
+import org.apache.commons.io.FileUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
@@ -250,6 +252,28 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                 .setButtonWidget(
                         new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.open_records_folder").asFormattedString(),
                                 (button) -> OperatingUtils.setFile(SpeedRunIGT.getRecordsPath().toFile()))
+                )
+                .setCategory("speedrunigt.option.category.records")
+        );
+
+        factories.add(screen -> new OptionButtonFactory.Builder()
+                .setButtonWidget(
+                        new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.delete_all_records").asFormattedString(),
+                                (button) -> {
+                                    MinecraftClient.getInstance().openScreen(new ConsumerConfirmScreen((boolean1, i) -> {
+                                        if (boolean1) {
+                                            try {
+                                                FileUtils.deleteDirectory(SpeedRunIGT.getRecordsPath().toFile());
+                                                if (!SpeedRunIGT.getRecordsPath().toFile().mkdir()) {
+                                                    SpeedRunIGT.error("Failed to make records directory");
+                                                }
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                        MinecraftClient.getInstance().openScreen(screen);
+                                    }, new TranslatableText("speedrunigt.option.delete_all_records.description").asFormattedString(), "", 0));
+                                })
                 )
                 .setCategory("speedrunigt.option.category.records")
         );
