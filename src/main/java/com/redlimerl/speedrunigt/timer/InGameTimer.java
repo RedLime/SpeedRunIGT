@@ -236,7 +236,6 @@ public class InGameTimer implements Serializable {
             });
         }
 
-        INSTANCE.recordString = SpeedRunIGT.PRETTY_GSON.toJson(InGameTimerUtils.convertTimelineJson(INSTANCE));
         INSTANCE.writeRecordFile(false);
 
         for (Consumer<InGameTimer> onCompleteConsumer : onCompleteConsumers) {
@@ -251,7 +250,6 @@ public class InGameTimer implements Serializable {
     public static void leave() {
         if (!INSTANCE.isServerIntegrated) return;
 
-        INSTANCE.recordString = SpeedRunIGT.PRETTY_GSON.toJson(InGameTimerUtils.convertTimelineJson(INSTANCE));
         INSTANCE.leaveTime = System.currentTimeMillis();
         INSTANCE.pauseCount = 0;
         INSTANCE.setPause(true, TimerStatus.LEAVE, "leave the world");
@@ -344,15 +342,13 @@ public class InGameTimer implements Serializable {
         }
     }
 
-    private String recordString = "";
     public void writeRecordFile(boolean worldOnly) {
         File recordFile = new File(SpeedRunIGT.getRecordsPath().toFile(), uuid + ".json");
         File worldFile = InGameTimerUtils.getTimerLogDir(this.worldName, "");
         if (worldFile == null && isServerIntegrated) return;
         File worldRecordFile = !isServerIntegrated ? null : new File(worldFile, "record.json");
-        String resultRecord = recordString;
+        String resultRecord = SpeedRunIGT.PRETTY_GSON.toJson(InGameTimerUtils.convertTimelineJson(this));
         if (resultRecord.isEmpty()) return;
-        recordString = "";
 
         SpeedRunOptions.RecordGenerateType optionType = SpeedRunOption.getOption(SpeedRunOptions.GENERATE_RECORD_FILE);
         if (optionType == SpeedRunOptions.RecordGenerateType.NONE
@@ -560,7 +556,6 @@ public class InGameTimer implements Serializable {
                 this.setStatus(toStatus);
                 if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE) == SpeedRunOptions.TimerSaveInterval.PAUSE && status != TimerStatus.LEAVE && this.isStarted()) save();
 
-                recordString = SpeedRunIGT.PRETTY_GSON.toJson(InGameTimerUtils.convertTimelineJson(this));
                 writeRecordFile(true);
             }
         } else {
