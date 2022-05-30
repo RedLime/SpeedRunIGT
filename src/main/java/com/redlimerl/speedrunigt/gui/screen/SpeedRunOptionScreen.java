@@ -34,8 +34,8 @@ public class SpeedRunOptionScreen extends Screen {
     private ButtonScrollListWidget buttonListWidget;
     private String currentSelectCategory = "";
     private int page = 0;
-    private AbstractButtonWidget prevPageButton = null;
-    private AbstractButtonWidget nextPageButton = null;
+    private ClickableWidget prevPageButton = null;
+    private ClickableWidget nextPageButton = null;
 
     public SpeedRunOptionScreen(Screen parent) {
         super(new TranslatableText("speedrunigt.title.options"));
@@ -90,7 +90,7 @@ public class SpeedRunOptionScreen extends Screen {
         this.page = MathHelper.clamp(this.page + num, 0, maxPage);
 
         int count = 0;
-        for (AbstractButtonWidget value : categorySelectButtons.values()) {
+        for (ClickableWidget value : categorySelectButtons.values()) {
             value.visible = this.page * 6 <= count && (this.page + 1) * 6 > count;
             count++;
         }
