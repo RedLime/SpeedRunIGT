@@ -16,6 +16,7 @@ import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -28,6 +29,9 @@ public class SpeedRunOptionScreen extends Screen {
     private final HashMap<Element, Supplier<String>> tooltips = new HashMap<>();
     private ButtonScrollListWidget buttonListWidget;
     private String currentSelectCategory = "";
+    private int page = 0;
+    private ClickableWidget prevPageButton = null;
+    private ClickableWidget nextPageButton = null;
 
     public SpeedRunOptionScreen(Screen parent) {
         super(Text.translatable("speedrunigt.title.options"));
@@ -56,11 +60,17 @@ public class SpeedRunOptionScreen extends Screen {
             categorySubButtons.put(category, categoryList);
 
             if (!categorySelectButtons.containsKey(category)) {
-                ButtonWidget buttonWidget = new ButtonWidget(width - 110, 30 + (categoryCount++ * 22), 80, 20, Text.translatable(category), (ButtonWidget buttonWidget1) -> selectCategory(category));
+                ButtonWidget buttonWidget = new ButtonWidget(width - 110, 30 + ((categoryCount++ % 6) * 22), 80, 20, Text.translatable(category), (ButtonWidget buttonWidget1) -> selectCategory(category));
                 categorySelectButtons.put(category, buttonWidget);
                 addDrawableChild(buttonWidget);
             }
         }
+
+        prevPageButton = addDrawableChild(new ButtonWidget(width - 110, 30 + (6 * 22), 38, 20, Text.literal("<"), (ButtonWidget button) -> openPage(-1)));
+
+        nextPageButton = addDrawableChild(new ButtonWidget(width - 68, 30 + (6 * 22), 38, 20, Text.literal(">"), (ButtonWidget button) -> openPage(+1)));
+
+        openPage(0);
 
         addDrawableChild(new ButtonWidget(width - 85, height - 35, 70, 20, ScreenTexts.CANCEL, (ButtonWidget button) -> close()));
 
@@ -69,6 +79,27 @@ public class SpeedRunOptionScreen extends Screen {
         buttonListWidget = addSelectableChild(new ButtonScrollListWidget());
 
         categorySelectButtons.keySet().stream().findFirst().ifPresent(this::selectCategory);
+    }
+
+    public void openPage(int num) {
+        int maxPage = Math.max((categorySelectButtons.keySet().size() - 1) / 6, 0);
+        this.page = MathHelper.clamp(this.page + num, 0, maxPage);
+
+        int count = 0;
+        for (ClickableWidget value : categorySelectButtons.values()) {
+            value.visible = this.page * 6 <= count && (this.page + 1) * 6 > count;
+            count++;
+        }
+
+        if (maxPage == 0) {
+            prevPageButton.visible = false;
+            nextPageButton.visible = false;
+        } else {
+            prevPageButton.visible = true;
+            nextPageButton.visible = true;
+            prevPageButton.active = !(this.page == 0);
+            nextPageButton.active = !(maxPage == this.page);
+        }
     }
 
     @Override
