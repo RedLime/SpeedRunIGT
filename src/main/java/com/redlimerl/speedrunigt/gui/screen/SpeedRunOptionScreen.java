@@ -13,6 +13,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.math.MathHelper;
 import org.lwjgl.opengl.GL11;
 
 import java.util.*;
@@ -27,6 +28,9 @@ public class SpeedRunOptionScreen extends Screen {
     private ButtonScrollListWidget buttonListWidget;
     private final ArrayList<ButtonWidget> widgetButtons = new ArrayList<>();
     private String currentSelectCategory = "";
+    private int page = 0;
+    private ButtonWidget prevPageButton = null;
+    private ButtonWidget nextPageButton = null;
 
     public SpeedRunOptionScreen(Screen parent) {
         super();
@@ -55,11 +59,19 @@ public class SpeedRunOptionScreen extends Screen {
             categorySubButtons.put(category, categoryList);
 
             if (!categorySelectButtons.containsKey(category)) {
-                ButtonWidget buttonWidget = new ConsumerButtonWidget(width - 110, 30 + (categoryCount++ * 22), 80, 20, new TranslatableText(category).asFormattedString(), (buttonWidget1) -> selectCategory(category));
+                ButtonWidget buttonWidget = new ConsumerButtonWidget(width - 110, 30 + ((categoryCount++ % 6) * 22), 80, 20, new TranslatableText(category).asFormattedString(), (buttonWidget1) -> selectCategory(category));
                 categorySelectButtons.put(category, buttonWidget);
                 buttons.add(buttonWidget);
             }
         }
+
+        prevPageButton = new ConsumerButtonWidget(width - 110, 30 + (6 * 22), 38, 20, "<", (button) -> openPage(-1));
+        buttons.add(prevPageButton);
+
+        nextPageButton = new ConsumerButtonWidget(width - 68, 30 + (6 * 22), 38, 20, ">", (button) -> openPage(+1));
+        buttons.add(nextPageButton);
+
+        openPage(0);
 
         buttons.add(new ConsumerButtonWidget(width - 85, height - 35, 70, 20, ScreenTexts.CANCEL, (button) -> onClose()));
 
@@ -68,6 +80,27 @@ public class SpeedRunOptionScreen extends Screen {
         buttonListWidget = new ButtonScrollListWidget();
 
         categorySelectButtons.keySet().stream().findFirst().ifPresent(this::selectCategory);
+    }
+
+    public void openPage(int num) {
+        int maxPage = Math.max((categorySelectButtons.keySet().size() - 1) / 6, 0);
+        this.page = MathHelper.clamp(this.page + num, 0, maxPage);
+
+        int count = 0;
+        for (ButtonWidget value : categorySelectButtons.values()) {
+            value.visible = this.page * 6 <= count && (this.page + 1) * 6 > count;
+            count++;
+        }
+
+        if (maxPage == 0) {
+            prevPageButton.visible = false;
+            nextPageButton.visible = false;
+        } else {
+            prevPageButton.visible = true;
+            nextPageButton.visible = true;
+            prevPageButton.active = !(this.page == 0);
+            nextPageButton.active = !(maxPage == this.page);
+        }
     }
 
     public void onClose() {

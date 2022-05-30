@@ -188,8 +188,14 @@ public abstract class MinecraftClientMixin {
     }
 
     // Crash safety
-    @Inject(method = "addSystemDetailsToCrashReport", at = @At("HEAD"))
-    public void onCrash(CrashReport report, CallbackInfoReturnable<CrashReport> cir) {
+    @Inject(method = "cleanHeap", at = @At("HEAD"))
+    public void onCrash(CallbackInfo ci) {
+        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) InGameTimer.leave();
+    }
+
+    // Crash safety
+    @Inject(method = "printCrashReport", at = @At("HEAD"))
+    private static void onCrash(CrashReport crashReport, CallbackInfo ci) {
         if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) InGameTimer.leave();
     }
 
