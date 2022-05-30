@@ -194,7 +194,7 @@ public abstract class MinecraftClientMixin {
 
     // Crash safety
     @Inject(method = "printCrashReport", at = @At("HEAD"))
-    private static void onCrash(CrashReport crashReport, CallbackInfo ci) {
+    private void onCrash(CrashReport crashReport, CallbackInfo ci) {
         if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) InGameTimer.leave();
     }
 
