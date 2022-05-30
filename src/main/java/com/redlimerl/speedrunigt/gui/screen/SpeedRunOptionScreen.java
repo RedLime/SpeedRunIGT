@@ -13,6 +13,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.math.MathHelper;
 import org.lwjgl.opengl.GL11;
 
 import java.util.*;
@@ -27,6 +28,9 @@ public class SpeedRunOptionScreen extends Screen {
     private ButtonScrollListWidget buttonListWidget;
     private final ArrayList<ButtonWidget> widgetButtons = new ArrayList<>();
     private String currentSelectCategory = "";
+    private int page = 0;
+    private ButtonWidget prevPageButton = null;
+    private ButtonWidget nextPageButton = null;
 
     public SpeedRunOptionScreen(Screen parent) {
         super();
@@ -55,11 +59,19 @@ public class SpeedRunOptionScreen extends Screen {
             categorySubButtons.put(category, categoryList);
 
             if (!categorySelectButtons.containsKey(category)) {
-                ButtonWidget buttonWidget = new ConsumerButtonWidget(field_22535 - 110, 30 + (categoryCount++ * 22), 80, 20, new TranslatableText(category).asFormattedString(), (buttonWidget1) -> selectCategory(category));
+                ButtonWidget buttonWidget = new ConsumerButtonWidget(field_22535 - 110, 30 + ((categoryCount++ % 6) * 22), 80, 20, new TranslatableText(category).asFormattedString(), (buttonWidget1) -> selectCategory(category));
                 categorySelectButtons.put(category, buttonWidget);
                 field_22537.add(buttonWidget);
             }
         }
+
+        prevPageButton = new ConsumerButtonWidget(field_22535 - 110, 30 + (6 * 22), 38, 20, "<", (button) -> openPage(-1));
+        field_22537.add(prevPageButton);
+
+        nextPageButton = new ConsumerButtonWidget(field_22535 - 68, 30 + (6 * 22), 38, 20, ">", (button) -> openPage(+1));
+        field_22537.add(nextPageButton);
+
+        openPage(0);
 
         field_22537.add(new ConsumerButtonWidget(field_22535 - 85, field_22536 - 35, 70, 20, ScreenTexts.CANCEL, (button) -> onClose()));
 
@@ -68,6 +80,27 @@ public class SpeedRunOptionScreen extends Screen {
         buttonListWidget = new ButtonScrollListWidget();
 
         categorySelectButtons.keySet().stream().findFirst().ifPresent(this::selectCategory);
+    }
+
+    public void openPage(int num) {
+        int maxPage = Math.max((categorySelectButtons.keySet().size() - 1) / 6, 0);
+        this.page = MathHelper.clamp(this.page + num, 0, maxPage);
+
+        int count = 0;
+        for (ButtonWidget value : categorySelectButtons.values()) {
+            value.field_22512 = this.page * 6 <= count && (this.page + 1) * 6 > count;
+            count++;
+        }
+
+        if (maxPage == 0) {
+            prevPageButton.field_22512 = false;
+            nextPageButton.field_22512 = false;
+        } else {
+            prevPageButton.field_22512 = true;
+            nextPageButton.field_22512 = true;
+            prevPageButton.field_22511 = !(this.page == 0);
+            nextPageButton.field_22511 = !(maxPage == this.page);
+        }
     }
 
     public void onClose() {
