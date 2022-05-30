@@ -66,9 +66,11 @@ public class SpeedRunOptionScreen extends Screen {
             }
         }
 
-        prevPageButton = method_13411(new ConsumerButtonWidget(width - 110, 30 + (6 * 22), 38, 20, "<", (button) -> openPage(-1)));
+        prevPageButton = new ConsumerButtonWidget(width - 110, 30 + (6 * 22), 38, 20, "<", (button) -> openPage(-1));
+        buttons.add(prevPageButton);
 
-        nextPageButton = method_13411(new ConsumerButtonWidget(width - 68, 30 + (6 * 22), 38, 20, ">", (button) -> openPage(+1)));
+        nextPageButton = new ConsumerButtonWidget(width - 68, 30 + (6 * 22), 38, 20, ">", (button) -> openPage(+1));
+        buttons.add(nextPageButton);
 
         openPage(0);
 
