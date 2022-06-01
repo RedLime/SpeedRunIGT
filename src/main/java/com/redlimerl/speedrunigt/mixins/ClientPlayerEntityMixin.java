@@ -56,14 +56,15 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             timer.updateFirstInput();
         }
 
+        List<ItemStack> playerItemList = Lists.newArrayList();
+        playerItemList.addAll(Lists.newArrayList(this.inventory.armor));
+        playerItemList.addAll(Lists.newArrayList(this.inventory.main));
+
         // Custom Json category
         if (timer.getCategory().getConditionJson() != null) {
-            List<ItemStack> itemStacks = Lists.newArrayList();
-            itemStacks.addAll(Lists.newArrayList(this.inventory.armor));
-            itemStacks.addAll(Lists.newArrayList(this.inventory.main));
             for (CategoryCondition.Condition<?> condition : timer.getCustomCondition().getConditionList()) {
                 if (condition instanceof ObtainItemCategoryCondition) {
-                    timer.updateCondition((ObtainItemCategoryCondition) condition, itemStacks);
+                    timer.updateCondition((ObtainItemCategoryCondition) condition, playerItemList);
                 }
             }
             timer.checkConditions();
@@ -92,10 +93,19 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             return;
         }
 
+        for (ItemStack itemStack : playerItemList) {
+            if (itemStack == null) continue;
+
+            //Stack of Lime Wool
+            if (timer.getCategory() == RunCategories.STACK_OF_LIME_WOOL) {
+                if (itemStack.getItem() == Item.fromBlock(Blocks.WOOL) && itemStack.getDamage() == 5 && itemStack.count == 64) InGameTimer.complete();
+            }
+        }
+
+        List<Item> items = Arrays.stream(this.inventory.main).filter(itemStack -> itemStack != null && !itemStack.isEmpty()).map(ItemStack::getItem).collect(Collectors.toList());
 
         //All Swords
         if (timer.getCategory() == RunCategories.ALL_SWORDS) {
-            List<Item> items = Arrays.stream(this.inventory.main).filter(itemStack -> itemStack != null && !itemStack.isEmpty()).map(ItemStack::getItem).collect(Collectors.toList());
             if (items.contains(Items.STONE_SWORD) &&
                     items.contains(Items.DIAMOND_SWORD) &&
                     items.contains(Items.GOLDEN_SWORD) &&
@@ -107,7 +117,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
         //All Minerals
         if (timer.getCategory() == RunCategories.ALL_MINERALS) {
-            List<Item> items = Arrays.stream(this.inventory.main).filter(itemStack -> itemStack != null && !itemStack.isEmpty()).map(ItemStack::getItem).collect(Collectors.toList());
             if (items.contains(Items.COAL) &&
                     items.contains(Items.IRON_INGOT) &&
                     items.contains(Items.GOLD_INGOT) &&
@@ -128,7 +137,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
         //Iron Armors & lvl 15
         if (timer.getCategory() == RunCategories.FULL_IA_15_LVL) {
-            List<Item> items = Arrays.stream(this.inventory.armor).filter(itemStack -> itemStack != null && !itemStack.isEmpty()).map(ItemStack::getItem).collect(Collectors.toList());
             if (items.contains(Items.IRON_HELMET) &&
                     items.contains(Items.IRON_CHESTPLATE) &&
                     items.contains(Items.IRON_BOOTS) &&
@@ -137,15 +145,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             }
         }
 
-        //Stack of Lime Wool
-        if (timer.getCategory() == RunCategories.STACK_OF_LIME_WOOL) {
-            for (ItemStack itemStack : this.inventory.main) {
-                if (itemStack != null && itemStack.getItem() == Item.fromBlock(Blocks.WOOL) && itemStack.getDamage() == 5 && itemStack.count == 64) InGameTimer.complete();
-            }
-        }
-
         //For Timelines
-        if (timer.getCategory() == RunCategories.ANY && this.y >= 100 && this.isSleeping())
+        if (this.y >= 100 && this.isSleeping())
             timer.tryInsertNewTimeline("sleep_on_tower");
     }
 
