@@ -236,6 +236,7 @@ public class InGameTimer implements Serializable {
             });
         }
 
+        INSTANCE.updateRecordString();
         INSTANCE.writeRecordFile(false);
 
         for (Consumer<InGameTimer> onCompleteConsumer : onCompleteConsumers) {
@@ -342,12 +343,15 @@ public class InGameTimer implements Serializable {
         }
     }
 
+    private String resultRecord = "";
+    private void updateRecordString() {
+        resultRecord = SpeedRunIGT.PRETTY_GSON.toJson(InGameTimerUtils.convertTimelineJson(this));
+    }
     public void writeRecordFile(boolean worldOnly) {
         File recordFile = new File(SpeedRunIGT.getRecordsPath().toFile(), uuid + ".json");
         File worldFile = InGameTimerUtils.getTimerLogDir(this.worldName, "");
         if (worldFile == null && isServerIntegrated) return;
         File worldRecordFile = !isServerIntegrated ? null : new File(worldFile, "record.json");
-        String resultRecord = SpeedRunIGT.PRETTY_GSON.toJson(InGameTimerUtils.convertTimelineJson(this));
         if (resultRecord.isEmpty()) return;
 
         SpeedRunOptions.RecordGenerateType optionType = SpeedRunOption.getOption(SpeedRunOptions.GENERATE_RECORD_FILE);
@@ -556,6 +560,7 @@ public class InGameTimer implements Serializable {
                 this.setStatus(toStatus);
                 if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE) == SpeedRunOptions.TimerSaveInterval.PAUSE && status != TimerStatus.LEAVE && this.isStarted()) save();
 
+                updateRecordString();
                 writeRecordFile(true);
             }
         } else {
