@@ -32,7 +32,7 @@ public abstract class ServerWorldMixin extends World {
         boolean result = super.setBlockState(pos, state, flags);
 
         InGameTimer timer = InGameTimer.getInstance();
-        if (!this.isClient() && flags == 2 && state.getBlock() == Blocks.END_PORTAL && timer.getCategory() == RunCategories.ALL_PORTALS && Objects.equals(getRegistryKey().getValue().toString(), DimensionType.OVERWORLD_ID.toString())) {
+        if (!this.isClient() && flags == 2 && state.getBlock() == Blocks.END_PORTAL && Objects.equals(getRegistryKey().getValue().toString(), DimensionType.OVERWORLD_ID.toString())) {
             for (RunPortalPos runPortalPos : timer.getEndPortalPosList()) {
                 if (runPortalPos.squaredDistanceTo(pos) < 100) {
                     return result;
