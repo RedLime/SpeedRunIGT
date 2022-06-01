@@ -547,6 +547,7 @@ public class InGameTimer implements Serializable {
     public void setPause(boolean toPause, TimerStatus toStatus, String reason) {
         if (this.getStatus() == TimerStatus.COMPLETED_LEGACY || this.isCoop) return;
 
+        SpeedRunIGT.debug(toStatus +" " + reason);
         if (toPause) {
             if (this.getStatus().getPause() <= toStatus.getPause()) {
                 if (this.getStatus().getPause() < 1 && this.isStarted()) {

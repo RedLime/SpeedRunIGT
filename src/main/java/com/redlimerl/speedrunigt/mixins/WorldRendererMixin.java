@@ -2,9 +2,12 @@ package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.utils.MixinValues;
 import net.minecraft.client.render.WorldRenderer;
+import net.minecraft.client.world.ClientWorld;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(WorldRenderer.class)
 public class WorldRendererMixin {
@@ -15,6 +18,11 @@ public class WorldRendererMixin {
     private Object[] redirectChunks(Object[] object) {
         MixinValues.COMPLETED_RENDER_CHUNKS = (int) object[0];
         return object;
+    }
+
+    @Inject(method = "method_1371", at = @At("TAIL"))
+    private void onSetWorld(ClientWorld clientWorld, CallbackInfo ci) {
+        MixinValues.IS_CHANGED_WORLD = true;
     }
 
 }
