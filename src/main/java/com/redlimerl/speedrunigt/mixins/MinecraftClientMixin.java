@@ -90,12 +90,10 @@ public abstract class MinecraftClientMixin {
         }
 
         // For Timelines
-        if (timer.getCategory() == RunCategories.ANY) {
-            if (targetWorld.dimension.getType() == -1) {
-                timer.tryInsertNewTimeline("enter_nether");
-            } else if (targetWorld.dimension.getType() == 1) {
-                timer.tryInsertNewTimeline("enter_end");
-            }
+        if (targetWorld.dimension.getType() == -1) {
+            timer.tryInsertNewTimeline("enter_nether");
+        } else if (targetWorld.dimension.getType() == 1) {
+            timer.tryInsertNewTimeline("enter_end");
         }
 
         //Enter Nether
