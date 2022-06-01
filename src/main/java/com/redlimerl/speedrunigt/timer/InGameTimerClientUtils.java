@@ -27,7 +27,7 @@ public class InGameTimerClientUtils {
         if (timer.getStatus() != TimerStatus.IDLE) return false;
 
         if (!client.isPaused() && client.worldRenderer != null && Mouse.isInsideWindow() && Display.isActive() && Mouse.isGrabbed()
-                && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
+                && !InGameTimerUtils.IS_CHANGING_DIMENSION && MixinValues.IS_CHANGED_WORLD) {
             if (checkRender) {
                 WorldRendererAccessor worldRenderer = (WorldRendererAccessor) client.worldRenderer;
                 client.worldRenderer.getChunksDebugString(); // For init MixinValues#completedChunks value

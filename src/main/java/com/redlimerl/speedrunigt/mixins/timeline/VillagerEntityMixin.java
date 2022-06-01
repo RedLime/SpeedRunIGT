@@ -14,7 +14,7 @@ public class VillagerEntityMixin {
     @Inject(method = "trade", at = @At("HEAD"))
     public void onTrade(TradeOffer offer, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
-        if (timer.getCategory() == RunCategories.ANY) timer.tryInsertNewTimeline("trade_with_villager");
+        timer.tryInsertNewTimeline("trade_with_villager");
     }
 
 }
