@@ -90,12 +90,10 @@ public abstract class MinecraftClientMixin {
         }
 
         // For Timelines
-        if (timer.getCategory() == RunCategories.ANY) {
-            if (targetWorld.dimension.dimensionType == -1) {
-                timer.tryInsertNewTimeline("enter_nether");
-            } else if (targetWorld.dimension.dimensionType == 1) {
-                timer.tryInsertNewTimeline("enter_end");
-            }
+        if (targetWorld.dimension.dimensionType == -1) {
+            timer.tryInsertNewTimeline("enter_nether");
+        } else if (targetWorld.dimension.dimensionType == 1) {
+            timer.tryInsertNewTimeline("enter_end");
         }
 
         //Enter Nether
@@ -153,13 +151,6 @@ public abstract class MinecraftClientMixin {
 
 
 
-
-    /**
-     * Moved the mouse stuff from MouseMixin and redid it by Void_X_Walker
-     */
-    private float previousX=0;
-    private float previousY=0;
-
     @Redirect(method="tick", at=@At(value="INVOKE", target = "Lorg/lwjgl/input/Mouse;getEventDWheel()I", remap = false))
     public int getScrolled(){
         if(Mouse.getEventDWheel()!=0){
@@ -170,11 +161,9 @@ public abstract class MinecraftClientMixin {
 
     @Inject(method="tick",at=@At(value = "HEAD"))
     public void getMoved(CallbackInfo ci){
-        if(Mouse.getX()!=previousX||Mouse.getY()!=previousY){
+        if(Mouse.getDX() != 0||Mouse.getDY() != 0){
             unlock();
         }
-        previousX=Mouse.getX();
-        previousY=Mouse.getY();
     }
 
     private void unlock() {

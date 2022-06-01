@@ -44,16 +44,16 @@ public abstract class ServerPlayerEntityMixin {
         Dimension newDimension = player.world.dimension;
 
         InGameTimer timer = InGameTimer.getInstance();
-        if (timer.getStatus() != TimerStatus.NONE && !timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY) {
+        if (timer.getStatus() != TimerStatus.NONE) {
             if (oldDimension instanceof OverworldDimension && newDimension instanceof TheNetherDimension) {
-                InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(newDimension, Vec3d.of(player.x, player.y, player.z), lastPortalPos.add(0, 0, 0));
+                if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY) InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(newDimension, Vec3d.of(player.x, player.y, player.z), lastPortalPos.add(0, 0, 0));
             }
 
             if (oldDimension instanceof TheNetherDimension && newDimension instanceof OverworldDimension) {
                 if (InGameTimerUtils.isBlindTraveled(lastPortalPos)) {
                     InGameTimer.getInstance().tryInsertNewTimeline("nether_travel");
                 }
-                InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(newDimension, lastPortalPos.add(0, 0, 0), Vec3d.of(player.x, player.y, player.z));
+                if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY) InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(newDimension, lastPortalPos.add(0, 0, 0), Vec3d.of(player.x, player.y, player.z));
             }
         }
     }
