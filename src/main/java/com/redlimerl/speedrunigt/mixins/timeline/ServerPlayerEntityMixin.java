@@ -47,16 +47,18 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         RegistryKey<World> newRegistryKey = world.getRegistryKey();
 
         InGameTimer timer = InGameTimer.getInstance();
-        if (timer.getStatus() != TimerStatus.NONE && !timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY) {
+        if (timer.getStatus() != TimerStatus.NONE) {
             if (oldRegistryKey == World.OVERWORLD && newRegistryKey == World.NETHER) {
-                InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.NETHER, this.getPos().add(0, 0, 0), lastPortalPos.add(0, 0, 0));
+                if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY)
+                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.NETHER, this.getPos().add(0, 0, 0), lastPortalPos.add(0, 0, 0));
             }
 
             if (oldRegistryKey == World.NETHER && newRegistryKey == World.OVERWORLD) {
                 if (InGameTimerUtils.isBlindTraveled(lastPortalPos)) {
                     InGameTimer.getInstance().tryInsertNewTimeline("nether_travel");
                 }
-                InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.OVERWORLD, lastPortalPos.add(0, 0, 0), this.getPos().add(0, 0, 0));
+                if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY)
+                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.OVERWORLD, lastPortalPos.add(0, 0, 0), this.getPos().add(0, 0, 0));
             }
         }
     }

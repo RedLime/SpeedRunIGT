@@ -80,12 +80,10 @@ public abstract class MinecraftClientMixin {
         }
 
         // For Timelines
-        if (timer.getCategory() == RunCategories.ANY) {
-            if (Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionTypes.THE_NETHER_ID.toString())) {
-                timer.tryInsertNewTimeline("enter_nether");
-            } else if (Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionTypes.THE_END_ID.toString())) {
-                timer.tryInsertNewTimeline("enter_end");
-            }
+        if (Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionTypes.THE_NETHER_ID.toString())) {
+            timer.tryInsertNewTimeline("enter_nether");
+        } else if (Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionTypes.THE_END_ID.toString())) {
+            timer.tryInsertNewTimeline("enter_end");
         }
 
         //Enter Nether
