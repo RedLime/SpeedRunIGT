@@ -34,16 +34,16 @@ public abstract class ServerPlayerEntityMixin {
         class_2750 newDimension = player.world.dimension.method_11789();
 
         InGameTimer timer = InGameTimer.getInstance();
-        if (timer.getStatus() != TimerStatus.NONE && !timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY) {
+        if (timer.getStatus() != TimerStatus.NONE) {
             if (oldDimension == class_2750.field_12920 && newDimension == class_2750.field_12921) {
-                InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(class_2750.field_12921, player.getPos().add(0, 0, 0), lastPortalPos.add(0, 0, 0));
+                if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY) InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(class_2750.field_12921, player.getPos().add(0, 0, 0), lastPortalPos.add(0, 0, 0));
             }
 
             if (oldDimension == class_2750.field_12921 && newDimension == class_2750.field_12920) {
                 if (InGameTimerUtils.isBlindTraveled(lastPortalPos)) {
                     InGameTimer.getInstance().tryInsertNewTimeline("nether_travel");
                 }
-                InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(class_2750.field_12920, lastPortalPos.add(0, 0, 0), player.getPos().add(0, 0, 0));
+                if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY) InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(class_2750.field_12920, lastPortalPos.add(0, 0, 0), player.getPos().add(0, 0, 0));
             }
         }
     }
