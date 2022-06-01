@@ -31,7 +31,7 @@ public abstract class ServerWorldMixin extends World {
         boolean result = super.method_8506(pos, state, flags);
 
         InGameTimer timer = InGameTimer.getInstance();
-        if (!this.method_16390() && flags == 2 && state.getBlock() == Blocks.END_PORTAL && timer.getCategory() == RunCategories.ALL_PORTALS && timer.getCategory() == RunCategories.ALL_PORTALS && dimension.method_11789() == class_3793.field_18954) {
+        if (!this.method_16390() && flags == 2 && state.getBlock() == Blocks.END_PORTAL && timer.getCategory() == RunCategories.ALL_PORTALS && dimension.method_11789() == class_3793.field_18954) {
             for (RunPortalPos runPortalPos : timer.getEndPortalPosList()) {
                 if (runPortalPos.squaredDistanceTo(pos) < 100) {
                     return result;

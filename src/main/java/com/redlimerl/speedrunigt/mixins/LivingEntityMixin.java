@@ -35,11 +35,9 @@ public abstract class LivingEntityMixin extends Entity {
         if (this.removed || this.dead || timer.getStatus() == TimerStatus.NONE) return;
 
         // For Timelines
-        if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {
-            if (this.method_15557() == class_3460.field_16737 && this.attackingPlayer != null) timer.tryInsertNewTimeline("kill_wither");
-            if (this.method_15557() == class_3460.field_16798 && this.attackingPlayer != null) timer.tryInsertNewTimeline("kill_elder_guardian");
-            if (this.method_15557() == class_3460.field_16800) timer.tryInsertNewTimeline("kill_ender_dragon");
-        }
+        if (this.method_15557() == class_3460.field_16737 && this.attackingPlayer != null) timer.tryInsertNewTimeline("kill_wither");
+        if (this.method_15557() == class_3460.field_16798 && this.attackingPlayer != null) timer.tryInsertNewTimeline("kill_elder_guardian");
+        if (this.method_15557() == class_3460.field_16800) timer.tryInsertNewTimeline("kill_ender_dragon");
 
         //Kill All Bosses
         if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {

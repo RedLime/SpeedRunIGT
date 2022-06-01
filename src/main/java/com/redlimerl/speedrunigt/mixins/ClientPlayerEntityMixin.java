@@ -49,43 +49,19 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             timer.updateFirstInput();
         }
 
+        List<ItemStack> playerItemList = Lists.newArrayList();
+        playerItemList.addAll(this.inventory.field_15082);
+        playerItemList.addAll(this.inventory.field_15083);
+        playerItemList.addAll(this.inventory.field_15084);
+
         // Custom Json category
         if (timer.getCategory().getConditionJson() != null) {
-            List<ItemStack> itemStacks = Lists.newArrayList();
-            itemStacks.addAll(this.inventory.field_15082);
-            itemStacks.addAll(this.inventory.field_15083);
-            itemStacks.addAll(this.inventory.field_15084);
             for (CategoryCondition.Condition<?> condition : timer.getCustomCondition().getConditionList()) {
                 if (condition instanceof ObtainItemCategoryCondition) {
-                    timer.updateCondition((ObtainItemCategoryCondition) condition, itemStacks);
+                    timer.updateCondition((ObtainItemCategoryCondition) condition, playerItemList);
                 }
             }
             timer.checkConditions();
-        }
-
-        // AA Timeline
-        if (timer.getCategory() == RunCategories.ALL_ADVANCEMENTS) {
-            int shells = 0;
-            for (ItemStack itemStack : this.inventory.field_15082) {
-                if (itemStack == null) continue;
-                if (itemStack.getItem() == Items.TRIDENT) {
-                    timer.tryInsertNewTimeline("got_trident");
-                }
-                if (itemStack.getItem() == Items.NAUTILUS_SHELL) {
-                    shells += itemStack.getCount();
-                }
-                if (itemStack.getItem() == Blocks.SHULKER_BOX.method_16312()) {
-                    shells += InGameTimerUtils.getItemCountFromShulkerBox(itemStack, Items.NAUTILUS_SHELL);
-                }
-            }
-
-            if (shells > timer.getMoreData(1541)) {
-                int i = 1;
-                while (shells >= timer.getMoreData(1541) + i) {
-                    timer.tryInsertNewTimeline("got_shell_" + (timer.getMoreData(1541) + i++));
-                }
-                timer.updateMoreData(1541, shells);
-            }
         }
 
         //HIGH%
@@ -101,9 +77,40 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             return;
         }
 
+        for (ItemStack itemStack : playerItemList) {
+            int shells = 0;
+
+            if (itemStack == null) continue;
+
+            // Timelines
+            if (itemStack.getItem() == Items.TRIDENT) {
+                timer.tryInsertNewTimeline("got_trident");
+            }
+            if (itemStack.getItem() == Items.NAUTILUS_SHELL) {
+                shells += itemStack.getCount();
+            }
+            if (itemStack.getItem() == Blocks.SHULKER_BOX.method_16312()) {
+                shells += InGameTimerUtils.getItemCountFromShulkerBox(itemStack, Items.NAUTILUS_SHELL);
+            }
+            if (shells > timer.getMoreData(1541)) {
+                int i = 1;
+                while (shells >= timer.getMoreData(1541) + i) {
+                    timer.tryInsertNewTimeline("got_shell_" + (timer.getMoreData(1541) + i++));
+                }
+                timer.updateMoreData(1541, shells);
+            }
+
+
+            //Stack of Lime Wool
+            if (timer.getCategory() == RunCategories.STACK_OF_LIME_WOOL) {
+                if (itemStack.getItem() == Blocks.LIME_WOOL.method_16312() && itemStack.getCount() == 64) InGameTimer.complete();
+            }
+        }
+
+        List<Item> items = this.inventory.field_15082.stream().map(ItemStack::getItem).collect(Collectors.toList());
+
         //All Swords
         if (timer.getCategory() == RunCategories.ALL_SWORDS) {
-            List<Item> items = this.inventory.field_15082.stream().map(ItemStack::getItem).collect(Collectors.toList());
             if (items.contains(Items.STONE_SWORD) &&
                     items.contains(Items.DIAMOND_SWORD) &&
                     items.contains(Items.GOLDEN_SWORD) &&
@@ -115,7 +122,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
         //All Minerals
         if (timer.getCategory() == RunCategories.ALL_MINERALS) {
-            List<Item> items = this.inventory.field_15082.stream().map(ItemStack::getItem).collect(Collectors.toList());
             if (items.contains(Items.COAL) &&
                     items.contains(Items.IRON_INGOT) &&
                     items.contains(Items.GOLD_INGOT) &&
@@ -130,19 +136,11 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
         //Iron Armors & lvl 15
         if (timer.getCategory() == RunCategories.FULL_IA_15_LVL) {
-            List<Item> items = this.inventory.field_15083.stream().map(ItemStack::getItem).collect(Collectors.toList());
             if (items.contains(Items.IRON_HELMET) &&
                     items.contains(Items.IRON_CHESTPLATE) &&
                     items.contains(Items.IRON_BOOTS) &&
                     items.contains(Items.IRON_LEGGINGS) && experienceLevel >= 15) {
                 InGameTimer.complete();
-            }
-        }
-
-        //Stack of Lime Wool
-        if (timer.getCategory() == RunCategories.STACK_OF_LIME_WOOL) {
-            for (ItemStack itemStack : this.inventory.field_15082) {
-                if (itemStack != null && itemStack.getItem() == Blocks.LIME_WOOL.method_16312() && itemStack.getCount() == 64) InGameTimer.complete();
             }
         }
     }
