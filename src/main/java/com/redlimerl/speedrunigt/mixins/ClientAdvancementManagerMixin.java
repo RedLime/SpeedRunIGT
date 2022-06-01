@@ -45,13 +45,12 @@ public abstract class ClientAdvancementManagerMixin {
         if (advancementProgress.isDone() && timer.getStatus() != TimerStatus.NONE) {
 
             // For Timelines
-            if (timer.getCategory() == RunCategories.ANY) {
-                if (Objects.equals(advancement.getId().getPath(), "story/follow_ender_eye")) {
-                    timer.tryInsertNewTimeline("enter_stronghold");
-                } else if (Objects.equals(advancement.getId().getPath(), "nether/find_fortress")) {
-                    timer.tryInsertNewTimeline("enter_fortress");
-                }
+            if (Objects.equals(advancement.getId().getPath(), "story/follow_ender_eye")) {
+                timer.tryInsertNewTimeline("enter_stronghold");
+            } else if (Objects.equals(advancement.getId().getPath(), "nether/find_fortress")) {
+                timer.tryInsertNewTimeline("enter_fortress");
             }
+
             timer.tryInsertNewAdvancement(advancement.getId().toString(), null, advancement.getDisplay() != null);
             if (timer.isCoop() && advancement.getDisplay() != null) {
                 TimerPacketUtils.sendClient2ServerPacket(client, new TimerAchieveAdvancementPacket(advancement));
