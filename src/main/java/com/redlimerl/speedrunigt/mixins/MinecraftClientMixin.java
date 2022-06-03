@@ -13,6 +13,7 @@ import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import com.redlimerl.speedrunigt.utils.MixinValues;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.MouseInput;
 import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.ProgressScreen;
@@ -46,6 +47,7 @@ public abstract class MinecraftClientMixin {
 
     @Shadow private boolean paused;
 
+    @Shadow public MouseInput mouse;
     private boolean disconnectCheck = false;
 
     @Inject(at = @At("HEAD"), method = "startGame")
@@ -158,17 +160,10 @@ public abstract class MinecraftClientMixin {
         return Mouse.getEventDWheel();
     }
 
-    @Inject(method="tick",at=@At(value = "HEAD"))
-    public void getMoved(CallbackInfo ci){
-        if(Mouse.getDX() != 0||Mouse.getDY() != 0){
-            unlock();
-        }
-    }
-
     private void unlock() {
         InGameTimer timer = InGameTimer.getInstance();
         if (InGameTimerClientUtils.canUnpauseTimer(false)) {
-            timer.setPause(false, "moved mouse");
+            timer.setPause(false, "moved mouse wheel");
         }
         if (Display.isActive() && !MinecraftClient.getInstance().isPaused() && Mouse.isGrabbed()) {
             timer.updateFirstInput();
