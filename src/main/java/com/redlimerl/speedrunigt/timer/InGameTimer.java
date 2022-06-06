@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -120,7 +121,7 @@ public class InGameTimer implements Serializable {
     @NotNull
     private TimerStatus status = TimerStatus.NONE;
 
-    private final HashMap<Integer, Integer> moreData = new HashMap<>();
+    private final ConcurrentHashMap<Integer, Integer> moreData = new ConcurrentHashMap<>();
     private CategoryCondition customCondition = null;
 
     /**
@@ -235,6 +236,7 @@ public class InGameTimer implements Serializable {
                 }
             });
         }
+        INSTANCE.completeCount++;
 
         INSTANCE.updateRecordString();
         INSTANCE.writeRecordFile(false);
@@ -263,7 +265,7 @@ public class InGameTimer implements Serializable {
     private static boolean waitingSaveTask = false;
     private static final ExecutorService saveManagerThread = Executors.newFixedThreadPool(2);
     private static void save() { save(false); }
-    private static void save(boolean withLeave) {
+    private static synchronized void save(boolean withLeave) {
         if (waitingSaveTask || saveManagerThread.isShutdown() || saveManagerThread.isTerminated() || !INSTANCE.isServerIntegrated || INSTANCE.worldName.isEmpty()) return;
 
         String worldName = INSTANCE.worldName, timerData = SpeedRunIGT.GSON.toJson(INSTANCE) + "", completeData = SpeedRunIGT.GSON.toJson(COMPLETED_INSTANCE) + "";
@@ -418,7 +420,6 @@ public class InGameTimer implements Serializable {
 
     public void setUncompleted(boolean canSendPacket) {
         if (!this.isCompleted) return;
-        this.completeCount++;
         this.isCompleted = false;
         if (canSendPacket && this.isCoop() && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerUncompletedPacket());
     }
@@ -587,7 +588,7 @@ public class InGameTimer implements Serializable {
                 }
                 if (isPaused()) {
                     this.pauseLogList.add(new TimerPauseLog(prevPauseReason, reason, getInGameTime(false), getRealTimeAttack(), nowTime - loggerPausedTime, pauseCount, retime));
-                    if (this.pauseLogList.size() >= 10) {
+                    if (this.pauseLogList.size() >= 100) {
                         if (this.isServerIntegrated) {
                             File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "logs");
                             if (worldDir == null) return;
