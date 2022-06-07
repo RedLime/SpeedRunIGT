@@ -65,6 +65,11 @@ public abstract class LivingEntityMixin extends Entity {
             InGameTimer.complete();
         }
 
+        //Kill Warden
+        if (timer.getCategory() == RunCategories.KILL_WARDEN && this.getType() == EntityType.WARDEN && this.attackingPlayer != null) {
+            InGameTimer.complete();
+        }
+
         if (this.getType() == EntityType.ENDER_DRAGON && !this.world.isClient()) {
             InGameTimerUtils.IS_KILLED_ENDER_DRAGON = true;
         }

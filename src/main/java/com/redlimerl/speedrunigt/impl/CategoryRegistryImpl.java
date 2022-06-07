@@ -15,7 +15,7 @@ public class CategoryRegistryImpl implements SpeedRunIGTApi {
         list.add(ANY);list.add(CUSTOM);
         list.add(ALL_ADVANCEMENTS);list.add(HALF);list.add(POGLOOT_QUATER);
         list.add(ALL_PORTALS);
-        list.add(KILL_ALL_BOSSES);list.add(KILL_WITHER);list.add(KILL_ELDER_GUARDIAN);
+        list.add(KILL_WARDEN);list.add(KILL_ALL_BOSSES);list.add(KILL_WITHER);list.add(KILL_ELDER_GUARDIAN);
         list.add(HOW_DID_WE_GET_HERE);list.add(HERO_OF_VILLAGE);list.add(ARBALISTIC);
         list.add(ENTER_NETHER);list.add(ENTER_END);
         list.add(MINE_A_CHUNK);

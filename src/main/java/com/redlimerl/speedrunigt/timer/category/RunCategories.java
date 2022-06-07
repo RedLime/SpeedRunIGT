@@ -9,6 +9,7 @@ public class RunCategories {
     public static RunCategory ANY = new RunCategory("ANY","mc#Any_Glitchless");
     public static RunCategory CUSTOM = new RunCategory("CUSTOM","mc#");
     public static RunCategory HIGH = new RunCategory("HIGH","mcce#High");
+    public static RunCategory KILL_WARDEN = new RunCategory("KILL_WARDEN","mcce#Kill_Bosses");
     public static RunCategory KILL_ALL_BOSSES = new RunCategory("KILL_ALL_BOSSES","mcce#Kill_Bosses");
     public static RunCategory KILL_WITHER = new RunCategory("KILL_WITHER","mcce#Kill_Bosses");
     public static RunCategory KILL_ELDER_GUARDIAN = new RunCategory("KILL_ELDER_GUARDIAN","mcce#Kill_Bosses");

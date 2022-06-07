@@ -92,17 +92,17 @@ public abstract class ClientAdvancementManagerMixin {
 
         //All Advancements
         if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategories.ALL_ADVANCEMENTS) {
-            if (getCompleteAdvancementsCount() >= 95) InGameTimer.complete();
+            if (getCompleteAdvancementsCount() >= 102) InGameTimer.complete();
         }
 
         //Half%
         if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategories.HALF) {
-            if (getCompleteAdvancementsCount() >= 48) InGameTimer.complete();
+            if (getCompleteAdvancementsCount() >= 51) InGameTimer.complete();
         }
 
         //(PogLoot) Quater
         if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategories.POGLOOT_QUATER) {
-            if (getCompleteAdvancementsCount() >= 24) InGameTimer.complete();
+            if (getCompleteAdvancementsCount() >= 26) InGameTimer.complete();
         }
     }
 
