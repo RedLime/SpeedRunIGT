@@ -11,6 +11,7 @@ import com.redlimerl.speedrunigt.timer.packet.packets.TimerAchieveAdvancementPac
 import net.minecraft.achievement.Achievement;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.AchievementNotification;
+import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -42,19 +43,21 @@ public abstract class AchievementNotificationMixin {
             timer.checkConditions();
         }
 
+        int maxCount = InGameTimer.getInstance().getMoreData(7441);
+
         //All Advancements
         if (timer.getCategory() == RunCategories.ALL_ACHIEVEMENTS) {
-            if (getCompleteAdvancementsCount() >= 34) InGameTimer.complete();
+            if (getCompleteAdvancementsCount() >= maxCount) InGameTimer.complete();
         }
 
         //Half%
         if (timer.getCategory() == RunCategories.HALF) {
-            if (getCompleteAdvancementsCount() >= 17) InGameTimer.complete();
+            if (getCompleteAdvancementsCount() >= MathHelper.ceil(maxCount / 2.0f)) InGameTimer.complete();
         }
 
         //Half%
         if (timer.getCategory() == RunCategories.POGLOOT_QUATER) {
-            if (getCompleteAdvancementsCount() >= 9) InGameTimer.complete();
+            if (getCompleteAdvancementsCount() >= MathHelper.ceil(maxCount / 4.0f)) InGameTimer.complete();
         }
     }
 
