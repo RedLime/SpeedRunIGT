@@ -11,17 +11,15 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
 
+import java.util.Enumeration;
 import java.util.Objects;
 
 public class TimerInitPacket extends TimerPacket {
 
     public static final String IDENTIFIER = TimerPacket.identifier("ti_in");
     private final InGameTimer sendTimer;
+    private final String customData;
     private final long sendRTA;
-
-    private static long getNanoTime() {
-        return System.nanoTime() / 1000000L;
-    }
 
     public TimerInitPacket() {
         this(null, InGameTimer.getInstance().getRealTimeAttack());
@@ -30,6 +28,16 @@ public class TimerInitPacket extends TimerPacket {
     public TimerInitPacket(InGameTimer timer, long rta) {
         super(IDENTIFIER);
         this.sendTimer = timer;
+        StringBuilder stringBuilder = new StringBuilder();
+        if (timer != null) {
+            Enumeration<Integer> keyInt = timer.getMoreDataKeys();
+            while (keyInt.hasMoreElements()) {
+                Integer key = keyInt.nextElement();
+                Integer value = timer.getMoreData(key);
+                stringBuilder.append(key).append(",").append(value).append(";");
+            }
+        }
+        this.customData = stringBuilder.substring(0, stringBuilder.length() - (stringBuilder.length() > 0 ? 1 : 0));
         this.sendRTA = rta;
     }
 
@@ -41,6 +49,7 @@ public class TimerInitPacket extends TimerPacket {
             buf.writeString(sendTimer.getCategory().getID());
             buf.writeLong(sendRTA);
             buf.writeInt(sendTimer.getRunType().getCode());
+            buf.writeString(customData);
         }
         return buf;
     }
@@ -62,6 +71,7 @@ public class TimerInitPacket extends TimerPacket {
             buf.writeString(sendTimer.getCategory().getID());
             buf.writeLong(sendRTA);
             buf.writeInt(sendTimer.getRunType().getCode());
+            buf.writeString(customData);
         }
         if (!SpeedRunIGT.IS_CLIENT_SIDE && (sendTimer != null || !InGameTimer.getInstance().isStarted())) {
             TimerPacketBuf copiedBuf = buf.copy();
@@ -82,6 +92,7 @@ public class TimerInitPacket extends TimerPacket {
         RunCategory category = RunCategory.getCategory(buf.readString());
         long rtaTime = buf.readLong();
         int runType = buf.readInt();
+        String readCustom = buf.readString();
 
         long startTime = System.currentTimeMillis() - rtaTime;
 
@@ -92,6 +103,14 @@ public class TimerInitPacket extends TimerPacket {
         }
         InGameTimer.getInstance().setCoop(true);
         InGameTimer.getInstance().setServerIntegrated(isIntegrated);
-        InGameTimer.getInstance().setPause(false, "co-op setup");
+
+        if (!readCustom.isEmpty()) {
+            for (String customString : readCustom.split(";")) {
+                String[] data = customString.split(",");
+                int key = Integer.parseInt(data[0]);
+                int value = Integer.parseInt(data[1]);
+                InGameTimer.getInstance().updateMoreData(key, value);
+            }
+        }
     }
 }
