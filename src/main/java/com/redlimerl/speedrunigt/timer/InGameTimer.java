@@ -154,7 +154,7 @@ public class InGameTimer implements Serializable {
         INSTANCE.isCoop = isCoop;
         INSTANCE.setPause(true, TimerStatus.IDLE, "reset");
         INSTANCE.setPause(false, "reset");
-        if (isCoop && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerInitPacket(INSTANCE, INSTANCE.getStartTime()));
+        if (isCoop && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerInitPacket(INSTANCE, INSTANCE.getRealTimeAttack()));
     }
 
     /**
@@ -398,6 +398,10 @@ public class InGameTimer implements Serializable {
 
     public int getMoreData(int key) {
         return moreData.getOrDefault(key, 0);
+    }
+
+    public Enumeration<Integer> getMoreDataKeys() {
+        return moreData.keys();
     }
 
     public void updateMoreData(int key, int value) {
