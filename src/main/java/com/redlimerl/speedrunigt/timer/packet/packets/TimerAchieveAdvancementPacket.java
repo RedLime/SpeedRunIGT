@@ -1,13 +1,15 @@
 package com.redlimerl.speedrunigt.timer.packet.packets;
 
-import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
+import com.redlimerl.speedrunigt.timer.TimerAdvancementTracker;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacketBuf;
 import net.minecraft.advancement.SimpleAdvancement;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
+
+import java.util.Map;
 
 public class TimerAchieveAdvancementPacket extends TimerPacket {
 
@@ -33,11 +35,20 @@ public class TimerAchieveAdvancementPacket extends TimerPacket {
 
     @Override
     public void receiveClient2ServerPacket(TimerPacketBuf buf, MinecraftServer server) {
-        if (!SpeedRunIGT.IS_CLIENT_SIDE) {
-            TimerPacketBuf copiedBuf = buf.copy();
-            InGameTimer.getInstance().tryInsertNewAdvancement(copiedBuf.readIdentifier().toString(), null, true);
-            copiedBuf.release();
+        TimerPacketBuf copiedBuf = buf.copy();
+        InGameTimer.getInstance().tryInsertNewAdvancement(copiedBuf.readIdentifier().toString(), null, true);
+        copiedBuf.release();
+
+        int count = 0, goal = InGameTimer.getInstance().getMoreData(7441);
+        for (Map.Entry<String, TimerAdvancementTracker.AdvancementTrack> track : InGameTimer.getInstance().getAdvancementsTracker().getAdvancements().entrySet()) {
+            if (track.getValue().isAdvancement() && track.getValue().isComplete()) count++;
         }
+
+        if (goal > 0 && count >= goal) {
+            InGameTimer.complete();
+            return;
+        }
+
         this.sendPacketToPlayers(buf, server);
     }
 
