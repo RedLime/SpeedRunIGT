@@ -38,6 +38,7 @@ public abstract class LivingEntityMixin extends Entity {
         // For Timelines
         if (this.getType() == EntityType.WITHER && this.attackingPlayer != null) timer.tryInsertNewTimeline("kill_wither");
         if (this.getType() == EntityType.ELDER_GUARDIAN && this.attackingPlayer != null) timer.tryInsertNewTimeline("kill_elder_guardian");
+        if (this.getType() == EntityType.WARDEN && this.attackingPlayer != null) timer.tryInsertNewTimeline("kill_warden");
         if (this.getType() == EntityType.ENDER_DRAGON) timer.tryInsertNewTimeline("kill_ender_dragon");
 
         //Kill All Bosses
@@ -51,6 +52,10 @@ public abstract class LivingEntityMixin extends Entity {
             }
             if (this.getType() == EntityType.ELDER_GUARDIAN && this.attackingPlayer != null) {
                 timer.updateMoreData(2, 1);
+                RunCategories.checkAllBossesCompleted();
+            }
+            if (this.getType() == EntityType.WARDEN && this.attackingPlayer != null) {
+                timer.updateMoreData(3, 1);
                 RunCategories.checkAllBossesCompleted();
             }
         }

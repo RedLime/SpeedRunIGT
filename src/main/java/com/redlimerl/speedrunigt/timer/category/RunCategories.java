@@ -33,7 +33,7 @@ public class RunCategories {
     public static void checkAllBossesCompleted() {
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getCategory() == KILL_ALL_BOSSES) {
-            if (timer.getMoreData(0) + timer.getMoreData(1) + timer.getMoreData(2) == 3) {
+            if (timer.getMoreData(0) + timer.getMoreData(1) + timer.getMoreData(2) + timer.getMoreData(3) == 4) {
                 InGameTimer.complete();
             }
         }
