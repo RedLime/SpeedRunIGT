@@ -7,11 +7,15 @@ import com.redlimerl.speedrunigt.timer.packet.TimerPacketUtils;
 import com.redlimerl.speedrunigt.timer.packet.packets.TimerAchieveCriteriaPacket;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.PlayerAdvancementTracker;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import java.util.LinkedHashMap;
@@ -20,6 +24,17 @@ import java.util.LinkedHashMap;
 public abstract class PlayerAdvancementTrackerMixin {
 
     @Shadow private ServerPlayerEntity owner;
+
+    @Shadow @Final private MinecraftServer server;
+
+    @Inject(method = "beginTrackingAllAdvancements", at = @At("RETURN"))
+    private void onBegin(CallbackInfo ci) {
+        int count = 0;
+        for (Advancement advancement : this.server.getAdvancementManager().getAdvancements()) {
+            if (advancement.getDisplay() != null) count++;
+        }
+        InGameTimer.getInstance().updateMoreData(7441, count);
+    }
 
     @ModifyArgs(method = "endTrackingCompleted", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancement/criterion/Criterion$ConditionsContainer;<init>(Lnet/minecraft/advancement/criterion/CriterionConditions;Lnet/minecraft/advancement/Advancement;Ljava/lang/String;)V"))
     private void getCriteria(Args args) {
