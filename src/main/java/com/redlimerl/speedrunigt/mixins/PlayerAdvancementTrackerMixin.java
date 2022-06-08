@@ -7,11 +7,15 @@ import com.redlimerl.speedrunigt.timer.packet.TimerPacketUtils;
 import com.redlimerl.speedrunigt.timer.packet.packets.TimerAchieveCriteriaPacket;
 import net.minecraft.class_3326;
 import net.minecraft.class_3347;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import java.util.LinkedHashMap;
@@ -20,6 +24,17 @@ import java.util.LinkedHashMap;
 public class PlayerAdvancementTrackerMixin {
 
     @Shadow private ServerPlayerEntity field_16375;
+
+    @Shadow @Final private MinecraftServer field_16369;
+
+    @Inject(method = "method_14928", at = @At("RETURN"))
+    private void onBegin(CallbackInfo ci) {
+        int count = 0;
+        for (class_3326 advancement : this.field_16369.method_14910().method_14940()) {
+            if (advancement.method_14796() != null) count++;
+        }
+        InGameTimer.getInstance().updateMoreData(7441, count);
+    }
 
     @ModifyArgs(method = "method_14929", at = @At(value = "INVOKE", target = "Lnet/minecraft/class_3352$class_3353;<init>(Lnet/minecraft/class_3354;Lnet/minecraft/class_3326;Ljava/lang/String;)V"))
     private void getCriteria(Args args) {
