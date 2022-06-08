@@ -16,6 +16,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
 import org.apache.commons.io.FileUtils;
 
@@ -177,6 +178,20 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
             );
         }
 
+        if (Math.random() < 0.05) {
+            factories.add(screen -> new OptionButtonFactory.Builder()
+                    .setButtonWidget(new ButtonWidget(0, 0, 150, 20, new LiteralText("Dream Luck : OFF"), (ButtonWidget button) -> button.setMessage(new LiteralText("HAHA no u"))))
+                    .setCategory("Cheat")
+            );
+        }
+
+        if (Math.random() < 0.01) {
+            factories.add(screen -> new OptionButtonFactory.Builder()
+                    .setButtonWidget(new ButtonWidget(0, 0, 150, 20, new LiteralText("no way LMAO").formatted(Formatting.OBFUSCATED), (ButtonWidget button) -> {}))
+                    .setCategory("???")
+            );
+        }
+
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
                         new ButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.current_extensions"),
@@ -260,7 +275,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
                         new ButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.delete_all_records"),
-                                (ButtonWidget button) -> {
+                                (ButtonWidget button) ->
                                     MinecraftClient.getInstance().openScreen(new ConfirmScreen(boolean1 -> {
                                         if (boolean1) {
                                             try {
@@ -273,8 +288,8 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                                             }
                                         }
                                         MinecraftClient.getInstance().openScreen(screen);
-                                    }, new TranslatableText("speedrunigt.option.delete_all_records.description"), LiteralText.EMPTY));
-                                })
+                                    }, new TranslatableText("speedrunigt.option.delete_all_records.description"), LiteralText.EMPTY))
+                                )
                 )
                 .setCategory("speedrunigt.option.category.records")
         );
