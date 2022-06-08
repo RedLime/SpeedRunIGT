@@ -4,6 +4,8 @@ import com.google.gson.JsonObject;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.category.condition.StatCategoryCondition;
+import net.minecraft.achievement.Achievement;
+import net.minecraft.advancement.criterion.Criterions;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.stat.ServerStatHandler;
 import net.minecraft.stat.Stat;
@@ -23,6 +25,11 @@ import java.util.Map;
 public abstract class ServerStatHandlerMixin extends StatHandler {
 
     @Shadow @Final private static Logger LOGGER;
+
+    @Inject(method = "method_8270", at = @At("RETURN"))
+    public void onInit(CallbackInfo ci) {
+        InGameTimer.getInstance().updateMoreData(7441, Criterions.ACHIEVEMENTS.size());
+    }
 
     @Inject(method = "method_8300", at = @At("TAIL"))
     public void onUpdate(PlayerEntity playerEntity, Stat stat, int i, CallbackInfo ci) {
