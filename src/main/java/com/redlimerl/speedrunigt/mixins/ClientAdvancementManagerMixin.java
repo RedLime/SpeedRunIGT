@@ -82,6 +82,11 @@ public abstract class ClientAdvancementManagerMixin {
             if (timer.getCategory() == RunCategories.ARBALISTIC && Objects.equals(advancement.getId().toString(), new Identifier("adventure/arbalistic").toString())) {
                 InGameTimer.complete();
             }
+
+            //Cover Me In Debris
+            if (timer.getCategory() == RunCategories.COVER_ME_IN_DEBRIS && Objects.equals(advancement.getId().toString(), new Identifier("nether/netherite_armor").toString())) {
+                InGameTimer.complete();
+            }
         }
         return entry.getValue();
     }
