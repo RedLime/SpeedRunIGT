@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.mixins;
 
+import com.google.common.collect.Sets;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerAdvancementTracker;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
@@ -25,6 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 @Mixin(ClientAdvancementManager.class)
 public abstract class ClientAdvancementManagerMixin {
@@ -32,6 +34,10 @@ public abstract class ClientAdvancementManagerMixin {
     @Shadow @Final private AdvancementManager manager;
 
     @Shadow @Final private MinecraftClient client;
+
+    @Shadow public abstract AdvancementManager getManager();
+
+    @Shadow @Final private Map<Advancement, AdvancementProgress> advancementProgresses;
 
     @Redirect(method = "onAdvancements", at = @At(value = "INVOKE", target = "Ljava/util/Map$Entry;getValue()Ljava/lang/Object;"))
     public Object advancement(Map.Entry<Identifier, AdvancementProgress> entry) {
@@ -112,10 +118,22 @@ public abstract class ClientAdvancementManagerMixin {
     }
 
     private int getCompleteAdvancementsCount() {
-        int count = 0;
+        Set<String> completedAdvancements = Sets.newHashSet();
         for (Map.Entry<String, TimerAdvancementTracker.AdvancementTrack> track : InGameTimer.getInstance().getAdvancementsTracker().getAdvancements().entrySet()) {
-            if (track.getValue().isAdvancement() && track.getValue().isComplete()) count++;
+            if (track.getValue().isAdvancement() && track.getValue().isComplete()) completedAdvancements.add(track.getKey());
         }
-        return count;
+        for (Advancement advancement : this.getManager().getAdvancements()) {
+            if (this.advancementProgresses.containsKey(advancement) && advancement.getDisplay() != null) {
+                AdvancementProgress advancementProgress = this.advancementProgresses.get(advancement);
+
+                advancementProgress.init(advancement.getCriteria(), advancement.getRequirements());
+                String advancementID = advancement.getId().toString();
+                if (advancementProgress.isDone() && completedAdvancements.contains(advancementID)) {
+                    completedAdvancements.add(advancementID);
+                    InGameTimer.getInstance().tryInsertNewAdvancement(advancementID, null, true);
+                }
+            }
+        }
+        return completedAdvancements.size();
     }
 }
