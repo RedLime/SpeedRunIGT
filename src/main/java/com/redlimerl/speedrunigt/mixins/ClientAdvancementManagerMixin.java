@@ -16,6 +16,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientAdvancementManager;
 import net.minecraft.network.packet.s2c.play.AdvancementUpdateS2CPacket;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -101,19 +102,21 @@ public abstract class ClientAdvancementManagerMixin {
     public void onComplete(AdvancementUpdateS2CPacket packet, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
+        int maxCount = timer.getMoreData(7441) == 0 ? 80 : timer.getMoreData(7441);
+
         //All Advancements
         if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategories.ALL_ADVANCEMENTS) {
-            if (getCompleteAdvancementsCount() >= 80) InGameTimer.complete();
+            if (getCompleteAdvancementsCount() >= maxCount) InGameTimer.complete();
         }
 
         //Half%
         if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategories.HALF) {
-            if (getCompleteAdvancementsCount() >= 40) InGameTimer.complete();
+            if (getCompleteAdvancementsCount() >= MathHelper.ceil(maxCount / 2.0f)) InGameTimer.complete();
         }
 
         //(PogLoot) Quater
         if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategories.POGLOOT_QUATER) {
-            if (getCompleteAdvancementsCount() >= 20) InGameTimer.complete();
+            if (getCompleteAdvancementsCount() >= MathHelper.ceil(maxCount / 4.0f)) InGameTimer.complete();
         }
     }
 
