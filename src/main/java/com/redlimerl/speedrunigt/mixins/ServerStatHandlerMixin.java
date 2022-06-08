@@ -1,9 +1,11 @@
 package com.redlimerl.speedrunigt.mixins;
 
 import com.google.gson.JsonObject;
+import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.category.condition.StatCategoryCondition;
+import net.minecraft.achievement.Achievements;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.stat.ServerStatHandler;
 import net.minecraft.stat.Stat;
@@ -23,6 +25,12 @@ import java.util.Map;
 public abstract class ServerStatHandlerMixin extends StatHandler {
 
     @Shadow @Final private static Logger LOGGER;
+
+    @Inject(method = "method_8270", at = @At("RETURN"))
+    public void onInit(CallbackInfo ci) {
+        SpeedRunIGT.debug("Detected Achievements: "+ Achievements.ACHIEVEMENTS.size());
+        InGameTimer.getInstance().updateMoreData(7441, Achievements.ACHIEVEMENTS.size());
+    }
 
     @Inject(method = "method_8300", at = @At("TAIL"))
     public void onUpdate(PlayerEntity playerEntity, Stat stat, int i, CallbackInfo ci) {
