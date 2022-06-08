@@ -18,6 +18,7 @@ public class RunCategories {
     public static RunCategory HOW_DID_WE_GET_HERE = new RunCategory("HOW_DID_WE_GET_HERE","mcce#How_Did_We_Get_Here");
     public static RunCategory HERO_OF_VILLAGE = new RunCategory("HERO_OF_VILLAGE","mcce#Hero_of_the_Village");
     public static RunCategory ARBALISTIC = new RunCategory("ARBALISTIC","mcce#Arbalistic");
+    public static RunCategory COVER_ME_IN_DEBRIS = new RunCategory("COVER_ME_IN_DEBRIS","mcce#Cover_Me_in_Debris", "advancements.nether.netherite_armor.title");
     public static RunCategory ENTER_NETHER = new RunCategory("ENTER_NETHER","mcce#Enter_Nether");
     public static RunCategory ENTER_END = new RunCategory("ENTER_END","mcce#Etner_Edn");
     public static RunCategory ALL_SWORDS = new RunCategory("ALL_SWORDS","mcce#All_Swords");
