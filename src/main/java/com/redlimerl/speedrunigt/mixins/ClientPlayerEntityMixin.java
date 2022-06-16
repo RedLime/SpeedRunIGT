@@ -80,7 +80,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             ArrayList<String> itemList = new ArrayList<>();
             int slot = 0;
             for (ItemStack itemStack : this.inventory.field_15082) {
-                if (itemStack == null || itemStack.isEmpty()) continue;
+                if (itemStack == null || itemStack.isEmpty() || itemStack.getItem() == Items.AIR) continue;
                 String itemId = Item.getRawId(itemStack.getItem()) + (itemStack.isDamaged() ? (":" + itemStack.getMeta()) : "");
                 if (!itemList.contains(itemId)) {
                     itemList.add(itemId);
