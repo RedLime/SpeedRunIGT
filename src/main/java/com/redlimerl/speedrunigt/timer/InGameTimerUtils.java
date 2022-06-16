@@ -51,11 +51,14 @@ public class InGameTimerUtils {
         File worldFolder = path.toFile();
         File file = path.resolve(SpeedRunIGT.MOD_ID).resolve(pathName).toFile();
 
-        if (!worldFolder.exists() || !worldFolder.isDirectory()) return null;
+        if (!worldFolder.exists() || !worldFolder.isDirectory()) {
+            SpeedRunIGT.error("World directory doesn't exist, couldn't make timer dirs");
+            return null;
+        }
 
         if (!file.exists()) {
             SpeedRunIGT.debug(file.mkdirs() ? "make timer dirs" : "failed to make timer dirs");
-        } else if (!file.isDirectory() || worldFolder.listFiles() == null || Objects.requireNonNull(worldFolder.listFiles()).length < 3) {
+        } else if (!file.isDirectory()) {
             return null;
         }
         return file;
@@ -131,7 +134,7 @@ public class InGameTimerUtils {
         return String.format("%d.%03d", seconds, time % 1000);
     }
 
-    public static JsonObject convertTimelineJson(InGameTimer timer) {
+    public synchronized static JsonObject convertTimelineJson(InGameTimer timer) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("mc_version", getMinecraftVersion());
         jsonObject.addProperty("speedrunigt_version", SpeedRunIGT.MOD_VERSION);
