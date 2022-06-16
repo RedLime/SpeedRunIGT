@@ -39,7 +39,7 @@
     "screen.DownloadingTerrainScreenMixin",
     "screen.GameMenuScreenMixin",
     "screen.OptionsScreenMixin",
-    "screen.WorldOptionsScreenMixin",
+    "screen.CreateWorldScreenMixin",
     "server.IntegratedServerMixin",
     "translate.I18nMixin",
     "translate.TranslatableTextMixin"

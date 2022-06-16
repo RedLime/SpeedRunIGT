@@ -72,7 +72,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
         //Full Inventory
         if (timer.getCategory() == RunCategories.FULL_INV) {
-            if (this.inventory.field_15082.stream().filter(itemStack -> itemStack != null && itemStack != ItemStack.EMPTY).map(ItemStack::getItem).distinct().toArray().length == 36)
+            if (this.inventory.field_15082.stream().filter(itemStack -> itemStack != null && itemStack != ItemStack.EMPTY&& itemStack.getItem() != Items.AIR).map(ItemStack::getItem).distinct().toArray().length == 36)
                 InGameTimer.complete();
             return;
         }
