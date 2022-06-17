@@ -174,7 +174,7 @@ public class InGameTimer implements Serializable {
     /**
      * End the Timer, Trigger when Complete Ender Dragon
      */
-    public static void complete(long endTime, boolean canSendPacket) {
+    public synchronized static void complete(long endTime, boolean canSendPacket) {
         if (INSTANCE.isCompleted || !INSTANCE.isStarted()) return;
 
         // Init additional data
