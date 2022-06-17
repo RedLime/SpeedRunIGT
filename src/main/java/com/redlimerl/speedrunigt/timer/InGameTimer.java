@@ -174,7 +174,7 @@ public class InGameTimer implements Serializable {
     /**
      * End the Timer, Trigger when Complete Ender Dragon
      */
-    public static void complete(long endTime, boolean canSendPacket) {
+    public synchronized static void complete(long endTime, boolean canSendPacket) {
         if (INSTANCE.isCompleted || !INSTANCE.isStarted()) return;
 
         // Init additional data
@@ -565,10 +565,12 @@ public class InGameTimer implements Serializable {
                 if (pauseTriggerTick == loggerTicks) tick();
                 pauseTriggerTick = loggerTicks;
                 this.setStatus(toStatus);
-                if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE) == SpeedRunOptions.TimerSaveInterval.PAUSE && status != TimerStatus.LEAVE && this.isStarted()) save();
 
-                updateRecordString();
-                writeRecordFile(true);
+                if (this.isStarted()) {
+                    if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE) == SpeedRunOptions.TimerSaveInterval.PAUSE && status != TimerStatus.LEAVE) save();
+                    updateRecordString();
+                    writeRecordFile(true);
+                }
             }
         } else {
             if (this.isStarted()) {
