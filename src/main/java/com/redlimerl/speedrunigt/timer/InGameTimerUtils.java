@@ -141,7 +141,7 @@ public class InGameTimerUtils {
         return String.format("%d.%03d", seconds, time % 1000);
     }
 
-    public static JsonObject convertTimelineJson(InGameTimer timer) {
+    public synchronized static JsonObject convertTimelineJson(InGameTimer timer) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("mc_version", getMinecraftVersion());
         jsonObject.addProperty("speedrunigt_version", SpeedRunIGT.MOD_VERSION);
