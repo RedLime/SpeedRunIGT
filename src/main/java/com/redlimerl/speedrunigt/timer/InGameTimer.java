@@ -270,9 +270,14 @@ public class InGameTimer implements Serializable {
 
         String worldName = INSTANCE.worldName, timerData = SpeedRunIGT.GSON.toJson(INSTANCE) + "", completeData = SpeedRunIGT.GSON.toJson(COMPLETED_INSTANCE) + "";
         File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "data");
-        if (worldDir == null) return;
+        if (worldDir == null) {
+            SpeedRunIGT.debug("Tried to saving timer data, but couldn't find world directory");
+            return;
+        }
 
         if (withLeave) end();
+
+        SpeedRunIGT.debug("Start timer data saving...");
 
         waitingSaveTask = true;
         saveManagerThread.submit(() -> {
@@ -285,20 +290,36 @@ public class InGameTimer implements Serializable {
 
                     // Old data backup
                     if (timerFile.exists()) {
-                        if (oldTimerFile.exists()) FileUtils.forceDelete(oldTimerFile);
-                        FileUtils.moveFile(timerFile, oldTimerFile);
-                        if (timerCompleteFile.exists()) {
-                            if (oldTimerCompleteFile.exists()) FileUtils.forceDelete(oldTimerCompleteFile);
-                            FileUtils.moveFile(timerCompleteFile, oldTimerCompleteFile);
+                        if (oldTimerFile.exists()) {
+                            FileUtils.forceDelete(oldTimerFile);
+                            SpeedRunIGT.debug("deleted old backup timer data");
                         }
-                        else if (oldTimerCompleteFile.exists()) FileUtils.deleteQuietly(oldTimerCompleteFile);
+                        FileUtils.moveFile(timerFile, oldTimerFile);
+                        SpeedRunIGT.debug("renamed backup timer data");
+                        if (timerCompleteFile.exists()) {
+                            if (oldTimerCompleteFile.exists()) {
+                                FileUtils.forceDelete(oldTimerCompleteFile);
+                                SpeedRunIGT.debug("deleted old backup timer data *c");
+                            }
+                            FileUtils.moveFile(timerCompleteFile, oldTimerCompleteFile);
+                            SpeedRunIGT.debug("renamed backup timer data *c");
+                        }
+                        else if (oldTimerCompleteFile.exists())  {
+                            FileUtils.deleteQuietly(oldTimerCompleteFile);
+                            SpeedRunIGT.debug("deleted old backup timer data *c");
+                        }
                     }
+
+                    SpeedRunIGT.debug("Timer data target path: " + timerFile.getPath());
 
                     // Save data
                     FileUtils.writeStringToFile(timerFile, Crypto.encrypt(timerData, cryptKey), StandardCharsets.UTF_8);
                     if (INSTANCE.isCompleted) FileUtils.writeStringToFile(timerCompleteFile, Crypto.encrypt(completeData, cryptKey), StandardCharsets.UTF_8);
 
                     waitingSaveTask = false;
+                    SpeedRunIGT.debug("End timer data saving...");
+                } else {
+                    SpeedRunIGT.debug("Doesn't exist world directory: " + worldDir.getPath());
                 }
             } catch (Throwable e) {
                 e.printStackTrace();
@@ -311,10 +332,13 @@ public class InGameTimer implements Serializable {
         File worldDir = InGameTimerUtils.getTimerLogDir(name, "data");
         if (worldDir == null) return false;
 
+        SpeedRunIGT.debug("Start timer data loading...");
+
         String isOld = "";
         while (true) {
             File file = new File(worldDir, "timer.igt"+isOld);
             File completeFile = new File(worldDir, "timer.c.igt"+isOld);
+            SpeedRunIGT.debug("Loading timer data target path: " + file.getPath());
             if (file.exists()) {
                 try {
                     INSTANCE = SpeedRunIGT.GSON.fromJson(Crypto.decrypt(FileUtils.readFileToString(file, StandardCharsets.UTF_8), cryptKey), InGameTimer.class);
@@ -333,6 +357,7 @@ public class InGameTimer implements Serializable {
                     INSTANCE.worldName = name;
                     COMPLETED_INSTANCE.worldName = name;
 
+                    SpeedRunIGT.debug("End timer data loading...");
                     return true;
                 } catch (Throwable e) {
                     if (!isOld.isEmpty()) return false;
@@ -340,6 +365,7 @@ public class InGameTimer implements Serializable {
                 }
             } else if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_START_GENERATED_WORLD) && isOld.isEmpty()) {
                 InGameTimer.start(name, RunType.OLD_WORLD);
+                SpeedRunIGT.debug("Couldn't find any file, created new timer.");
                 return true;
             } else return false;
         }
@@ -365,6 +391,7 @@ public class InGameTimer implements Serializable {
                 if (!worldOnly) FileUtils.writeStringToFile(recordFile, resultRecord, StandardCharsets.UTF_8);
                 if (worldRecordFile != null) FileUtils.writeStringToFile(worldRecordFile, resultRecord, StandardCharsets.UTF_8);
                 System.setProperty("speedrunigt.record", recordFile.getName());
+                SpeedRunIGT.debug("Saved record file" + (worldOnly ? "" : "s (with global save)"));
             } catch (IOException e) {
                 e.printStackTrace();
                 SpeedRunIGT.error("Failed to write timer record :(");
@@ -552,6 +579,8 @@ public class InGameTimer implements Serializable {
     public void setPause(boolean toPause, TimerStatus toStatus, String reason) {
         if (this.getStatus() == TimerStatus.COMPLETED_LEGACY || this.isCoop) return;
 
+        SpeedRunIGT.debug("Paused: "+toPause+" (" + toStatus.name() + ") / Reason : " + reason);
+
         if (toPause) {
             if (this.getStatus().getPause() <= toStatus.getPause()) {
                 if (this.getStatus().getPause() < 1 && this.isStarted()) {
@@ -565,9 +594,9 @@ public class InGameTimer implements Serializable {
                 pauseTriggerTick = loggerTicks;
                 this.setStatus(toStatus);
 
+                updateRecordString();
                 if (this.isStarted()) {
                     if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE) == SpeedRunOptions.TimerSaveInterval.PAUSE && status != TimerStatus.LEAVE) save();
-                    updateRecordString();
                     writeRecordFile(true);
                 }
             }
