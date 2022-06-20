@@ -38,6 +38,7 @@ public class SpeedRunIGT implements ModInitializer {
     private static boolean isInitialized = false;
     public static boolean isInitialized() { return isInitialized; }
     public static boolean IS_CLIENT_SIDE = false;
+    public static boolean IS_DEBUG_MODE = FabricLoader.getInstance().isDevelopmentEnvironment();
     public static MinecraftServer DEDICATED_SERVER = null;
 
     public static String DEBUG_DATA = "";
@@ -124,7 +125,7 @@ public class SpeedRunIGT implements ModInitializer {
 
     private static final Logger LOGGER = LogManager.getLogger("SpeedRunIGT");
     public static void debug(Object obj) {
-        if (FabricLoader.getInstance().isDevelopmentEnvironment()) LOGGER.info(obj);
+        if (IS_DEBUG_MODE) LOGGER.info(obj);
     }
     public static void error(Object obj) { LOGGER.error(obj); }
 }
