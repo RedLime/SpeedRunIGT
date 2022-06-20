@@ -294,6 +294,19 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                 .setCategory("speedrunigt.option.category.records")
         );
 
+        factories.add(screen -> new OptionButtonFactory.Builder()
+                .setButtonWidget(
+                        new ButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.debug_mode").append(" : ").append(SpeedRunIGT.IS_DEBUG_MODE ? ScreenTexts.ON : ScreenTexts.OFF),
+                                (ButtonWidget button) -> {
+                                    SpeedRunIGT.IS_DEBUG_MODE = !SpeedRunIGT.IS_DEBUG_MODE;
+                                    SpeedRunIGT.error("Debug mode is " + (SpeedRunIGT.IS_DEBUG_MODE ? "enabled" : "disabled") + "!");
+                                    button.setMessage(new TranslatableText("speedrunigt.option.debug_mode").append(" : ").append(SpeedRunIGT.IS_DEBUG_MODE ? ScreenTexts.ON : ScreenTexts.OFF));
+                                })
+                )
+                .setToolTip(() -> I18n.translate("speedrunigt.option.debug_mode.description"))
+                .setCategory("DEBUG")
+        );
+
         return factories;
     }
 }
