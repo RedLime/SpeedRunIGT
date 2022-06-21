@@ -288,7 +288,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                                 })
                 )
                 .setToolTip(() -> I18n.translate("speedrunigt.option.debug_mode.description"))
-                .setCategory("DEBUG")
+                .setCategory("Debug")
         );
 
         return factories;
