@@ -316,7 +316,6 @@ public class InGameTimer implements Serializable {
                     FileUtils.writeStringToFile(timerFile, Crypto.encrypt(timerData, cryptKey), StandardCharsets.UTF_8);
                     if (INSTANCE.isCompleted) FileUtils.writeStringToFile(timerCompleteFile, Crypto.encrypt(completeData, cryptKey), StandardCharsets.UTF_8);
 
-                    waitingSaveTask = false;
                     SpeedRunIGT.debug("End timer data saving...");
                 } else {
                     SpeedRunIGT.debug("Doesn't exist world directory: " + worldDir.getPath());
@@ -324,6 +323,8 @@ public class InGameTimer implements Serializable {
             } catch (Throwable e) {
                 e.printStackTrace();
                 SpeedRunIGT.error("Failed to save timer data's :(");
+            } finally {
+                waitingSaveTask = false;
             }
         });
     }
@@ -395,6 +396,8 @@ public class InGameTimer implements Serializable {
             } catch (IOException e) {
                 e.printStackTrace();
                 SpeedRunIGT.error("Failed to write timer record :(");
+            } finally {
+                SpeedRunIGT.debug("Done with saving record file");
             }
         });
     }
