@@ -88,6 +88,18 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
 
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
+                        new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.safe_font_mode").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.CUSTOM_FONT_SAFE_MODE) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString(),
+                                (button) -> {
+                                    SpeedRunOption.setOption(SpeedRunOptions.CUSTOM_FONT_SAFE_MODE, !SpeedRunOption.getOption(SpeedRunOptions.CUSTOM_FONT_SAFE_MODE));
+                                    button.field_22510 = (new TranslatableText("speedrunigt.option.safe_font_mode").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.CUSTOM_FONT_SAFE_MODE) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
+                                })
+                )
+                .setToolTip(() -> I18n.translate("speedrunigt.option.safe_font_mode.description"))
+                .setCategory("speedrunigt.option.category.general")
+        );
+
+        factories.add(screen -> new OptionButtonFactory.Builder()
+                .setButtonWidget(
                         new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.timer_position.toggle_timer").append(" : ").append(TIMER_DRAWER.isToggle() ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString(),
                                 (button) -> {
                                     TIMER_DRAWER.setToggle(!TIMER_DRAWER.isToggle());
