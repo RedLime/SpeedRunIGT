@@ -3,7 +3,11 @@ package com.redlimerl.speedrunigt.timer;
 import com.google.common.collect.Maps;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class TimerAdvancementTracker implements Serializable {
     @SuppressWarnings("unused")
@@ -19,6 +23,14 @@ public class TimerAdvancementTracker implements Serializable {
         public void setTime(long igt, long rta) {
             this.igt = igt;
             this.rta = rta;
+        }
+
+        public long getRTA() {
+            return rta;
+        }
+
+        public long getIGT() {
+            return igt;
         }
     }
     public static class AdvancementTrack extends Track {
@@ -56,7 +68,7 @@ public class TimerAdvancementTracker implements Serializable {
         }
     }
 
-    private final LinkedHashMap<String, AdvancementTrack> advancements = Maps.newLinkedHashMap();
+    private final ConcurrentMap<String, AdvancementTrack> advancements = Maps.newConcurrentMap();
 
     public AdvancementTrack getOrCreateTrack(String string) {
         if (advancements.containsKey(string)) return advancements.get(string);
@@ -65,7 +77,7 @@ public class TimerAdvancementTracker implements Serializable {
         return track;
     }
 
-    public LinkedHashMap<String, AdvancementTrack> getAdvancements() {
+    public Map<String, AdvancementTrack> getAdvancements() {
         return advancements;
     }
 }
