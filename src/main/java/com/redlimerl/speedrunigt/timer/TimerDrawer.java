@@ -281,17 +281,21 @@ public class TimerDrawer {
 
         //폰트 조정
         float fontHeight = 8;
-        FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) client).getFontManager();
-        if (getTimerFont() != MinecraftClient.DEFAULT_FONT_ID && fontManager.getFontStorages().containsKey(getTimerFont())) {
-            rtaText.setStyle(rtaText.getStyle().withFont(getTimerFont()));
-            igtText.setStyle(igtText.getStyle().withFont(getTimerFont()));
-            if (!fontHeightMap.containsKey(getTimerFont().toString())) {
-                fontManager.getFontStorages().get(getTimerFont()).getGlyph('I').bake(glyph -> {
-                    fontHeightMap.put(getTimerFont().toString(), glyph.getHeight() / glyph.getOversample());
-                    return null;
-                });
+        if (!SpeedRunOption.getOption(SpeedRunOptions.CUSTOM_FONT_SAFE_MODE)) {
+
+            FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) client).getFontManager();
+            if (getTimerFont() != MinecraftClient.DEFAULT_FONT_ID && fontManager.getFontStorages().containsKey(getTimerFont())) {
+                rtaText.setStyle(rtaText.getStyle().withFont(getTimerFont()));
+                igtText.setStyle(igtText.getStyle().withFont(getTimerFont()));
+                if (!fontHeightMap.containsKey(getTimerFont().toString())) {
+                    fontManager.getFontStorages().get(getTimerFont()).getGlyph('I').bake(glyph -> {
+                        fontHeightMap.put(getTimerFont().toString(), glyph.getHeight() / glyph.getOversample());
+                        return null;
+                    });
+                }
+                fontHeight = fontHeightMap.get(getTimerFont().toString());
             }
-            fontHeight = fontHeightMap.get(getTimerFont().toString());
+
         }
 
         //초기 값 조정

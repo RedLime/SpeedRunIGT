@@ -265,7 +265,7 @@ public class TimerCustomizeScreen extends Screen {
                         Identifier fontIdentifier = availableFonts.get(c + i);
                         MutableText text = Text.literal(fontIdentifier.getPath());
 
-                        if (client != null && fontManager.getFontStorages().containsKey(fontIdentifier)) {
+                        if (client != null && fontManager.getFontStorages().containsKey(fontIdentifier) && !SpeedRunOption.getOption(SpeedRunOptions.CUSTOM_FONT_SAFE_MODE)) {
                             text.setStyle(text.getStyle().withFont(fontIdentifier));
                         } else {
                             text.append(Text.literal(" (Unavailable)")).formatted(Formatting.RED);
