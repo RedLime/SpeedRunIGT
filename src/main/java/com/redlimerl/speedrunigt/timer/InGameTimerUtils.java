@@ -30,10 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -166,10 +163,21 @@ public class InGameTimerUtils {
             timelineArr.add(timelineObj);
         }
         jsonObject.add("timelines", timelineArr);
-        jsonObject.add("advancements", SpeedRunIGT.GSON.toJsonTree(timer.getAdvancementsTracker().getAdvancements()));
+        jsonObject.add("advancements", SpeedRunIGT.GSON.toJsonTree(sortMapByValue(timer.getAdvancementsTracker().getAdvancements())));
         jsonObject.add("stats", getStatsJson(timer));
 
         return jsonObject;
+    }
+
+    public static LinkedHashMap<String, TimerAdvancementTracker.AdvancementTrack> sortMapByValue(Map<String, TimerAdvancementTracker.AdvancementTrack> map) {
+        List<Map.Entry<String, TimerAdvancementTracker.AdvancementTrack>> entries = new LinkedList<>(map.entrySet());
+        entries.sort(Comparator.comparingLong(value -> value.getValue().getRTA()));
+
+        LinkedHashMap<String, TimerAdvancementTracker.AdvancementTrack> result = new LinkedHashMap<>();
+        for (Map.Entry<String, TimerAdvancementTracker.AdvancementTrack> entry : entries) {
+            result.put(entry.getKey(), entry.getValue());
+        }
+        return result;
     }
 
     public static JsonObject getStatsJson(InGameTimer timer) {

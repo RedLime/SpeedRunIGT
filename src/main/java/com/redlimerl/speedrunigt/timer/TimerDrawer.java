@@ -288,14 +288,18 @@ public class TimerDrawer {
         //폰트 조정
         float fontHeight = 8;
         TextRenderer targetFont = client.textRenderer;
-        FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) MinecraftClient.getInstance()).getFontManager();
-        if (getTimerFont() != MinecraftClient.DEFAULT_TEXT_RENDERER_ID && fontManager.getTextRenderers().containsKey(getTimerFont())) {
-            targetFont = fontManager.getTextRenderers().get(getTimerFont());
-            FontStorageAccessor fontStorage = (FontStorageAccessor) ((TextRendererAccessor) targetFont).getFontStorage();
-            fontHeight = fontHeightMap.computeIfAbsent(getTimerFont().toString(), key -> {
-                RenderableGlyph glyph = fontStorage.invokeRenderableGlyph('I');
-                return glyph.getHeight() / glyph.getOversample();
-            });
+        if (!SpeedRunOption.getOption(SpeedRunOptions.CUSTOM_FONT_SAFE_MODE)) {
+
+            FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) MinecraftClient.getInstance()).getFontManager();
+            if (getTimerFont() != MinecraftClient.DEFAULT_TEXT_RENDERER_ID && fontManager.getTextRenderers().containsKey(getTimerFont())) {
+                targetFont = fontManager.getTextRenderers().get(getTimerFont());
+                FontStorageAccessor fontStorage = (FontStorageAccessor) ((TextRendererAccessor) targetFont).getFontStorage();
+                fontHeight = fontHeightMap.computeIfAbsent(getTimerFont().toString(), key -> {
+                    RenderableGlyph glyph = fontStorage.invokeRenderableGlyph('I');
+                    return glyph.getHeight() / glyph.getOversample();
+                });
+            }
+
         }
 
         //초기 값 조정
