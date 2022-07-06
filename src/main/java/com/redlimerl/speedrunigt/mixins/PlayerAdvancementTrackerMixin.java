@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
-import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Mixin(AdvancementFile.class)
 public class PlayerAdvancementTrackerMixin {
@@ -42,7 +42,7 @@ public class PlayerAdvancementTrackerMixin {
         SimpleAdvancement advancement = args.get(1);
         String criteriaKey = args.get(2);
 
-        LinkedHashMap<String, TimerAdvancementTracker.AdvancementTrack> advancements = InGameTimer.getInstance().getAdvancementsTracker().getAdvancements();
+        Map<String, TimerAdvancementTracker.AdvancementTrack> advancements = InGameTimer.getInstance().getAdvancementsTracker().getAdvancements();
         if (advancements.containsKey(advancement.getIdentifier().toString())) {
             TimerAdvancementTracker.AdvancementTrack track = advancements.get(advancement.getIdentifier().toString());
             if (track.isComplete() || track.isCompletedCriteria(criteriaKey)) return;
