@@ -265,7 +265,7 @@ public class TimerCustomizeScreen extends Screen {
                         LiteralText text = new LiteralText(fontIdentifier.getPath());
                         TextRenderer targetFont = this.font;
 
-                        if (fontManager.getTextRenderers().containsKey(fontIdentifier)) {
+                        if (fontManager.getTextRenderers().containsKey(fontIdentifier) && !SpeedRunOption.getOption(SpeedRunOptions.CUSTOM_FONT_SAFE_MODE)) {
                             targetFont = fontManager.getTextRenderers().get(fontIdentifier);
                         } else {
                             text.append(new LiteralText(" (Unavailable)")).formatted(Formatting.RED);
