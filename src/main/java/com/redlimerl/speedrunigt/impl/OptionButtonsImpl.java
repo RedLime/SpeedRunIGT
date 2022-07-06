@@ -91,7 +91,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                         new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.safe_font_mode").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.CUSTOM_FONT_SAFE_MODE) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString(),
                                 (button) -> {
                                     SpeedRunOption.setOption(SpeedRunOptions.CUSTOM_FONT_SAFE_MODE, !SpeedRunOption.getOption(SpeedRunOptions.CUSTOM_FONT_SAFE_MODE));
-                                    button.message = (new TranslatableText("speedrunigt.option.safe_font_mode").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.CUSTOM_FONT_SAFE_MODE) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
+                                    button.field_22510 = (new TranslatableText("speedrunigt.option.safe_font_mode").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.CUSTOM_FONT_SAFE_MODE) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
                                 })
                 )
                 .setToolTip(() -> I18n.translate("speedrunigt.option.safe_font_mode.description"))
