@@ -4,9 +4,9 @@
   "package": "com.redlimerl.speedrunigt.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "EndPortalBlockMixin",
     "LivingEntityMixin",
     "PlayerAdvancementTrackerMixin",
-    "EndPortalBlockMixin",
     "ServerStatHandlerMixin",
     "ServerWorldMixin",
     "access.ServerStatHandlerAccessor",
@@ -39,6 +39,7 @@
     "retime.OptionButtonWidgetMixin",
     "retime.OptionImplMixin",
     "retime.OptionSliderWidgetMixin",
+    "retime.OptionScreenMixin",
     "retime.accessor.OptionButtonWidgetAccessor",
     "screen.CreditsScreenMixin",
     "screen.DownloadingTerrainScreenMixin",
