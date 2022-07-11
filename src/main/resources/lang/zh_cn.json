@@ -64,6 +64,8 @@
   "speedrunigt.option.hide_timer_in_debugs": "在F3调试中隐藏计时器",
   "speedrunigt.option.debug_mode": "调试模式",
   "speedrunigt.option.debug_mode.description": "将SpeedRunIGT的调试日志写入Minecraft日志。\n用于捕获错误，在要上传SRC的速通中禁止使用。",
+  "speedrunigt.option.safe_font_mode": "安全字体模式",
+  "speedrunigt.option.safe_font_mode.description": "启用它以禁止显示自定义ttf字体文本\n此选项或许可以解决某些显卡驱动的崩溃。",
   "speedrunigt.option.waiting_first_input": "从第一个输入开始",
   "speedrunigt.option.waiting_first_input.description": "改变计时器的起始点\n世界加载到玩家的第一个输入中\n(移动、打开背包等).\n此选项用于从第一个输入开始的类别。",
   "speedrunigt.option.auto_toggle_coop": "自动Co-op模式",
