@@ -644,7 +644,7 @@ public class InGameTimer implements Serializable {
                         }
                         this.pauseLogList.clear();
                     }
-                    if (this.getCategory() == RunCategories.ALL_ACHIEVEMENTS && leaveTime != 0 && leaveTime > startTime) excludedTime = System.currentTimeMillis() - leaveTime;
+                    if (this.getCategory() == RunCategories.ALL_ACHIEVEMENTS && leaveTime != 0 && leaveTime > startTime) excludedTime += System.currentTimeMillis() - leaveTime;
                     leaveTime = 0;
                 }
                 if (this.getStatus() == TimerStatus.IDLE && loggerTicks != 0) {
