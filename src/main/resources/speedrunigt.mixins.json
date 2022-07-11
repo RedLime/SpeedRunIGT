@@ -4,6 +4,7 @@
   "package": "com.redlimerl.speedrunigt.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "EndPortalBlockMixin",
     "LivingEntityMixin",
     "EndPortalBlockMixin",
     "ServerStatHandlerMixin",
@@ -34,6 +35,7 @@
     "keybinding.KeyBindingAccessor",
     "network.ClientPlayNetworkHandlerMixin",
     "retime.OptionButtonWidgetMixin",
+    "retime.OptionScreenMixin",
     "retime.accessor.OptionSliderWidgetAccessor",
     "screen.CreditsScreenMixin",
     "screen.DownloadingTerrainScreenMixin",
