@@ -1,7 +1,6 @@
 package com.redlimerl.speedrunigt.mixins.timeline;
 
 import com.mojang.authlib.GameProfile;
-import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
