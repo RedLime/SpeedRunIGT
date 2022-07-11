@@ -3,7 +3,6 @@ package com.redlimerl.speedrunigt.mixins.retime;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import net.minecraft.client.gui.screen.option.OptionsScreen;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.CyclingButtonWidget;
 import net.minecraft.world.Difficulty;
 import org.spongepowered.asm.mixin.Mixin;
