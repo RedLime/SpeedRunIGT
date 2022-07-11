@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(SettingsScreen.class)
 public class OptionScreenMixin {
 
-    @Inject(method = "buttonClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/LevelProperties;setDifficulty(Lnet/minecraft/world/Difficulty;)V", shift = At.Shift.AFTER))
+    @Inject(method = "buttonClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/options/GameOptions;method_870(Lnet/minecraft/class_350;I)V", shift = At.Shift.AFTER))
     public void onChangeDifficulty(ButtonWidget button, CallbackInfo ci) {
         SpeedRunIGT.debug("detected");
         InGameTimerUtils.CHANGED_OPTIONS.add(button);
