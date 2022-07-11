@@ -2,22 +2,20 @@ package com.redlimerl.speedrunigt.mixins.retime;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SettingsScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(targets = "net.minecraft.client.gui.screen.SettingsScreen$6")
+@Mixin(SettingsScreen.class)
 public class OptionScreenMixin {
 
-    @Inject(method = "method_18374", remap = false, at = @At("TAIL"))
-    public void onChangeDifficulty(double d, double e, CallbackInfo ci) {
+    @Inject(method = "buttonClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/LevelProperties;setDifficulty(Lnet/minecraft/world/Difficulty;)V", shift = At.Shift.AFTER))
+    public void onChangeDifficulty(ButtonWidget button, CallbackInfo ci) {
         SpeedRunIGT.debug("detected");
-        InGameTimerUtils.CHANGED_OPTIONS.add(this);
+        InGameTimerUtils.CHANGED_OPTIONS.add(button);
     }
 
 }
