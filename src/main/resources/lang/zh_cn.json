@@ -84,7 +84,7 @@
   "speedrunigt.option.auto_save_interval.pause": "每次暂停",
   "speedrunigt.option.auto_save_interval.ticks": "一定的Tick后",
   "speedrunigt.option.auto_save_interval.description": "设置时间间隔以自动保存计时器数据。\n这是一个不同于原始计时器数据保存的选项。\n在低性能设备上可能会造成卡顿。",
-  "speedrunigt.option.category.general": "首页",
+  "speedrunigt.option.category.general": "常规",
   "speedrunigt.option.category.timing": "计时",
   "speedrunigt.option.category.timer": "计时器",
   "speedrunigt.option.current_extensions": "计时器扩展",
