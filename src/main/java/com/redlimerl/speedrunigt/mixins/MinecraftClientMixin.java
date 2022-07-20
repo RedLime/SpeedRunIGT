@@ -10,6 +10,7 @@ import com.redlimerl.speedrunigt.timer.InGameTimerClientUtils;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
+import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.CreditsScreen;
@@ -53,7 +54,8 @@ public abstract class MinecraftClientMixin {
     public void onCreate(String name, String displayName, LevelInfo levelInfo, CallbackInfo ci) {
         try {
             if (levelInfo != null) {
-                InGameTimer.start(name, RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
+                RunCategory category = SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY);
+                if (category.isAutoStart()) InGameTimer.start(name, RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
             } else {
                 boolean loaded = InGameTimer.load(name);
                 if (!loaded) InGameTimer.end();
