@@ -6,18 +6,18 @@ public class RunCategories {
 
     public static RunCategory ERROR_CATEGORY = new RunCategory("unknown","mc");
 
-    public static RunCategory ANY = new RunCategory("ANY","mc#Any_Glitchless");
+    public static RunCategory ANY = RunCategoryBuilder.create("ANY", "mc", "speedrunigt.option.timer_category.any")
+            .setRetimeFunction(igt -> igt < 1000 * 60 * 17).build();
     public static RunCategory CUSTOM = new RunCategory("CUSTOM","mc#");
     public static RunCategory HIGH = new RunCategory("HIGH","mcce#High");
     public static RunCategory KILL_ALL_BOSSES = new RunCategory("KILL_ALL_BOSSES","mcce#Kill_Bosses");
     public static RunCategory KILL_WITHER = new RunCategory("KILL_WITHER","mcce#Kill_Bosses");
     public static RunCategory KILL_ELDER_GUARDIAN = new RunCategory("KILL_ELDER_GUARDIAN","mcce#Kill_Bosses");
-    public static RunCategory ALL_ACHIEVEMENTS = new RunCategory("ALL_ACHIEVEMENTS","mc#All_Achievements");
+    public static RunCategory ALL_ACHIEVEMENTS = RunCategoryBuilder.create("ALL_ADVANCEMENTS","mc#All_Advancements", "speedrunigt.option.timer_category.all_advancements")
+            .setCanSegment(true).build();
     public static RunCategory HALF = new RunCategory("HALF","mcce#Half");
     public static RunCategory POGLOOT_QUATER = new RunCategory("POGLOOT_QUATER","pogloot_ce#Quater");
-    public static RunCategory HOW_DID_WE_GET_HERE = new RunCategory("HOW_DID_WE_GET_HERE","mcce#How_Did_We_Get_Here");
-    public static RunCategory HERO_OF_VILLAGE = new RunCategory("HERO_OF_VILLAGE","mcce#Hero_of_the_Village");
-    public static RunCategory ARBALISTIC = new RunCategory("ARBALISTIC","mcce#Arbalistic");
+    public static RunCategory HOW_DID_WE_GET_HERE = new RunCategory("HOW_DID_WE_GET_HERE","mcce#How_Did_We_Get_Here", "advancements.nether.all_effects.title");
     public static RunCategory ENTER_NETHER = new RunCategory("ENTER_NETHER","mcce#Enter_Nether");
     public static RunCategory ENTER_END = new RunCategory("ENTER_END","mcce#Etner_Edn");
     public static RunCategory ALL_SWORDS = new RunCategory("ALL_SWORDS","mcce#All_Swords");
@@ -26,7 +26,8 @@ public class RunCategories {
     public static RunCategory ALL_WORKSTATIONS = new RunCategory("ALL_WORKSTATIONS","mcce#All_Workstations");
     public static RunCategory FULL_INV = new RunCategory("FULL_INV","mcce#Full_Inventory");
     public static RunCategory STACK_OF_LIME_WOOL = new RunCategory("STACK_OF_LIME_WOOL","mcce#Stack_of_Lime_Wool");
-    public static RunCategory ALL_PORTALS = new RunCategory("ALL_PORTALS","mcce#All_Portals");
+    public static RunCategory ALL_PORTALS = RunCategoryBuilder.create("ALL_PORTALS","mcce#All_Portals", "speedrunigt.option.timer_category.all_portals")
+            .setCanSegment(true).build();
     public static RunCategory MINE_A_CHUNK = new RunCategory("MINE_A_CHUNK","mcce#Mine_a_Chunk");
 
     public static void checkAllBossesCompleted() {
