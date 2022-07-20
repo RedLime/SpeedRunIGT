@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 
 public class RunCategory {
 
@@ -37,33 +38,58 @@ public class RunCategory {
 
 
     private final String id;
-    private final String srcCategory;
+    private final String categoryUrl;
     private final String translateKey;
+    private final boolean autoStart;
+    private final boolean canSegment;
+    private final boolean customUrl;
+    private final Function<Long, Boolean> retimeFunction;
     private final @Nullable String conditionFileName;
     private final @Nullable JsonArray conditionJson;
 
-    public RunCategory(String id, String srcCategory) {
-        this(id, srcCategory, "speedrunigt.option.timer_category." + id.toLowerCase(Locale.ROOT));
+    public RunCategory(String id, String categoryUrl) {
+        this(id, categoryUrl, "speedrunigt.option.timer_category." + id.toLowerCase(Locale.ROOT));
     }
 
-    public RunCategory(String id, String srcCategory, String translateKey) {
-        this(id, srcCategory, translateKey, null, null);
+    public RunCategory(String id, String categoryUrl, String translateKey) {
+        this(id, categoryUrl, translateKey, null, null);
     }
 
-    public RunCategory(String id, String srcCategory, String translateKey, @Nullable String conditionFileName, @Nullable JsonArray conditionJson) {
+    public RunCategory(String id, String categoryUrl, String translateKey, @Nullable String conditionFileName, @Nullable JsonArray conditionJson) {
+        this(id, categoryUrl, translateKey, conditionFileName, conditionJson, true, false, false, (value) -> false);
+    }
+
+    public RunCategory(String id, String categoryUrl, String translateKey, @Nullable String conditionFileName, @Nullable JsonArray conditionJson,
+                       boolean autoStart, boolean canSegment, boolean customUrl, Function<Long, Boolean> retimeFunction) {
         this.id = id;
-        this.srcCategory = srcCategory;
+        this.categoryUrl = categoryUrl;
         this.translateKey = translateKey;
         this.conditionFileName = conditionFileName;
         this.conditionJson = conditionJson;
+        this.autoStart = autoStart;
+        this.canSegment = canSegment;
+        this.customUrl = customUrl;
+        this.retimeFunction = retimeFunction;
     }
 
     public String getID() {
         return id;
     }
 
-    public String getSRCLeaderboardUrl() {
-        return "https://www.speedrun.com/" + srcCategory;
+    public String getLeaderboardUrl() {
+        return (customUrl ? "https://www.speedrun.com/" : "") + categoryUrl;
+    }
+
+    public boolean canSegment() {
+        return canSegment;
+    }
+
+    public boolean isAutoStart() {
+        return autoStart;
+    }
+
+    public boolean isNeedAutoRetime(long igt) {
+        return retimeFunction.apply(igt);
     }
 
     public Text getText() {

@@ -191,4 +191,16 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             portalTick = 0;
         }
     }
+
+    @Override
+    public void changeLookDirection(double cursorDeltaX, double cursorDeltaY) {
+        super.changeLookDirection(cursorDeltaX, cursorDeltaY);
+
+        if (cursorDeltaX != 0 || cursorDeltaY != 0) {
+            InGameTimer timer = InGameTimer.getInstance();
+            if (timer.getStatus() == TimerStatus.IDLE && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
+                timer.setPause(false, "changed look direction");
+            }
+        }
+    }
 }
