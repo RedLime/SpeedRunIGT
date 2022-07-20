@@ -83,7 +83,7 @@ public class SpeedRunCategoryScreen extends Screen {
 
             public CategoryEntry(RunCategory category) {
                 this.checkBox = new CategoryCheckBoxWidget(category);
-                this.urlButton = new ButtonWidget(0, 0, 30, 20, new TranslatableText("speedrunigt.option.more"), button -> Util.getOperatingSystem().open(category.getSRCLeaderboardUrl()));
+                this.urlButton = new ButtonWidget(0, 0, 30, 20, new TranslatableText("speedrunigt.option.more"), button -> Util.getOperatingSystem().open(category.getLeaderboardUrl()));
                 children.add(urlButton);
                 children.add(checkBox);
             }
