@@ -23,7 +23,6 @@ public class RunCategories {
     public static RunCategory ALL_SWORDS = new RunCategory("ALL_SWORDS","mcce#All_Swords");
     public static RunCategory ALL_MINERALS = new RunCategory("ALL_MINERALS","mcce#All_Minerals");
     public static RunCategory FULL_IA_15_LVL = new RunCategory("FULL_IA_15_LVL","mcce#Full_Iron_Armor_and_15_Levels");
-    public static RunCategory ALL_WORKSTATIONS = new RunCategory("ALL_WORKSTATIONS","mcce#All_Workstations");
     public static RunCategory FULL_INV = new RunCategory("FULL_INV","mcce#Full_Inventory");
     public static RunCategory STACK_OF_LIME_WOOL = new RunCategory("STACK_OF_LIME_WOOL","mcce#Stack_of_Lime_Wool");
     public static RunCategory ALL_PORTALS = RunCategoryBuilder.create("ALL_PORTALS","mcce#All_Portals", "speedrunigt.option.timer_category.all_portals")
