@@ -164,4 +164,16 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             portalTick = 0;
         }
     }
+
+    @Override
+    public void method_15558(double cursorDeltaX, double cursorDeltaY) {
+        super.method_15558(cursorDeltaX, cursorDeltaY);
+
+        if (cursorDeltaX != 0 || cursorDeltaY != 0) {
+            InGameTimer timer = InGameTimer.getInstance();
+            if (timer.getStatus() == TimerStatus.IDLE && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
+                timer.setPause(false, "changed look direction");
+            }
+        }
+    }
 }

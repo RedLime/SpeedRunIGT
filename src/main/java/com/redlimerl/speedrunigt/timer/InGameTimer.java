@@ -509,10 +509,12 @@ public class InGameTimer implements Serializable {
                         + this.endIGTTime;
     }
 
-    private static final int RETIME_MINUTES = 17;
     public long getRetimedInGameTime() {
         long base = getInGameTime(false);
-        return base + (this.isGlitched || this.isCoop || this.getCategory() != RunCategories.ANY || base >= 60000 * RETIME_MINUTES || this.getRunType() != RunType.RANDOM_SEED ? 0 : this.retimedIGTTime);
+        if (this.getCategory().isNeedAutoRetime(base)) {
+            return base + (this.isGlitched || this.isCoop || this.getRunType() != RunType.RANDOM_SEED ? 0 : this.retimedIGTTime);
+        }
+        return base;
     }
 
     private long firstRenderedTime = 0;
@@ -643,7 +645,7 @@ public class InGameTimer implements Serializable {
                         }
                         this.pauseLogList.clear();
                     }
-                    if (this.getCategory() == RunCategories.ALL_ADVANCEMENTS && leaveTime != 0 && leaveTime > startTime) excludedTime += System.currentTimeMillis() - leaveTime;
+                    if (this.getCategory().canSegment() && leaveTime != 0 && leaveTime > startTime) excludedTime += System.currentTimeMillis() - leaveTime;
                     leaveTime = 0;
                 }
                 if (this.getStatus() == TimerStatus.IDLE && loggerTicks != 0) {
