@@ -3,7 +3,6 @@ package com.redlimerl.speedrunigt.timer;
 import com.google.common.collect.Maps;
 
 import java.io.Serializable;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
@@ -34,7 +33,7 @@ public class TimerAdvancementTracker implements Serializable {
     public static class AdvancementTrack extends Track {
         private boolean complete;
         private boolean is_advancement;
-        private final LinkedHashMap<String, Track> criteria = Maps.newLinkedHashMap();
+        private final ConcurrentMap<String, Track> criteria = Maps.newConcurrentMap();
 
         public AdvancementTrack() {
             super(0, 0);
