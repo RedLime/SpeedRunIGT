@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class TimerAdvancementTracker implements Serializable {
@@ -34,7 +33,7 @@ public class TimerAdvancementTracker implements Serializable {
     public static class AdvancementTrack extends Track {
         private boolean complete;
         private boolean is_advancement;
-        private final LinkedHashMap<String, Track> criteria = Maps.newLinkedHashMap();
+        private final HashMap<String, Track> criteria = Maps.newHashMap();
 
         public AdvancementTrack() {
             super(0, 0);
