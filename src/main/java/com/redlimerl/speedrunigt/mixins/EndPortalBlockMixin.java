@@ -8,6 +8,7 @@ import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.running.RunPortalPos;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.EndPortalBlock;
+import net.minecraft.class_3794;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -27,7 +28,7 @@ public class EndPortalBlockMixin {
             InGameTimer timer = InGameTimer.getInstance();
 
             //All Portals
-            if (entity.world.dimension.isOverworld()) {
+            if (entity.world.dimension instanceof class_3794) {
                 boolean isNewPortal = true;
                 for (RunPortalPos runPortalPos : timer.getEndPortalPosList()) {
                     if (runPortalPos.squaredDistanceTo(pos) < 100) {
