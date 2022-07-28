@@ -6,8 +6,6 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecimals;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
-import com.redlimerl.speedrunigt.timer.category.RunCategories;
-import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -288,7 +286,7 @@ public class TimerDrawer {
                 rtaText.setStyle(rtaText.getStyle().withFont(getTimerFont()));
                 igtText.setStyle(igtText.getStyle().withFont(getTimerFont()));
                 if (!fontHeightMap.containsKey(getTimerFont().toString())) {
-                    fontManager.getFontStorages().get(getTimerFont()).getGlyph('I').bake(glyph -> {
+                    fontManager.getFontStorages().get(getTimerFont()).getGlyph('I', false).bake(glyph -> {
                         fontHeightMap.put(getTimerFont().toString(), glyph.getHeight() / glyph.getOversample());
                         return null;
                     });
