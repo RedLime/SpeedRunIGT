@@ -617,7 +617,7 @@ public class InGameTimer implements Serializable {
                         } else {
                             if (InGameTimerUtils.CHANGED_OPTIONS.size() > 0) {
                                 int options = InGameTimerUtils.CHANGED_OPTIONS.size();
-                                retimedIGTTime += Math.max(nowTime - loggerPausedTime - (5000L * options), 0);
+                                retimedIGTTime += Math.max(nowTime - loggerPausedTime - 5000L, 0);
                                 retime = new TimerPauseLog.Retime(retimedIGTTime - beforeRetime, "changed option" + (options > 1 ? ("s (" + options + ")") : ""));
                                 InGameTimerUtils.CHANGED_OPTIONS.clear();
                             } else {
