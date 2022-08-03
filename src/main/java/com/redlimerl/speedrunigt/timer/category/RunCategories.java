@@ -13,11 +13,10 @@ public class RunCategories {
     public static RunCategory KILL_ALL_BOSSES = new RunCategory("KILL_ALL_BOSSES","mcce#Kill_Bosses");
     public static RunCategory KILL_WITHER = new RunCategory("KILL_WITHER","mcce#Kill_Bosses");
     public static RunCategory KILL_ELDER_GUARDIAN = new RunCategory("KILL_ELDER_GUARDIAN","mcce#Kill_Bosses");
-    public static RunCategory ALL_ACHIEVEMENTS = RunCategoryBuilder.create("ALL_ADVANCEMENTS","mc#All_Advancements", "speedrunigt.option.timer_category.all_advancements")
+    public static RunCategory ALL_ACHIEVEMENTS = RunCategoryBuilder.create("ALL_ADVANCEMENTS","mc#All_Advancements", "speedrunigt.option.timer_category.all_achievements")
             .setCanSegment(true).build();
     public static RunCategory HALF = new RunCategory("HALF","mcce#Half");
     public static RunCategory POGLOOT_QUATER = new RunCategory("POGLOOT_QUATER","pogloot_ce#Quater");
-    public static RunCategory HOW_DID_WE_GET_HERE = new RunCategory("HOW_DID_WE_GET_HERE","mcce#How_Did_We_Get_Here", "advancements.nether.all_effects.title");
     public static RunCategory ENTER_NETHER = new RunCategory("ENTER_NETHER","mcce#Enter_Nether");
     public static RunCategory ENTER_END = new RunCategory("ENTER_END","mcce#Etner_Edn");
     public static RunCategory ALL_SWORDS = new RunCategory("ALL_SWORDS","mcce#All_Swords");
