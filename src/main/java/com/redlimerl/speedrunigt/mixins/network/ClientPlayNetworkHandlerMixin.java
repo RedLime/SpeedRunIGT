@@ -22,15 +22,18 @@ public class ClientPlayNetworkHandlerMixin {
 
     @Inject(method = "onCustomPayload", at = @At("HEAD"), cancellable = true)
     public void onCustom(CustomPayloadS2CPacket packet, CallbackInfo ci) {
-        if (packet.getChannel().startsWith(SpeedRunIGT.MOD_ID)) {
+        if (packet.getChannel().startsWith("srigt")) {
             TimerPacket timerPacket = TimerPacket.createTimerPacketFromPacket(packet.getChannel());
             TimerPacketBuf buf = TimerPacketBuf.of(Unpooled.wrappedBuffer(packet.method_7734()));
-            SpeedRunIGT.debug(String.format("Server->Client Packet: %s bytes, ID : %s", buf.getBuffer().capacity(), packet.getChannel()));
+            SpeedRunIGT.debug(String.format("Server->Client Packet: %s bytes, ID : %s", packet.method_7734().length, packet.getChannel()));
             try {
                 if (timerPacket != null && SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) {
                     timerPacket.receiveServer2ClientPacket(buf, client);
                     buf.release();
                 }
+                else throw new IllegalArgumentException();
+            } catch (IllegalArgumentException e) {
+                SpeedRunIGT.error("Unknown packet type, probably SpeedRunIGT version different between players");
             } catch (Exception e) {
                 e.printStackTrace();
                 SpeedRunIGT.error("Failed to read packet in client side, probably SpeedRunIGT version different between players");
