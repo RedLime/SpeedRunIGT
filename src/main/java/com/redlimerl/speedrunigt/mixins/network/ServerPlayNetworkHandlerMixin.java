@@ -20,7 +20,7 @@ public class ServerPlayNetworkHandlerMixin {
 
     @Inject(method = "onCustomPayload", at = @At("TAIL"))
     public void onCustom(CustomPayloadC2SPacket packet, CallbackInfo ci) {
-        if (packet.getChannel().startsWith(SpeedRunIGT.MOD_ID+"|")) {
+        if (packet.getChannel().startsWith("srigt")) {
             TimerPacket timerPacket = TimerPacket.createTimerPacketFromPacket(packet.getChannel());
             TimerPacketBuf buf = TimerPacketBuf.of(packet.getPayload());
             SpeedRunIGT.debug(String.format("Client->Server Packet: %s bytes, ID : %s", buf.getBuffer().capacity(), packet.getChannel()));
