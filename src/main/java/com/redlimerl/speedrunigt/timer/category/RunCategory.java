@@ -77,7 +77,7 @@ public class RunCategory {
     }
 
     public String getLeaderboardUrl() {
-        return (customUrl ? "https://www.speedrun.com/" : "") + categoryUrl;
+        return (customUrl ? "" : "https://www.speedrun.com/") + categoryUrl;
     }
 
     public boolean canSegment() {
