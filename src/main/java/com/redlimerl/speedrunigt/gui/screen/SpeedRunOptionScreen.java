@@ -119,7 +119,7 @@ public class SpeedRunOptionScreen extends Screen {
         drawStringWithShadow(matrices, textRenderer, "v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215);
 
         ArrayList<Text> tooltip = getToolTip(mouseX, mouseY);
-        if (!tooltip.isEmpty()) this.renderTooltip(matrices, tooltip, 0, height);
+        if (!tooltip.isEmpty() && !this.isDragging()) this.renderTooltip(matrices, tooltip, 0, height);
     }
 
     public ArrayList<Text> getToolTip(int mouseX, int mouseY) {
