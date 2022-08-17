@@ -8,20 +8,25 @@ import com.redlimerl.speedrunigt.gui.screen.SpeedRunIGTInfoScreen;
 import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
+import com.redlimerl.speedrunigt.timer.InGameTimer;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ConfirmScreen;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
+import net.minecraft.util.math.MathHelper;
 import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
+import java.util.function.Supplier;
 
 import static com.redlimerl.speedrunigt.SpeedRunIGTClient.TIMER_DRAWER;
 
@@ -181,13 +186,6 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                 .setCategory("speedrunigt.option.category.timing")
         );
 
-        if (Math.random() < 0.1) {
-            factories.add(screen -> new OptionButtonFactory.Builder()
-                    .setButtonWidget(new ButtonWidget(0, 0, 150, 20, Text.literal("amongus"), (ButtonWidget button) -> {}))
-                    .setCategory("sus")
-            );
-        }
-
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
                         new ButtonWidget(0, 0, 150, 20, Text.translatable("speedrunigt.option.current_extensions"),
@@ -235,17 +233,57 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                 .setCategory("speedrunigt.option.category.timer")
         );
 
+        ButtonWidget alwaysAutoRetimeButton = new ButtonWidget(0, 0, 150, 20, Text.translatable("speedrunigt.option.always_use_auto_retime").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_USE_AUTO_RETIME) ? ScreenTexts.ON : ScreenTexts.OFF),
+                (ButtonWidget button) -> {
+                    SpeedRunOption.setOption(SpeedRunOptions.ALWAYS_USE_AUTO_RETIME, !SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_USE_AUTO_RETIME));
+                    button.setMessage(Text.translatable("speedrunigt.option.always_use_auto_retime").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_USE_AUTO_RETIME) ? ScreenTexts.ON : ScreenTexts.OFF));
+                });
+
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
                         new ButtonWidget(0, 0, 150, 20, Text.translatable("speedrunigt.option.auto_retime").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE) ? ScreenTexts.ON : ScreenTexts.OFF),
                                 (ButtonWidget button) -> {
                                     SpeedRunOption.setOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE, !SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE));
                                     button.setMessage(Text.translatable("speedrunigt.option.auto_retime").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE) ? ScreenTexts.ON : ScreenTexts.OFF));
+                                    alwaysAutoRetimeButton.active = SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE);
                                 })
                 )
                 .setToolTip(() -> I18n.translate("speedrunigt.option.auto_retime.description"))
-                .setCategory("speedrunigt.option.category.timer")
+                .setCategory("speedrunigt.option.category.retime")
         );
+
+        factories.add(screen -> {
+            alwaysAutoRetimeButton.active = SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE);
+            return new OptionButtonFactory.Builder()
+                            .setButtonWidget(alwaysAutoRetimeButton)
+                            .setToolTip(() -> I18n.translate("speedrunigt.option.always_use_auto_retime.description"))
+                            .setCategory("speedrunigt.option.category.retime");
+            }
+        );
+
+        factories.add(screen -> {
+            Supplier<Text> makeText = () -> {
+                int value = SpeedRunOption.getOption(SpeedRunOptions.CHANGE_ANY_TO_AA_OVER);
+                return Text.translatable("speedrunigt.option.auto_toggle_aa").append(" : ")
+                        .append(value > 0 ? Text.literal(value+"+") : ScreenTexts.OFF);
+            };
+            return new OptionButtonFactory.Builder()
+                            .setButtonWidget(
+                                    new SliderWidget(0, 0, 150, 20, makeText.get(), MathHelper.clamp(SpeedRunOption.getOption(SpeedRunOptions.CHANGE_ANY_TO_AA_OVER) / 50.0, 0.0, 1.0)) {
+                                        @Override
+                                        protected void updateMessage() {
+                                            this.setMessage(makeText.get());
+                                        }
+
+                                        @Override
+                                        protected void applyValue() {
+                                            SpeedRunOption.setOption(SpeedRunOptions.CHANGE_ANY_TO_AA_OVER, (int) Math.round(this.value * 50));
+                                        }
+                                    }
+                            )
+                            .setToolTip(() -> I18n.translate("speedrunigt.option.auto_toggle_aa.description"))
+                            .setCategory("speedrunigt.option.category.timer");
+        });
 
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
@@ -271,23 +309,53 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
                         new ButtonWidget(0, 0, 150, 20, Text.translatable("speedrunigt.option.delete_all_records"),
-                                (ButtonWidget button) -> {
-                                    MinecraftClient.getInstance().setScreen(new ConfirmScreen(boolean1 -> {
-                                        if (boolean1) {
-                                            try {
-                                                FileUtils.deleteDirectory(SpeedRunIGT.getRecordsPath().toFile());
-                                                if (!SpeedRunIGT.getRecordsPath().toFile().mkdir()) {
-                                                    SpeedRunIGT.error("Failed to make records directory");
-                                                }
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
+                                (ButtonWidget button) -> MinecraftClient.getInstance().setScreen(new ConfirmScreen(boolean1 -> {
+                                    if (boolean1) {
+                                        try {
+                                            FileUtils.deleteDirectory(SpeedRunIGT.getRecordsPath().toFile());
+                                            if (!SpeedRunIGT.getRecordsPath().toFile().mkdir()) {
+                                                SpeedRunIGT.error("Failed to make records directory");
                                             }
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
                                         }
-                                        MinecraftClient.getInstance().setScreen(screen);
-                                    }, Text.translatable("speedrunigt.option.delete_all_records.description"), Text.empty()));
-                                })
+                                    }
+                                    MinecraftClient.getInstance().setScreen(screen);
+                                }, Text.translatable("speedrunigt.option.delete_all_records.description"), Text.empty())))
                 )
                 .setCategory("speedrunigt.option.category.records")
+        );
+
+        factories.add(screen -> {
+            if (InGameTimer.getInstance().isStopped()) {
+                ButtonWidget buttonWidget = new ButtonWidget(0, 0, 150, 20, Text.translatable("speedrunigt.option.generate_timer_logs"), (ButtonWidget button) -> {});
+                buttonWidget.active = false;
+                return new OptionButtonFactory.Builder()
+                        .setButtonWidget(
+                                buttonWidget
+                        )
+                        .setToolTip(() -> I18n.translate("speedrunigt.option.generate_timer_logs.description"))
+                        .setCategory("speedrunigt.option.category.records");
+            }
+            return new OptionButtonFactory.Builder()
+                            .setButtonWidget(
+                                    new ButtonWidget(0, 0, 150, 20, Text.translatable("speedrunigt.option.generate_timer_logs"),
+                                            (ButtonWidget button) ->
+                                                    MinecraftClient.getInstance().setScreen(new ConfirmScreen(boolean1 -> {
+                                                        if (boolean1) {
+                                                            try {
+                                                                InGameTimer.writeTimerLogs(InGameTimer.getInstance());
+                                                            } catch (Exception e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                        }
+                                                        MinecraftClient.getInstance().setScreen(screen);
+                                                    }, Text.translatable("speedrunigt.option.generate_timer_logs.message"), Text.empty()))
+                                    )
+                            )
+                            .setToolTip(() -> I18n.translate("speedrunigt.option.generate_timer_logs.description"))
+                            .setCategory("speedrunigt.option.category.records");
+            }
         );
 
         factories.add(screen -> new OptionButtonFactory.Builder()
@@ -302,6 +370,28 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                 .setToolTip(() -> I18n.translate("speedrunigt.option.debug_mode.description"))
                 .setCategory("Debug")
         );
+
+
+        if (Math.random() < 0.1) {
+            factories.add(screen -> new OptionButtonFactory.Builder()
+                    .setButtonWidget(new ButtonWidget(0, 0, 150, 20, Text.literal("amongus"), (ButtonWidget button) -> {}))
+                    .setCategory("???")
+            );
+        }
+
+        if (Math.random() < 0.05) {
+            factories.add(screen -> new OptionButtonFactory.Builder()
+                    .setButtonWidget(new ButtonWidget(0, 0, 150, 20, Text.literal("Dream Luck : OFF"), (ButtonWidget button) -> button.setMessage(Text.literal("HAHA no u"))))
+                    .setCategory("???")
+            );
+        }
+
+        if (Math.random() < 0.01) {
+            factories.add(screen -> new OptionButtonFactory.Builder()
+                    .setButtonWidget(new ButtonWidget(0, 0, 150, 20, Text.literal("no way LMAO").formatted(Formatting.OBFUSCATED), (ButtonWidget button) -> {}))
+                    .setCategory("???")
+            );
+        }
 
         return factories;
     }

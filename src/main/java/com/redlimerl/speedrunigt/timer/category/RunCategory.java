@@ -2,6 +2,7 @@ package com.redlimerl.speedrunigt.timer.category;
 
 import com.google.gson.JsonArray;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.timer.InGameTimer;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,7 +44,7 @@ public class RunCategory {
     private final boolean autoStart;
     private final boolean canSegment;
     private final boolean customUrl;
-    private final Function<Long, Boolean> retimeFunction;
+    private final Function<InGameTimer, Boolean> retimeFunction;
     private final @Nullable String conditionFileName;
     private final @Nullable JsonArray conditionJson;
 
@@ -60,7 +61,7 @@ public class RunCategory {
     }
 
     public RunCategory(String id, String categoryUrl, String translateKey, @Nullable String conditionFileName, @Nullable JsonArray conditionJson,
-                       boolean autoStart, boolean canSegment, boolean customUrl, Function<Long, Boolean> retimeFunction) {
+                       boolean autoStart, boolean canSegment, boolean customUrl, Function<InGameTimer, Boolean> retimeFunction) {
         this.id = id;
         this.categoryUrl = categoryUrl;
         this.translateKey = translateKey;
@@ -77,7 +78,7 @@ public class RunCategory {
     }
 
     public String getLeaderboardUrl() {
-        return (customUrl ? "https://www.speedrun.com/" : "") + categoryUrl;
+        return (customUrl ? "" : "https://www.speedrun.com/") + categoryUrl;
     }
 
     public boolean canSegment() {
@@ -88,8 +89,8 @@ public class RunCategory {
         return autoStart;
     }
 
-    public boolean isNeedAutoRetime(long igt) {
-        return retimeFunction.apply(igt);
+    public boolean isNeedAutoRetime(InGameTimer timer) {
+        return retimeFunction.apply(timer);
     }
 
     public Text getText() {
