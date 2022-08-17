@@ -8,19 +8,18 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerClientUtils;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
+import com.redlimerl.speedrunigt.timer.TimerDrawer.PositionType;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.minecraft.class_3793;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.CreditsScreen;
-import net.minecraft.client.gui.screen.GameMenuScreen;
-import net.minecraft.client.gui.screen.ProgressScreen;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.*;
 import net.minecraft.client.options.GameOptions;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.crash.CrashReport;
+import net.minecraft.util.math.Vec2f;
 import net.minecraft.world.level.LevelInfo;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,7 +27,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin {
@@ -109,6 +107,13 @@ public abstract class MinecraftClientMixin {
         RunCategories.checkAllBossesCompleted();
     }
 
+    private int saveTickCount = 0;
+    @Inject(method = "tick", at = @At("RETURN"))
+    private void onTickMixin(CallbackInfo ci) {
+        if (++saveTickCount >= 20)
+            SpeedRunOption.checkSave();
+    }
+
     @Inject(method = "method_18228", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Util;method_20230()J", shift = At.Shift.AFTER))
     private void renderMixin(boolean tick, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
@@ -124,6 +129,7 @@ public abstract class MinecraftClientMixin {
     }
 
 
+    private PositionType currentPositionType = PositionType.DEFAULT;
     @Inject(method = "method_18228", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/class_3264;method_18450()V", shift = At.Shift.AFTER))
     private void drawTimer(CallbackInfo ci) {
@@ -142,6 +148,32 @@ public abstract class MinecraftClientMixin {
                 && (!this.isPaused() || this.currentScreen instanceof CreditsScreen || this.currentScreen instanceof GameMenuScreen || !SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS))
                 && !(!this.isPaused() && SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) && this.options.debugEnabled)
                 && !(this.currentScreen instanceof TimerCustomizeScreen)) {
+
+            if (SpeedRunOption.getOption(SpeedRunOptions.ENABLE_TIMER_SPLIT_POS)) {
+                long time = System.nanoTime();
+                PositionType updatePositionType = PositionType.DEFAULT;
+                if (this.options.debugEnabled)
+                    updatePositionType = PositionType.WHILE_F3;
+                if (this.isPaused() && !(this.currentScreen instanceof DownloadingTerrainScreen))
+                    updatePositionType = PositionType.WHILE_PAUSED;
+
+                if (currentPositionType != updatePositionType) {
+                    currentPositionType = updatePositionType;
+                    Vec2f igtPos = currentPositionType == PositionType.DEFAULT
+                            ? new Vec2f(SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_POSITION_X), SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_POSITION_Y))
+                            : SpeedRunOption.getOption(currentPositionType == PositionType.WHILE_F3 ? SpeedRunOptions.TIMER_IGT_POSITION_FOR_F3 : SpeedRunOptions.TIMER_IGT_POSITION_FOR_PAUSE);
+
+                    Vec2f rtaPos = currentPositionType == PositionType.DEFAULT
+                            ? new Vec2f(SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_POSITION_X), SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_POSITION_Y))
+                            : SpeedRunOption.getOption(currentPositionType == PositionType.WHILE_F3 ? SpeedRunOptions.TIMER_RTA_POSITION_FOR_F3 : SpeedRunOptions.TIMER_RTA_POSITION_FOR_PAUSE);
+
+                    SpeedRunIGTClient.TIMER_DRAWER.setRTA_XPos(rtaPos.x);
+                    SpeedRunIGTClient.TIMER_DRAWER.setRTA_YPos(rtaPos.y);
+                    SpeedRunIGTClient.TIMER_DRAWER.setIGT_XPos(igtPos.x);
+                    SpeedRunIGTClient.TIMER_DRAWER.setIGT_YPos(igtPos.y);
+                    SpeedRunIGT.debug("Done with "+(System.nanoTime()-time)+"ns");
+                }
+            }
             SpeedRunIGTClient.TIMER_DRAWER.draw();
         }
     }

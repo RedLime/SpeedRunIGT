@@ -5,6 +5,7 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.SpeedRunIGTUpdateChecker;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.gui.ConsumerButtonWidget;
+import com.redlimerl.speedrunigt.mixins.access.ScreenHelperAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.minecraft.client.gui.screen.Screen;
@@ -130,7 +131,7 @@ public class SpeedRunOptionScreen extends Screen {
         this.textRenderer.drawWithShadow("v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215);
 
         ArrayList<String> tooltip = getToolTip();
-        if (!tooltip.isEmpty()) this.renderTooltip(tooltip, 0, height);
+        if (!tooltip.isEmpty() && !((ScreenHelperAccessor) this).accessIsHolding()) this.renderTooltip(tooltip, 0, height);
     }
 
     public ArrayList<String> getToolTip() {
