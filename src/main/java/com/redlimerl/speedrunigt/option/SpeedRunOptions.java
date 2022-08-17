@@ -5,6 +5,7 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.timer.running.RunType;
+import com.redlimerl.speedrunigt.utils.Vec2f;
 import net.minecraft.util.Identifier;
 
 import java.util.Objects;
@@ -223,6 +224,42 @@ public class SpeedRunOptions {
         }
     };
 
+    public static final OptionArgument<Integer> CHANGE_ANY_TO_AA_OVER = new OptionArgument<Integer>(new Identifier(SpeedRunIGT.MOD_ID, "change_aa_over"), 0) {
+        @Override
+        public Integer valueFromString(String string) {
+            return Integer.parseInt(string);
+        }
+
+        @Override
+        public String valueToString(Integer value) {
+            return String.valueOf(value);
+        }
+    };
+
+    public static final OptionArgument<Boolean> ALWAYS_USE_AUTO_RETIME = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "always_use_auto_retime"), false) {
+        @Override
+        public Boolean valueFromString(String string) {
+            return Objects.equals(string, "true");
+        }
+
+        @Override
+        public String valueToString(Boolean value) {
+            return String.valueOf(value);
+        }
+    };
+
+    public static final OptionArgument<Boolean> ENABLE_TIMER_SPLIT_POS = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "enable_timer_split_position"), false) {
+        @Override
+        public Boolean valueFromString(String string) {
+            return Objects.equals(string, "true");
+        }
+
+        @Override
+        public String valueToString(Boolean value) {
+            return String.valueOf(value);
+        }
+    };
+
     public static final OptionArgument<Float> TIMER_RTA_POSITION_X = new OptionArgument<Float>(new Identifier(SpeedRunIGT.MOD_ID, "timer_rta_pos_x"), 0.983f) {
         @Override
         public Float valueFromString(String string) {
@@ -247,6 +284,32 @@ public class SpeedRunOptions {
         }
     };
 
+    public static final OptionArgument<Vec2f> TIMER_RTA_POSITION_FOR_F3 = new OptionArgument<Vec2f>(new Identifier(SpeedRunIGT.MOD_ID, "timer_rta_pos_for_f3"), new Vec2f(0.983f, 0.035f)) {
+        @Override
+        public Vec2f valueFromString(String string) {
+            String[] vec = string.split(",");
+            return new Vec2f(Float.parseFloat(vec[0]), Float.parseFloat(vec[1]));
+        }
+
+        @Override
+        public String valueToString(Vec2f value) {
+            return value.x+","+value.y;
+        }
+    };
+
+    public static final OptionArgument<Vec2f> TIMER_RTA_POSITION_FOR_PAUSE = new OptionArgument<Vec2f>(new Identifier(SpeedRunIGT.MOD_ID, "timer_rta_pos_for_pause"), new Vec2f(0.983f, 0.035f)) {
+        @Override
+        public Vec2f valueFromString(String string) {
+            String[] vec = string.split(",");
+            return new Vec2f(Float.parseFloat(vec[0]), Float.parseFloat(vec[1]));
+        }
+
+        @Override
+        public String valueToString(Vec2f value) {
+            return value.x+","+value.y;
+        }
+    };
+
     public static final OptionArgument<Float> TIMER_IGT_POSITION_X = new OptionArgument<Float>(new Identifier(SpeedRunIGT.MOD_ID, "timer_igt_pos_x"), 0.983f) {
         @Override
         public Float valueFromString(String string) {
@@ -268,6 +331,32 @@ public class SpeedRunOptions {
         @Override
         public String valueToString(Float value) {
             return value.toString();
+        }
+    };
+
+    public static final OptionArgument<Vec2f> TIMER_IGT_POSITION_FOR_F3 = new OptionArgument<Vec2f>(new Identifier(SpeedRunIGT.MOD_ID, "timer_igt_pos_for_f3"), new Vec2f(0.983f, 0.08f)) {
+        @Override
+        public Vec2f valueFromString(String string) {
+            String[] vec = string.split(",");
+            return new Vec2f(Float.parseFloat(vec[0]), Float.parseFloat(vec[1]));
+        }
+
+        @Override
+        public String valueToString(Vec2f value) {
+            return value.x+","+value.y;
+        }
+    };
+
+    public static final OptionArgument<Vec2f> TIMER_IGT_POSITION_FOR_PAUSE = new OptionArgument<Vec2f>(new Identifier(SpeedRunIGT.MOD_ID, "timer_igt_pos_for_pause"), new Vec2f(0.983f, 0.08f)) {
+        @Override
+        public Vec2f valueFromString(String string) {
+            String[] vec = string.split(",");
+            return new Vec2f(Float.parseFloat(vec[0]), Float.parseFloat(vec[1]));
+        }
+
+        @Override
+        public String valueToString(Vec2f value) {
+            return value.x+","+value.y;
         }
     };
 
