@@ -1,5 +1,7 @@
 package com.redlimerl.speedrunigt.timer.category;
 
+import com.redlimerl.speedrunigt.timer.InGameTimer;
+
 import java.util.function.Function;
 
 @SuppressWarnings("unused")
@@ -11,7 +13,7 @@ public class RunCategoryBuilder {
     private boolean autoStart = true;
     private boolean canSegment = false;
     private boolean customUrl = false;
-    private Function<Long, Boolean> retimeFunction = (value) -> false;
+    private Function<InGameTimer, Boolean> retimeFunction = (value) -> false;
 
     public static RunCategoryBuilder create(String id, String categoryUrl, String translateKey) {
         return new RunCategoryBuilder(id, categoryUrl, translateKey);
@@ -56,7 +58,7 @@ public class RunCategoryBuilder {
         return this;
     }
 
-    public RunCategoryBuilder setRetimeFunction(Function<Long, Boolean> retimeFunction) {
+    public RunCategoryBuilder setRetimeFunction(Function<InGameTimer, Boolean> retimeFunction) {
         this.retimeFunction = retimeFunction;
         return this;
     }
