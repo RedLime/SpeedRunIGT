@@ -4,6 +4,7 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.SpeedRunIGTUpdateChecker;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.gui.ConsumerButtonWidget;
+import com.redlimerl.speedrunigt.mixins.access.ScreenAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.utils.OperatingUtils;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
@@ -132,7 +133,7 @@ public class SpeedRunOptionScreen extends Screen {
         field_22540.method_956("v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215);
 
         ArrayList<String> tooltip = getToolTip(mouseX, mouseY);
-        if (!tooltip.isEmpty()) this.method_21932(tooltip, 0, field_22536);
+        if (!tooltip.isEmpty() && ((ScreenAccessor) this).getPrevClickedButton() == null) this.method_21932(tooltip, 0, field_22536);
     }
 
     public ArrayList<String> getToolTip(int mouseX, int mouseY) {

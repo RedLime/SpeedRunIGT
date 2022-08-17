@@ -15,6 +15,10 @@ import net.minecraft.client.gui.DrawableHelper;
 @Environment(EnvType.CLIENT)
 public class TimerDrawer {
 
+    public enum PositionType {
+        DEFAULT, WHILE_F3, WHILE_PAUSED
+    }
+
     private final boolean translateZ;
     private final MinecraftClient client = MinecraftClient.getInstance();
 
