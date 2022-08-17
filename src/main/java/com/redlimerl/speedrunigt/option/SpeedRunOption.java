@@ -57,7 +57,15 @@ public class SpeedRunOption {
     public static <T> void setOption(OptionArgument<T> option, T value) {
         InGameTimerUtils.CHANGED_OPTIONS.add(option);
         options.put(option.getKey(), option.valueToString(value));
-        save();
+        needSave = true;
+    }
+
+    private static boolean needSave = false;
+    public static void checkSave() {
+        if (needSave) {
+            save();
+            needSave = false;
+        }
     }
 
     public static void init() {
