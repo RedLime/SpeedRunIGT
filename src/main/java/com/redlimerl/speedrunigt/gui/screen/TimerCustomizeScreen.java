@@ -97,25 +97,30 @@ public class TimerCustomizeScreen extends Screen {
         initPositionButtons();
         initBackgroundButtons();
 
-        this.normalButton = new ConsumerButtonWidget(width / 2 - 149, height / 2 - 48, 58, 20, new TranslatableText("options.title").append("...").asFormattedString(), (button) -> openTab(0));
+        this.normalButton = new ConsumerButtonWidget(width / 2 - 179, height / 2 - 48, 58, 20, new TranslatableText("options.title").append("...").asFormattedString(), (button) -> openTab(0));
         method_13411(this.normalButton);
+        this.tabButtons.add(this.normalButton);
 
-        this.igtButton = new ConsumerButtonWidget(width / 2 - 89, height / 2 - 48, 58, 20, new LiteralText("IGT...").asFormattedString(), (button) -> openTab(1));
+        this.igtButton = new ConsumerButtonWidget(width / 2 - 119, height / 2 - 48, 58, 20, new LiteralText("IGT...").asFormattedString(), (button) -> openTab(1));
         method_13411(this.igtButton);
+        this.tabButtons.add(this.igtButton);
 
-        this.rtaButton = new ConsumerButtonWidget(width / 2 - 29, height / 2 - 48, 58, 20, new LiteralText("RTA...").asFormattedString(), (button) -> openTab(2));
+        this.rtaButton = new ConsumerButtonWidget(width / 2 - 59, height / 2 - 48, 58, 20, new LiteralText("RTA...").asFormattedString(), (button) -> openTab(2));
         method_13411(this.rtaButton);
+        this.tabButtons.add(this.rtaButton);
 
         this.posButton = addButton(new ConsumerButtonWidget(width / 2 + 1, height / 2 - 48, 58, 20, "Pos...", (ButtonWidget button) -> openTab(5)));
         method_13411(this.posButton);
         this.tabButtons.add(this.posButton);
 
-        ButtonWidget fontButton = new ConsumerButtonWidget(width / 2 + 31, height / 2 - 48, 58, 20, new TranslatableText("speedrunigt.title.font").asFormattedString(), button -> {});
+        ButtonWidget fontButton = new ConsumerButtonWidget(width / 2 + 61, height / 2 - 48, 58, 20, new TranslatableText("speedrunigt.title.font").asFormattedString(), button -> {});
         fontButton.active = false;
         method_13411(fontButton);
+        this.tabButtons.add(fontButton);
 
-        this.backgroundButton = new ConsumerButtonWidget(width / 2 + 91, height / 2 - 48, 58, 20, new TranslatableText("speedrunigt.title.background").asFormattedString(), (button) -> openTab(4));
+        this.backgroundButton = new ConsumerButtonWidget(width / 2 + 121, height / 2 - 48, 58, 20, new TranslatableText("speedrunigt.title.background").asFormattedString(), (button) -> openTab(4));
         method_13411(this.backgroundButton);
+        this.tabButtons.add(this.backgroundButton);
 
         method_13411(new ConsumerButtonWidget(width / 2 - 89, height / 2 + 62, 58, 20, new TranslatableText("speedrunigt.option.hide").asFormattedString(), (button) -> {
             hide = !hide;
