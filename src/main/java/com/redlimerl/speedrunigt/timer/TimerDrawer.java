@@ -24,6 +24,10 @@ import java.util.HashMap;
 @Environment(EnvType.CLIENT)
 public class TimerDrawer {
 
+    public enum PositionType {
+        DEFAULT, WHILE_F3, WHILE_PAUSED
+    }
+
     public static final HashMap<String, Float> fontHeightMap = new HashMap<>();
 
     private final boolean translateZ;
