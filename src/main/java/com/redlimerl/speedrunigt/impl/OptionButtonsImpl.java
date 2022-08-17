@@ -5,28 +5,36 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.api.SpeedRunIGTApi;
 import com.redlimerl.speedrunigt.gui.ConsumerButtonWidget;
+import com.redlimerl.speedrunigt.gui.CustomSliderWidget;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunCategoryScreen;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunIGTInfoScreen;
 import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
+import com.redlimerl.speedrunigt.timer.InGameTimer;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ConfirmScreen;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Style;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.math.MathHelper;
 import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
+import java.util.function.Supplier;
 
 import static com.redlimerl.speedrunigt.SpeedRunIGTClient.TIMER_DRAWER;
 
 public class OptionButtonsImpl implements SpeedRunIGTApi {
+
+    private ConsumerButtonWidget alwaysAutoRetimeButton = null;
 
     @Override
     public Collection<OptionButtonFactory> createOptionButtons() {
@@ -182,13 +190,6 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                 .setCategory("speedrunigt.option.category.timing")
         );
 
-        if (Math.random() < 0.1) {
-            factories.add(screen -> new OptionButtonFactory.Builder()
-                    .setButtonWidget(new ConsumerButtonWidget(0, 0, 150, 20, new LiteralText("amongus").asFormattedString(), (button) -> {}))
-                    .setCategory("sus")
-            );
-        }
-
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
                         new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.current_extensions").getString(), (buttonWidget) -> {})
@@ -241,11 +242,50 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                                 (button) -> {
                                     SpeedRunOption.setOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE, !SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE));
                                     button.message = (new TranslatableText("speedrunigt.option.auto_retime").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
+                                    alwaysAutoRetimeButton.active = SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE);
                                 })
                 )
                 .setToolTip(() -> I18n.translate("speedrunigt.option.auto_retime.description"))
-                .setCategory("speedrunigt.option.category.timer")
+                .setCategory("speedrunigt.option.category.retime")
         );
+
+        factories.add(screen -> {
+            alwaysAutoRetimeButton = new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.always_use_auto_retime").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_USE_AUTO_RETIME) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString(),
+                    (button) -> {
+                        SpeedRunOption.setOption(SpeedRunOptions.ALWAYS_USE_AUTO_RETIME, !SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_USE_AUTO_RETIME));
+                        button.message = (new TranslatableText("speedrunigt.option.always_use_auto_retime").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_USE_AUTO_RETIME) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
+                    });
+            alwaysAutoRetimeButton.active = SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE);
+            return new OptionButtonFactory.Builder()
+                            .setButtonWidget(alwaysAutoRetimeButton)
+                            .setToolTip(() -> I18n.translate("speedrunigt.option.always_use_auto_retime.description"))
+                            .setCategory("speedrunigt.option.category.retime");
+            }
+        );
+
+        factories.add(screen -> {
+            Supplier<String> makeText = () -> {
+                int value = SpeedRunOption.getOption(SpeedRunOptions.CHANGE_ANY_TO_AA_OVER);
+                return new TranslatableText("speedrunigt.option.auto_toggle_aa").append(" : ")
+                        .append(value > 0 ? (value+"+") : ScreenTexts.OFF).asFormattedString();
+            };
+            return new OptionButtonFactory.Builder()
+                            .setButtonWidget(
+                                    new CustomSliderWidget(0, 0, 150, 20, MathHelper.clamp(SpeedRunOption.getOption(SpeedRunOptions.CHANGE_ANY_TO_AA_OVER) / 50.0f, 0.0f, 1.0f), new CustomSliderWidget.SliderWorker() {
+                                        @Override
+                                        public String updateMessage() {
+                                            return makeText.get();
+                                        }
+
+                                        @Override
+                                        public void applyValue(float value) {
+                                            SpeedRunOption.setOption(SpeedRunOptions.CHANGE_ANY_TO_AA_OVER, Math.round(value * 50));
+                                        }
+                                    })
+                            )
+                            .setToolTip(() -> I18n.translate("speedrunigt.option.auto_toggle_aa.description"))
+                            .setCategory("speedrunigt.option.category.timer");
+        });
 
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
@@ -271,23 +311,53 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
                         new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.delete_all_records").asFormattedString(),
-                                (button) -> {
-                                    MinecraftClient.getInstance().openScreen(new ConfirmScreen((boolean1, i) -> {
-                                        if (boolean1) {
-                                            try {
-                                                FileUtils.deleteDirectory(SpeedRunIGT.getRecordsPath().toFile());
-                                                if (!SpeedRunIGT.getRecordsPath().toFile().mkdir()) {
-                                                    SpeedRunIGT.error("Failed to make records directory");
-                                                }
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
+                                (button) -> MinecraftClient.getInstance().openScreen(new ConfirmScreen((boolean1, i) -> {
+                                    if (boolean1) {
+                                        try {
+                                            FileUtils.deleteDirectory(SpeedRunIGT.getRecordsPath().toFile());
+                                            if (!SpeedRunIGT.getRecordsPath().toFile().mkdir()) {
+                                                SpeedRunIGT.error("Failed to make records directory");
                                             }
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
                                         }
-                                        MinecraftClient.getInstance().openScreen(screen);
-                                    }, new TranslatableText("speedrunigt.option.delete_all_records.description").asFormattedString(), "", 0));
-                                })
+                                    }
+                                    MinecraftClient.getInstance().openScreen(screen);
+                                }, new TranslatableText("speedrunigt.option.delete_all_records.description").asFormattedString(), "", 0)))
                 )
                 .setCategory("speedrunigt.option.category.records")
+        );
+
+        factories.add(screen -> {
+            if (InGameTimer.getInstance().isStopped()) {
+                ConsumerButtonWidget buttonWidget = new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.generate_timer_logs").asFormattedString(), (button) -> {});
+                buttonWidget.active = false;
+                return new OptionButtonFactory.Builder()
+                        .setButtonWidget(
+                                buttonWidget
+                        )
+                        .setToolTip(() -> I18n.translate("speedrunigt.option.generate_timer_logs.description"))
+                        .setCategory("speedrunigt.option.category.records");
+            }
+            return new OptionButtonFactory.Builder()
+                            .setButtonWidget(
+                                    new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.generate_timer_logs").asFormattedString(),
+                                            (button) ->
+                                                    MinecraftClient.getInstance().openScreen(new ConfirmScreen((boolean1, i) -> {
+                                                        if (boolean1) {
+                                                            try {
+                                                                InGameTimer.writeTimerLogs(InGameTimer.getInstance());
+                                                            } catch (Exception e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                        }
+                                                        MinecraftClient.getInstance().openScreen(screen);
+                                                    }, new TranslatableText("speedrunigt.option.generate_timer_logs.message").asFormattedString(), "", 0))
+                                    )
+                            )
+                            .setToolTip(() -> I18n.translate("speedrunigt.option.generate_timer_logs.description"))
+                            .setCategory("speedrunigt.option.category.records");
+            }
         );
 
         factories.add(screen -> new OptionButtonFactory.Builder()
@@ -302,6 +372,28 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                 .setToolTip(() -> I18n.translate("speedrunigt.option.debug_mode.description"))
                 .setCategory("Debug")
         );
+
+
+        if (Math.random() < 0.1) {
+            factories.add(screen -> new OptionButtonFactory.Builder()
+                    .setButtonWidget(new ConsumerButtonWidget(0, 0, 150, 20, "amongus", (button) -> {}))
+                    .setCategory("???")
+            );
+        }
+
+        if (Math.random() < 0.05) {
+            factories.add(screen -> new OptionButtonFactory.Builder()
+                    .setButtonWidget(new ConsumerButtonWidget(0, 0, 150, 20, "Dream Luck : OFF", (button) -> button.message = ("HAHA no u")))
+                    .setCategory("???")
+            );
+        }
+
+        if (Math.random() < 0.01) {
+            factories.add(screen -> new OptionButtonFactory.Builder()
+                    .setButtonWidget(new ConsumerButtonWidget(0, 0, 150, 20, new LiteralText("no way LMAO").setStyle(new Style().setFormatting(Formatting.OBFUSCATED)).asFormattedString(), (button) -> {}))
+                    .setCategory("???")
+            );
+        }
 
         return factories;
     }
