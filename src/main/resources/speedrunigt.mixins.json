@@ -6,7 +6,6 @@
   "mixins": [
     "EndPortalBlockMixin",
     "LivingEntityMixin",
-    "EndPortalBlockMixin",
     "ServerStatHandlerMixin",
     "ServerWorldMixin",
     "access.LevelStorageAccessor",
@@ -30,6 +29,7 @@
     "access.ButtonWidgetAccessor",
     "access.ClientChunkProviderAccessor",
     "access.MinecraftClientAccessorForAttack",
+    "access.ScreenAccessor",
     "access.WorldRendererAccessor",
     "keybinding.GameOptionsMixin",
     "keybinding.KeyBindingAccessor",
@@ -37,11 +37,11 @@
     "retime.OptionButtonWidgetMixin",
     "retime.OptionScreenMixin",
     "retime.accessor.OptionSliderWidgetAccessor",
+    "screen.CreateWorldScreenMixin",
     "screen.CreditsScreenMixin",
     "screen.DownloadingTerrainScreenMixin",
     "screen.GameMenuScreenMixin",
     "screen.OptionsScreenMixin",
-    "screen.CreateWorldScreenMixin",
     "server.IntegratedServerMixin",
     "translate.I18nMixin",
     "translate.TranslatableTextMixin"
