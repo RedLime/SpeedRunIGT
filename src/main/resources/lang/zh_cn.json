@@ -72,7 +72,7 @@
   "speedrunigt.option.generate_timer_logs.message": "你确定要为当前的世界生成计时器日志吗？",
   "speedrunigt.option.generate_timer_logs.description": "生成当前世界的计时器日志 （适用于类别选择错误的情况）\n只能在玩这个世界时使用",
   "speedrunigt.option.auto_toggle_aa": "自动切换到 Any%/AA",
-  "speedrunigt.option.auto_toggle_aa.description": "如果您正在玩随机种子 Any%%或全进度，\n当您在设置的时间内看到积分(?)时，\n它将被设置为 Any%%。否则，\n您可以继续玩全进度。",
+  "speedrunigt.option.auto_toggle_aa.description": "如果您正在玩随机种子 Any%%或全进度，\n当您在设置的时间内达到某完成度时，\n它将被设置为 Any%%。否则，\n您可以继续玩全进度。",
   "speedrunigt.option.always_use_auto_retime": "总是使用自动Retime",
   "speedrunigt.option.always_use_auto_retime.description": "它会在你完成速通时显示Retime后的时间，甚至是IGT。",
   "speedrunigt.option.waiting_first_input": "从第一个输入开始",
