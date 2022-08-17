@@ -191,50 +191,7 @@ public class InGameTimer implements Serializable {
         if (timer.isCoop() && canSendPacket && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerCompletePacket(timer.getRealTimeAttack()));
 
         if (INSTANCE.isServerIntegrated) {
-            StringBuilder resultLog = new StringBuilder();
-            boolean isRetimed = timer.getRetimedInGameTime() != timer.getInGameTime(false);
-            resultLog.append("Result > IGT: ").append(timeToStringFormat(timer.getInGameTime(false)));
-            if (isRetimed) resultLog.append(", Auto-Retimed IGT: ").append(timeToStringFormat(timer.getRetimedInGameTime()));
-            resultLog.append(", RTA: ").append(timeToStringFormat(timer.getRealTimeAttack()))
-                    .append(", Counted Ticks: ").append(timer.activateTicks)
-                    .append(", Total Ticks: ").append(timer.loggerTicks);
-            if (isRetimed) resultLog.append(", Auto-Retimed IGT Length: ").append(timeToStringFormat(timer.retimedIGTTime));
-            if (timer.getCategory() == RunCategories.ALL_ADVANCEMENTS)
-                resultLog.append(", Excluded RTA Time: ").append(timeToStringFormat(timer.excludedTime));
-
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy.MM.dd HH:mm:ss");
-            String logInfo = "====================\r\n"
-                    + resultLog + "\r\n"
-                    + timer.firstInput + "\r\n"
-                    + "MC Version : " + InGameTimerUtils.getMinecraftVersion() + "\r\n"
-                    + "Timer Version : " + SpeedRunIGT.MOD_VERSION + "\r\n"
-                    + "Run Date : " + simpleDateFormat.format(new Date());
-
-            String worldName = INSTANCE.worldName;
-            File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "logs");
-            if (worldDir == null) return;
-
-            File advancementFile = new File(worldDir, "igt_advancement" + timer.getLogSuffix()),
-                    pauseFile = new File(worldDir, "igt_timer" + timer.getLogSuffix()),
-                    tickFile = new File(worldDir, "igt_freeze" + timer.getLogSuffix()),
-                    categoryFile = new File(worldDir, "igt_category" + timer.getLogSuffix());
-            String advancementLog = SpeedRunIGT.GSON.toJson(timer.getAdvancementsTracker().getAdvancements()),
-                    pauseLog = InGameTimerUtils.pauseLogListToString(timer.pauseLogList, !pauseFile.exists(), pauseFile.exists() ? 0 : timer.completeCount) + logInfo,
-                    freezeLog = InGameTimerUtils.logListToString(timer.freezeLogList, tickFile.exists() ? 0 : timer.completeCount),
-                    categoryRaw = timer.getCategory().getConditionJson() != null ? SpeedRunIGT.PRETTY_GSON.toJson(timer.getCategory().getConditionJson()) : "";
-            timer.freezeLogList.clear();
-            timer.pauseLogList.clear();
-            saveManagerThread.submit(() -> {
-                try {
-                    FileUtils.writeStringToFile(advancementFile, advancementLog, StandardCharsets.UTF_8);
-                    FileUtils.writeStringToFile(pauseFile, pauseLog, StandardCharsets.UTF_8, true);
-                    FileUtils.writeStringToFile(tickFile, freezeLog, StandardCharsets.UTF_8, true);
-                    if (!categoryRaw.isEmpty()) FileUtils.writeStringToFile(categoryFile, categoryRaw, StandardCharsets.UTF_8);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    SpeedRunIGT.error("Failed to save timer logs :( RTA : " + timeToStringFormat(timer.getRealTimeAttack()) + " / IGT : " + timeToStringFormat(timer.getInGameTime(false)));
-                }
-            });
+            writeTimerLogs(timer);
         }
         INSTANCE.completeCount++;
 
@@ -248,6 +205,53 @@ public class InGameTimer implements Serializable {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static void writeTimerLogs(InGameTimer timer) {
+        StringBuilder resultLog = new StringBuilder();
+        boolean isRetimed = timer.getRetimedInGameTime() != timer.getInGameTime(false);
+        resultLog.append("Result > IGT: ").append(timeToStringFormat(timer.getInGameTime(false)));
+        if (isRetimed) resultLog.append(", Auto-Retimed IGT: ").append(timeToStringFormat(timer.getRetimedInGameTime()));
+        resultLog.append(", RTA: ").append(timeToStringFormat(timer.getRealTimeAttack()))
+                .append(", Counted Ticks: ").append(timer.activateTicks)
+                .append(", Total Ticks: ").append(timer.loggerTicks);
+        if (isRetimed) resultLog.append(", Auto-Retimed IGT Length: ").append(timeToStringFormat(timer.retimedIGTTime));
+        if (timer.getCategory() == RunCategories.ALL_ADVANCEMENTS)
+            resultLog.append(", Excluded RTA Time: ").append(timeToStringFormat(timer.excludedTime));
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy.MM.dd HH:mm:ss");
+        String logInfo = "====================\r\n"
+                + resultLog + "\r\n"
+                + timer.firstInput + "\r\n"
+                + "MC Version : " + InGameTimerUtils.getMinecraftVersion() + "\r\n"
+                + "Timer Version : " + SpeedRunIGT.MOD_VERSION + "\r\n"
+                + "Run Date : " + simpleDateFormat.format(new Date());
+
+        String worldName = INSTANCE.worldName;
+        File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "logs");
+        if (worldDir == null) return;
+
+        File advancementFile = new File(worldDir, "igt_advancement" + timer.getLogSuffix()),
+                pauseFile = new File(worldDir, "igt_timer" + timer.getLogSuffix()),
+                tickFile = new File(worldDir, "igt_freeze" + timer.getLogSuffix()),
+                categoryFile = new File(worldDir, "igt_category" + timer.getLogSuffix());
+        String advancementLog = SpeedRunIGT.GSON.toJson(timer.getAdvancementsTracker().getAdvancements()),
+                pauseLog = InGameTimerUtils.pauseLogListToString(timer.pauseLogList, !pauseFile.exists(), pauseFile.exists() ? 0 : timer.completeCount) + logInfo,
+                freezeLog = InGameTimerUtils.logListToString(timer.freezeLogList, tickFile.exists() ? 0 : timer.completeCount),
+                categoryRaw = timer.getCategory().getConditionJson() != null ? SpeedRunIGT.PRETTY_GSON.toJson(timer.getCategory().getConditionJson()) : "";
+        timer.freezeLogList.clear();
+        timer.pauseLogList.clear();
+        saveManagerThread.submit(() -> {
+            try {
+                FileUtils.writeStringToFile(advancementFile, advancementLog, StandardCharsets.UTF_8);
+                FileUtils.writeStringToFile(pauseFile, pauseLog, StandardCharsets.UTF_8, true);
+                FileUtils.writeStringToFile(tickFile, freezeLog, StandardCharsets.UTF_8, true);
+                if (!categoryRaw.isEmpty()) FileUtils.writeStringToFile(categoryFile, categoryRaw, StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                e.printStackTrace();
+                SpeedRunIGT.error("Failed to save timer logs :( RTA : " + timeToStringFormat(timer.getRealTimeAttack()) + " / IGT : " + timeToStringFormat(timer.getInGameTime(false)));
+            }
+        });
     }
 
     public static void leave() {
@@ -470,6 +474,10 @@ public class InGameTimer implements Serializable {
         return this.startTime != 0;
     }
 
+    public boolean isStopped() {
+        return this.getStatus() == TimerStatus.LEAVE || this.getStatus() == TimerStatus.NONE;
+    }
+
     public boolean isPaused() {
         return this.getStatus() != TimerStatus.COMPLETED_LEGACY && this.getStatus().getPause() > 0;
     }
@@ -511,8 +519,8 @@ public class InGameTimer implements Serializable {
 
     public long getRetimedInGameTime() {
         long base = getInGameTime(false);
-        if (this.getCategory().isNeedAutoRetime(base)) {
-            return base + (this.isGlitched || this.isCoop || this.getRunType() != RunType.RANDOM_SEED ? 0 : this.retimedIGTTime);
+        if (this.getCategory().isNeedAutoRetime(this)) {
+            return base + this.retimedIGTTime;
         }
         return base;
     }
@@ -700,6 +708,10 @@ public class InGameTimer implements Serializable {
 
     public boolean isHardcore() {
         return isHardcore;
+    }
+
+    public boolean isGlitched() {
+        return isGlitched;
     }
 
     public RunType getRunType() {
