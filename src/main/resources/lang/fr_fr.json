@@ -16,7 +16,7 @@
   "speedrunigt.option.timer_position.scale": "%s Timer Scale",
   "speedrunigt.option.timer_position.show_time_only": "Disable Timer Labels",
   "speedrunigt.option.timer_position.show_decimals": "Timer Precision",
-  "speedrunigt.option.timer_position.show_decimals.description": "Note: This option only applies when you aren't paused.",
+  "speedrunigt.option.timer_position.show_decimals.description": "Remarque : Cette option s'applique uniquement lorsque le jeu n'est pas en pause.",
   "speedrunigt.option.timer_position.show_decimals.context": "%s Decimals",
   "speedrunigt.option.timer_position.lock_timer_position": "Lock the Timer's Position",
   "speedrunigt.option.timer_position.text_decorate": "%s Text Style",
