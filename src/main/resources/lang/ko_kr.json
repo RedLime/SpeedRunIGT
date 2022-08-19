@@ -67,7 +67,7 @@
   "speedrunigt.option.debug_mode": "디버그 모드",
   "speedrunigt.option.debug_mode.description": "SpeedRunIGT의 디버그 로그를 마인크래프트 로그에 작성합니다.\n이 기능은 버그를 포착하기 위해 있으며, 일반 런에 사용 시\nSRC에서 기록이 거절당할 수 있습니다.",
   "speedrunigt.option.safe_font_mode": "안전 글꼴 모드",
-  "speedrunigt.option.safe_font_mode.description": "활성화 시 커스텀 TTF 폰트 텍스트를 렌더링하지 않습니다.\n이 옵션은 일부 그래픽 드라이버에서 발생하는 크래시를 위한 것입니다.",
+  "speedrunigt.option.safe_font_mode.description": "Don't render custom TTF font text if you enabled.\nThis option is for crashes with some graphics drivers.",
   "speedrunigt.option.generate_timer_logs": "타이머 로드 생성",
   "speedrunigt.option.generate_timer_logs.message": "정말 현재 월드의 타이머 로그를 만드시겠어요?",
   "speedrunigt.option.generate_timer_logs.description": "현재 월드의 타이머 로그를 만듭니다. (카테고리 선택 실수를 위함)\n오직 월드를 플레이 중일 때만 사용할 수 있습니다.",
