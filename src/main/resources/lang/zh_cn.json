@@ -67,7 +67,7 @@
   "speedrunigt.option.debug_mode": "调试模式",
   "speedrunigt.option.debug_mode.description": "将SpeedRunIGT的调试日志写入Minecraft日志。\n用于捕获错误，在要上传SRC的速通中禁止使用。",
   "speedrunigt.option.safe_font_mode": "安全字体模式",
-  "speedrunigt.option.safe_font_mode.description": "启用它以禁止显示自定义ttf字体文本\n此选项或许可以解决某些显卡驱动的崩溃。",
+  "speedrunigt.option.safe_font_mode.description": "Don't render custom TTF font text if you enabled.\nThis option is for crashes with some graphics drivers.",
   "speedrunigt.option.generate_timer_logs": "生成计时器日志",
   "speedrunigt.option.generate_timer_logs.message": "你确定要为当前的世界生成计时器日志吗？",
   "speedrunigt.option.generate_timer_logs.description": "生成当前世界的计时器日志 （适用于类别选择错误的情况）\n只能在玩这个世界时使用",
