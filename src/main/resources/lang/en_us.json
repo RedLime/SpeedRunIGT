@@ -67,7 +67,7 @@
   "speedrunigt.option.debug_mode": "Debug Mode",
   "speedrunigt.option.debug_mode.description": "Write debug log of SpeedRunIGT into Minecraft log.\nIt is intended to catch bugs and may result in rejection\nby the SRC when used in normal runs.",
   "speedrunigt.option.safe_font_mode": "Safe Font Mode",
-  "speedrunigt.option.safe_font_mode.description": "Don't render custom ttf font text if you enabled.\nThis option is for crashes with some graphics drivers.",
+  "speedrunigt.option.safe_font_mode.description": "Don't render custom TTF font text if you enabled.\nThis option is for crashes with some graphics drivers.",
   "speedrunigt.option.generate_timer_logs": "Generate Timer Logs",
   "speedrunigt.option.generate_timer_logs.message": "Are you sure you want to create timer logs for current world?",
   "speedrunigt.option.generate_timer_logs.description": "Create timer logs of the current world. (for category miss-selecting)\ncan be used only while playing the world.",
