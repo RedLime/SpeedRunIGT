@@ -53,7 +53,7 @@ public class TimerElement {
 
     public void draw(MatrixStack matrixStack, boolean doTranslate) {
         matrixStack.push();
-        if (doTranslate) matrixStack.translate(0, 0, 1000);
+        if (doTranslate) matrixStack.translate(0, 0, 1);
         matrixStack.scale(scale, scale, 1f);
         drawOutLine(client.textRenderer, matrixStack, scaledPosition.getX(), scaledPosition.getY(), text, color, decoration);
         matrixStack.pop();
