@@ -150,15 +150,16 @@ public abstract class MinecraftClientMixin {
                 && !(!this.isPaused() && SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) && this.options.debugEnabled)
                 && !(this.currentScreen instanceof TimerCustomizeScreen)) {
 
-            if (SpeedRunOption.getOption(SpeedRunOptions.ENABLE_TIMER_SPLIT_POS)) {
-                long time = System.nanoTime();
+            boolean needUpdate = SpeedRunIGTClient.TIMER_DRAWER.isNeedUpdate();
+            boolean enableSplit = SpeedRunOption.getOption(SpeedRunOptions.ENABLE_TIMER_SPLIT_POS);
+            if (needUpdate || enableSplit) {
                 PositionType updatePositionType = PositionType.DEFAULT;
-                if (this.options.debugEnabled)
+                if (enableSplit && this.options.debugEnabled)
                     updatePositionType = PositionType.WHILE_F3;
-                if (this.isPaused() && !(this.currentScreen instanceof DownloadingTerrainScreen))
+                if (enableSplit && this.isPaused() && !(this.currentScreen instanceof DownloadingTerrainScreen))
                     updatePositionType = PositionType.WHILE_PAUSED;
 
-                if (currentPositionType != updatePositionType) {
+                if (currentPositionType != updatePositionType || needUpdate) {
                     currentPositionType = updatePositionType;
                     Vec2f igtPos = currentPositionType == PositionType.DEFAULT
                             ? new Vec2f(SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_POSITION_X), SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_POSITION_Y))
@@ -172,7 +173,6 @@ public abstract class MinecraftClientMixin {
                     SpeedRunIGTClient.TIMER_DRAWER.setRTA_YPos(rtaPos.y);
                     SpeedRunIGTClient.TIMER_DRAWER.setIGT_XPos(igtPos.x);
                     SpeedRunIGTClient.TIMER_DRAWER.setIGT_YPos(igtPos.y);
-                    SpeedRunIGT.debug("Done with "+(System.nanoTime()-time)+"ns");
                 }
             }
             SpeedRunIGTClient.TIMER_DRAWER.draw();
