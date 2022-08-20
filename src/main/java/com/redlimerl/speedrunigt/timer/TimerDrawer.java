@@ -11,6 +11,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
+import org.lwjgl.opengl.GL11;
 
 @Environment(EnvType.CLIENT)
 public class TimerDrawer {
@@ -21,6 +22,8 @@ public class TimerDrawer {
 
     private final boolean translateZ;
     private final MinecraftClient client = MinecraftClient.getInstance();
+
+    private boolean needUpdate = false;
 
     private float igtXPos;
     private float igtYPos;
@@ -225,6 +228,15 @@ public class TimerDrawer {
         this.bgOpacity = bgOpacity;
     }
 
+    public void update() {
+        this.needUpdate = true;
+    }
+
+    public boolean isNeedUpdate() {
+        boolean result = this.needUpdate;
+        this.needUpdate = false;
+        return result;
+    }
 
     private String getTimeFormat(long time) {
         if ((InGameTimer.getInstance().isCompleted() || InGameTimer.getInstance().isPaused()) && translateZ) {
@@ -274,7 +286,9 @@ public class TimerDrawer {
         igtTimerElement.init(igtXPos, igtYPos, igtScale, igtText, igtColor, igtDecoration, 9);
 
         //배경 렌더
+        GL11.glPushMatrix();
         if (bgOpacity > 0.01f) {
+            if (translateZ) GL11.glTranslatef(0, 0, 998);
             Position rtaMin = new Position(rtaTimerElement.getPosition().getX() - rtaPadding, rtaTimerElement.getPosition().getY() - rtaPadding);
             Position rtaMax = new Position(rtaMin.getX() + rtaTimerElement.getScaledTextWidth() + ((rtaPadding - 1) + rtaPadding), rtaMin.getY() + rtaTimerElement.getScaledTextHeight() + ((rtaPadding - 1) + rtaPadding));
             Position igtMin = new Position(igtTimerElement.getPosition().getX() - igtPadding, igtTimerElement.getPosition().getY() - igtPadding);
@@ -293,6 +307,8 @@ public class TimerDrawer {
         //렌더
         if (igtScale != 0) igtTimerElement.draw(translateZ);
         if (rtaScale != 0) rtaTimerElement.draw(translateZ);
+        GL11.glPopMatrix();
+
     }
 
 

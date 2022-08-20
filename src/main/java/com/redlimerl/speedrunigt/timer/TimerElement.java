@@ -55,7 +55,7 @@ public class TimerElement {
 
     public void draw(boolean doTranslate) {
         GL11.glPushMatrix();
-        if (doTranslate) GL11.glTranslatef(0, 0, 999);
+        if (doTranslate) GL11.glTranslatef(0, 0, 1);
         GL11.glScalef(scale, scale, 1.0F);
         drawOutLine(this.textRenderer, scaledPosition.getX(), scaledPosition.getY(), text, color, decoration);
         GL11.glPopMatrix();
