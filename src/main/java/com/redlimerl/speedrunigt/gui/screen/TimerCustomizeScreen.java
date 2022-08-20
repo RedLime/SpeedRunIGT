@@ -224,6 +224,7 @@ public class TimerCustomizeScreen extends Screen {
                 }
             }
 
+            SpeedRunIGTClient.TIMER_DRAWER.update();
             SpeedRunOption.setOption(SpeedRunOptions.ENABLE_TIMER_SPLIT_POS, splitPosition);
 
             changed = false;
@@ -592,6 +593,11 @@ public class TimerCustomizeScreen extends Screen {
                     changed = true;
                     posTypeButton.active = splitPosition;
                     button.setMessage(new TranslatableText("speedrunigt.option.timer_position.split_position").append(" : ").append(splitPosition ? ScreenTexts.ON : ScreenTexts.OFF));
+                    if (!splitPosition) {
+                        currentPosType = PositionType.DEFAULT;
+                        refreshPosition();
+                        posTypeButton.setMessage(new TranslatableText("speedrunigt.option.timer_position.split_position_type").append(" : ").append(new TranslatableText("speedrunigt.option.timer_position.split_position_type."+currentPosType.name().toLowerCase(Locale.ROOT))));
+                    }
                 }))
         );
 
