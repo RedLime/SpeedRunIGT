@@ -8,6 +8,7 @@
   "speedrunigt.menu.download_update": "업데이트 다운로드",
   "speedrunigt.menu.latest_change_log": "최근 체인지로그 보기",
   "speedrunigt.menu.donate": "후원",
+  "speedrunigt.menu.crowdin": "Contribute Translation",
   "speedrunigt.option.check_info": "SpeedRunIGT 정보",
   "speedrunigt.option.timer_position": "타이머 표시 설정",
   "speedrunigt.option.timer_position.description": "위치를 변경하고 싶다면, §e해당 위치에 클릭§f하세요.",
