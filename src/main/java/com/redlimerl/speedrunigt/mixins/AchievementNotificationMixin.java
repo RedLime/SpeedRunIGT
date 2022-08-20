@@ -8,7 +8,7 @@ import com.redlimerl.speedrunigt.timer.category.condition.AdvancementCategoryCon
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacketUtils;
 import com.redlimerl.speedrunigt.timer.packet.packets.TimerAchieveAdvancementPacket;
-import net.minecraft.achievement.Achievement;
+import net.minecraft.advancement.Achievement;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.AchievementNotification;
 import net.minecraft.util.math.MathHelper;
