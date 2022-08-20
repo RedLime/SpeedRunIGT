@@ -8,6 +8,7 @@
   "speedrunigt.menu.download_update": "התקן את העדכון חדש",
   "speedrunigt.menu.latest_change_log": "פתח את רשימת השינויים החדשה",
   "speedrunigt.menu.donate": "תתרום",
+  "speedrunigt.menu.crowdin": "Contribute Translation",
   "speedrunigt.option.check_info": "אודות SpeedRunIGT",
   "speedrunigt.option.timer_position": "הגדרות תצוגת טיימר",
   "speedrunigt.option.timer_position.description": "§e תלחץ איפשהו על המסך כדי לשנות את מיקום הטיימר",
