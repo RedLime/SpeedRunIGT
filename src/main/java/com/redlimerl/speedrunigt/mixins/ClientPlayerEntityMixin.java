@@ -10,8 +10,8 @@ import com.redlimerl.speedrunigt.timer.category.condition.ObtainItemCategoryCond
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.player.ClientPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -94,7 +94,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
             //Stack of Lime Wool
             if (timer.getCategory() == RunCategories.STACK_OF_LIME_WOOL) {
-                if (Item.fromBlock(Blocks.WOOL).equals(itemStack.getItem()) && itemStack.getMeta() == 5 && itemStack.method_13652() == 64) InGameTimer.complete();
+                if (Item.fromBlock(Blocks.WOOL).equals(itemStack.getItem()) && itemStack.getMeta() == 5 && itemStack.getCount() == 64) InGameTimer.complete();
             }
         }
 

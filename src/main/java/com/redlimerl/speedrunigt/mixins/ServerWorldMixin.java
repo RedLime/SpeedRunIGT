@@ -25,8 +25,8 @@ public abstract class ServerWorldMixin extends World {
     }
 
     @Override
-    public boolean setBlockState(BlockPos pos, BlockState state, int flags) {
-        boolean result = super.setBlockState(pos, state, flags);
+    public boolean method_8506(BlockPos pos, BlockState state, int flags) {
+        boolean result = super.method_8506(pos, state, flags);
 
         InGameTimer timer = InGameTimer.getInstance();
         if (!this.isClient && flags == 2 && state.getBlock() == Blocks.END_PORTAL && timer.getCategory() == RunCategories.ALL_PORTALS && dimension instanceof OverworldDimension) {

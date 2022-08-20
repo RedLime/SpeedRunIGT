@@ -32,7 +32,7 @@ public class ObtainItemCategoryCondition extends CategoryCondition.Condition<Lis
 
         for (ItemStack itemStack : itemStacks) {
             if (itemStack != null && Objects.equals(Item.getFromId(itemID), itemStack.getItem()) && itemStack.getDamage() == itemDamage)
-                amount += itemStack.method_13652();
+                amount += itemStack.getCount();
         }
 
         return amount >= itemAmount;

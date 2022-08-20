@@ -48,7 +48,7 @@ public abstract class ServerStatHandlerMixin extends StatHandler {
                 jsonObject2.addProperty("value", entry.getValue().getValue());
 
                 try {
-                    jsonObject2.add("progress", entry.getValue().getJsonElementProvider().method_8288());
+                    jsonObject2.add("progress", entry.getValue().getJsonElementProvider().write());
                 } catch (Throwable var6) {
                     LOGGER.warn("Couldn't save statistic {}: error serializing progress", entry.getKey().getText(), var6);
                 }

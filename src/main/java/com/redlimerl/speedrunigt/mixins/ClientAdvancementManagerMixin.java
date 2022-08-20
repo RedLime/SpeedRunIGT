@@ -10,7 +10,10 @@ import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacketUtils;
 import com.redlimerl.speedrunigt.timer.packet.packets.TimerAchieveAdvancementPacket;
 import net.minecraft.*;
+import net.minecraft.advancement.AdvancementProgress;
+import net.minecraft.advancement.SimpleAdvancement;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.packet.c2s.play.AdvancementUpdatePacket;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Final;
@@ -32,27 +35,27 @@ public abstract class ClientAdvancementManagerMixin {
 
     @Shadow @Final private MinecraftClient field_16127;
 
-    @Shadow @Final private Map<class_3326, class_3334> field_16129;
+    @Shadow @Final private Map<SimpleAdvancement, AdvancementProgress> field_16129;
 
-    @Redirect(method = "method_14667", at = @At(value = "INVOKE", target = "Ljava/util/Map$Entry;getValue()Ljava/lang/Object;"))
-    public Object advancement(Map.Entry<Identifier, class_3334> entry) {
+    @Redirect(method = "onProgressUpdate", at = @At(value = "INVOKE", target = "Ljava/util/Map$Entry;getValue()Ljava/lang/Object;"))
+    public Object advancement(Map.Entry<Identifier, AdvancementProgress> entry) {
         InGameTimer timer = InGameTimer.getInstance();
 
-        class_3326 advancement = this.field_16128.method_14814(entry.getKey());
-        class_3334 advancementProgress = entry.getValue();
+        SimpleAdvancement advancement = this.field_16128.method_14814(entry.getKey());
+        AdvancementProgress advancementProgress = entry.getValue();
         assert advancement != null;
-        advancementProgress.method_14836(advancement.method_14799(), advancement.method_14802());
+        advancementProgress.method_14836(advancement.getCriteria(), advancement.getRequirements());
 
         if (advancementProgress.method_14833() && timer.getStatus() != TimerStatus.NONE) {
 
             // For Timelines
-            if (Objects.equals(advancement.method_14801().getPath(), "story/follow_ender_eye")) {
+            if (Objects.equals(advancement.getIdentifier().getPath(), "story/follow_ender_eye")) {
                 timer.tryInsertNewTimeline("enter_stronghold");
-            } else if (Objects.equals(advancement.method_14801().getPath(), "nether/find_fortress")) {
+            } else if (Objects.equals(advancement.getIdentifier().getPath(), "nether/find_fortress")) {
                 timer.tryInsertNewTimeline("enter_fortress");
             }
-            timer.tryInsertNewAdvancement(advancement.method_14801().toString(), null, advancement.method_14796() != null);
-            if (timer.isCoop() && advancement.method_14796() != null) {
+            timer.tryInsertNewAdvancement(advancement.getIdentifier().toString(), null, advancement.getDisplay() != null);
+            if (timer.isCoop() && advancement.getDisplay() != null) {
                 TimerPacketUtils.sendClient2ServerPacket(field_16127, new TimerAchieveAdvancementPacket(advancement));
             }
 
@@ -67,15 +70,15 @@ public abstract class ClientAdvancementManagerMixin {
             }
 
             //How Did We Get Here
-            if (timer.getCategory() == RunCategories.HOW_DID_WE_GET_HERE && Objects.equals(advancement.method_14801().toString(), new Identifier("nether/all_effects").toString())) {
+            if (timer.getCategory() == RunCategories.HOW_DID_WE_GET_HERE && Objects.equals(advancement.getIdentifier().toString(), new Identifier("nether/all_effects").toString())) {
                 InGameTimer.complete();
             }
         }
         return entry.getValue();
     }
 
-    @Inject(at = @At("RETURN"), method = "method_14667")
-    public void onComplete(class_3336 arg, CallbackInfo ci) {
+    @Inject(at = @At("RETURN"), method = "onProgressUpdate")
+    public void onComplete(AdvancementUpdatePacket arg, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
         int maxCount = timer.getMoreData(7441) == 0 ? 80 : timer.getMoreData(7441);
@@ -101,12 +104,12 @@ public abstract class ClientAdvancementManagerMixin {
         for (Map.Entry<String, TimerAdvancementTracker.AdvancementTrack> track : InGameTimer.getInstance().getAdvancementsTracker().getAdvancements().entrySet()) {
             if (track.getValue().isAdvancement() && track.getValue().isComplete()) completedAdvancements.add(track.getKey());
         }
-        for (class_3326 advancement : this.field_16128.method_14816()) {
-            if (this.field_16129.containsKey(advancement) && advancement.method_14796() != null) {
-                class_3334 advancementProgress = this.field_16129.get(advancement);
+        for (SimpleAdvancement advancement : this.field_16128.method_14816()) {
+            if (this.field_16129.containsKey(advancement) && advancement.getDisplay() != null) {
+                AdvancementProgress advancementProgress = this.field_16129.get(advancement);
 
-                advancementProgress.method_14836(advancement.method_14799(), advancement.method_14802());
-                String advancementID = advancement.method_14801().toString();
+                advancementProgress.method_14836(advancement.getCriteria(), advancement.getRequirements());
+                String advancementID = advancement.getIdentifier().toString();
                 if (advancementProgress.method_14833() && completedAdvancements.contains(advancementID)) {
                     completedAdvancements.add(advancementID);
                     InGameTimer.getInstance().tryInsertNewAdvancement(advancementID, null, true);

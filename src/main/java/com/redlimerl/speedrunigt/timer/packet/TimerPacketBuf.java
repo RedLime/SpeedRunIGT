@@ -69,11 +69,11 @@ public class TimerPacketBuf {
     }
 
     public void writeIdentifier(Identifier identifier) {
-        this.buf.method_14780(identifier);
+        this.buf.writeIdentifier(identifier);
     }
 
     public Identifier readIdentifier() {
-        return this.buf.method_14781();
+        return this.buf.readIdentifier();
     }
 
     public void release() {
