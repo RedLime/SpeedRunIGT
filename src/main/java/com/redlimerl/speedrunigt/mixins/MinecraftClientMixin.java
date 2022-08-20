@@ -13,13 +13,13 @@ import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.timer.running.RunType;
-import net.minecraft.class_3793;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.*;
 import net.minecraft.client.options.GameOptions;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.math.Vec2f;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.level.LevelInfo;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -87,20 +87,20 @@ public abstract class MinecraftClientMixin {
         }
 
         // For Timelines
-        if (targetWorld.dimension.method_11789() == class_3793.field_18955) {
+        if (targetWorld.dimension.method_11789() == DimensionType.THE_NETHER) {
             timer.tryInsertNewTimeline("enter_nether");
-        } else if (targetWorld.dimension.method_11789() == class_3793.field_18956) {
+        } else if (targetWorld.dimension.method_11789() == DimensionType.THE_END) {
             timer.tryInsertNewTimeline("enter_end");
         }
 
         //Enter Nether
-        if (timer.getCategory() == RunCategories.ENTER_NETHER && targetWorld.dimension.method_11789() == class_3793.field_18955) {
+        if (timer.getCategory() == RunCategories.ENTER_NETHER && targetWorld.dimension.method_11789() == DimensionType.THE_NETHER) {
             InGameTimer.complete();
             return;
         }
 
         //Enter End
-        if (timer.getCategory() == RunCategories.ENTER_END && targetWorld.dimension.method_11789() == class_3793.field_18956) {
+        if (timer.getCategory() == RunCategories.ENTER_END && targetWorld.dimension.method_11789() == DimensionType.THE_END) {
             InGameTimer.complete();
         }
 

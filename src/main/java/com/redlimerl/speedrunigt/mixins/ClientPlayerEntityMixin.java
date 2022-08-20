@@ -89,7 +89,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             if (itemStack.getItem() == Items.NAUTILUS_SHELL) {
                 shells += itemStack.getCount();
             }
-            if (itemStack.getItem() == Blocks.SHULKER_BOX.method_16312()) {
+            if (itemStack.getItem() == Blocks.SHULKER_BOX.getItem()) {
                 shells += InGameTimerUtils.getItemCountFromShulkerBox(itemStack, Items.NAUTILUS_SHELL);
             }
             if (shells > timer.getMoreData(1541)) {
@@ -103,7 +103,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
             //Stack of Lime Wool
             if (timer.getCategory() == RunCategories.STACK_OF_LIME_WOOL) {
-                if (itemStack.getItem() == Blocks.LIME_WOOL.method_16312() && itemStack.getCount() == 64) InGameTimer.complete();
+                if (itemStack.getItem() == Blocks.LIME_WOOL.getItem() && itemStack.getCount() == 64) InGameTimer.complete();
             }
         }
 

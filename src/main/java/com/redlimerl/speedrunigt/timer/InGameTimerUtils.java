@@ -17,7 +17,6 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.impl.FabricLoaderImpl;
 import net.minecraft.class_2960;
 import net.minecraft.class_3066;
-import net.minecraft.class_3793;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -26,6 +25,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.dimension.DimensionType;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -201,10 +201,10 @@ public class InGameTimerUtils {
         return FabricLoaderImpl.INSTANCE.getGameProvider().getNormalizedGameVersion();
     }
 
-    public static boolean isLoadableBlind(class_3793 dimensionType, Vec3d netherPos, Vec3d overPos) {
+    public static boolean isLoadableBlind(DimensionType dimensionType, Vec3d netherPos, Vec3d overPos) {
         InGameTimer timer = InGameTimer.getInstance();
-        List<RunPortalPos> arrayList = dimensionType == class_3793.field_18955 ? timer.lastNetherPortalPos : dimensionType == class_3793.field_18954 ? timer.lastOverWorldPortalPos : null;
-        Vec3d targetPos = dimensionType == class_3793.field_18955 ? netherPos : dimensionType == class_3793.field_18954 ? overPos : null;
+        List<RunPortalPos> arrayList = dimensionType == DimensionType.THE_NETHER ? timer.lastNetherPortalPos : dimensionType == DimensionType.OVERWORLD ? timer.lastOverWorldPortalPos : null;
+        Vec3d targetPos = dimensionType == DimensionType.THE_NETHER ? netherPos : dimensionType == DimensionType.OVERWORLD ? overPos : null;
         if (arrayList == null || targetPos == null) return true;
         for (RunPortalPos portalPos : arrayList) {
             if (portalPos.squaredDistanceTo(targetPos) < 16) return false;

@@ -5,7 +5,6 @@ import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.class_3793;
 import net.minecraft.class_4070;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.BlockPos;

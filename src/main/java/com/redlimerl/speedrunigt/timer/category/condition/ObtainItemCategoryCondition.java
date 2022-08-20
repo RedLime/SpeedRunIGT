@@ -31,7 +31,7 @@ public class ObtainItemCategoryCondition extends CategoryCondition.Condition<Lis
         int amount = 0;
 
         for (ItemStack itemStack : itemStacks) {
-            if (itemStack != null && Objects.equals(Objects.requireNonNull(Registry.ITEM.method_19959(itemStack.getItem())).toString(), itemID) && itemStack.getDamage() == itemDamage)
+            if (itemStack != null && Objects.equals(Objects.requireNonNull(Registry.ITEM.getId(itemStack.getItem())).toString(), itemID) && itemStack.getDamage() == itemDamage)
                 amount += itemStack.getCount();
         }
 

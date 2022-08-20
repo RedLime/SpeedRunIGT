@@ -4,8 +4,8 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
-import net.minecraft.class_3460;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,7 +24,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Shadow protected PlayerEntity attackingPlayer;
 
-    public LivingEntityMixin(class_3460<?> type, World world) {
+    public LivingEntityMixin(EntityType<?> type, World world) {
         super(type, world);
     }
 
@@ -35,36 +35,36 @@ public abstract class LivingEntityMixin extends Entity {
         if (this.removed || this.dead || timer.getStatus() == TimerStatus.NONE) return;
 
         // For Timelines
-        if (this.method_15557() == class_3460.field_16737 && this.attackingPlayer != null) timer.tryInsertNewTimeline("kill_wither");
-        if (this.method_15557() == class_3460.field_16798 && this.attackingPlayer != null) timer.tryInsertNewTimeline("kill_elder_guardian");
-        if (this.method_15557() == class_3460.field_16800) timer.tryInsertNewTimeline("kill_ender_dragon");
+        if (this.method_15557() == EntityType.WITHER && this.attackingPlayer != null) timer.tryInsertNewTimeline("kill_wither");
+        if (this.method_15557() == EntityType.ELDER_GUARDIAN && this.attackingPlayer != null) timer.tryInsertNewTimeline("kill_elder_guardian");
+        if (this.method_15557() == EntityType.ENDER_DRAGON) timer.tryInsertNewTimeline("kill_ender_dragon");
 
         //Kill All Bosses
         if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {
-            if (this.method_15557() == class_3460.field_16800) {
+            if (this.method_15557() == EntityType.ENDER_DRAGON) {
                 timer.updateMoreData(0, 1);
             }
-            if (this.method_15557() == class_3460.field_16737) {
+            if (this.method_15557() == EntityType.WITHER && this.attackingPlayer != null) {
                 timer.updateMoreData(1, 1);
                 RunCategories.checkAllBossesCompleted();
             }
-            if (this.method_15557() == class_3460.field_16798) {
+            if (this.method_15557() == EntityType.ELDER_GUARDIAN && this.attackingPlayer != null) {
                 timer.updateMoreData(2, 1);
                 RunCategories.checkAllBossesCompleted();
             }
         }
 
         //Kill Wither
-        if (timer.getCategory() == RunCategories.KILL_WITHER && this.method_15557() == class_3460.field_16737) {
+        if (timer.getCategory() == RunCategories.KILL_WITHER && this.method_15557() == EntityType.WITHER && this.attackingPlayer != null) {
             InGameTimer.complete();
         }
 
         //Kill Elder Guardian
-        if (timer.getCategory() == RunCategories.KILL_ELDER_GUARDIAN && this.method_15557() == class_3460.field_16798) {
+        if (timer.getCategory() == RunCategories.KILL_ELDER_GUARDIAN && this.method_15557() == EntityType.ELDER_GUARDIAN && this.attackingPlayer != null) {
             InGameTimer.complete();
         }
 
-        if (this.method_15557() == class_3460.field_16800 && !this.world.isClient) {
+        if (this.method_15557() == EntityType.ENDER_DRAGON && !this.world.isClient) {
             InGameTimerUtils.IS_KILLED_ENDER_DRAGON = true;
         }
     }
