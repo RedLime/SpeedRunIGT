@@ -8,6 +8,7 @@
   "speedrunigt.menu.download_update": "Download New Update",
   "speedrunigt.menu.latest_change_log": "Open Latest Changelog",
   "speedrunigt.menu.donate": "Donate",
+  "speedrunigt.menu.crowdin": "Contribute Translation",
   "speedrunigt.option.check_info": "SpeedRunIGT Info",
   "speedrunigt.option.timer_position": "Timer Display Options",
   "speedrunigt.option.timer_position.description": "§eClick somewhere on the screen to change the timer's position.",
