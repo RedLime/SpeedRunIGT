@@ -142,7 +142,6 @@ public class InGameTimer implements Serializable {
      * Start the Timer, Trigger when player to join(created) the world
      */
     public static void reset() {
-        if (INSTANCE.isCompleted || INSTANCE.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
         RunType runType = INSTANCE.getRunType();
         boolean isGlitched = INSTANCE.isGlitched;
         boolean isCoop = INSTANCE.isCoop;
