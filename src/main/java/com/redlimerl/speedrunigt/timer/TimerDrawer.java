@@ -30,6 +30,8 @@ public class TimerDrawer {
     private final boolean translateZ;
     private final MinecraftClient client = MinecraftClient.getInstance();
 
+    private boolean needUpdate = false;
+
     private float igtXPos;
     private float igtYPos;
     private float igtScale;
@@ -244,6 +246,15 @@ public class TimerDrawer {
         this.bgOpacity = bgOpacity;
     }
 
+    public void update() {
+        this.needUpdate = true;
+    }
+
+    public boolean isNeedUpdate() {
+        boolean result = this.needUpdate;
+        this.needUpdate = false;
+        return result;
+    }
 
     private String getTimeFormat(long time) {
         if ((InGameTimer.getInstance().isCompleted() || InGameTimer.getInstance().isPaused()) && translateZ) {
@@ -309,7 +320,9 @@ public class TimerDrawer {
         MatrixStack matrixStack = new MatrixStack();
 
         //배경 렌더
+        matrixStack.push();
         if (bgOpacity > 0.01f) {
+            if (translateZ) matrixStack.translate(0, 0, 998);
             Position rtaMin = new Position(rtaTimerElement.getPosition().getX() - rtaPadding, rtaTimerElement.getPosition().getY() - rtaPadding);
             Position rtaMax = new Position(rtaMin.getX() + rtaTimerElement.getScaledTextWidth() + ((rtaPadding - 1) + rtaPadding), rtaMin.getY() + rtaTimerElement.getScaledTextHeight() + ((rtaPadding - 1) + rtaPadding));
             Position igtMin = new Position(igtTimerElement.getPosition().getX() - igtPadding, igtTimerElement.getPosition().getY() - igtPadding);
@@ -328,6 +341,7 @@ public class TimerDrawer {
         //렌더
         if (igtScale != 0) igtTimerElement.draw(matrixStack, translateZ);
         if (rtaScale != 0) rtaTimerElement.draw(matrixStack, translateZ);
+        matrixStack.pop();
 
     }
 

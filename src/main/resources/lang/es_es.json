@@ -46,7 +46,6 @@
   "speedrunigt.option.timer_category.warning": "There are several unsupported categories, which will be added later.",
   "speedrunigt.option.timer_category.any": "Any%%",
   "speedrunigt.option.timer_category.high": "High%%",
-  "speedrunigt.option.timer_category.kill_warden": "Kill Warden",
   "speedrunigt.option.timer_category.kill_all_bosses": "Kill All Bosses",
   "speedrunigt.option.timer_category.kill_wither": "Kill Wither",
   "speedrunigt.option.timer_category.kill_elder_guardian": "Kill Elder Guardian",

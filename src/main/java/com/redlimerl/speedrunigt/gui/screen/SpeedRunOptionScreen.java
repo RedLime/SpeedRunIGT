@@ -76,6 +76,8 @@ public class SpeedRunOptionScreen extends Screen {
 
         addDrawableChild(new ButtonWidget(15, height - 35, 70, 20, Text.translatable("speedrunigt.menu.donate"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://ko-fi.com/redlimerl")));
 
+        addDrawableChild(new ButtonWidget(88, height - 35, 140, 20, Text.translatable("speedrunigt.menu.crowdin"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://crowdin.com/project/speedrunigt")));
+
         buttonListWidget = addSelectableChild(new ButtonScrollListWidget());
 
         categorySelectButtons.keySet().stream().findFirst().ifPresent(this::selectCategory);
