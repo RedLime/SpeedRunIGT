@@ -8,6 +8,7 @@
   "speedrunigt.menu.download_update": "Télécharger La Nouvelle Mise À Jour",
   "speedrunigt.menu.latest_change_log": "Ouvrir le journal des modifications le plus récent",
   "speedrunigt.menu.donate": "Faire Un Don",
+  "speedrunigt.menu.crowdin": "Contribute Translation",
   "speedrunigt.option.check_info": "Infos Sur SpeedrunIGT ",
   "speedrunigt.option.timer_position": "Affichage Des Chronos",
   "speedrunigt.option.timer_position.description": "§eCliquez Là Où Vous Souhaitez Mettre Le Chrono",
