@@ -8,7 +8,7 @@ import com.redlimerl.speedrunigt.mixins.access.ScreenAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.utils.OperatingUtils;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
-import net.minecraft.class_1803;
+import net.minecraft.client.class_1803;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.EntryListWidget;

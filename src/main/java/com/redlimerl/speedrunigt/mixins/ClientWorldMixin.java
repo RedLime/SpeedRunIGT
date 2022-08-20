@@ -32,16 +32,16 @@ public abstract class ClientWorldMixin extends World {
     }
 
     @Override
-    public boolean method_4721(int i, int j, int k, Block block, int l, int m) {
-        boolean result = super.method_4721(i, j, k, block, l, m);
+    public boolean setBlock(int i, int j, int k, Block block, int l, int m) {
+        boolean result = super.setBlock(i, j, k, block, l, m);
 
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getCategory() == RunCategories.MINE_A_CHUNK) {
-            Chunk chunk = method_3680(i, k);
+            Chunk chunk = getChunk(i, k);
             for (int x = chunk.getChunkPos().getCenterX() - 8; x < chunk.getChunkPos().getCenterX() + 8; x++) {
                 for (int y = getBedrockMaxHeight(); y < method_3771(); y++) {
                     for (int z = chunk.getChunkPos().getCenterZ() - 8; z < chunk.getChunkPos().getCenterZ() + 8; z++) {
-                        Block targetBlock = method_3774(x, y, z);
+                        Block targetBlock = getBlock(x, y, z);
                         if (targetBlock != Blocks.BEDROCK && targetBlock != Blocks.AIR) {
                             return result;
                         }
