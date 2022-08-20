@@ -5,7 +5,7 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerClientUtils;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import net.minecraft.client.options.KeyBinding;
-import net.minecraft.util.IntObjectStorage;
+import net.minecraft.util.collection.IntObjectStorage;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -22,7 +22,7 @@ public abstract class KeyBindingMixin {
 
     @Inject(method = "setKeyPressed", at = @At("TAIL"))
     private static void onPress(int keyCode, boolean pressed, CallbackInfo ci) {
-        KeyBinding keyBinding =KEY_MAP.get(keyCode);
+        KeyBinding keyBinding = KEY_MAP.get(keyCode);
         if(keyBinding!=null && pressed){
             InGameTimer timer = InGameTimer.getInstance();
             if (InGameTimerClientUtils.isFocusedClick() &&

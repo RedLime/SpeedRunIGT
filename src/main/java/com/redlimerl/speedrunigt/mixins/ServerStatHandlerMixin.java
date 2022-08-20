@@ -5,7 +5,7 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.category.condition.StatCategoryCondition;
-import net.minecraft.achievement.Achievements;
+import net.minecraft.advancement.AchievementsAndCriterions;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.stat.ServerStatHandler;
 import net.minecraft.stat.Stat;
@@ -28,8 +28,8 @@ public abstract class ServerStatHandlerMixin extends StatHandler {
 
     @Inject(method = "method_8270", at = @At("RETURN"))
     public void onInit(CallbackInfo ci) {
-        SpeedRunIGT.debug("Detected Achievements: "+ Achievements.ACHIEVEMENTS.size());
-        InGameTimer.getInstance().updateMoreData(7441, Achievements.ACHIEVEMENTS.size());
+        SpeedRunIGT.debug("Detected Achievements: " + AchievementsAndCriterions.ACHIEVEMENTS.size());
+        InGameTimer.getInstance().updateMoreData(7441, AchievementsAndCriterions.ACHIEVEMENTS.size());
     }
 
     @Inject(method = "method_8300", at = @At("TAIL"))
@@ -56,7 +56,7 @@ public abstract class ServerStatHandlerMixin extends StatHandler {
                 jsonObject2.addProperty("value", entry.getValue().getValue());
 
                 try {
-                    jsonObject2.add("progress", entry.getValue().getJsonElementProvider().method_8288());
+                    jsonObject2.add("progress", entry.getValue().getJsonElementProvider().write());
                 } catch (Throwable var6) {
                     LOGGER.warn("Couldn't save statistic {}: error serializing progress", entry.getKey().getText(), var6);
                 }
