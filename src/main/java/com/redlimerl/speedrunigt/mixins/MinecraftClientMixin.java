@@ -168,15 +168,16 @@ public abstract class MinecraftClientMixin {
                 && !(!this.isPaused() && SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) && this.options.debugEnabled)
                 && !(this.currentScreen instanceof TimerCustomizeScreen)) {
 
-            if (SpeedRunOption.getOption(SpeedRunOptions.ENABLE_TIMER_SPLIT_POS)) {
-                long time = System.nanoTime();
+            boolean needUpdate = SpeedRunIGTClient.TIMER_DRAWER.isNeedUpdate();
+            boolean enableSplit = SpeedRunOption.getOption(SpeedRunOptions.ENABLE_TIMER_SPLIT_POS);
+            if (needUpdate || enableSplit) {
                 PositionType updatePositionType = PositionType.DEFAULT;
-                if (this.options.debugEnabled)
+                if (enableSplit && this.options.debugEnabled)
                     updatePositionType = PositionType.WHILE_F3;
-                if (this.isPaused() && !(this.currentScreen instanceof DownloadingTerrainScreen) && (this.currentScreen instanceof GameMenuScreen && !this.previousNoUI))
+                if (enableSplit && this.isPaused() && !(this.currentScreen instanceof DownloadingTerrainScreen) && (this.currentScreen instanceof GameMenuScreen && !this.previousNoUI))
                     updatePositionType = PositionType.WHILE_PAUSED;
 
-                if (currentPositionType != updatePositionType) {
+                if (currentPositionType != updatePositionType || needUpdate) {
                     currentPositionType = updatePositionType;
                     Vec2f igtPos = currentPositionType == PositionType.DEFAULT
                             ? new Vec2f(SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_POSITION_X), SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_POSITION_Y))
@@ -190,7 +191,6 @@ public abstract class MinecraftClientMixin {
                     SpeedRunIGTClient.TIMER_DRAWER.setRTA_YPos(rtaPos.y);
                     SpeedRunIGTClient.TIMER_DRAWER.setIGT_XPos(igtPos.x);
                     SpeedRunIGTClient.TIMER_DRAWER.setIGT_YPos(igtPos.y);
-                    SpeedRunIGT.debug("Done with "+(System.nanoTime()-time)+"ns");
                 }
             }
             SpeedRunIGTClient.TIMER_DRAWER.draw();
@@ -212,24 +212,26 @@ public abstract class MinecraftClientMixin {
             @Override
             protected Map<Identifier, List<Font>> prepare(ResourceManager manager, Profiler profiler) {
                 SpeedRunIGT.FONT_MAPS.clear();
-                try {
-                    HashMap<Identifier, List<Font>> map = new HashMap<>();
 
-                    File[] fontFiles = SpeedRunIGT.FONT_PATH.toFile().listFiles();
-                    if (fontFiles == null) return new HashMap<>();
+                HashMap<Identifier, List<Font>> map = new HashMap<>();
 
-                    for (File file : Arrays.stream(fontFiles).filter(file -> file.getName().endsWith(".ttf")).collect(Collectors.toList())) {
+                File[] fontFiles = SpeedRunIGT.FONT_PATH.toFile().listFiles();
+                if (fontFiles == null) return new HashMap<>();
+
+                for (File file : Arrays.stream(fontFiles).filter(file -> file.getName().endsWith(".ttf") || file.getName().endsWith(".otf")).collect(Collectors.toList())) {
+                    try {
                         File config = SpeedRunIGT.FONT_PATH.resolve(file.getName().substring(0, file.getName().length() - 4) + ".json").toFile();
                         if (config.exists()) {
                             FontUtils.addFont(map, file, config);
                         } else {
                             FontUtils.addFont(map, file, null);
                         }
+                    } catch (Throwable e) {
+                        SpeedRunIGT.error("Failed to load "+file.getName()+" font file");
+                        e.printStackTrace();
                     }
-                    return map;
-                } catch (Throwable e) {
-                    return new HashMap<>();
                 }
+                return map;
             }
 
             @Override
