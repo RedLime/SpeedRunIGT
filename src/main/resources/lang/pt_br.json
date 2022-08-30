@@ -73,7 +73,7 @@
   "speedrunigt.option.generate_timer_logs": "Gerar Logs do Timer",
   "speedrunigt.option.generate_timer_logs.message": "Tem certeza que deseja criar logs do timer para o atual mundo?",
   "speedrunigt.option.generate_timer_logs.description": "Cria registros do temporizador do mundo atual. (para a categoria não selecionada)\npode ser usada apenas enquanto estiver jogando no mundo.",
-  "speedrunigt.option.auto_toggle_aa": "Alternar automaticamente para Any%/AA",
+  "speedrunigt.option.auto_toggle_aa": "Alternar auto para Any%%/AA",
   "speedrunigt.option.auto_toggle_aa.description": "Se você estiver jogando Random Seed Any%% ou All Advances,\nquando você vê os créditos dentro dos minutos definidos,\nele será definido como Any%%. Por outro lado,\nvocê pode continuar jogando como Todos os Avanços.",
   "speedrunigt.option.always_use_auto_retime": "Sempre usar Retime Automático",
   "speedrunigt.option.always_use_auto_retime.description": "Será repensado tempo depois de terminar o jogo mesmo depois de concluir qualquer IGT.",
