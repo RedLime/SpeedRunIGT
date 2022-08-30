@@ -73,7 +73,7 @@
   "speedrunigt.option.generate_timer_logs": "Créer des logs de chrono",
   "speedrunigt.option.generate_timer_logs.message": "Êtes-vous sûr de vouloir créer des logs de chrono pour le monde actuel ?",
   "speedrunigt.option.generate_timer_logs.description": "Créer des logs de chrono du monde actuel. (Pour les mauvaises sélection de catégorie).\nPeut être uniquement utilisé une fois le monde créé.",
-  "speedrunigt.option.auto_toggle_aa": "Basculer automatiquement vers Any%/AA",
+  "speedrunigt.option.auto_toggle_aa": "Basculer auto vers Any%%/AA",
   "speedrunigt.option.auto_toggle_aa.description": "Si vous jouez en Random Seed Any%% ou All Advancements, lorsque les crédits s'affichent dans le temps imparti, le chrono sera réglé pour Any%%. Autrement, vous pourrez continuer à jouer en All Advancements.",
   "speedrunigt.option.always_use_auto_retime": "Toujours utiliser l'auto-retime",
   "speedrunigt.option.always_use_auto_retime.description": "Le temps post-retime sera affiché après que vous ayez terminé la run, peu importe votre IGT.",
