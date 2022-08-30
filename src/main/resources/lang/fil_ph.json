@@ -115,7 +115,7 @@
   "speedrunigt.option.current_extensions": "Timer Extensions",
   "speedrunigt.option.current_extensions.description": "Currently using SpeedRunIGT extensions: %s",
   "speedrunigt.option.auto_retime": "Awtomatiko i-retime para sa SRC",
-  "speedrunigt.option.auto_retime.description": "Any% run na sub-13 sa 1.16+, sub-17 sa 1.9-1.15, at sub-23 sa pre1.9\nay awtomatikong ire-retimed kasunod ng speedrun.com retime rules.\nKung naglalaro ka ng set seed o hindi Any%%, awtomatiko itong madi-disable.",
+  "speedrunigt.option.auto_retime.description": "Any%% run na sub-13 sa 1.16+, sub-17 sa 1.9-1.15, at sub-23 sa pre1.9\nay awtomatikong ire-retimed kasunod ng speedrun.com retime rules.\nKung naglalaro ka ng set seed o hindi Any%%, awtomatiko itong madi-disable.",
   "speedrunigt.controls.start_timer": "I-restart ang Timer (para sa 'Custom' na Kategorya)",
   "speedrunigt.controls.stop_timer": "Stop Timer (for 'Custom' Category)",
   "speedrunigt.message.update.unknown": "Nabigong makuha ang pinakabagong bersyon ng impormasyon.",
