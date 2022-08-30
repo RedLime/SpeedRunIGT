@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.timer;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.redlimerl.speedrunigt.mixins.access.FontManagerAccessor;
 import com.redlimerl.speedrunigt.mixins.access.FontStorageAccessor;
 import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
@@ -295,6 +296,7 @@ public class TimerDrawer {
         return new LiteralText((this.simply ? "" : "RTA: ") + getTimeFormat(InGameTimer.getInstance().getRealTimeAttack()));
     }
 
+    @SuppressWarnings("deprecation")
     public void draw() {
         if (!toggle) return;
 
@@ -326,8 +328,8 @@ public class TimerDrawer {
         MatrixStack matrixStack = new MatrixStack();
 
         //배경 렌더
-        matrixStack.push();
-        if (translateZ) matrixStack.translate(0, 0, 998);
+        RenderSystem.pushMatrix();
+        if (translateZ) RenderSystem.translatef(0, 0, 998);
         if (bgOpacity > 0.01f) {
             Position rtaMin = new Position(rtaTimerElement.getPosition().getX() - rtaPadding, rtaTimerElement.getPosition().getY() - rtaPadding);
             Position rtaMax = new Position(rtaMin.getX() + rtaTimerElement.getScaledTextWidth() + ((rtaPadding - 1) + rtaPadding), rtaMin.getY() + rtaTimerElement.getScaledTextHeight() + ((rtaPadding - 1) + rtaPadding));
@@ -347,7 +349,7 @@ public class TimerDrawer {
         //렌더
         if (igtScale != 0) igtTimerElement.draw(matrixStack, translateZ);
         if (rtaScale != 0) rtaTimerElement.draw(matrixStack, translateZ);
-        matrixStack.pop();
+        RenderSystem.popMatrix();
 
     }
 
