@@ -73,7 +73,7 @@
   "speedrunigt.option.generate_timer_logs": "Gumawa ng Timer Logs",
   "speedrunigt.option.generate_timer_logs.message": "Sigurado ka bang gusto mong gumawa ng mga timer log para sa kasalukuyang mundo?",
   "speedrunigt.option.generate_timer_logs.description": "Gumawa ng mga timer log ng kasalukuyang mundo. (para sa maling pagpili ng kategorya)\nmagagamit lamang habang naglalaro sa mundo.",
-  "speedrunigt.option.auto_toggle_aa": "Auto Toggle to Any%/AA",
+  "speedrunigt.option.auto_toggle_aa": "Auto Toggle to Any%%/AA",
   "speedrunigt.option.auto_toggle_aa.description": "Kung naglalaro ka ng Random Seed Any%% o All Advancements,\nkapag nakita mo ang mga kredito sa loob ng itinakdang minuto,\nito ay itatakda sa Any%%. Kung hindi,\nmaaari kang magpatuloy sa paglalaro bilang All Advancements.",
   "speedrunigt.option.always_use_auto_retime": "Laging Gumamit ng Auto Retime",
   "speedrunigt.option.always_use_auto_retime.description": "Ito ay ipapakita sa retimed na oras pagkatapos mong makumpleto ang run kahit na anumang IGT.",
