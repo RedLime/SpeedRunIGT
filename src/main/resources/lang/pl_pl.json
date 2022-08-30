@@ -73,7 +73,7 @@
   "speedrunigt.option.generate_timer_logs": "Generuj Logi Timera",
   "speedrunigt.option.generate_timer_logs.message": "Czy na pewno chcesz wygenerować logi timera dla obecnego świata?",
   "speedrunigt.option.generate_timer_logs.description": "Tworzy pliki logów dla obecnego świata.\n(przydatne, gdy ustawiona jest zła kategoria)\nMogą być używanie tylko podczas grania na danym świecie.",
-  "speedrunigt.option.auto_toggle_aa": "Automatycznie przełączaj między Any%/AA",
+  "speedrunigt.option.auto_toggle_aa": "Auto Toggle to Any%%/AA",
   "speedrunigt.option.auto_toggle_aa.description": "Jeżeli grasz w Any%% lub All Advancements na losowym seedzie,\nkiedy zobaczysz napisy końcowe gry w określonym czasie,\ntimer zatrzyma się jak dla Any%%, w przeciwnym razie\nmożesz kontynuować speedrun jako All Advancements",
   "speedrunigt.option.always_use_auto_retime": "Zawsze Używaj Auto Retime",
   "speedrunigt.option.always_use_auto_retime.description": "Zretimowany czas będzie pokazany po ukończeniu runa, niezależnie od IGT.",
