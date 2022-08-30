@@ -73,7 +73,7 @@
   "speedrunigt.option.generate_timer_logs": "Tạo Timer Log",
   "speedrunigt.option.generate_timer_logs.message": "Bạn có chắc chắn muốn tạo Timer Log cho thế giới hiện tại không?",
   "speedrunigt.option.generate_timer_logs.description": "Tạo Timer Log của thế giới hiện tại. (cho danh mục lựa chọn sai)\nchỉ có thể được sử dụng trong khi chơi thế giới.",
-  "speedrunigt.option.auto_toggle_aa": "Tự động chuyển sang Any%/AA ",
+  "speedrunigt.option.auto_toggle_aa": "Tự động chuyển sang Any%%/AA",
   "speedrunigt.option.auto_toggle_aa.description": "Nếu bạn đang chơi RSG Any%% hoặc All Advancements,\nkhi bạn thấy Credit trong vòng số phút đã định,\nnó sẽ được đặt thành Any%%. Nếu không thì,\nbạn có thể tiếp tục chơi như All Advancements.",
   "speedrunigt.option.always_use_auto_retime": "Luôn luôn sử dụng Retime tự động",
   "speedrunigt.option.always_use_auto_retime.description": "Hiển thị IGT đã ngừng hoạt động bất kể thời gian IGT sau khi hoàn thành màn chạy.",
