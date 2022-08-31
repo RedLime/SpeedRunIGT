@@ -108,6 +108,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         }
 
         List<Item> items = this.inventory.field_15082.stream().map(ItemStack::getItem).collect(Collectors.toList());
+        List<Item> armors = this.inventory.field_15083.stream().map(ItemStack::getItem).collect(Collectors.toList());
 
         //All Swords
         if (timer.getCategory() == RunCategories.ALL_SWORDS) {
@@ -136,10 +137,10 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
         //Iron Armors & lvl 15
         if (timer.getCategory() == RunCategories.FULL_IA_15_LVL) {
-            if (items.contains(Items.IRON_HELMET) &&
-                    items.contains(Items.IRON_CHESTPLATE) &&
-                    items.contains(Items.IRON_BOOTS) &&
-                    items.contains(Items.IRON_LEGGINGS) && experienceLevel >= 15) {
+            if (armors.contains(Items.IRON_HELMET) &&
+                    armors.contains(Items.IRON_CHESTPLATE) &&
+                    armors.contains(Items.IRON_BOOTS) &&
+                    armors.contains(Items.IRON_LEGGINGS) && experienceLevel >= 15) {
                 InGameTimer.complete();
             }
         }
