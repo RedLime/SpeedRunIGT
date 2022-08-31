@@ -43,6 +43,7 @@
     "screen.GeneratorOptionsMixin",
     "screen.OptionsScreenMixin",
     "server.IntegratedServerMixin",
+    "timeline.SoundSystemMixin",
     "translate.I18nMixin",
     "translate.TranslatableTextMixin"
   ],
