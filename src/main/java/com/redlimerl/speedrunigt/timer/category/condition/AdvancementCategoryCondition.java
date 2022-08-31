@@ -16,7 +16,7 @@ public class AdvancementCategoryCondition extends CategoryCondition.Condition<Si
         try {
             this.advancement = jsonObject.get("advancement").getAsString();
         } catch (Exception e) {
-            throw new InvalidCategoryException(InvalidCategoryException.Reason.INVALID_JSON_DATA, "Failed to read condition \"advancement\"");
+            throw new InvalidCategoryException(InvalidCategoryException.Reason.INVALID_JSON_DATA, "Failed to read condition \"advancement\" in \"" + this.getName() + "\"");
         }
     }
 
