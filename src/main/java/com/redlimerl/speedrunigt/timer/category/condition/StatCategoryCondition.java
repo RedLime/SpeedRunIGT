@@ -15,7 +15,7 @@ public class StatCategoryCondition extends CategoryCondition.Condition<JsonObjec
             this.stat = jsonObject.get("stat").getAsString();
             this.goal = jsonObject.get("goal").getAsInt();
         } catch (Exception e) {
-            throw new InvalidCategoryException(InvalidCategoryException.Reason.INVALID_JSON_DATA, "Failed to read condition \"stat\" or \"goal\"");
+            throw new InvalidCategoryException(InvalidCategoryException.Reason.INVALID_JSON_DATA, "Failed to read condition \"stat\" or \"goal\" in \"" + this.getName() + "\"");
         }
     }
 
