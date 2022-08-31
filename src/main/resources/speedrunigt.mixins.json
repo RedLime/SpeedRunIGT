@@ -47,6 +47,7 @@
     "screen.OptionsScreenMixin",
     "screen.CreateWorldScreenMixin",
     "server.IntegratedServerMixin",
+    "timeline.SoundSystemMixin",
     "translate.I18nMixin",
     "translate.TranslatableTextMixin"
   ],
