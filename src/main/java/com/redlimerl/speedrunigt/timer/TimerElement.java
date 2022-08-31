@@ -58,7 +58,7 @@ public class TimerElement {
     public void draw(boolean doTranslate) {
         RenderSystem.pushMatrix();
         if (doTranslate) RenderSystem.translatef(0, 0, 1);
-        RenderSystem.scalef(scale, scale, 1.0F);
+        RenderSystem.scalef(scale, scale, 1f);
         drawOutLine(this.textRenderer, scaledPosition.getX(), scaledPosition.getY(), text, color, decoration);
         RenderSystem.popMatrix();
     }
