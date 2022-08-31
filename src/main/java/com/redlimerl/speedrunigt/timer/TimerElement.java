@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.timer;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
 import com.redlimerl.speedrunigt.timer.TimerDrawer.Position;
 import net.minecraft.client.MinecraftClient;
@@ -51,12 +52,13 @@ public class TimerElement {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public void draw(MatrixStack matrixStack, boolean doTranslate) {
-        matrixStack.push();
-        if (doTranslate) matrixStack.translate(0, 0, 1);
-        matrixStack.scale(scale, scale, 1f);
+        RenderSystem.pushMatrix();
+        if (doTranslate) RenderSystem.translatef(0, 0, 1);
+        RenderSystem.scalef(scale, scale, 1f);
         drawOutLine(client.textRenderer, matrixStack, scaledPosition.getX(), scaledPosition.getY(), text, color, decoration);
-        matrixStack.pop();
+        RenderSystem.popMatrix();
     }
 
     private static void drawOutLine(TextRenderer textRenderer, MatrixStack matrixStack, int x, int y, MutableText text, Integer color, TimerDecoration decoration) {
