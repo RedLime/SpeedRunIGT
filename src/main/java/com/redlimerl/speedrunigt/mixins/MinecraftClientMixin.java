@@ -18,7 +18,6 @@ import com.redlimerl.speedrunigt.utils.Vec2f;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
-import net.minecraft.client.gui.screen.ProgressScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.*;
 import net.minecraft.client.options.GameOptions;
@@ -40,9 +39,6 @@ public abstract class MinecraftClientMixin {
 
     @Shadow public GameOptions options;
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    @Shadow public abstract boolean isPaused();
-
     @Shadow @Nullable public Screen currentScreen;
 
     @Shadow @Nullable public ClientWorld world;
@@ -51,7 +47,7 @@ public abstract class MinecraftClientMixin {
 
     private boolean disconnectCheck = false;
 
-    @Inject(at = @At("HEAD"), method = "startGame")
+    @Inject(at = @At("HEAD"), method = "method_2935")
     public void onCreate(String name, String displayName, LevelInfo levelInfo, CallbackInfo ci) {
         try {
             if (levelInfo != null) {
@@ -218,13 +214,13 @@ public abstract class MinecraftClientMixin {
     }
 
     // Record save
-    @Inject(method = "stop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sound/SoundManager;close()V", shift = At.Shift.BEFORE))
+    @Inject(method = "stop", at = @At(value = "INVOKE", target = "Lnet/minecraft/stat/StatHandler;method_1739()V", shift = At.Shift.BEFORE))
     public void onStop(CallbackInfo ci) {
         InGameTimer.getInstance().writeRecordFile(false);
     }
 
     // Disconnecting fix
-    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resource/ResourcePackLoader;method_7040()V", shift = At.Shift.BEFORE), method = "connect(Lnet/minecraft/client/world/ClientWorld;Ljava/lang/String;)V")
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/LevelStorageAccess;method_254()V", shift = At.Shift.BEFORE), method = "connect(Lnet/minecraft/client/world/ClientWorld;Ljava/lang/String;)V")
     public void disconnect(CallbackInfo ci) {
         if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE && disconnectCheck) {
             InGameTimer.leave();

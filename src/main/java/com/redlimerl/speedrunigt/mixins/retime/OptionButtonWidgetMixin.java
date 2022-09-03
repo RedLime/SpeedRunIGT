@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class OptionButtonWidgetMixin {
 
     @SuppressWarnings("ConstantConditions")
-    @Inject(method = "method_21930", at = @At("RETURN"))
+    @Inject(method = "buttonClicked", at = @At("RETURN"))
     public void onClickOption(ButtonWidget button, CallbackInfo ci) {
         if (((Object) this) instanceof OptionButtonWidget) {
             InGameTimerUtils.CHANGED_OPTIONS.add(((OptionButtonWidget) ((Object) this)).method_1088());

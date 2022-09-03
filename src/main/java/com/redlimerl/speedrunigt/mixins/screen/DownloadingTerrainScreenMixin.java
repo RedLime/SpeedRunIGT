@@ -20,7 +20,7 @@ public abstract class DownloadingTerrainScreenMixin extends Screen {
         }
     }
 
-    @ModifyArg(method = "method_21925", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/DownloadingTerrainScreen;method_21881(Lnet/minecraft/client/font/TextRenderer;Ljava/lang/String;III)V"), index = 1)
+    @ModifyArg(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/DownloadingTerrainScreen;drawCenteredString(Lnet/minecraft/client/font/TextRenderer;Ljava/lang/String;III)V"), index = 1)
     public String onRender(String string) {
         if (InGameTimer.getInstance().isPaused() && InGameTimer.getInstance().isStarted() && !InGameTimer.getInstance().isCoop()) {
             return string + " (#" + InGameTimer.getInstance().getPauseCount() + ")";

@@ -5,26 +5,25 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacketBuf;
-import io.netty.buffer.Unpooled;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+import net.minecraft.client.class_469;
+import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ClientPlayNetworkHandler.class)
+@Mixin(class_469.class)
 public class ClientPlayNetworkHandlerMixin {
 
     @Shadow private MinecraftClient client;
 
     @Inject(method = "onCustomPayload", at = @At("HEAD"), cancellable = true)
-    public void onCustom(CustomPayloadS2CPacket packet, CallbackInfo ci) {
-        if (packet.getChannel().startsWith("srigt")) {
-            TimerPacket timerPacket = TimerPacket.createTimerPacketFromPacket(packet.getChannel());
-            TimerPacketBuf buf = TimerPacketBuf.of(Unpooled.wrappedBuffer(packet.method_7734()));
+    public void onCustom(CustomPayloadC2SPacket packet, CallbackInfo ci) {
+        if (packet.channel.startsWith("srigt")) {
+            TimerPacket timerPacket = TimerPacket.createTimerPacketFromPacket(packet.channel);
+            TimerPacketBuf buf = TimerPacketBuf.of(packet.field_2455);
             SpeedRunIGT.debug(String.format("Server->Client Packet: %s bytes, ID : %s", packet.method_7734().length, packet.getChannel()));
             try {
                 if (timerPacket != null && SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) {

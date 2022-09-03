@@ -8,7 +8,7 @@ import com.redlimerl.speedrunigt.timer.category.condition.AdvancementCategoryCon
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacketUtils;
 import com.redlimerl.speedrunigt.timer.packet.packets.TimerAchieveAdvancementPacket;
-import net.minecraft.achievement.Achievement;
+import net.minecraft.advancement.Achievement;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.AchievementNotification;
 import net.minecraft.util.math.MathHelper;
@@ -22,16 +22,16 @@ import java.util.Map;
 @Mixin(AchievementNotification.class)
 public abstract class AchievementNotificationMixin {
 
-    @Inject(method = "display", at = @At("HEAD"))
+    @Inject(method = "method_1092", at = @At("HEAD"))
     public void onComplete(Achievement achieved, CallbackInfo ci){
         InGameTimer timer = InGameTimer.getInstance();
 
         if (timer.getStatus() == TimerStatus.NONE) return;
 
         // For Timeline
-        timer.tryInsertNewAdvancement(achieved.name, null, true);
+        timer.tryInsertNewAdvancement(achieved.getStringId(), null, true);
         if (timer.isCoop() && (timer.getCategory() == RunCategories.ALL_ACHIEVEMENTS || timer.getCategory() == RunCategories.HALF || timer.getCategory() == RunCategories.POGLOOT_QUATER))
-            TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerAchieveAdvancementPacket(achieved.name));
+            TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerAchieveAdvancementPacket(achieved.getStringId()));
 
         // Custom Json category
         if (timer.getCategory().getConditionJson() != null) {

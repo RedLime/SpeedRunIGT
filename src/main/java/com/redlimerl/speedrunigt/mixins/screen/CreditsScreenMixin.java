@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(CreditsScreen.class)
 public class CreditsScreenMixin {
 
-    @Inject(method = "method_21947", at = @At("TAIL"))
+    @Inject(method = "init", at = @At("TAIL"))
     private void initMixin(CallbackInfo ci) {
         @NotNull
         InGameTimer timer = InGameTimer.getInstance();
