@@ -19,6 +19,7 @@ import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.MathHelper;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -99,6 +100,7 @@ public class InGameTimer implements Serializable {
     private String firstInput = "";
     private final CopyOnWriteArrayList<TimerPauseLog> pauseLogList = new CopyOnWriteArrayList<>();
     private final CopyOnWriteArrayList<TimerTickLog> freezeLogList = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<String> debugLogList = new CopyOnWriteArrayList<>();
 
     //For logging var
     private int loggerTicks = 0;
@@ -233,18 +235,22 @@ public class InGameTimer implements Serializable {
         File advancementFile = new File(worldDir, "igt_advancement" + timer.getLogSuffix()),
                 pauseFile = new File(worldDir, "igt_timer" + timer.getLogSuffix()),
                 tickFile = new File(worldDir, "igt_freeze" + timer.getLogSuffix()),
-                categoryFile = new File(worldDir, "igt_category" + timer.getLogSuffix());
+                categoryFile = new File(worldDir, "igt_category" + timer.getLogSuffix()),
+                debugFile = new File(worldDir, "igt_debug.txt");
         String advancementLog = SpeedRunIGT.GSON.toJson(timer.getAdvancementsTracker().getAdvancements()),
                 pauseLog = InGameTimerUtils.pauseLogListToString(timer.pauseLogList, !pauseFile.exists(), pauseFile.exists() ? 0 : timer.completeCount) + logInfo,
                 freezeLog = InGameTimerUtils.logListToString(timer.freezeLogList, tickFile.exists() ? 0 : timer.completeCount),
-                categoryRaw = timer.getCategory().getConditionJson() != null ? SpeedRunIGT.PRETTY_GSON.toJson(timer.getCategory().getConditionJson()) : "";
+                categoryRaw = timer.getCategory().getConditionJson() != null ? SpeedRunIGT.PRETTY_GSON.toJson(timer.getCategory().getConditionJson()) : "",
+                debugRaw = StringUtils.join(timer.debugLogList.iterator(), '\n');
         timer.freezeLogList.clear();
         timer.pauseLogList.clear();
+        timer.debugLogList.clear();
         saveManagerThread.submit(() -> {
             try {
                 FileUtils.writeStringToFile(advancementFile, advancementLog, StandardCharsets.UTF_8);
                 FileUtils.writeStringToFile(pauseFile, pauseLog, StandardCharsets.UTF_8, true);
                 FileUtils.writeStringToFile(tickFile, freezeLog, StandardCharsets.UTF_8, true);
+                if (SpeedRunIGT.IS_DEBUG_MODE) FileUtils.writeStringToFile(debugFile, debugRaw, StandardCharsets.UTF_8, true);
                 if (!categoryRaw.isEmpty()) FileUtils.writeStringToFile(categoryFile, categoryRaw, StandardCharsets.UTF_8);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -482,7 +488,7 @@ public class InGameTimer implements Serializable {
     }
 
     public boolean isPlaying() {
-        return !this.isPaused() && this.getStatus() != TimerStatus.COMPLETED_LEGACY;
+        return !this.isPaused() && this.getStatus() != TimerStatus.COMPLETED_LEGACY && this.getStatus() != TimerStatus.NONE;
     }
 
     public long getEndTime() {
@@ -553,8 +559,9 @@ public class InGameTimer implements Serializable {
         long tickDelays = currentTime - leastTickTime;
 
         //Rebase time (When a joined world or changed dimension)
-        if (leastStartTime != 0 && leastTickTime != 0) {
-            rebaseIGTime += MathHelper.clamp((leastStartTime - leastTickTime) * 1.0 / tickDelays, 0, 1) * 50.0;
+        if (leastStartTime != 0 && leastTickTime != 0 && leastStartTime != currentTime) {
+            double value = MathHelper.clamp((leastStartTime - leastTickTime) * 1.0 / tickDelays, 0, 1) * 50.0;
+            rebaseIGTime += value;
             leastStartTime = 0;
         }
 
