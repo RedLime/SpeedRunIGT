@@ -7,7 +7,10 @@ import static com.redlimerl.speedrunigt.timer.packet.TimerPacket.registryPacket;
 public class TimerPackets {
     public static void init() {
         registryPacket(
-                TimerInitPacket.IDENTIFIER, TimerInitPacket::new
+                TimerStartPacket.IDENTIFIER, TimerStartPacket::new
+        );
+        registryPacket(
+                TimerInitializePacket.IDENTIFIER, TimerInitializePacket::new
         );
         registryPacket(
                 TimerCompletePacket.IDENTIFIER, TimerCompletePacket::new
