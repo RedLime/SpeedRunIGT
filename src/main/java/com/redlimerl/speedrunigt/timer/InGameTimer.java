@@ -155,7 +155,7 @@ public class InGameTimer implements Serializable {
         INSTANCE.isCoop = isCoop;
         INSTANCE.setPause(true, TimerStatus.IDLE, "reset");
         INSTANCE.setPause(false, "reset");
-        if (isCoop && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerInitPacket(INSTANCE, INSTANCE.getRealTimeAttack()));
+        if (isCoop && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerStartPacket(INSTANCE, INSTANCE.getRealTimeAttack()));
     }
 
     /**
@@ -595,7 +595,11 @@ public class InGameTimer implements Serializable {
 
     public void setPause(boolean isPause, String reason) { this.setPause(isPause, TimerStatus.PAUSED, reason); }
     public void setPause(boolean toPause, TimerStatus toStatus, String reason) {
-        if (this.getStatus() == TimerStatus.COMPLETED_LEGACY || this.isCoop) return;
+        if (this.getStatus() == TimerStatus.COMPLETED_LEGACY || this.isCoop()) {
+            if (!(this.isCoop() && !toPause && !this.isStarted())) {
+                return;
+            }
+        }
 
         SpeedRunIGT.debug("Paused: "+toPause+" (" + toStatus.name() + ") / Reason : " + reason);
 
@@ -669,6 +673,13 @@ public class InGameTimer implements Serializable {
                 startTime = System.currentTimeMillis();
                 if (this.isGlitched) save();
                 if (loggerTicks != 0) leastStartTime = startTime;
+                if (this.isCoop()) {
+                    if (SpeedRunIGT.IS_CLIENT_SIDE) {
+                        TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerStartPacket(InGameTimer.getInstance(), 0));
+                    } else {
+                        TimerPacketUtils.sendServer2ClientPacket(SpeedRunIGT.DEDICATED_SERVER, new TimerStartPacket(InGameTimer.getInstance(), 0));
+                    }
+                }
             }
             this.setStatus(TimerStatus.RUNNING);
         }
