@@ -15,18 +15,18 @@ import net.minecraft.util.Identifier;
 import java.util.Enumeration;
 import java.util.Objects;
 
-public class TimerInitPacket extends TimerPacket {
+public class TimerStartPacket extends TimerPacket {
 
-    public static final Identifier IDENTIFIER = TimerPacket.identifier("timer_init");
+    public static final Identifier IDENTIFIER = TimerPacket.identifier("timer_start");
     private final InGameTimer sendTimer;
     private final String customData;
     private final long sendRTA;
 
-    public TimerInitPacket() {
+    public TimerStartPacket() {
         this(null, InGameTimer.getInstance().getRealTimeAttack());
     }
 
-    public TimerInitPacket(InGameTimer timer, long rta) {
+    public TimerStartPacket(InGameTimer timer, long rta) {
         super(IDENTIFIER);
         this.sendTimer = timer;
         StringBuilder stringBuilder = new StringBuilder();
@@ -73,8 +73,7 @@ public class TimerInitPacket extends TimerPacket {
             buf.writeLong(sendRTA);
             buf.writeInt(sendTimer.getRunType().getCode());
             buf.writeString(customData);
-        }
-        if (!SpeedRunIGT.IS_CLIENT_SIDE && (sendTimer != null || !InGameTimer.getInstance().isStarted())) {
+
             TimerPacketBuf copiedBuf = buf.copy();
             timerInit(copiedBuf, true);
             copiedBuf.release();
