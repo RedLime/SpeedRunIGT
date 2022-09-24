@@ -12,7 +12,7 @@ public class RunCategories {
     public static RunCategory ANY = RunCategoryBuilder.create("ANY", "mc", "speedrunigt.option.timer_category.any")
             .setRetimeFunction(timer ->
                     !timer.isGlitched() && !timer.isCoop() && timer.getRunType() == RunType.RANDOM_SEED &&
-                            (SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_USE_AUTO_RETIME) || timer.getInGameTime(false) < 1000 * 60 * 17)
+                            (SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_USE_AUTO_RETIME) || timer.getInGameTime(false) < 1000 * 60 * 30)
             ).build();
     public static RunCategory CUSTOM = new RunCategory("CUSTOM","mc#");
     public static RunCategory HIGH = new RunCategory("HIGH","mcce#High");
