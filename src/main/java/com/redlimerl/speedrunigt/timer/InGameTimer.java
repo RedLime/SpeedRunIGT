@@ -680,6 +680,7 @@ public class InGameTimer implements Serializable {
                         TimerPacketUtils.sendServer2ClientPacket(SpeedRunIGT.DEDICATED_SERVER, new TimerStartPacket(InGameTimer.getInstance(), 0));
                     }
                 }
+                InGameTimerUtils.LATEST_TIMER_TIME = System.currentTimeMillis();
             }
             this.setStatus(TimerStatus.RUNNING);
         }
