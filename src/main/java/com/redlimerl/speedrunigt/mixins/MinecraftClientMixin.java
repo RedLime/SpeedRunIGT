@@ -185,8 +185,8 @@ public abstract class MinecraftClientMixin {
     /**
      * Moved the mouse stuff from MouseMixin and redid it by Void_X_Walker
      */
-    private float previousX = 0;
-    private float previousY = 0;
+    private int previousX = 0;
+    private int previousY = 0;
     @Redirect(method="method_12141", at=@At(value="INVOKE", target = "Lorg/lwjgl/input/Mouse;getEventDWheel()I", remap = false))
     public int getScrolled(){
         if (Mouse.getEventDWheel() != 0){
@@ -196,17 +196,22 @@ public abstract class MinecraftClientMixin {
     }
     @Inject(method="method_12141", at=@At(value = "HEAD"))
     public void getMoved(CallbackInfo ci){
-        if (Mouse.getX()!=previousX||Mouse.getY()!=previousY){
-            unlock();
+        if (InGameTimer.getInstance().isPaused()) {
+            if ((Mouse.getX() != previousX || Mouse.getY() != previousY) && previousX != 0 && previousY != 0){
+                unlock();
+            } else {
+                previousX = Mouse.getDX();
+                previousY = Mouse.getDY();
+            }
         }
-        previousX = Mouse.getX();
-        previousY = Mouse.getY();
     }
 
     private void unlock() {
         InGameTimer timer = InGameTimer.getInstance();
         if (InGameTimerClientUtils.canUnpauseTimer(false)) {
             timer.setPause(false, "moved mouse");
+            previousX = 0;
+            previousY = 0;
         }
         if (Display.isActive() && !MinecraftClient.getInstance().isPaused() && Mouse.isGrabbed()) {
             timer.updateFirstInput();

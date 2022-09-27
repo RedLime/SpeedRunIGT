@@ -29,6 +29,7 @@ public class InGameTimerClientUtils {
                 && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
             if (checkRender) {
                 WorldRendererAccessor worldRenderer = (WorldRendererAccessor) client.worldRenderer;
+                if (worldRenderer.getChunkBuilder() == null) return false;
                 int chunks = worldRenderer.invokeCompletedChunkCount();
                 int entities = worldRenderer.getRegularEntityCount() - (client.options.perspective > 0 ? 0 : 1);
 
