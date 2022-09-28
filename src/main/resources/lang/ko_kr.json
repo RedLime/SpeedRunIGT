@@ -73,7 +73,7 @@
   "speedrunigt.option.generate_timer_logs": "타이머 로그 생성",
   "speedrunigt.option.generate_timer_logs.message": "정말 현재 월드의 타이머 로그를 만드시겠어요?",
   "speedrunigt.option.generate_timer_logs.description": "현재 월드의 타이머 로그를 만듭니다. (카테고리 선택 실수를 위함)\n오직 월드를 플레이 중일 때만 사용할 수 있습니다.",
-  "speedrunigt.option.auto_toggle_aa": "Any%/AA 자동 변경",
+  "speedrunigt.option.auto_toggle_aa": "Any%%/AA 자동 변경",
   "speedrunigt.option.auto_toggle_aa.description": "만약 랜덤 시드 Any%% 혹은 모든 발전과제 달성을 플레이 중이라면,\n설정한 시간(분 단위)안에 엔딩 크레딧을 볼 때\nAny%%로 설정하고, 그렇지 않은 경우\n모든 발전과제 달성으로 계속 플레이됩니다.",
   "speedrunigt.option.always_use_auto_retime": "자동 리타임 항상 사용",
   "speedrunigt.option.always_use_auto_retime.description": "IGT 시간에 관계없이 런을 끝낸 이후로 표시되는 리타임된 시간을 항상 표시합니다.",
