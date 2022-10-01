@@ -108,7 +108,7 @@ public class SpeedRunOptionScreen extends Screen {
 
     @Override
     public void onClose() {
-        if (this.client != null) this.client.setScreen(parent);
+        if (this.client != null) this.client.openScreen(parent);
     }
 
     @Override
@@ -214,11 +214,6 @@ public class SpeedRunOptionScreen extends Screen {
                 return children;
             }
 
-            @Override
-            public List<? extends Selectable> selectableChildren() {
-                return children;
-            }
-
             public ClickableWidget getButtonWidget() {
                 return buttonWidget;
             }
@@ -227,6 +222,11 @@ public class SpeedRunOptionScreen extends Screen {
             public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
                 buttonWidget.y = y;
                 buttonWidget.render(matrices, mouseX, mouseY, tickDelta);
+            }
+
+            @Override
+            public List<? extends Selectable> method_37025() {
+                return children;
             }
         }
     }

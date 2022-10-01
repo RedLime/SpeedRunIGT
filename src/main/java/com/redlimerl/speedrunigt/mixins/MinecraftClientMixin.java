@@ -84,15 +84,15 @@ public abstract class MinecraftClientMixin {
         disconnectCheck = false;
     }
 
-    @Inject(method = "setScreen", at = @At("RETURN"))
-    public void onSetScreen(Screen screen, CallbackInfo ci) {
+    @Inject(method = "openScreen", at = @At("RETURN"))
+    public void onopenScreen(Screen screen, CallbackInfo ci) {
         if (screen instanceof LevelLoadingScreen) {
             disconnectCheck = true;
         }
         if (InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN != null) {
             Screen screen1 = InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN;
             InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN = null;
-            MinecraftClient.getInstance().setScreen(screen1);
+            MinecraftClient.getInstance().openScreen(screen1);
         }
     }
 

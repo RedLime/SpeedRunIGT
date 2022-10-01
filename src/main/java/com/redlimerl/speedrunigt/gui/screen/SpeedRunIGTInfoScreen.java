@@ -35,7 +35,7 @@ public class SpeedRunIGTInfoScreen extends Screen {
 
         addDrawableChild(new ButtonWidget(width / 2 - 155, height - 80, 150, 20, new TranslatableText("speedrunigt.menu.open_github_repo"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://github.com/RedLime/SpeedRunIGT/")));
         addDrawableChild(new ButtonWidget(width / 2 + 5, height - 80, 150, 20, new TranslatableText("speedrunigt.menu.open_support_page"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://ko-fi.com/redlimerl")));
-        addDrawableChild(new ButtonWidget(width / 2 - 100, height - 40, 200, 20, ScreenTexts.BACK, (ButtonWidget button) -> client.setScreen(parent)));
+        addDrawableChild(new ButtonWidget(width / 2 - 100, height - 40, 200, 20, ScreenTexts.BACK, (ButtonWidget button) -> client.openScreen(parent)));
     }
 
     @Override
@@ -65,7 +65,7 @@ public class SpeedRunIGTInfoScreen extends Screen {
     @Override
     public void onClose() {
         if (client != null) {
-            client.setScreen(parent);
+            client.openScreen(parent);
         }
     }
 }

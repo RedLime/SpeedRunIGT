@@ -21,12 +21,13 @@ import java.util.Objects;
 @Mixin(KeyBinding.class)
 public abstract class KeyBindingMixin {
 
-    @Shadow @Final private static Map<InputUtil.Key, KeyBinding> KEY_TO_BINDINGS;
+
+    @Shadow @Final private static Map<InputUtil.Key, KeyBinding> keyToBindings;
 
     @Inject(method = "setKeyPressed", at = @At("TAIL"))
     private static void onPress(InputUtil.Key key, boolean pressed, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
-        KeyBinding keyBinding = KEY_TO_BINDINGS.get(key);
+        KeyBinding keyBinding = keyToBindings.get(key);
         if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
         if (keyBinding != null && pressed) {
             if (InGameTimerClientUtils.isFocusedClick() &&

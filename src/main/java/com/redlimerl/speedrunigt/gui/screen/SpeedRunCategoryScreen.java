@@ -43,7 +43,7 @@ public class SpeedRunCategoryScreen extends Screen {
     @Override
     protected void init() {
         assert client != null;
-        addDrawableChild(new ButtonWidget(width / 2 - 100, height - 35, 200, 20, ScreenTexts.CANCEL, button -> client.setScreen(parent)));
+        addDrawableChild(new ButtonWidget(width / 2 - 100, height - 35, 200, 20, ScreenTexts.CANCEL, button -> client.openScreen(parent)));
 
         this.listWidget = new CategorySelectionListWidget(client);
         addSelectableChild(listWidget);
@@ -51,7 +51,7 @@ public class SpeedRunCategoryScreen extends Screen {
 
     @Override
     public void onClose() {
-        if (this.client != null) this.client.setScreen(parent);
+        if (this.client != null) this.client.openScreen(parent);
     }
 
     @Override
@@ -104,7 +104,7 @@ public class SpeedRunCategoryScreen extends Screen {
             }
 
             @Override
-            public List<? extends Selectable> selectableChildren() {
+            public List<? extends Selectable> method_37025() {
                 return children;
             }
 

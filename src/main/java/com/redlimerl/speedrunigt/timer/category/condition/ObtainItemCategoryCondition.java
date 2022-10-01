@@ -34,7 +34,7 @@ public class ObtainItemCategoryCondition extends CategoryCondition.Condition<Lis
 
         for (ItemStack itemStack : itemStacks) {
             if (itemStack != null && Objects.equals(Registry.ITEM.getId(itemStack.getItem()).toString(), itemID) && itemStack.getDamage() == itemDamage) {
-                if (!nbtTag.isEmpty() && (itemStack.getNbt() == null || !itemStack.getNbt().toString().equals(nbtTag))) {
+                if (!nbtTag.isEmpty() && (itemStack.getTag() == null || !itemStack.getTag().toString().equals(nbtTag))) {
                     continue;
                 }
                 amount += itemStack.getCount();

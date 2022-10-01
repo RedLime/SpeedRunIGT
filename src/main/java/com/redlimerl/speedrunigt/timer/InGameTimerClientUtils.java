@@ -64,7 +64,7 @@ public class InGameTimerClientUtils {
     static void setCategoryWarningScreen(@Nullable String conditionFileName, InvalidCategoryException exception) {
         if (MinecraftClient.getInstance().currentScreen == null)
             FAILED_CATEGORY_INIT_SCREEN = new FailedCategoryInitScreen(conditionFileName, exception);
-        else MinecraftClient.getInstance().setScreen(new FailedCategoryInitScreen(conditionFileName, exception));
+        else MinecraftClient.getInstance().openScreen(new FailedCategoryInitScreen(conditionFileName, exception));
     }
 
     static MinecraftServer getClientServer() {

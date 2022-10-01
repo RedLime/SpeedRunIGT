@@ -231,7 +231,7 @@ public class TimerCustomizeScreen extends Screen {
         }));
 
         addDrawableChild(new ButtonWidget(width / 2 + 31, height / 2 + 62, 58, 20, ScreenTexts.CANCEL, (ButtonWidget button) -> {
-            if (client != null) client.setScreen(parent);
+            if (client != null) client.openScreen(parent);
         }));
 
         fontConfigButton.visible = false;
@@ -333,7 +333,7 @@ public class TimerCustomizeScreen extends Screen {
     @Override
     public void onClose() {
         assert client != null;
-        client.setScreen(parent);
+        client.openScreen(parent);
     }
 
 
@@ -663,7 +663,7 @@ public class TimerCustomizeScreen extends Screen {
 
 
         fontConfigButton = addDrawableChild(new ButtonWidget(width / 2 + 88, 0, 50, 20, new LiteralText("Config"), (ButtonWidget button) -> {
-            if (client != null) client.setScreen(new FontConfigScreen(this, drawer.getTimerFont()));
+            if (client != null) client.openScreen(new FontConfigScreen(this, drawer.getTimerFont()));
         } ));
         fontOptions.add(addDrawableChild(new ButtonWidget(width / 2 - 154, height / 2 - 80, 150, 20, new TranslatableText("speedrunigt.option.timer_position.font.open_folder"), (ButtonWidget button) -> Util.getOperatingSystem().open(SpeedRunIGT.FONT_PATH.toFile()))));
         fontOptions.add(addDrawableChild(new ButtonWidget(width / 2 + 4, height / 2 - 80, 150, 20, new TranslatableText("speedrunigt.option.timer_position.font.description"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://youtu.be/agBbiTQWj78"))));

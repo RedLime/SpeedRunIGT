@@ -56,7 +56,7 @@ public class FontConfigScreen extends Screen {
 
     @Override
     public void onClose() {
-        if (client != null) client.setScreen(parent);
+        if (client != null) client.openScreen(parent);
     }
 
     @Override
