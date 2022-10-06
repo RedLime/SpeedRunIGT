@@ -68,7 +68,7 @@ public class SpeedRunCategoryScreen extends Screen {
         public CategorySelectionListWidget(MinecraftClient client) {
             super(client, SpeedRunCategoryScreen.this.width, SpeedRunCategoryScreen.this.height, 32, SpeedRunCategoryScreen.this.height - 55, 24);
 
-            this.replaceEntries(RunCategory.getCategories().values().stream().map(CategoryEntry::new).collect(Collectors.toList()));
+            this.replaceEntries(RunCategory.getCategories().values().stream().filter(runCategory -> !runCategory.isHideCategory()).map(CategoryEntry::new).collect(Collectors.toList()));
         }
 
         @Override
