@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Map;
@@ -40,8 +40,8 @@ public abstract class ClientAdvancementManagerMixin {
 
     @Shadow @Final private Map<Advancement, AdvancementProgress> advancementProgresses;
 
-    @Redirect(method = "onAdvancements", at = @At(value = "INVOKE", target = "Ljava/util/Map$Entry;getValue()Ljava/lang/Object;"))
-    public Object advancement(Map.Entry<Identifier, AdvancementProgress> entry) {
+    @ModifyVariable(method = "onAdvancements", at = @At(value = "INVOKE", target = "Ljava/util/Map$Entry;getValue()Ljava/lang/Object;"))
+    public Map.Entry<Identifier, AdvancementProgress> advancement(Map.Entry<Identifier, AdvancementProgress> entry) {
         InGameTimer timer = InGameTimer.getInstance();
         
         Advancement advancement = this.manager.get(entry.getKey());
@@ -95,7 +95,7 @@ public abstract class ClientAdvancementManagerMixin {
                 InGameTimer.complete();
             }
         }
-        return entry.getValue();
+        return entry;
     }
 
     @Inject(at = @At("RETURN"), method = "onAdvancements")
