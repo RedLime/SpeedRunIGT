@@ -140,8 +140,10 @@ public abstract class MinecraftClientMixin {
     private int saveTickCount = 0;
     @Inject(method = "tick", at = @At("RETURN"))
     private void onTickMixin(CallbackInfo ci) {
-        if (++saveTickCount >= 20)
+        if (++saveTickCount >= 20) {
             SpeedRunOption.checkSave();
+            saveTickCount = 0;
+        }
     }
 
     @Inject(method = "render(Z)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Util;getMeasuringTimeNano()J", shift = At.Shift.AFTER))
