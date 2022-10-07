@@ -48,7 +48,7 @@ jobs:
         uses: actions/checkout@v2
       - uses: actions/download-artifact@v3
         with:
-          path: build/results
+          path: ./build/results
       - name: Publish release
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
@@ -58,4 +58,4 @@ jobs:
           title: ${{ inputs.release_version }}
           files: |
             LICENSE*
-            build/results/*.jar
+            ./build/results/*.jar
