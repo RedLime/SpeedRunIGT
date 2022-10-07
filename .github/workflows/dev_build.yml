@@ -38,6 +38,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: '1.16.5'
+          clean: 'false'
       - name: Make gradlew executable
         run: chmod +x ./gradlew
       - name: Build artifacts
