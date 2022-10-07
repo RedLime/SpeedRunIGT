@@ -25,14 +25,14 @@ jobs:
           distribution: 'adopt'
 
 
-      - name: Checkout ${{ matrix.branch }}
+      - name: Checkout 1.${{ matrix.branch }}
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          ref: ${{ matrix.branch }}
-      - name: Make gradlew executable - ${{ matrix.branch }}
+          ref: 1.${{ matrix.branch }}
+      - name: Make gradlew executable - 1.${{ matrix.branch }}
         run: chmod +x ./gradlew
-      - name: Build artifacts - ${{ matrix.branch }}
+      - name: Build artifacts - 1.${{ matrix.branch }}
         run: ./gradlew build
 
 
