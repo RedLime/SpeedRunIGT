@@ -97,6 +97,7 @@ public class InGameTimer implements Serializable {
     private int pauseCount = 0;
 
     //Logs
+    private boolean writeFiles = true;
     private String firstInput = "";
     private final CopyOnWriteArrayList<TimerPauseLog> pauseLogList = new CopyOnWriteArrayList<>();
     private final CopyOnWriteArrayList<TimerTickLog> freezeLogList = new CopyOnWriteArrayList<>();
@@ -209,6 +210,8 @@ public class InGameTimer implements Serializable {
     }
 
     public static void writeTimerLogs(InGameTimer timer) {
+        if (!timer.writeFiles) return;
+
         StringBuilder resultLog = new StringBuilder();
         boolean isRetimed = timer.getRetimedInGameTime() != timer.getInGameTime(false);
         resultLog.append("Result > IGT: ").append(timeToStringFormat(timer.getInGameTime(false)));
@@ -275,7 +278,7 @@ public class InGameTimer implements Serializable {
     private static final ExecutorService saveManagerThread = Executors.newFixedThreadPool(2);
     private static void save() { save(false); }
     private static synchronized void save(boolean withLeave) {
-        if (waitingSaveTask || saveManagerThread.isShutdown() || saveManagerThread.isTerminated() || !INSTANCE.isServerIntegrated || INSTANCE.worldName.isEmpty()) return;
+        if (waitingSaveTask || saveManagerThread.isShutdown() || saveManagerThread.isTerminated() || !INSTANCE.isServerIntegrated || INSTANCE.worldName.isEmpty() || !INSTANCE.writeFiles) return;
 
         String worldName = INSTANCE.worldName, timerData = SpeedRunIGT.GSON.toJson(INSTANCE) + "", completeData = SpeedRunIGT.GSON.toJson(COMPLETED_INSTANCE) + "";
         File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "data");
@@ -398,7 +401,7 @@ public class InGameTimer implements Serializable {
 
         saveManagerThread.submit(() -> {
             try {
-                if (!worldOnly) FileUtils.writeStringToFile(recordFile, resultRecord, StandardCharsets.UTF_8);
+                if (!worldOnly && writeFiles) FileUtils.writeStringToFile(recordFile, resultRecord, StandardCharsets.UTF_8);
                 if (worldRecordFile != null) FileUtils.writeStringToFile(worldRecordFile, resultRecord, StandardCharsets.UTF_8);
                 System.setProperty("speedrunigt.record", recordFile.getName());
                 SpeedRunIGT.debug("Saved record file" + (worldOnly ? "" : "s (with global save)"));
@@ -572,7 +575,7 @@ public class InGameTimer implements Serializable {
             this.freezeLogList.add(new TimerTickLog(activateTicks, loggerTicks, getRealTimeAttack(),
                     tickDelays, getInGameTime(false), this.getStatus() == TimerStatus.IDLE));
             if (this.freezeLogList.size() >= 1000) {
-                if (this.isServerIntegrated) {
+                if (this.isServerIntegrated && writeFiles) {
                     File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "logs");
                     if (worldDir == null) return;
                     File tickFile = new File(worldDir, "igt_freeze" + this.getLogSuffix());
@@ -647,7 +650,7 @@ public class InGameTimer implements Serializable {
                 if (isPaused()) {
                     this.pauseLogList.add(new TimerPauseLog(prevPauseReason, reason, getInGameTime(false), getRealTimeAttack(), nowTime - loggerPausedTime, pauseCount, retime));
                     if (this.pauseLogList.size() >= 100) {
-                        if (this.isServerIntegrated) {
+                        if (this.isServerIntegrated && writeFiles) {
                             File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "logs");
                             if (worldDir == null) return;
                             File pauseFile = new File(worldDir, "igt_timer" + this.getLogSuffix());
@@ -680,6 +683,7 @@ public class InGameTimer implements Serializable {
                         TimerPacketUtils.sendServer2ClientPacket(SpeedRunIGT.DEDICATED_SERVER, new TimerStartPacket(InGameTimer.getInstance(), 0));
                     }
                 }
+                InGameTimerUtils.LATEST_TIMER_TIME = System.currentTimeMillis();
             }
             this.setStatus(TimerStatus.RUNNING);
         }
@@ -797,5 +801,9 @@ public class InGameTimer implements Serializable {
 
     public CopyOnWriteArrayList<RunPortalPos> getEndPortalPosList() {
         return endPortalPosList;
+    }
+
+    public void setWriteFiles(boolean writeFiles) {
+        this.writeFiles = writeFiles;
     }
 }
