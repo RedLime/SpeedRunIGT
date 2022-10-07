@@ -20,11 +20,30 @@ jobs:
         with:
           java-version: '17'
           distribution: 'adopt'
-      - uses: actions/checkout@v3
+
+
+      - name: Checkout 1.16.1
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: '1.16.1'
       - name: Make gradlew executable
         run: chmod +x ./gradlew
       - name: Build artifacts
         run: ./gradlew build
+
+
+      - name: Checkout 1.16.5
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: '1.16.5'
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+      - name: Build artifacts
+        run: ./gradlew build
+
+
       - uses: actions/upload-artifact@v3
         with:
           name: Package
