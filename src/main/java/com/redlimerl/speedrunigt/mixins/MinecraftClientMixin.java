@@ -131,7 +131,7 @@ public abstract class MinecraftClientMixin {
     }
 
     private PositionType currentPositionType = PositionType.DEFAULT;
-    @Inject(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;render(FJ)V", shift = At.Shift.AFTER))
+    @Inject(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;renderStreamIndicator(F)V", shift = At.Shift.AFTER))
     private void drawTimer(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
@@ -187,12 +187,11 @@ public abstract class MinecraftClientMixin {
     private float previousX=0;
     private float previousY=0;
 
-    @Redirect(method="method_12141", at=@At(value="INVOKE", target = "Lorg/lwjgl/input/Mouse;getEventDWheel()I", remap = false))
-    public int getScrolled(){
-        if(Mouse.getEventDWheel()!=0){
+    @Inject(method="method_12141", at=@At(value="INVOKE", target = "Lorg/lwjgl/input/Mouse;getEventDWheel()I", remap = false))
+    public void getScrolled(CallbackInfo ci) {
+        if(Mouse.getEventDWheel() != 0){
             unlock();
         }
-        return Mouse.getEventDWheel();
     }
 
     @Inject(method="tick",at=@At(value = "HEAD"))
