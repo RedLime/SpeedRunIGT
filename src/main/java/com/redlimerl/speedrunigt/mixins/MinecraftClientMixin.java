@@ -33,7 +33,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MinecraftClient.class)
@@ -186,14 +185,11 @@ public abstract class MinecraftClientMixin {
         MixinValues.IS_RENDERED_BEFORE = false;
     }
 
-
-
-    @Redirect(method="tick", at=@At(value="INVOKE", target = "Lorg/lwjgl/input/Mouse;getEventDWheel()I", remap = false))
-    public int getScrolled(){
-        if(Mouse.getEventDWheel()!=0){
+    @Inject(method="tick", at=@At(value="INVOKE", target = "Lorg/lwjgl/input/Mouse;getEventDWheel()I", remap = false))
+    public void getScrolled(CallbackInfo ci) {
+        if (Mouse.getEventDWheel() !=0 ) {
             unlock();
         }
-        return Mouse.getEventDWheel();
     }
 
     private void unlock() {
