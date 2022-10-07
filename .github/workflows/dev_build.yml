@@ -21,10 +21,10 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
       - uses: actions/checkout@v3
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-      - name: Build artifacts
-        run: ./gradlew build
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        with:
+          arguments: build
       - uses: actions/upload-artifact@v3
         with:
           name: Package
