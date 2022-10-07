@@ -14,7 +14,6 @@
     "coop.TimeCommandMixin",
     "network.CustomPayloadC2SPacketAccessor",
     "network.ServerPlayNetworkHandlerMixin",
-    "server.DedicatedServerMixin",
     "timeline.ServerPlayerEntityMixin"
   ],
   "client": [
@@ -48,6 +47,9 @@
     "timeline.SoundSystemMixin",
     "translate.I18nMixin",
     "translate.TranslatableTextMixin"
+  ],
+  "server": [
+    "server.DedicatedServerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
