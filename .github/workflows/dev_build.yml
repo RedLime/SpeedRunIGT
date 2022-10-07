@@ -42,6 +42,7 @@ jobs:
           path: build/libs/*.jar
   publish:
     runs-on: ubuntu-latest
+    needs: build
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
