@@ -33,6 +33,7 @@ import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.level.LevelInfo;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -62,8 +63,8 @@ public abstract class MinecraftClientMixin {
 
     @Shadow private boolean paused;
 
-    @Shadow @Final public TextRenderer textRenderer;
-    @Shadow @Final private Window window;
+    @Shadow public TextRenderer textRenderer;
+    @Shadow public Window window;
     private boolean disconnectCheck = false;
 
     @Inject(at = @At("HEAD"), method = "startIntegratedServer")
