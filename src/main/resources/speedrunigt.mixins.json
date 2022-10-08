@@ -13,13 +13,13 @@
     "coop.PlayerManagerMixin",
     "coop.TimeCommandMixin",
     "network.ServerPlayNetworkHandlerMixin",
-    "server.DedicatedServerMixin",
     "timeline.ServerPlayerEntityMixin"
   ],
   "client": [
     "ClientAdvancementManagerMixin",
     "ClientPlayerEntityMixin",
     "ClientWorldMixin",
+    "InGameHudMixin",
     "KeyBindingMixin",
     "MinecraftClientMixin",
     "PlayerAdvancementTrackerMixin",
@@ -38,11 +38,15 @@
     "screen.CreditsScreenMixin",
     "screen.DownloadingTerrainScreenMixin",
     "screen.GameMenuScreenMixin",
+    "screen.LevelLoadingScreenMixin",
     "screen.OptionsScreenMixin",
     "server.IntegratedServerMixin",
     "timeline.SoundSystemMixin",
     "translate.I18nMixin",
     "translate.TranslatableTextMixin"
+  ],
+  "server": [
+    "server.DedicatedServerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
