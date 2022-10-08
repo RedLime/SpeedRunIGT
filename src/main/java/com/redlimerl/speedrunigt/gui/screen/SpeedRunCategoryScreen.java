@@ -5,6 +5,7 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
+import com.redlimerl.speedrunigt.timer.category.CustomCategoryManager;
 import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.fabricmc.api.EnvType;
@@ -27,6 +28,7 @@ public class SpeedRunCategoryScreen extends Screen {
     private final ArrayList<ButtonWidget> widgetButtons = new ArrayList<>();
 
     public SpeedRunCategoryScreen(Screen parent) {
+        CustomCategoryManager.init(false);
         this.parent = parent;
     }
 
@@ -67,6 +69,7 @@ public class SpeedRunCategoryScreen extends Screen {
         public CategorySelectionListWidget(MinecraftClient minecraft) {
             super(minecraft, SpeedRunCategoryScreen.this.width, SpeedRunCategoryScreen.this.height, 32, SpeedRunCategoryScreen.this.height - 55, 24);
             for (RunCategory runCategory : RunCategory.getCategories().values()) {
+                if (runCategory.isHideCategory()) continue;
                 CategoryEntry entry = new CategoryEntry(runCategory);
                 field_20307.add(entry);
                 this.method_18423().add(entry);
