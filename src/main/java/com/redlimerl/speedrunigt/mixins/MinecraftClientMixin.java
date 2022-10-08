@@ -143,7 +143,7 @@ public abstract class MinecraftClientMixin {
     }
 
     private PositionType currentPositionType = PositionType.DEFAULT;
-    @Inject(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;renderStreamIndicator(F)V", shift = At.Shift.AFTER))
+    @Inject(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/AchievementNotification;tick()V", shift = At.Shift.AFTER))
     private void drawTimer(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
@@ -157,7 +157,7 @@ public abstract class MinecraftClientMixin {
 
         long time = System.currentTimeMillis() - InGameTimerUtils.LATEST_TIMER_TIME;
         if (time < 2950) {
-            Window window = new Window((MinecraftClient) ((Object) this), this.width, this.height);
+            Window window = new Window(this.options, this.width, this.height);
             String text = "SpeedRunIGT v" + (SpeedRunIGT.MOD_VERSION.split("\\+")[0]);
             this.textRenderer.draw(text, this.currentScreen != null ? (int) ((window.getScaledWidth() - this.textRenderer.getStringWidth(text)) / 2f) : 4, (int) window.getScaledHeight() - 12,
                     ColorMixer.getArgb((int) (MathHelper.clamp((3000 - time) / 1000.0, 0, 1) * (this.currentScreen != null ? 90 : 130)), 255, 255, 255));
