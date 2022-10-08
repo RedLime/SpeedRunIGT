@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.mixins;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.SpeedRunIGTClient;
 import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
@@ -15,15 +16,19 @@ import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import com.redlimerl.speedrunigt.utils.MixinValues;
 import com.redlimerl.speedrunigt.utils.Vec2f;
+import com.redlimerl.speedrunigt.version.ColorMixer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.ProgressScreen;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.*;
 import net.minecraft.client.options.GameOptions;
+import net.minecraft.client.util.Window;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.crash.CrashReport;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.level.LevelInfo;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Mouse;
@@ -32,7 +37,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MinecraftClient.class)
@@ -49,6 +53,9 @@ public abstract class MinecraftClientMixin {
 
     @Shadow private boolean paused;
 
+    @Shadow public TextRenderer textRenderer;
+    @Shadow public int width;
+    @Shadow public int height;
     private boolean disconnectCheck = false;
 
     @Inject(at = @At("HEAD"), method = "startGame")
@@ -116,8 +123,10 @@ public abstract class MinecraftClientMixin {
     private int saveTickCount = 0;
     @Inject(method = "tick", at = @At("RETURN"))
     private void onTickMixin(CallbackInfo ci) {
-        if (++saveTickCount >= 20)
+        if (++saveTickCount >= 20) {
             SpeedRunOption.checkSave();
+            saveTickCount = 0;
+        }
     }
 
     @Inject(method = "runGameLoop", at = @At("TAIL"))
@@ -145,6 +154,18 @@ public abstract class MinecraftClientMixin {
             } else {
                 timer.updateFirstRendered();
             }
+        }
+
+        long time = System.currentTimeMillis() - InGameTimerUtils.LATEST_TIMER_TIME;
+        if (time < 2950) {
+            Window window = new Window((MinecraftClient) ((Object) this), this.width, this.height);
+            GlStateManager.pushMatrix();
+            GlStateManager.enableBlend();
+            String text = "SpeedRunIGT v" + (SpeedRunIGT.MOD_VERSION.split("\\+")[0]);
+            this.textRenderer.draw(text, this.currentScreen != null ? (int) ((window.getScaledWidth() - this.textRenderer.getStringWidth(text)) / 2f) : 4, (int) window.getScaledHeight() - 12,
+                    ColorMixer.getArgb((int) (MathHelper.clamp((3000 - time) / 1000.0, 0, 1) * (this.currentScreen != null ? 90 : 130)), 255, 255, 255));
+            GlStateManager.disableBlend();
+            GlStateManager.popMatrix();
         }
 
         SpeedRunIGT.DEBUG_DATA = timer.getStatus().name();
