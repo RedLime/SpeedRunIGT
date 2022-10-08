@@ -17,22 +17,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LoadingScreenRenderer.class)
 public class LevelLoadingScreenMixin {
 
-    @Shadow private Window window;
+    @Shadow private Window field_7695;
 
-    @Shadow private MinecraftClient client;
+    @Shadow private MinecraftClient field_1029;
 
     @Inject(method = "setTitle", at = @At("RETURN"))
     public void onInit(CallbackInfo ci) {
         InGameTimerUtils.LATEST_TIMER_TIME = System.currentTimeMillis();
     }
 
-    @Inject(method = "setProgressPercentage", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;drawWithShadow(Ljava/lang/String;FFI)I", shift = At.Shift.BEFORE))
+    @Inject(method = "progressStagePercentage", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;drawWithShadow(Ljava/lang/String;FFI)I", shift = At.Shift.BEFORE))
     public void onRender(int percentage, CallbackInfo ci) {
         long time = System.currentTimeMillis() - InGameTimerUtils.LATEST_TIMER_TIME;
         if (time < 2950) {
             GlStateManager.pushMatrix();
             String text = "SpeedRunIGT v" + (SpeedRunIGT.MOD_VERSION.split("\\+")[0]);
-            this.client.textRenderer.draw(text, (int) ((window.getScaledWidth() - this.client.textRenderer.getStringWidth(text)) / 2f), (int) window.getScaledHeight() - 12,
+            this.field_1029.textRenderer.draw(text, (int) ((field_7695.getScaledWidth() - this.field_1029.textRenderer.getStringWidth(text)) / 2f), (int) field_7695.getScaledHeight() - 12,
                     ColorMixer.getArgb((int) (MathHelper.clamp((3000 - time) / 1000.0, 0, 1) * 90), 255, 255, 255));
             GlStateManager.popMatrix();
         }
