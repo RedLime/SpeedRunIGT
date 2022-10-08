@@ -14,6 +14,7 @@ public class ObtainItemCategoryCondition extends CategoryCondition.Condition<Lis
     private final int itemDamage;
     private final int itemAmount;
     private final String nbtTag;
+    private final boolean strictMode;
 
     public ObtainItemCategoryCondition(JsonObject jsonObject) throws InvalidCategoryException {
         super(jsonObject);
@@ -23,6 +24,7 @@ public class ObtainItemCategoryCondition extends CategoryCondition.Condition<Lis
             this.itemAmount = jsonObject.has("item_amount") ? jsonObject.get("item_amount").getAsInt() : 1; // Optional
             this.itemDamage = jsonObject.has("item_damage") ? jsonObject.get("item_damage").getAsInt() : 0; // Optional
             this.nbtTag = jsonObject.has("item_tag") ? jsonObject.get("item_tag").getAsString() : ""; // Optional
+            this.strictMode = !jsonObject.has("strict_mode") || jsonObject.get("strict_mode").getAsBoolean(); // Optional
         } catch (Exception e) {
             throw new InvalidCategoryException(InvalidCategoryException.Reason.INVALID_JSON_DATA, "Failed to read condition \"" + this.getName() + "\"");
         }
@@ -42,5 +44,9 @@ public class ObtainItemCategoryCondition extends CategoryCondition.Condition<Lis
         }
 
         return amount >= itemAmount;
+    }
+
+    public boolean isStrictMode() {
+        return strictMode;
     }
 }
