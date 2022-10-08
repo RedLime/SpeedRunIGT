@@ -3,8 +3,8 @@ package com.redlimerl.speedrunigt.timer;
 import com.google.common.collect.Maps;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 public class TimerAdvancementTracker implements Serializable {
     @SuppressWarnings("unused")
@@ -33,7 +33,7 @@ public class TimerAdvancementTracker implements Serializable {
     public static class AdvancementTrack extends Track {
         private boolean complete;
         private boolean is_advancement;
-        private final HashMap<String, Track> criteria = Maps.newHashMap();
+        private final ConcurrentSkipListMap<String, Track> criteria = new ConcurrentSkipListMap<>();
 
         public AdvancementTrack() {
             super(0, 0);
@@ -65,7 +65,7 @@ public class TimerAdvancementTracker implements Serializable {
         }
     }
 
-    private final HashMap<String, AdvancementTrack> advancements = Maps.newHashMap();
+    private final ConcurrentSkipListMap<String, AdvancementTrack> advancements = new ConcurrentSkipListMap<>();
 
     public synchronized AdvancementTrack getOrCreateTrack(String string) {
         if (advancements.containsKey(string)) return advancements.get(string);
