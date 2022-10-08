@@ -58,6 +58,4 @@ jobs:
           repo_token: '${{ secrets.GITHUB_TOKEN }}'
           prerelease: ${{ inputs.is_prerelease }}
           title: ${{ inputs.release_version }}
-          files: |
-            LICENSE*
-            ${{steps.download.outputs.download-path}}
+          files: ${{steps.download.outputs.download-path}}
