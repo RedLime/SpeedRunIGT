@@ -37,6 +37,7 @@ public class InGameTimerUtils {
     public static final HashSet<Object> CHANGED_OPTIONS = Sets.newHashSet();
     public static boolean RETIME_IS_WAITING_LOAD = false;
     public static boolean IS_SET_SEED = false;
+    public static long LATEST_TIMER_TIME = 0;
 
     public static @Nullable File getTimerLogDir(String worldName, String pathName) {
         Path path;

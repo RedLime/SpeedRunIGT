@@ -13,6 +13,7 @@ public class RunCategoryBuilder {
     private boolean autoStart = true;
     private boolean canSegment = false;
     private boolean customUrl = false;
+    private boolean hideCategory = false;
     private Function<InGameTimer, Boolean> retimeFunction = (value) -> false;
 
     public static RunCategoryBuilder create(String id, String categoryUrl, String translateKey) {
@@ -37,6 +38,7 @@ public class RunCategoryBuilder {
                 autoStart,
                 canSegment,
                 customUrl,
+                hideCategory,
                 retimeFunction
         );
     }
@@ -55,6 +57,11 @@ public class RunCategoryBuilder {
 
     public RunCategoryBuilder setUseCustomUrl(boolean useCustomUrl) {
         this.customUrl = useCustomUrl;
+        return this;
+    }
+
+    public RunCategoryBuilder setHideCategory(boolean hideCategory) {
+        this.hideCategory = hideCategory;
         return this;
     }
 
