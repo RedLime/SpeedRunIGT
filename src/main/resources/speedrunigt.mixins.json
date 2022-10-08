@@ -20,6 +20,7 @@
     "AchievementNotificationMixin",
     "ClientPlayerEntityMixin",
     "ClientWorldMixin",
+    "InGameHudMixin",
     "KeyBindingMixin",
     "MinecraftClientMixin",
     "ServerStatHandlerMixin",
@@ -39,11 +40,15 @@
     "screen.CreditsScreenMixin",
     "screen.DownloadingTerrainScreenMixin",
     "screen.GameMenuScreenMixin",
+    "screen.LevelLoadingScreenMixin",
     "screen.OptionsScreenMixin",
     "server.IntegratedServerMixin",
     "timeline.SoundSystemMixin",
     "translate.I18nMixin",
     "translate.TranslatableTextMixin"
+  ],
+  "server": [
+    "server.DedicatedServerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
