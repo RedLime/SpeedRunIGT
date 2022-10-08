@@ -20,8 +20,12 @@ import java.util.Map;
 
 public class CategoryCondition implements Serializable {
 
-    private static class Conditions implements Serializable {
+    public static class Conditions implements Serializable {
         private final ArrayList<Condition<?>> conditions = new ArrayList<>();
+
+        public List<Condition<?>> getConditions() {
+            return conditions;
+        }
     }
 
     @SuppressWarnings("FieldCanBeLocal")
@@ -120,5 +124,9 @@ public class CategoryCondition implements Serializable {
         ArrayList<Condition<?>> list = Lists.newArrayList();
         for (Conditions availableCondition : availableConditions) list.addAll(availableCondition.conditions);
         return list;
+    }
+
+    public List<Conditions> getConditions() {
+        return availableConditions;
     }
 }
