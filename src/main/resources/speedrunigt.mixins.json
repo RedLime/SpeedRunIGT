@@ -14,7 +14,6 @@
     "coop.TimeCommandMixin",
     "network.CustomPayloadC2SPacketAccessor",
     "network.ServerPlayNetworkHandlerMixin",
-    "server.DedicatedServerMixin",
     "timeline.ServerPlayerEntityMixin"
   ],
   "client": [
@@ -22,6 +21,7 @@
     "ClientPlayerEntityMixin",
     "ClientWorldMixin",
     "IntegratedServerLoaderMixin",
+    "InGameHudMixin",
     "KeyBindingMixin",
     "MinecraftClientMixin",
     "MouseMixin",
@@ -40,11 +40,15 @@
     "screen.DownloadingTerrainScreenMixin",
     "screen.GameMenuScreenMixin",
     "screen.GeneratorOptionsMixin",
+    "screen.LevelLoadingScreenMixin",
     "screen.OptionsScreenMixin",
     "server.IntegratedServerMixin",
     "timeline.SoundSystemMixin",
     "translate.I18nMixin",
     "translate.TranslatableTextMixin"
+  ],
+  "server": [
+    "server.DedicatedServerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

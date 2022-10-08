@@ -43,6 +43,7 @@ public class InGameTimerUtils {
     public static boolean RETIME_IS_WAITING_LOAD = false;
     public static boolean IS_SET_SEED = false;
     public static boolean CAN_DISCONNECT = false;
+    public static long LATEST_TIMER_TIME = 0;
 
     public static @Nullable File getTimerLogDir(String worldName, String pathName) {
         Path path;

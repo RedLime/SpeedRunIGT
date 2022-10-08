@@ -10,6 +10,7 @@ import net.minecraft.util.math.Vec2f;
 
 import java.util.Objects;
 
+@SuppressWarnings("Convert2Diamond")
 public class SpeedRunOptions {
     public static final OptionArgument<RunCategory> TIMER_CATEGORY = new OptionArgument<RunCategory>(new Identifier(SpeedRunIGT.MOD_ID, "timer_category_v7"), RunCategories.ANY) {
         @Override
@@ -249,6 +250,30 @@ public class SpeedRunOptions {
     };
 
     public static final OptionArgument<Boolean> ALWAYS_USE_AUTO_RETIME = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "always_use_auto_retime"), false) {
+        @Override
+        public Boolean valueFromString(String string) {
+            return Objects.equals(string, "true");
+        }
+
+        @Override
+        public String valueToString(Boolean value) {
+            return String.valueOf(value);
+        }
+    };
+
+    public static final OptionArgument<Boolean> ENABLE_PRACTICE_DETECT = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "practice_detect"), true) {
+        @Override
+        public Boolean valueFromString(String string) {
+            return Objects.equals(string, "true");
+        }
+
+        @Override
+        public String valueToString(Boolean value) {
+            return String.valueOf(value);
+        }
+    };
+
+    public static final OptionArgument<Boolean> TELEPORT_TO_END_PRACTICE = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "teleport_to_practice"), true) {
         @Override
         public Boolean valueFromString(String string) {
             return Objects.equals(string, "true");
