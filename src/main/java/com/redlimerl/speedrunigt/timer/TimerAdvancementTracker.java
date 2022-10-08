@@ -4,7 +4,7 @@ import com.google.common.collect.Maps;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 public class TimerAdvancementTracker implements Serializable {
     @SuppressWarnings("unused")
@@ -33,7 +33,7 @@ public class TimerAdvancementTracker implements Serializable {
     public static class AdvancementTrack extends Track {
         private boolean complete;
         private boolean is_advancement;
-        private final ConcurrentMap<String, Track> criteria = Maps.newConcurrentMap();
+        private final ConcurrentSkipListMap<String, Track> criteria = new ConcurrentSkipListMap<>();
 
         public AdvancementTrack() {
             super(0, 0);
@@ -65,7 +65,7 @@ public class TimerAdvancementTracker implements Serializable {
         }
     }
 
-    private final ConcurrentMap<String, AdvancementTrack> advancements = Maps.newConcurrentMap();
+    private final ConcurrentSkipListMap<String, AdvancementTrack> advancements = new ConcurrentSkipListMap<>();
 
     public AdvancementTrack getOrCreateTrack(String string) {
         if (advancements.containsKey(string)) return advancements.get(string);
