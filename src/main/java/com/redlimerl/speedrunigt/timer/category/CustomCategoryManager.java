@@ -22,6 +22,9 @@ public class CustomCategoryManager {
     }
 
     public static void init() {
+        init(true);
+    }
+    public static void init(boolean warningScreen) {
         File dir = getCategoryPath().toFile();
         dir.mkdirs();
 
@@ -48,7 +51,7 @@ public class CustomCategoryManager {
                 try {
                     RunCategory.registerCategory(runCategory);
                 } catch (IllegalArgumentException e) {
-                    InGameTimerUtils.setCategoryWarningScreen(file.getName(), new InvalidCategoryException(InvalidCategoryException.Reason.DUPLICATED_CATEGORY_ID, ""));
+                    if (warningScreen) InGameTimerUtils.setCategoryWarningScreen(file.getName(), new InvalidCategoryException(InvalidCategoryException.Reason.DUPLICATED_CATEGORY_ID, ""));
                 }
             } catch (JsonParseException | IOException e) {
                 InGameTimerUtils.setCategoryWarningScreen(file.getName(), new InvalidCategoryException(InvalidCategoryException.Reason.FAILED_JSON_PARSE, ""));
