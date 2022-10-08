@@ -17,14 +17,19 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
 import net.minecraft.client.font.Font;
 import net.minecraft.client.font.FontStorage;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.hud.BackgroundHelper;
 import net.minecraft.client.gui.screen.*;
 import net.minecraft.client.option.GameOptions;
+import net.minecraft.client.util.Window;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.resource.ReloadableResourceManagerImpl;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.SinglePreparationResourceReloader;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.crash.CrashReport;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.registry.DynamicRegistryManager;
@@ -60,6 +65,8 @@ public abstract class MinecraftClientMixin {
 
     @Shadow private boolean paused;
 
+    @Shadow @Final public TextRenderer textRenderer;
+    @Shadow @Final private Window window;
     private boolean disconnectCheck = false;
 
     @Inject(at = @At("HEAD"), method = "createWorld")
@@ -131,8 +138,10 @@ public abstract class MinecraftClientMixin {
     private int saveTickCount = 0;
     @Inject(method = "tick", at = @At("RETURN"))
     private void onTickMixin(CallbackInfo ci) {
-        if (++saveTickCount >= 20)
+        if (++saveTickCount >= 20) {
             SpeedRunOption.checkSave();
+            saveTickCount = 0;
+        }
     }
 
     @Inject(method = "render(Z)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Util;getMeasuringTimeNano()J", shift = At.Shift.AFTER))
@@ -153,7 +162,7 @@ public abstract class MinecraftClientMixin {
     private PositionType currentPositionType = PositionType.DEFAULT;
     private boolean previousNoUI = false;
     @Inject(method = "render", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/client/toast/ToastManager;draw(Lnet/minecraft/client/util/math/MatrixStack;)V", shift = At.Shift.AFTER))
+            target = "Lnet/minecraft/client/gl/Framebuffer;endWrite()V", shift = At.Shift.BEFORE))
     private void drawTimer(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
@@ -163,6 +172,13 @@ public abstract class MinecraftClientMixin {
             } else {
                 timer.updateFirstRendered();
             }
+        }
+
+        long time = System.currentTimeMillis() - InGameTimerUtils.LATEST_TIMER_TIME;
+        if (time < 2950) {
+            String text = "SpeedRunIGT v" + (SpeedRunIGT.MOD_VERSION.split("\\+")[0]);
+            this.textRenderer.draw(new MatrixStack(), text, this.currentScreen != null ? ((this.window.getScaledWidth() - this.textRenderer.getWidth(text)) / 2f) : 4, this.window.getScaledHeight() - 12,
+                    BackgroundHelper.ColorMixer.getArgb((int) (MathHelper.clamp((3000 - time) / 1000.0, 0, 1) * (this.currentScreen != null ? 90 : 130)), 255, 255, 255));
         }
 
         SpeedRunIGT.DEBUG_DATA = timer.getStatus().name();
