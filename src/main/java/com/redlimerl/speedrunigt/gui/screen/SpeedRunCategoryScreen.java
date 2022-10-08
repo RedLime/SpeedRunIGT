@@ -5,6 +5,7 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
+import com.redlimerl.speedrunigt.timer.category.CustomCategoryManager;
 import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.fabricmc.api.EnvType;
@@ -30,6 +31,7 @@ public class SpeedRunCategoryScreen extends Screen {
     private final ArrayList<ButtonWidget> widgetButtons = new ArrayList<>();
 
     public SpeedRunCategoryScreen(Screen parent) {
+        CustomCategoryManager.init(false);
         this.parent = parent;
     }
 
@@ -72,7 +74,7 @@ public class SpeedRunCategoryScreen extends Screen {
         private final ArrayList<CategoryEntry> entries = new ArrayList<>();
         public CategorySelectionListWidget(MinecraftClient minecraft) {
             super(minecraft, SpeedRunCategoryScreen.this.field_22535, SpeedRunCategoryScreen.this.field_22536, 32, SpeedRunCategoryScreen.this.field_22536 - 55, 24);
-            entries.addAll(RunCategory.getCategories().values().stream().map(CategoryEntry::new).collect(Collectors.toList()));
+            entries.addAll(RunCategory.getCategories().values().stream().filter(runCategory -> !runCategory.isHideCategory()).map(CategoryEntry::new).collect(Collectors.toList()));
             widgetButtons.addAll(entries.stream().map(entry -> entry.checkBox).collect(Collectors.toList()));
         }
 
