@@ -18,7 +18,6 @@ import net.minecraft.client.RunArgs;
 import net.minecraft.client.font.Font;
 import net.minecraft.client.font.FontStorage;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.hud.BackgroundHelper;
 import net.minecraft.client.gui.screen.*;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.util.Window;
@@ -29,6 +28,7 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.SinglePreparationResourceReloader;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.crash.CrashReport;
+import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.profiler.Profiler;
@@ -178,7 +178,7 @@ public abstract class MinecraftClientMixin {
         if (time < 2950) {
             String text = "SpeedRunIGT v" + (SpeedRunIGT.MOD_VERSION.split("\\+")[0]);
             this.textRenderer.draw(new MatrixStack(), text, this.currentScreen != null ? ((this.window.getScaledWidth() - this.textRenderer.getWidth(text)) / 2f) : 4, this.window.getScaledHeight() - 12,
-                    BackgroundHelper.ColorMixer.getArgb((int) (MathHelper.clamp((3000 - time) / 1000.0, 0, 1) * (this.currentScreen != null ? 90 : 130)), 255, 255, 255));
+                    ColorHelper.Argb.getArgb((int) (MathHelper.clamp((3000 - time) / 1000.0, 0, 1) * (this.currentScreen != null ? 90 : 130)), 255, 255, 255));
         }
 
         SpeedRunIGT.DEBUG_DATA = timer.getStatus().name();
