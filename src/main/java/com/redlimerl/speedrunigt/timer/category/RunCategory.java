@@ -27,7 +27,7 @@ public class RunCategory {
     }
 
     public static void registerCategory(RunCategory category) {
-        if (SpeedRunIGT.isInitialized()) return;
+        //if (SpeedRunIGT.isInitialized()) return;
         for (String id : CATEGORIES.keySet()) {
             if (id.equalsIgnoreCase(category.getID())) {
                 throw new IllegalArgumentException("ID \"" + id + "\" is an already registered RunCategory ID.");
@@ -44,6 +44,7 @@ public class RunCategory {
     private final boolean autoStart;
     private final boolean canSegment;
     private final boolean customUrl;
+    private final boolean hideCategory;
     private final Function<InGameTimer, Boolean> retimeFunction;
     private final @Nullable String conditionFileName;
     private final @Nullable JsonArray conditionJson;
@@ -57,11 +58,11 @@ public class RunCategory {
     }
 
     public RunCategory(String id, String categoryUrl, String translateKey, @Nullable String conditionFileName, @Nullable JsonArray conditionJson) {
-        this(id, categoryUrl, translateKey, conditionFileName, conditionJson, true, false, false, (value) -> false);
+        this(id, categoryUrl, translateKey, conditionFileName, conditionJson, true, false, false, false, (value) -> false);
     }
 
     public RunCategory(String id, String categoryUrl, String translateKey, @Nullable String conditionFileName, @Nullable JsonArray conditionJson,
-                       boolean autoStart, boolean canSegment, boolean customUrl, Function<InGameTimer, Boolean> retimeFunction) {
+                       boolean autoStart, boolean canSegment, boolean customUrl, boolean hideCategory, Function<InGameTimer, Boolean> retimeFunction) {
         this.id = id;
         this.categoryUrl = categoryUrl;
         this.translateKey = translateKey;
@@ -70,6 +71,7 @@ public class RunCategory {
         this.autoStart = autoStart;
         this.canSegment = canSegment;
         this.customUrl = customUrl;
+        this.hideCategory = hideCategory;
         this.retimeFunction = retimeFunction;
     }
 
@@ -92,6 +94,8 @@ public class RunCategory {
     public boolean isNeedAutoRetime(InGameTimer timer) {
         return retimeFunction.apply(timer);
     }
+
+    public boolean isHideCategory() { return hideCategory; }
 
     public TranslatableText getText() {
         return new TranslatableText(translateKey);
