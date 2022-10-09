@@ -44,7 +44,7 @@
   "speedrunigt.option.timer_category": "קטגוריית הטיימר",
   "speedrunigt.option.timer_category.unknown": "קטגוריה לא ידועה",
   "speedrunigt.option.timer_category.warning": "ישנן מספר קטגוריות שאינן נתמכות, שיוספו בעתיד",
-  "speedrunigt.option.timer_category.any": "Any%",
+  "speedrunigt.option.timer_category.any": "Any%%",
   "speedrunigt.option.timer_category.high": "High%",
   "speedrunigt.option.timer_category.kill_all_bosses": "הריגת כל הבוסים",
   "speedrunigt.option.timer_category.kill_wither": "הריגת הוויד'ר",
