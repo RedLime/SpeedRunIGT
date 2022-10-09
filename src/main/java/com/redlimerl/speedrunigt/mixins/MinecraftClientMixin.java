@@ -135,7 +135,7 @@ public abstract class MinecraftClientMixin {
     private PositionType currentPositionType = PositionType.DEFAULT;
     private boolean previousNoUI = false;
     @Inject(method = "render", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/client/gl/Framebuffer;endWrite()V", shift = At.Shift.BEFORE))
+            target = "Lnet/minecraft/client/toast/ToastManager;draw(Lnet/minecraft/client/util/math/MatrixStack;)V", shift = At.Shift.AFTER))
     private void drawTimer(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
