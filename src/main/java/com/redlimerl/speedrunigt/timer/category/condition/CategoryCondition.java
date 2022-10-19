@@ -8,7 +8,7 @@ import com.redlimerl.speedrunigt.api.CategoryConditionRegisterHelper;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
 import net.fabricmc.loader.api.SemanticVersion;
-import net.fabricmc.loader.impl.util.version.VersionPredicateParser;
+import net.fabricmc.loader.api.metadata.version.VersionPredicate;
 import org.spongepowered.include.com.google.common.collect.Lists;
 import org.spongepowered.include.com.google.common.collect.Maps;
 
@@ -91,7 +91,7 @@ public class CategoryCondition implements Serializable {
                 for (JsonElement jsonCondition : jsonConditions) {
                     JsonObject jsonObject = jsonCondition.getAsJsonObject();
                     if (jsonObject.has("version") &&
-                            !VersionPredicateParser.parse(jsonObject.get("version").getAsString()).test(SemanticVersion.parse(InGameTimerUtils.getMinecraftVersion()))) {
+                            !VersionPredicate.parse(jsonObject.get("version").getAsString()).test(SemanticVersion.parse(InGameTimerUtils.getMinecraftVersion()))) {
                         continue;
                     }
                     andConditions.conditions.add(getConditionType(jsonCondition.getAsJsonObject()));
