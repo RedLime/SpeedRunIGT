@@ -65,9 +65,9 @@ jobs:
           files: build/libs/!(*-@(dev|sources|all)).jar
 
           name: ${{ inputs.release_version }} (for ${{ steps.properties.outputs.minecraft_version }})
-          version: ${{ inputs.release_version }}+${{ steps.read_property.outputs.minecraft_version }}
+          version: ${{ inputs.release_version }}+${{ steps.properties.outputs.minecraft_version }}
           changelog: Check changelogs in https://github.com/RedLime/SpeedRunIGT/releases/tag/${{ inputs.release_version }}
-          game-versions: ${{ steps.read_property.outputs.mcversion }}
+          game-versions: ${{ steps.properties.outputs.minecraft_version }}
           version-resolver: exact
           version-type: release
           loaders: |
