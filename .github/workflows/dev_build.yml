@@ -44,12 +44,6 @@ jobs:
             'mcversion minecraft_version'
             'mcfversion minecraft_version_friendly'
 
-      - name: Find correct JAR
-        id: findjar
-        run: |
-          output="$(find build/libs/ ! -name "*-dev.jar" ! -name "*-sources.jar" -type f -printf "%f\n")"
-          echo "::set-output name=jarname::$output"
-
 
       - uses: actions/upload-artifact@v3
         with:
@@ -57,20 +51,27 @@ jobs:
           path: build/libs/*.jar
 
 
-      - name: Upload to Modrinth
-        uses: RubixDev/modrinth-upload@v1
+      - name: Upload artifacts to Modrinth and Curseforge
         if: ${{ inputs.is_prerelease == false }}
+        uses: Kir-Antipov/mc-publish@v3.2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          file_path: build/libs/${{ steps.findjar.outputs.jarname }}
+          modrinth-id: jnkd7LkJ
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          modrinth-featured: true
+          modrinth-unfeature-mode: subset
+
+          curseforge-id: 538881
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+          files: build/libs/!(*-@(dev|sources|all)).jar
+
           name: ${{ inputs.release_version }} (for ${{ steps.read_property.outputs.mcfversion }})
-          version: ${{ github.event.release.tag_name }}+${{ steps.read_property.outputs.mcversion }}
           changelog: Check changelogs in https://github.com/RedLime/SpeedRunIGT/releases/tag/${{ inputs.release_version }}
-          game_versions: ${{ steps.read_property.outputs.mcfversion }}
-          release_type: release
-          loaders: fabric,quilt
-          featured: true
-          project_id: jnkd7LkJ
+          game-versions: ${{ steps.read_property.outputs.mcversion }}
+          version-type: exact
+          loaders: |
+            fabric
+            quilt
   publish:
     runs-on: ubuntu-latest
     needs: build
