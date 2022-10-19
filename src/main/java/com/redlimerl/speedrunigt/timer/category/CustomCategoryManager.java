@@ -6,7 +6,7 @@ import com.google.gson.JsonParser;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import net.fabricmc.loader.api.SemanticVersion;
-import net.fabricmc.loader.impl.util.version.VersionPredicateParser;
+import net.fabricmc.loader.api.metadata.version.VersionPredicate;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -37,7 +37,7 @@ public class CustomCategoryManager {
             try {
                 JsonObject jsonObject = new JsonParser().parse(FileUtils.readFileToString(file, StandardCharsets.UTF_8)).getAsJsonObject();
 
-                if (!VersionPredicateParser.parse(jsonObject.get("version").getAsString()).test(SemanticVersion.parse(InGameTimerUtils.getMinecraftVersion()))) {
+                if (!VersionPredicate.parse(jsonObject.get("version").getAsString()).test(SemanticVersion.parse(InGameTimerUtils.getMinecraftVersion()))) {
                     SpeedRunIGT.error(String.format("Failed to add '%s' category file, it doesn't work for this version", file.getName()));
                     continue;
                 }
