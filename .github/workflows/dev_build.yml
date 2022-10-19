@@ -42,7 +42,6 @@ jobs:
           path: './gradle.properties'
           properties: |
             'mcversion minecraft_version'
-            'mcfversion minecraft_version_friendly'
 
 
       - uses: actions/upload-artifact@v3
@@ -65,7 +64,7 @@ jobs:
 
           files: build/libs/!(*-@(dev|sources|all)).jar
 
-          name: ${{ inputs.release_version }} (for ${{ steps.read_property.outputs.mcfversion }})
+          name: ${{ inputs.release_version }} (for ${{ steps.read_property.outputs.mcversion }})
           changelog: Check changelogs in https://github.com/RedLime/SpeedRunIGT/releases/tag/${{ inputs.release_version }}
           game-versions: ${{ steps.read_property.outputs.mcversion }}
           version-resolver: exact
