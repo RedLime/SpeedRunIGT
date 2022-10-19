@@ -14,7 +14,7 @@ import com.redlimerl.speedrunigt.timer.logs.TimerPauseLog;
 import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import com.redlimerl.speedrunigt.timer.running.RunPortalPos;
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.impl.FabricLoaderImpl;
+import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stat.ServerStatHandler;
@@ -195,7 +195,12 @@ public class InGameTimerUtils {
     }
 
     public static String getMinecraftVersion() {
-        return FabricLoaderImpl.INSTANCE.getGameProvider().getNormalizedGameVersion();
+        Optional<ModContainer> mcContainer = FabricLoader.getInstance().getModContainer("minecraft");
+        if (mcContainer.isPresent()) {
+            ModContainer mc = mcContainer.get();
+            return mc.getMetadata().getVersion().getFriendlyString();
+        }
+        return "unknown";
     }
 
     public static boolean isLoadableBlind(Dimension dimensionType, Vec3d netherPos, Vec3d overPos) {
