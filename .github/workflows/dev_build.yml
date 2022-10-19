@@ -36,12 +36,11 @@ jobs:
         run: ./gradlew build
 
       - name: Read value from Properties-file
-        id: read_property
-        uses: christian-draeger/read-properties@1.1.0
+        uses: madhead/read-java-properties@latest
+        id: properties
         with:
-          path: './gradle.properties'
-          properties: |
-            'mcversion minecraft_version'
+          file: gradle.properties
+          all: true
 
 
       - uses: actions/upload-artifact@v3
@@ -64,7 +63,8 @@ jobs:
 
           files: build/libs/!(*-@(dev|sources|all)).jar
 
-          name: ${{ inputs.release_version }} (for ${{ steps.read_property.outputs.mcversion }})
+          name: ${{ inputs.release_version }} (for ${{ steps.properties.outputs.minecraft_version }})
+          version: ${{ inputs.release_version }}+${{ steps.read_property.outputs.minecraft_version }}
           changelog: Check changelogs in https://github.com/RedLime/SpeedRunIGT/releases/tag/${{ inputs.release_version }}
           game-versions: ${{ steps.read_property.outputs.mcversion }}
           version-resolver: exact
