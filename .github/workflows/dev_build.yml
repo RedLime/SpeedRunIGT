@@ -68,7 +68,8 @@ jobs:
           name: ${{ inputs.release_version }} (for ${{ steps.read_property.outputs.mcfversion }})
           changelog: Check changelogs in https://github.com/RedLime/SpeedRunIGT/releases/tag/${{ inputs.release_version }}
           game-versions: ${{ steps.read_property.outputs.mcversion }}
-          version-type: exact
+          version-resolver: exact
+          version-type: release
           loaders: |
             fabric
             quilt
