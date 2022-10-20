@@ -370,6 +370,8 @@ public class InGameTimer implements Serializable {
                     INSTANCE.worldName = name;
                     COMPLETED_INSTANCE.worldName = name;
 
+                    INSTANCE.customCondition.refreshConditionClasses();
+
                     SpeedRunIGT.debug("End timer data loading...");
                     return true;
                 } catch (Throwable e) {
