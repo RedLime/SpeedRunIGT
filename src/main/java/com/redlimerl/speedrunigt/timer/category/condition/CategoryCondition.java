@@ -31,12 +31,14 @@ public class CategoryCondition implements Serializable {
     @SuppressWarnings("FieldCanBeLocal")
     public static class Condition<T> implements Serializable {
         private final String name;
+        private final JsonObject jsonObject;
         boolean isCompleted = false;
 
         public Condition(JsonObject jsonObject) throws InvalidCategoryException {
             if (!jsonObject.has("name"))
                 throw new InvalidCategoryException(InvalidCategoryException.Reason.INVALID_JSON_DATA, "condition \"name\" is undefined.");
             this.name = jsonObject.get("name").getAsString();
+            this.jsonObject = jsonObject;
         }
 
         public final boolean isCompleted() {
@@ -120,7 +122,7 @@ public class CategoryCondition implements Serializable {
         return false;
     }
 
-    public List<Condition<?>> getConditionList() {
+    public List<? extends Condition<?>> getConditionList() {
         ArrayList<Condition<?>> list = Lists.newArrayList();
         for (Conditions availableCondition : availableConditions) list.addAll(availableCondition.conditions);
         return list;
@@ -128,5 +130,22 @@ public class CategoryCondition implements Serializable {
 
     public List<Conditions> getConditions() {
         return availableConditions;
+    }
+
+    public void refreshConditionClasses() {
+        for (Conditions conditions : availableConditions) {
+            ArrayList<Condition<?>> newConditionList = Lists.newArrayList();
+            for (Condition<?> condition : conditions.conditions) {
+                try {
+                    Condition<?> newCondition = getConditionType(condition.jsonObject);
+                    newCondition.setCompleted(condition.isCompleted());
+                    newConditionList.add(newCondition);
+                } catch (InvalidCategoryException e) {
+                    newConditionList.add(condition);
+                }
+            }
+            conditions.conditions.clear();
+            conditions.conditions.addAll(newConditionList);
+        }
     }
 }
