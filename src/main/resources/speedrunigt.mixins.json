@@ -1,7 +1,7 @@
 {
   "required": true,
-  "minVersion": "0.8",
   "package": "com.redlimerl.speedrunigt.mixins",
+  "plugin": "com.redlimerl.speedrunigt.SpeedRunIGTMixinPlugin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "EndPortalBlockMixin",
@@ -33,7 +33,7 @@
     "keybinding.KeyBindingAccessor",
     "network.ClientPlayNetworkHandlerMixin",
     "retime.OptionButtonWidgetMixin",
-    "retime.OptionImplMixin",
+    "retime.SodiumOptionImplMixin",
     "retime.OptionSliderWidgetMixin",
     "retime.OptionScreenMixin",
     "screen.CreditsScreenMixin",
