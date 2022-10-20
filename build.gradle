@@ -35,7 +35,7 @@ processResources {
 
 	filesMatching("fabric.mod.json") {
 		expand "version": project.version
-		filter { line -> line.replace("{{MC_VERSION}}", project.minecraft_version) }
+		filter { line -> line.replace("{{MC_VERSION}}", project.minecraft_version_code) }
 	}
 }
 
