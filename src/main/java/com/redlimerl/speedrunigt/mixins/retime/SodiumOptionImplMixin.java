@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @SuppressWarnings("UnresolvedMixinReference")
 @Pseudo
 @Mixin(targets = "me.jellysquid.mods.sodium.client.gui.options.OptionImpl", remap = false)
-public class OptionImplMixin {
+public class SodiumOptionImplMixin {
 
     @Inject(method = "setValue", remap = false, at = @At("HEAD"))
     public void onSetValue(CallbackInfo ci) {
