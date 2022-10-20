@@ -14,7 +14,7 @@ public class GeneratorOptionsMixin {
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     @Inject(method = "withHardcore", at = @At("HEAD"))
-    public void onGenerate(boolean hardcore, OptionalLong optionalLong, CallbackInfoReturnable<GeneratorOptions> cir) {
+    public void onGenerate(OptionalLong optionalLong, CallbackInfoReturnable<GeneratorOptions> cir) {
         InGameTimerUtils.IS_SET_SEED = optionalLong.isPresent();
     }
 }
