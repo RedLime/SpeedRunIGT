@@ -260,6 +260,10 @@ public class InGameTimer implements Serializable {
                 SpeedRunIGT.error("Failed to save timer logs :( RTA : " + timeToStringFormat(timer.getRealTimeAttack()) + " / IGT : " + timeToStringFormat(timer.getInGameTime(false)));
             }
         });
+
+        if (SpeedRunOption.getOption(SpeedRunOptions.AUTO_SAVE_PLAYER_DATA) && InGameTimerUtils.getServer() != null) {
+            InGameTimerUtils.getServer().getPlayerManager().saveAllPlayerData();
+        }
     }
 
     public static void leave() {
