@@ -51,7 +51,6 @@ public class AllBlocksRunCategory extends RunCategory {
             }
         }
 
-        SpeedRunIGT.debug(placedBlocks.size());
         return placedBlocks.size() >= 650;
     }
 
