@@ -108,6 +108,8 @@
   "speedrunigt.option.generate_record.none": "Wala",
   "speedrunigt.option.delete_all_records": "Tanggalin ang Lahat ng Mga Rekord",
   "speedrunigt.option.delete_all_records.description": "Sigurado ka bang gusto mong tanggalin ang lahat ng Record file sa Records directory?",
+  "speedrunigt.option.auto_save_player_data": "Auto Save Player Data",
+  "speedrunigt.option.auto_save_player_data.description": "If you enable it, it will be saved all player(only) data\nwhen you completed the run. [For another programs like AATool]",
   "speedrunigt.option.timer_start_type": "Timer Start On",
   "speedrunigt.option.timer_start_type.description": "Itakda kung kailan sisimulan ang timer.\n- Awtomatiko: Kung nagpapatakbo ka ng random na binhi, magsisimula ito sa World Render.\n   kung na-takda na binhi, magsisimula ito sa iyong Unang Input.\n- Unang Input: Sinisimulan ang timer sa unang pag-input (pindutin ang key, paggalaw ng mouse)\n- World Render: Simulan ang timer kapag nag-render ang mundo sa unang pagkakataon.",
   "speedrunigt.option.timer_start_type.first_input": "Unang input",
