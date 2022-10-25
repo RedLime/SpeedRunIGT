@@ -108,8 +108,6 @@
   "speedrunigt.option.generate_record.none": "없음",
   "speedrunigt.option.delete_all_records": "모든 레코드 삭제",
   "speedrunigt.option.delete_all_records.description": "정말 레코드 폴더에 있는 모든 레코드 파일들을 삭제할까요?",
-  "speedrunigt.option.auto_save_player_data": "플레이어 데이터 자동 저장",
-  "speedrunigt.option.auto_save_player_data.description": "활성화 시, 런을 끝냈을 때 플레이어 데이터를 저장합니다.\n[AATool같은 타 프로그램을 위한 옵션]",
   "speedrunigt.option.timer_start_type": "타이머 시작 타이밍",
   "speedrunigt.option.timer_start_type.description": "타이머를 언제 시작할지 지정합니다.\n- 자동 : Random Seed일 경우, 월드 렌더과 같이 작동합니다.\n   Set Seed일 경우, 첫 입력과 같이 작동합니다.\n- 첫 입력 : 첫 입력 시 시작합니다. (키를 누르거나, 마우스를 움직임)\n- 월드 렌더 : 월드가 처음 렌더되었을 때 시작합니다.\n",
   "speedrunigt.option.timer_start_type.first_input": "첫 입력",

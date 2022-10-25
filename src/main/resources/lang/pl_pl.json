@@ -108,8 +108,6 @@
   "speedrunigt.option.generate_record.none": "Nic",
   "speedrunigt.option.delete_all_records": "Wyczyść Rejestr",
   "speedrunigt.option.delete_all_records.description": "Czy na pewno chcesz usunąć wszystkie pliki z rejestru?",
-  "speedrunigt.option.auto_save_player_data": "Auto Save Player Data",
-  "speedrunigt.option.auto_save_player_data.description": "If you enable it, it will be saved all player(only) data\nwhen you completed the run. [For another programs like AATool]",
   "speedrunigt.option.timer_start_type": "Włącz Timer",
   "speedrunigt.option.timer_start_type.description": "Wybierz kiedy włączyć timer:\n-Automatycznie: Timer włączy się przy pierwszej akcji jeśli grasz set seed, a przy załadowaniu świata jeśli grasz random seed.\n-Przy pierwszej akcji: Timer włączy się przy pierwszej akcji gracza (ruch myszką, wciśnięcie klawisza)\n-Przy załadowaniu świata: Timer włączy się przy pierwotnym załadowaniu świata.",
   "speedrunigt.option.timer_start_type.first_input": "Pierwszej akcji",

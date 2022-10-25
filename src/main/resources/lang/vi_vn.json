@@ -108,8 +108,6 @@
   "speedrunigt.option.generate_record.none": "Không có",
   "speedrunigt.option.delete_all_records": "Xóa tất cả bản ghi",
   "speedrunigt.option.delete_all_records.description": "Bạn có chắc chắn muốn xóa tất cả các tệp bản ghi trong thư mục bản ghi không?",
-  "speedrunigt.option.auto_save_player_data": "Auto Save Player Data",
-  "speedrunigt.option.auto_save_player_data.description": "If you enable it, it will be saved all player(only) data\nwhen you completed the run. [For another programs like AATool]",
   "speedrunigt.option.timer_start_type": "Timer bắt đầu bật",
   "speedrunigt.option.timer_start_type.description": "Đặt thời điểm bắt đầu hẹn giờ.\n- Tự động: Nếu bạn đang chạy RSG, nó sẽ bắt đầu ở World Render.\n    nếu SSG, nó sẽ bắt đầu ở chuyển động đầu tiên của bạn.\n- Chuyển động đầu tiên: Bắt đầu hẹn giờ ở chuyển động đầu tiên (nhấn phím, di chuyển chuột)\n- World Render: Bắt đầu hẹn giờ khi thế giới load lần đầu tiên.",
   "speedrunigt.option.timer_start_type.first_input": "Chuyển động đầu tiên",

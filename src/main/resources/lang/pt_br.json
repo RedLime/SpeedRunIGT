@@ -108,8 +108,6 @@
   "speedrunigt.option.generate_record.none": "Nenhum",
   "speedrunigt.option.delete_all_records": "Deletar todos os registros",
   "speedrunigt.option.delete_all_records.description": "Tem certeza que deseja excluir todos os arquivos de Registro no diretório de Registros?",
-  "speedrunigt.option.auto_save_player_data": "Auto Save Player Data",
-  "speedrunigt.option.auto_save_player_data.description": "If you enable it, it will be saved all player(only) data\nwhen you completed the run. [For another programs like AATool]",
   "speedrunigt.option.timer_start_type": "O temporizador inicia no",
   "speedrunigt.option.timer_start_type.description": "Defina quando iniciar o temporizador.\n- Automático: se você estiver executando uma semente aleatória, ela inicia na Renderização do Mundo.\n   se a semente for definida, começa na primeira entrada.\n- Primeira entrada: Inicia o temporizador na primeira entrada (key press, Movimento do mouse)\n- Renderização Mundial: Inicie o timer quando o mundo for renderizado pela primeira vez.\n",
   "speedrunigt.option.timer_start_type.first_input": "Primeiro Input",

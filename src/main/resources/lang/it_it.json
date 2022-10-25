@@ -108,8 +108,6 @@
   "speedrunigt.option.generate_record.none": "Nessuna",
   "speedrunigt.option.delete_all_records": "Elimina tutti i salvataggi",
   "speedrunigt.option.delete_all_records.description": "Sei sicuro di voler eliminare tutti i Salvataggi?",
-  "speedrunigt.option.auto_save_player_data": "Auto Save Player Data",
-  "speedrunigt.option.auto_save_player_data.description": "If you enable it, it will be saved all player(only) data\nwhen you completed the run. [For another programs like AATool]",
   "speedrunigt.option.timer_start_type": "Avvio timer",
   "speedrunigt.option.timer_start_type.description": "Imposta quando avviare il timer.\n- Automatico: Se stai correndo un seme casuale, inizia al Caricamento del Mondo.\n   se impostato un seme, inizia al tuo primo Input.\n- Primo Input: avvia il timer al primo input (pressione tasto, movimento del mouse)\n- Caricamento del Mondo: Inizia il timer quando il mondo si carica per la prima volta.\n",
   "speedrunigt.option.timer_start_type.first_input": "Primo Input",

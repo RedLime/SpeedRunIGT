@@ -199,7 +199,6 @@ public class InGameTimer implements Serializable {
 
         INSTANCE.updateRecordString();
         INSTANCE.writeRecordFile(false);
-        InGameTimerUtils.LATEST_TIMER_TIME = System.currentTimeMillis();
 
         for (Consumer<InGameTimer> onCompleteConsumer : onCompleteConsumers) {
             try {
@@ -261,10 +260,6 @@ public class InGameTimer implements Serializable {
                 SpeedRunIGT.error("Failed to save timer logs :( RTA : " + timeToStringFormat(timer.getRealTimeAttack()) + " / IGT : " + timeToStringFormat(timer.getInGameTime(false)));
             }
         });
-
-        if (SpeedRunOption.getOption(SpeedRunOptions.AUTO_SAVE_PLAYER_DATA) && InGameTimerUtils.getServer() != null) {
-            InGameTimerUtils.getServer().getPlayerManager().saveAllPlayerData();
-        }
     }
 
     public static void leave() {
@@ -690,6 +685,7 @@ public class InGameTimer implements Serializable {
                         TimerPacketUtils.sendServer2ClientPacket(SpeedRunIGT.DEDICATED_SERVER, new TimerStartPacket(InGameTimer.getInstance(), 0));
                     }
                 }
+                InGameTimerUtils.LATEST_TIMER_TIME = System.currentTimeMillis();
             }
             this.setStatus(TimerStatus.RUNNING);
         }

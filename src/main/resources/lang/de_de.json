@@ -108,8 +108,6 @@
   "speedrunigt.option.generate_record.none": "Keine",
   "speedrunigt.option.delete_all_records": "Alle Rekorde löschen",
   "speedrunigt.option.delete_all_records.description": "Bist du sicher, dass du alle Rekorde im Rekordordner löschen möchtest?",
-  "speedrunigt.option.auto_save_player_data": "Auto Save Player Data",
-  "speedrunigt.option.auto_save_player_data.description": "If you enable it, it will be saved all player(only) data\nwhen you completed the run. [For another programs like AATool]",
   "speedrunigt.option.timer_start_type": "Timer startet bei",
   "speedrunigt.option.timer_start_type.description": "Legen Sie fest, wann der Timer gestartet werden soll.\n- Automatisch: Wenn Sie einen zufälligen Seed verwenden, startet der Timer, sobald die Welt geladen ist. Wenn der Seed gesetzt ist, beginnt er bei der ersten Eingabe.\n- Erste Eingabe: Startet den Timer bei der ersten Eingabe (Tastendruck, Mausbewegung)\n- Laden der Welt: Starten Sie den Timer, wenn die Welt zum ersten Mal rendert.   ",
   "speedrunigt.option.timer_start_type.first_input": "Erste Eingabe",

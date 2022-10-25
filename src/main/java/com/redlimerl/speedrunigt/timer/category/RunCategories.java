@@ -37,7 +37,6 @@ public class RunCategories {
     public static RunCategory STACK_OF_LIME_WOOL = new RunCategory("STACK_OF_LIME_WOOL","mcce#Stack_of_Lime_Wool");
     public static RunCategory ALL_PORTALS = RunCategoryBuilder.create("ALL_PORTALS","mcce#All_Portals", "speedrunigt.option.timer_category.all_portals")
             .setCanSegment(true).build();
-    public static AllBlocksRunCategory ALL_BLOCKS = new AllBlocksRunCategory();
     public static RunCategory MINE_A_CHUNK = new RunCategory("MINE_A_CHUNK","mcce#Mine_a_Chunk");
 
     public static void checkAllBossesCompleted() {
