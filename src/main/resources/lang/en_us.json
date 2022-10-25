@@ -107,6 +107,8 @@
   "speedrunigt.option.generate_record.none": "None",
   "speedrunigt.option.delete_all_records": "Delete All Records",
   "speedrunigt.option.delete_all_records.description": "Are you sure want to delete all Record files in Records directory?",
+  "speedrunigt.option.auto_save_player_data": "Auto Save Player Data",
+  "speedrunigt.option.auto_save_player_data.description": "If you enable it, it will be saved all player(only) data\nwhen you completed the run. [For another programs like AATool]",
   "speedrunigt.option.timer_start_type": "Timer Start On",
   "speedrunigt.option.timer_start_type.description": "Set when to start the timer.\n- Automatic: If you're running a random seed, it starts on World Render.\n   if set seed, it starts on your First Input.\n- First Input: Starts the timer at first input (key press, mouse movement)\n- World Render: Start the timer when the world renders for the first time.\n",
   "speedrunigt.option.timer_start_type.first_input": "First Input",

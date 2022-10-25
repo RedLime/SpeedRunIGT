@@ -108,6 +108,8 @@
   "speedrunigt.option.generate_record.none": "אף פעם",
   "speedrunigt.option.delete_all_records": "מחק את כל הרישומים",
   "speedrunigt.option.delete_all_records.description": "האם אתה בטוח שאתה רוצה למחוק את כל הרישומים ממאגר הרישומים?",
+  "speedrunigt.option.auto_save_player_data": "Auto Save Player Data",
+  "speedrunigt.option.auto_save_player_data.description": "If you enable it, it will be saved all player(only) data\nwhen you completed the run. [For another programs like AATool]",
   "speedrunigt.option.timer_start_type": "התחל טיימר כאשר",
   "speedrunigt.option.timer_start_type.description": "קבע מתי להתחיל את הטיימר.\n-אוטומטי: אם אתה משחק בסיד רנדומלי, הטיימר יתחיל כשהעולם נטען.\nאם אתה בסיד קבוע מראש, זה מתחיל בלחיצה הראשונה.\n-לחיצה ראשונה: הטיימר יתחיל בלחיצה הראשונה של השחקן (הליכה, תזוזה של העכבר)\n-טעינת עולם: התחל את הטיימר כשהעולם טוען לראשונה.",
   "speedrunigt.option.timer_start_type.first_input": "לחיצה ראשונה",
