@@ -40,7 +40,6 @@
     "screen.DownloadingTerrainScreenMixin",
     "screen.GameMenuScreenMixin",
     "screen.GeneratorOptionsMixin",
-    "screen.LevelLoadingScreenMixin",
     "screen.OptionsScreenMixin",
     "server.IntegratedServerMixin",
     "timeline.SoundSystemMixin",
