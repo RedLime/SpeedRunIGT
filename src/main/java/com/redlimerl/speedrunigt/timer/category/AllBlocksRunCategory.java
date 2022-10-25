@@ -58,7 +58,7 @@ public class AllBlocksRunCategory extends RunCategory {
         if (block.getLootTableId() == LootTables.EMPTY) return false;
         if (block == Blocks.NETHER_PORTAL) return false;
         if (block == Blocks.FARMLAND) return false;
-        if (block == Blocks.DIRT_PATH) return false;
+        if (block == Blocks.GRASS_PATH) return false;
         if (block == Blocks.CHORUS_PLANT) return false;
         if (block == Blocks.LILY_PAD) return false;
         if (block == Blocks.PISTON_HEAD) return false;
@@ -70,7 +70,6 @@ public class AllBlocksRunCategory extends RunCategory {
         if (block == Blocks.PETRIFIED_OAK_SLAB) return false;
         if (block == Blocks.FROSTED_ICE) return false;
         if (block == Blocks.PLAYER_HEAD) return false;
-        if (block == Blocks.BUDDING_AMETHYST) return false;
         if (block instanceof FlowerPotBlock && block != Blocks.FLOWER_POT) return false;
         if (block instanceof InfestedBlock) return false;
         if (block instanceof WallSkullBlock) return false;
