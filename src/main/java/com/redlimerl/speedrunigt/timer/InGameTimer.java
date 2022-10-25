@@ -199,6 +199,7 @@ public class InGameTimer implements Serializable {
 
         INSTANCE.updateRecordString();
         INSTANCE.writeRecordFile(false);
+        InGameTimerUtils.LATEST_TIMER_TIME = System.currentTimeMillis();
 
         for (Consumer<InGameTimer> onCompleteConsumer : onCompleteConsumers) {
             try {
@@ -689,7 +690,6 @@ public class InGameTimer implements Serializable {
                         TimerPacketUtils.sendServer2ClientPacket(SpeedRunIGT.DEDICATED_SERVER, new TimerStartPacket(InGameTimer.getInstance(), 0));
                     }
                 }
-                InGameTimerUtils.LATEST_TIMER_TIME = System.currentTimeMillis();
             }
             this.setStatus(TimerStatus.RUNNING);
         }
