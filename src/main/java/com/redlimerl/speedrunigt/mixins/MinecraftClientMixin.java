@@ -9,6 +9,7 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.*;
 import com.redlimerl.speedrunigt.timer.TimerDrawer.PositionType;
+import com.redlimerl.speedrunigt.timer.category.AllBlocksRunCategory;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.timer.running.RunType;
@@ -101,6 +102,8 @@ public abstract class MinecraftClientMixin {
             InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN = null;
             MinecraftClient.getInstance().openScreen(screen1);
         }
+
+        SpeedRunIGT.error(AllBlocksRunCategory.getAllItems().size());
     }
 
     @Inject(at = @At("HEAD"), method = "joinWorld")
