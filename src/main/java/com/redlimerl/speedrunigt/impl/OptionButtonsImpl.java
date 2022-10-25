@@ -38,6 +38,14 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
 
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
+                        new ButtonWidget(0, 0, 150, 20, Text.literal("SpeedRunIGT Discord"),
+                                (ButtonWidget button) -> Util.getOperatingSystem().open("https://discord.gg/7G2tfP7Xpe"))
+                )
+                .setCategory("speedrunigt.option.category.general")
+        );
+
+        factories.add(screen -> new OptionButtonFactory.Builder()
+                .setButtonWidget(
                         new ButtonWidget(0, 0, 150, 20, Text.translatable("speedrunigt.option.timer_position"),
                                 (ButtonWidget button) -> MinecraftClient.getInstance().setScreen(new TimerCustomizeScreen(screen)))
                 )
@@ -380,6 +388,18 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                             .setToolTip(() -> I18n.translate("speedrunigt.option.generate_timer_logs.description"))
                             .setCategory("speedrunigt.option.category.records");
             }
+        );
+
+        factories.add(screen -> new OptionButtonFactory.Builder()
+                .setButtonWidget(
+                        new ButtonWidget(0, 0, 150, 20, Text.translatable("speedrunigt.option.auto_save_player_data").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.AUTO_SAVE_PLAYER_DATA) ? ScreenTexts.ON : ScreenTexts.OFF),
+                                (ButtonWidget button) -> {
+                                    SpeedRunOption.setOption(SpeedRunOptions.AUTO_SAVE_PLAYER_DATA, !SpeedRunOption.getOption(SpeedRunOptions.AUTO_SAVE_PLAYER_DATA));
+                                    button.setMessage(Text.translatable("speedrunigt.option.auto_save_player_data").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.AUTO_SAVE_PLAYER_DATA) ? ScreenTexts.ON : ScreenTexts.OFF));
+                                })
+                )
+                .setToolTip(() -> I18n.translate("speedrunigt.option.auto_save_player_data.description"))
+                .setCategory("speedrunigt.option.category.records")
         );
 
         factories.add(screen -> new OptionButtonFactory.Builder()
