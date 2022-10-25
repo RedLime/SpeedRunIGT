@@ -30,19 +30,7 @@ public class AllBlocksRunCategory extends RunCategory {
     public boolean isCompleted(MinecraftServer server) {
         Set<String> placedBlocks = Sets.newHashSet();
 
-        for (Block block : Registry.BLOCK) {
-            Block defaultBlock = block.getDefaultState().getBlock();
-            if (!isIncludedAllBlocks(defaultBlock)) continue;
-
-            for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-                if (player.getStatHandler().getStat(Stats.USED, defaultBlock.asItem()) > 0) {
-                    placedBlocks.add(Registry.BLOCK.getId(defaultBlock).toString());
-                    break;
-                }
-            }
-        }
-
-        for (Item item : getItemsForAllBlocks()) {
+        for (Item item : getAllItems()) {
             for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
                 if (player.getStatHandler().getStat(Stats.USED, item) > 0) {
                     placedBlocks.add(Registry.ITEM.getId(item).toString());
