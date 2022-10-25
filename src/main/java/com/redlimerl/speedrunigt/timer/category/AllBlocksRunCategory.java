@@ -2,8 +2,8 @@ package com.redlimerl.speedrunigt.timer.category;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.redlimerl.speedrunigt.SpeedRunIGT;
 import net.minecraft.block.*;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootTables;
@@ -54,7 +54,7 @@ public class AllBlocksRunCategory extends RunCategory {
         return placedBlocks.size() >= 650;
     }
 
-    public static boolean isIncludedAllBlocks(Block block) {
+    private static boolean isIncludedAllBlocks(Block block) {
         if (block.getLootTableId() == LootTables.EMPTY) return false;
         if (block == Blocks.NETHER_PORTAL) return false;
         if (block == Blocks.FARMLAND) return false;
@@ -70,18 +70,7 @@ public class AllBlocksRunCategory extends RunCategory {
         if (block == Blocks.PETRIFIED_OAK_SLAB) return false;
         if (block == Blocks.FROSTED_ICE) return false;
         if (block == Blocks.PLAYER_HEAD) return false;
-        if (block instanceof FlowerPotBlock && block != Blocks.FLOWER_POT) return false;
         if (block instanceof InfestedBlock) return false;
-        if (block instanceof WallSkullBlock) return false;
-        if (block instanceof WallBannerBlock) return false;
-        if (block instanceof WallSignBlock) return false;
-        if (block instanceof WallTorchBlock) return false;
-        if (block instanceof WallRedstoneTorchBlock) return false;
-        if (block instanceof AbstractPlantBlock) return false;
-        if (block instanceof AbstractFireBlock) return false;
-
-        if (block instanceof CoralWallFanBlock) return false;
-        if (block instanceof DeadCoralWallFanBlock) return false;
 
         if (block == Blocks.REDSTONE_WIRE) return false;
         if (block == Blocks.TRIPWIRE) return false;
@@ -93,10 +82,10 @@ public class AllBlocksRunCategory extends RunCategory {
         if (block instanceof AttachedStemBlock) return false;
         if (block instanceof StemBlock) return false;
 
-        return true;
+        return block != Blocks.AIR;
     }
 
-    public static List<Item> getItemsForAllBlocks() {
+    private static List<Item> getItemsForAllBlocks() {
         ArrayList<Item> items = Lists.newArrayList();
 
         items.add(Items.SWEET_BERRIES);
@@ -113,6 +102,23 @@ public class AllBlocksRunCategory extends RunCategory {
         items.add(Items.MELON_SEEDS);
         items.add(Items.PUMPKIN_SEEDS);
         items.add(Items.COCOA_BEANS);
+
+        return items;
+    }
+
+
+    public static List<Item> getAllItems() {
+        ArrayList<Item> items = Lists.newArrayList();
+
+        for (Item item : Registry.ITEM) {
+            if (getItemsForAllBlocks().contains(item)) items.add(item);
+
+            if (item instanceof BlockItem) {
+                BlockItem blockItem = (BlockItem) item;
+
+                if (isIncludedAllBlocks(blockItem.getBlock())) items.add(item);
+            }
+        }
 
         return items;
     }
