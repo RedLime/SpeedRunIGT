@@ -176,8 +176,10 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                 }
             }
         } else {
-            if (portalTick > 0 && InGameTimerUtils.IS_CHANGING_DIMENSION)
+            if (portalTick > 0 && InGameTimerUtils.IS_CHANGING_DIMENSION) {
                 InGameTimerUtils.IS_CHANGING_DIMENSION = false;
+                if (InGameTimer.getInstance().isPaused()) InGameTimer.getInstance().setPause(false, TimerStatus.IDLE, "Invalid portal check");
+            }
             portalTick = 0;
         }
     }
