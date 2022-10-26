@@ -51,6 +51,3 @@ The **Timer** Mod for Minecraft Speedrunning
 - Official Discord Server : [SpeedRunIGT Development](https://discord.gg/7G2tfP7Xpe)
 - Discord : RedLime#0817
 - [API Docs](https://github.com/RedLime/SpeedRunIGT/wiki/SpeedRunIGT-API-Document)
-
-## API Document for Devs
-- 
