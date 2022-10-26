@@ -1,57 +1,56 @@
 # SpeedRunIGT
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/S6S77MX01)
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/S6S77MX01) \
+Join [SpeedRunIGT Development](https://discord.gg/7G2tfP7Xpe) Discord!
+
+![GitHub Repo stars](https://img.shields.io/github/stars/RedLime/SpeedRunIGT?style=social)
+![GitHub](https://img.shields.io/github/license/RedLime/SpeedRunIGT?style=flat-square)
+![GitHub all releases](https://img.shields.io/github/downloads/RedLime/SpeedRunIGT/total?label=GitHub%20downloads&style=flat-square)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/RedLime/SpeedRunIGT?style=flat-square)
+[![Crowdin](https://badges.crowdin.net/speedrunigt/localized.svg)](https://crowdin.com/project/speedrunigt)
+[![Discord Shield](https://discordapp.com/api/guilds/1033677387143061574/widget.png?style=shield)](https://discord.gg/7G2tfP7Xpe)
 
 ## What is this mod?
-The **Timer** Mod for Minecraft Speedrun
+The **Timer** Mod for Minecraft Speedrunning
 
 ## Features
 - Display RTA/IGT timers In-game
 - Auto Start & Pause the timer
-  - Support Many Categories!
-- Configurable Timer Position, Scale, Color
+  - Supported 20+ categories!
+  - You can make your category!
+- Configurable timer position, scale and color
 - Custom font in timer
+- Many configurable options
+- APIs for developers
 - Some of anti-cheat for speedrunning
 
 ## Downloads
 - [Download Page](https://redlime.github.io/SpeedRunIGT/) (Recommended)
 - [Release Page](https://github.com/RedLime/SpeedRunIGT/releases)
 
-## How to install & use
-- [Link](https://github.com/RedLime/SpeedRunIGT/wiki/How-to-install)
-
 ## Support Versions
 ### Stable Versions
-- 1.16.1, 1.17.0, 1.17.1, 1.15.2, 1.14.4
-- 20w14∞, 1.16.5, 1.18.2, 1.19.2
-- 1.8.9, 1.7.10, 1.7.4 (with Legacy Fabric)
-- 1.8.0, 15w14a, 1.9.4, 1.12.2, 1.13.2 (with Legacy Fabric)
-### Unsupported Versions (No longer any update)
+- 1.14.x to 1.19.x (with Fabric Loader)
+- 1.7.x to 1.13.x (with Legacy Fabric Loader)
+- Some of subversions aren't supported. Check the available versions on the download page.
+### Unsupported Versions
+###### It was released before, but NO LONGER support any update
 - 1.18.1, 1.19, 1.19.1
 
 ## FaQ
 - Is it allowed in *[Speedrun.com](https://speedrun.com/mc)* run verification? ✅
 - Is it support Multi-Instances? ✅
-- Is it work with full-screen or MacOS? ✅
-- Is there any way to display them separately in OBS?
-  - Unfortunately, because this is a mod, it's hard to work on another window or widget.
+- Is it work with full-screen or macOS? ✅
 - How to add custom font in timer?
-  - check out guide [video with description](https://youtu.be/agBbiTQWj78)
-- License?
-  - [Here](https://github.com/RedLime/SpeedRunIGT/blob/1.16.1/LICENSE)
+  - Watch [this video with description](https://youtu.be/agBbiTQWj78)
+- If you have any question, join Discord server :)
 
 ## Contribute translation project!
-[Crowdin Project](https://crowdin.com/project/speedrunigt) \
-[![Crowdin](https://badges.crowdin.net/speedrunigt/localized.svg)](https://crowdin.com/project/speedrunigt)
+[Crowdin Project](https://crowdin.com/project/speedrunigt)
 
 ## Support
-Discord : RedLime#0817\
-Can I donate for u : Sure, why not. [here is my ko-fi](https://ko-fi.com/redlimerl)
-
-## Contributors
-- [Void_X_Walker](https://github.com/VoidXWalker) - Porting 1.8.9 [[Support]](https://ko-fi.com/voidxwalker)
-- [KingContaria](https://github.com/KingContaria) - Fixed some crashes
-- [xiaolin](https://github.com/liuzhengjin), [Crsuh2er0](https://github.com/Crsuh2er0) - Support Chinese language
-- [Gregor0410](https://github.com/Gregor0410), [Wurgo](https://github.com/wurgo) - English texts grammar correction
+- Official Discord Server : [SpeedRunIGT Development](https://discord.gg/7G2tfP7Xpe)
+- Discord : RedLime#0817
+- [API Docs](https://github.com/RedLime/SpeedRunIGT/wiki/SpeedRunIGT-API-Document)
 
 ## API Document for Devs
-- [API Docs](https://github.com/RedLime/SpeedRunIGT/wiki/SpeedRunIGT-API-Document)
+- 
