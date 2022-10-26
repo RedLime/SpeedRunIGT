@@ -43,7 +43,6 @@
     "screen.CreditsScreenMixin",
     "screen.DownloadingTerrainScreenMixin",
     "screen.GameMenuScreenMixin",
-    "screen.LevelLoadingScreenMixin",
     "screen.OptionsScreenMixin",
     "screen.CreateWorldScreenMixin",
     "server.IntegratedServerMixin",
