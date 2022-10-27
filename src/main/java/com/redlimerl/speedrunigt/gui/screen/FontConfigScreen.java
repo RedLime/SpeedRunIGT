@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.gui.screen;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
 import com.redlimerl.speedrunigt.utils.FontConfigure;
 import com.redlimerl.speedrunigt.utils.FontIdentifier;
 import net.minecraft.client.gui.screen.Screen;
@@ -34,13 +35,13 @@ public class FontConfigScreen extends Screen {
     protected void init() {
         assert client != null;
 
-        addDrawableChild(new ButtonWidget(width / 2 - 21, height / 2 - 45, 20, 20, Text.literal("-"), button -> newFontConfigure.size = MathHelper.clamp(newFontConfigure.size - 1, 1, 50)));
-        addDrawableChild(new ButtonWidget(width / 2 + 1, height / 2 - 45, 20, 20, Text.literal("+"), button -> newFontConfigure.size = MathHelper.clamp(newFontConfigure.size + 1, 1, 50)));
+        addDrawableChild(ButtonWidgetHelper.create(width / 2 - 21, height / 2 - 45, 20, 20, Text.literal("-"), button -> newFontConfigure.size = MathHelper.clamp(newFontConfigure.size - 1, 1, 50)));
+        addDrawableChild(ButtonWidgetHelper.create(width / 2 + 1, height / 2 - 45, 20, 20, Text.literal("+"), button -> newFontConfigure.size = MathHelper.clamp(newFontConfigure.size + 1, 1, 50)));
 
-        addDrawableChild(new ButtonWidget(width / 2 - 21, height / 2 + 5, 20, 20, Text.literal("-"), button -> newFontConfigure.oversample = MathHelper.clamp(Math.round((newFontConfigure.oversample - (Screen.hasShiftDown() ? 1f : 0.1f)) * 10) / 10f, 0.1f, 20f)));
-        addDrawableChild(new ButtonWidget(width / 2 + 1, height / 2 + 5, 20, 20, Text.literal("+"), button -> newFontConfigure.oversample = MathHelper.clamp(Math.round((newFontConfigure.oversample + (Screen.hasShiftDown() ? 1f : 0.1f)) * 10) / 10f, 0.1f, 20f)));
+        addDrawableChild(ButtonWidgetHelper.create(width / 2 - 21, height / 2 + 5, 20, 20, Text.literal("-"), button -> newFontConfigure.oversample = MathHelper.clamp(Math.round((newFontConfigure.oversample - (Screen.hasShiftDown() ? 1f : 0.1f)) * 10) / 10f, 0.1f, 20f)));
+        addDrawableChild(ButtonWidgetHelper.create(width / 2 + 1, height / 2 + 5, 20, 20, Text.literal("+"), button -> newFontConfigure.oversample = MathHelper.clamp(Math.round((newFontConfigure.oversample + (Screen.hasShiftDown() ? 1f : 0.1f)) * 10) / 10f, 0.1f, 20f)));
 
-        addDrawableChild(new ButtonWidget(width / 2 - 50, height - 62, 100, 20, Text.translatable("speedrunigt.font.apply_and_save"), button -> {
+        addDrawableChild(ButtonWidgetHelper.create(width / 2 - 50, height - 62, 100, 20, Text.translatable("speedrunigt.font.apply_and_save"), button -> {
             File config = SpeedRunIGT.FONT_PATH.resolve(fontIdentifier.getFile().getName().substring(0, fontIdentifier.getFile().getName().length() - 4) + ".json").toFile();
             try {
                 FileUtils.writeStringToFile(config, newFontConfigure.toString(), StandardCharsets.UTF_8);
@@ -50,7 +51,7 @@ public class FontConfigScreen extends Screen {
             }
         }));
 
-        addDrawableChild(new ButtonWidget(width / 2 - 50, height - 40, 100, 20, ScreenTexts.CANCEL, button -> this.close()));
+        addDrawableChild(ButtonWidgetHelper.create(width / 2 - 50, height - 40, 100, 20, ScreenTexts.CANCEL, button -> this.close()));
     }
 
     @Override

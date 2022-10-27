@@ -13,7 +13,7 @@ import java.util.OptionalLong;
 public class GeneratorOptionsMixin {
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    @Inject(method = "withHardcore", at = @At("HEAD"))
+    @Inject(method = "withSeed", at = @At("HEAD"))
     public void onGenerate(OptionalLong optionalLong, CallbackInfoReturnable<GeneratorOptions> cir) {
         InGameTimerUtils.IS_SET_SEED = optionalLong.isPresent();
     }

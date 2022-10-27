@@ -3,6 +3,7 @@ package com.redlimerl.speedrunigt.mixins.screen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.redlimerl.speedrunigt.SpeedRunIGTUpdateChecker;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunOptionScreen;
+import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.OptionsScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -28,7 +29,7 @@ public class OptionsScreenMixin extends Screen {
 
     @Inject(method = "init", at = @At("TAIL"))
     private void onInit(CallbackInfo ci) {
-        timerButton = new ButtonWidget(this.width / 2 - 180, this.height / 6 - 12, 20, 20, Text.empty(), (buttonWidget) -> {
+        timerButton = ButtonWidgetHelper.create(this.width / 2 - 180, this.height / 6 - 12, 20, 20, Text.empty(), (buttonWidget) -> {
             if (this.client != null) {
                 this.client.setScreen(new SpeedRunOptionScreen(this));
             }
@@ -41,7 +42,7 @@ public class OptionsScreenMixin extends Screen {
         if (this.client != null) {
             RenderSystem.setShaderTexture(0, timerButton.isHovered() ? ENDER_EYE :
                     SpeedRunIGTUpdateChecker.UPDATE_STATUS == SpeedRunIGTUpdateChecker.UpdateStatus.OUTDATED ? BLAZE_POWDER : ENDER_PEARL);
-            drawTexture(matrices, timerButton.x + 2, timerButton.y + 2, 0.0F, 0.0F, 16, 16, 16, 16);
+            drawTexture(matrices, timerButton.method_46426() + 2, timerButton.method_46427() + 2, 0.0F, 0.0F, 16, 16, 16, 16);
         }
     }
 }

@@ -5,6 +5,7 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.SpeedRunIGTUpdateChecker;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
+import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
@@ -60,23 +61,23 @@ public class SpeedRunOptionScreen extends Screen {
             categorySubButtons.put(category, categoryList);
 
             if (!categorySelectButtons.containsKey(category)) {
-                ButtonWidget buttonWidget = new ButtonWidget(width - 110, 30 + ((categoryCount++ % 6) * 22), 80, 20, Text.translatable(category), (ButtonWidget buttonWidget1) -> selectCategory(category));
+                ButtonWidget buttonWidget = ButtonWidgetHelper.create(width - 110, 30 + ((categoryCount++ % 6) * 22), 80, 20, Text.translatable(category), (ButtonWidget buttonWidget1) -> selectCategory(category));
                 categorySelectButtons.put(category, buttonWidget);
                 addDrawableChild(buttonWidget);
             }
         }
 
-        prevPageButton = addDrawableChild(new ButtonWidget(width - 110, 30 + (6 * 22), 38, 20, Text.literal("<"), (ButtonWidget button) -> openPage(-1)));
+        prevPageButton = addDrawableChild(ButtonWidgetHelper.create(width - 110, 30 + (6 * 22), 38, 20, Text.literal("<"), (ButtonWidget button) -> openPage(-1)));
 
-        nextPageButton = addDrawableChild(new ButtonWidget(width - 68, 30 + (6 * 22), 38, 20, Text.literal(">"), (ButtonWidget button) -> openPage(+1)));
+        nextPageButton = addDrawableChild(ButtonWidgetHelper.create(width - 68, 30 + (6 * 22), 38, 20, Text.literal(">"), (ButtonWidget button) -> openPage(+1)));
 
         openPage(0);
 
-        addDrawableChild(new ButtonWidget(width - 85, height - 35, 70, 20, ScreenTexts.CANCEL, (ButtonWidget button) -> close()));
+        addDrawableChild(ButtonWidgetHelper.create(width - 85, height - 35, 70, 20, ScreenTexts.CANCEL, (ButtonWidget button) -> close()));
 
-        addDrawableChild(new ButtonWidget(15, height - 35, 70, 20, Text.translatable("speedrunigt.menu.donate"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://ko-fi.com/redlimerl")));
+        addDrawableChild(ButtonWidgetHelper.create(15, height - 35, 70, 20, Text.translatable("speedrunigt.menu.donate"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://ko-fi.com/redlimerl")));
 
-        addDrawableChild(new ButtonWidget(88, height - 35, 140, 20, Text.translatable("speedrunigt.menu.crowdin"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://crowdin.com/project/speedrunigt")));
+        addDrawableChild(ButtonWidgetHelper.create(88, height - 35, 140, 20, Text.translatable("speedrunigt.menu.crowdin"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://crowdin.com/project/speedrunigt")));
 
         buttonListWidget = addSelectableChild(new ButtonScrollListWidget());
 
@@ -203,7 +204,7 @@ public class SpeedRunOptionScreen extends Screen {
 
             public Entry(ClickableWidget buttonWidget) {
                 this.buttonWidget = buttonWidget;
-                this.buttonWidget.x = (ButtonScrollListWidget.this.width - this.buttonWidget.getWidth()) / 2;
+                this.buttonWidget.method_46421((ButtonScrollListWidget.this.width - this.buttonWidget.getWidth()) / 2);
                 children.add(this.buttonWidget);
             }
 
@@ -223,7 +224,7 @@ public class SpeedRunOptionScreen extends Screen {
 
             @Override
             public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-                buttonWidget.y = y;
+                buttonWidget.method_46419(y);
                 buttonWidget.render(matrices, mouseX, mouseY, tickDelta);
             }
         }

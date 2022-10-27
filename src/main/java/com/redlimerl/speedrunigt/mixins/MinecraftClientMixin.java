@@ -38,7 +38,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.io.File;
 import java.util.*;
@@ -78,14 +77,13 @@ public abstract class MinecraftClientMixin {
 
     @Inject(at = @At("HEAD"), method = "joinWorld")
     public void onJoin(ClientWorld targetWorld, CallbackInfo ci) {
+        if (targetWorld == null) return;
+
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() == TimerStatus.NONE) return;
 
         InGameTimerUtils.IS_CHANGING_DIMENSION = false;
-
-        if (timer.getStatus() != TimerStatus.NONE) {
-            timer.setPause(true, TimerStatus.IDLE, "changed dimension");
-        }
+        timer.setPause(true, TimerStatus.IDLE, "changed dimension");
 
         // For Timelines
         if (Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionTypes.THE_NETHER_ID.toString())) {

@@ -7,7 +7,6 @@ import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.Slice;
 
 @Mixin(GameMenuScreen.class)
 public class GameMenuScreenMixin extends Screen {
@@ -16,12 +15,11 @@ public class GameMenuScreenMixin extends Screen {
         super(title);
     }
 
-    @ModifyArg(method = "render",
-            slice = @Slice(from = @At("HEAD"), to = @At("TAIL")),
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/GameMenuScreen;drawCenteredText(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/text/Text;III)V"), index = 2)
-    public Text onRender(Text string) {
-        if (InGameTimer.getInstance().isPaused() && InGameTimer.getInstance().isStarted() && !InGameTimer.getInstance().isCoop()) {
-            return Text.literal(string.getString() + " (#" + InGameTimer.getInstance().getPauseCount() + ")");
+    @ModifyArg(method = "<init>",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;<init>(Lnet/minecraft/text/Text;)V"), index = 0)
+    private static Text onInit(Text string) {
+        if (InGameTimer.getInstance().isStarted() && !InGameTimer.getInstance().isCoop()) {
+            return Text.literal(string.getString() + " (#" + (InGameTimer.getInstance().getPauseCount() + 1) + ")");
         } else {
             return string;
         }

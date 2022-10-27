@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.api;
 
+import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -10,7 +11,7 @@ import java.util.function.Supplier;
 public interface OptionButtonFactory {
     class Builder {
         private String category = null;
-        private ClickableWidget buttonWidget = new ButtonWidget(0, 0, 150, 20, Text.empty(), button -> {});
+        private ClickableWidget buttonWidget = ButtonWidgetHelper.create(0, 0, 150, 20, Text.empty(), button -> {});
         private Supplier<String> tooltip = null;
 
         public Builder setButtonWidget(ClickableWidget buttonWidget) {

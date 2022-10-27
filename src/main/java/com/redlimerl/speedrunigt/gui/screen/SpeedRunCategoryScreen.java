@@ -8,6 +8,7 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.category.CustomCategoryManager;
 import com.redlimerl.speedrunigt.timer.category.RunCategory;
+import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -45,7 +46,7 @@ public class SpeedRunCategoryScreen extends Screen {
     @Override
     protected void init() {
         assert client != null;
-        addDrawableChild(new ButtonWidget(width / 2 - 100, height - 35, 200, 20, ScreenTexts.CANCEL, button -> client.setScreen(parent)));
+        addDrawableChild(ButtonWidgetHelper.create(width / 2 - 100, height - 35, 200, 20, ScreenTexts.CANCEL, button -> client.setScreen(parent)));
 
         this.listWidget = new CategorySelectionListWidget(client);
         addSelectableChild(listWidget);
@@ -86,17 +87,17 @@ public class SpeedRunCategoryScreen extends Screen {
 
             public CategoryEntry(RunCategory category) {
                 this.checkBox = new CategoryCheckBoxWidget(category);
-                this.urlButton = new ButtonWidget(0, 0, 30, 20, Text.translatable("speedrunigt.option.more"), button -> Util.getOperatingSystem().open(category.getLeaderboardUrl()));
+                this.urlButton = ButtonWidgetHelper.create(0, 0, 30, 20, Text.translatable("speedrunigt.option.more"), button -> Util.getOperatingSystem().open(category.getLeaderboardUrl()));
                 children.add(urlButton);
                 children.add(checkBox);
             }
 
             public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-                this.urlButton.x = x;
-                this.urlButton.y = y;
+                this.urlButton.method_46421(x);
+                this.urlButton.method_46419(y);
                 this.urlButton.render(matrices, mouseX, mouseY, tickDelta);
-                this.checkBox.x = x + 34;
-                this.checkBox.y = y;
+                this.checkBox.method_46421(x + 34);
+                this.checkBox.method_46419(y);
                 this.checkBox.render(matrices, mouseX, mouseY, tickDelta);
             }
 
@@ -143,9 +144,9 @@ public class SpeedRunCategoryScreen extends Screen {
                     RenderSystem.enableBlend();
                     RenderSystem.defaultBlendFunc();
                     RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
-                    drawTexture(matrices, this.x, this.y, this.isFocused() ? 20.0F : 0.0F, this.isChecked() ? 20.0F : 0.0F, 20, this.height, 64, 64);
+                    drawTexture(matrices, this.method_46426(), this.method_46427(), this.isFocused() ? 20.0F : 0.0F, this.isChecked() ? 20.0F : 0.0F, 20, this.height, 64, 64);
                     this.renderBackground(matrices, minecraftClient, mouseX, mouseY);
-                    drawTextWithShadow(matrices, textRenderer, this.getMessage(), this.x + 24, this.y + (this.height - 8) / 2, 14737632 | MathHelper.ceil(this.alpha * 255.0F) << 24);
+                    drawTextWithShadow(matrices, textRenderer, this.getMessage(), this.method_46426() + 24, this.method_46427() + (this.height - 8) / 2, 14737632 | MathHelper.ceil(this.alpha * 255.0F) << 24);
                 }
             }
         }
