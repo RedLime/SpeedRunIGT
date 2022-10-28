@@ -111,10 +111,7 @@ public abstract class MinecraftClientMixin {
         if (timer.getStatus() == TimerStatus.NONE) return;
 
         InGameTimerUtils.IS_CHANGING_DIMENSION = false;
-
-        if (timer.getStatus() != TimerStatus.NONE) {
-            timer.setPause(true, TimerStatus.IDLE, "changed dimension");
-        }
+        timer.setPause(true, TimerStatus.IDLE, "changed dimension");
 
         // For Timelines
         if (targetWorld.getDimensionRegistryKey() == DimensionType.THE_NETHER_REGISTRY_KEY) {
