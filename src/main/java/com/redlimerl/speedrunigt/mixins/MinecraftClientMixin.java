@@ -94,10 +94,7 @@ public abstract class MinecraftClientMixin {
         InGameTimer timer = InGameTimer.getInstance();
 
         InGameTimerUtils.IS_CHANGING_DIMENSION = false;
-
-        if (timer.getStatus() != TimerStatus.NONE) {
-            timer.setPause(true, TimerStatus.IDLE, "changed dimension");
-        }
+        timer.setPause(true, TimerStatus.IDLE, "changed dimension");
 
         // For Timelines
         if (targetWorld.dimension.dimensionType == -1) {
