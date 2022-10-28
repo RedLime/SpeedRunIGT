@@ -12,7 +12,6 @@
     "coop.PlayerManagerMixin",
     "coop.TimeCommandMixin",
     "network.ServerPlayNetworkHandlerMixin",
-    "server.DedicatedServerMixin",
     "timeline.ServerPlayerEntityMixin",
     "timeline.VillagerEntityMixin"
   ],
