@@ -5,6 +5,7 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.crypt.Crypto;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
+import com.redlimerl.speedrunigt.therun.TheRunRequestHelper;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.category.RunCategory;
@@ -200,6 +201,7 @@ public class InGameTimer implements Serializable {
         INSTANCE.updateRecordString();
         INSTANCE.writeRecordFile(false);
         InGameTimerUtils.LATEST_TIMER_TIME = System.currentTimeMillis();
+        TheRunRequestHelper.updateTimerData(INSTANCE);
 
         for (Consumer<InGameTimer> onCompleteConsumer : onCompleteConsumers) {
             try {
@@ -690,6 +692,7 @@ public class InGameTimer implements Serializable {
                         TimerPacketUtils.sendServer2ClientPacket(SpeedRunIGT.DEDICATED_SERVER, new TimerStartPacket(InGameTimer.getInstance(), 0));
                     }
                 }
+                TheRunRequestHelper.updateTimerData(this);
             }
             this.setStatus(TimerStatus.RUNNING);
         }
@@ -709,6 +712,7 @@ public class InGameTimer implements Serializable {
             if (Objects.equals(timeline.getName(), name)) return false;
         }
         timelines.add(new TimerTimeline(name, getInGameTime(false), getRealTimeAttack()));
+        TheRunRequestHelper.updateTimerData(this);
         if (canSendPacket && this.isCoop() && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerTimelinePacket(name));
         return true;
     }
@@ -759,6 +763,10 @@ public class InGameTimer implements Serializable {
 
     public void openedLanIntegratedServer() {
         this.lanOpenedTime = getRealTimeAttack();
+    }
+
+    public boolean isOpenedIntegratedServer() {
+        return this.lanOpenedTime != null;
     }
 
     public void checkConditions() {
