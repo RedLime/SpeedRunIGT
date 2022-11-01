@@ -8,7 +8,6 @@ import com.redlimerl.speedrunigt.therun.TheRunKeyHelper;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.utils.FontUtils;
 import com.redlimerl.speedrunigt.utils.KeyBindingRegistry;
-import com.redlimerl.speedrunigt.utils.TranslateHelper;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
@@ -47,13 +46,6 @@ public class SpeedRunIGTClient implements ClientModInitializer {
 
         // End initializing
         isInitialized = true;
-
-        // Translate initialize
-        try {
-            TranslateHelper.init();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
 
         // Key Bindings initialize
         timerResetKeyBinding = KeyBindingRegistry.registerKeyBinding(new KeyBinding(
