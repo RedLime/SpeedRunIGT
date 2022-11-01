@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
 
 public class TheRunKeyHelper {
 
-    private static final File KEY_FILE = SpeedRunIGT.getGlobalPath().resolve("therun.gg.txt").toFile();
+    public static final File KEY_FILE = SpeedRunIGT.getGlobalPath().resolve("therun.gg.txt").toFile();
     public static String UPLOAD_KEY = "";
 
     public static void load() {
