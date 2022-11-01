@@ -9,7 +9,6 @@ import com.redlimerl.speedrunigt.gui.screen.TheRunUploadKeyScreen;
 import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
-import com.redlimerl.speedrunigt.therun.TheRunKeyHelper;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.client.MinecraftClient;
@@ -411,9 +410,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
                         new ButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.therun_gg.open_therun_gg"),
-                                (ButtonWidget button) -> {
-                                    Util.getOperatingSystem().open("https://therun.gg/");
-                                })
+                                (ButtonWidget button) -> Util.getOperatingSystem().open("https://therun.gg/"))
                 )
                 .setCategory("therun.gg")
         );
