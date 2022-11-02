@@ -74,7 +74,7 @@ public class SpeedRunOptionScreen extends Screen {
 
         nextPageButton = addButton(new ButtonWidget(width - 68, 30 + (6 * 22), 38, 20, new LiteralText(">"), (ButtonWidget button) -> openPage(+1)));
 
-        openPage(0);
+        openPage(page);
 
         addButton(new ButtonWidget(width - 85, height - 35, 70, 20, ScreenTexts.CANCEL, (ButtonWidget button) -> onClose()));
 
@@ -84,7 +84,8 @@ public class SpeedRunOptionScreen extends Screen {
 
         buttonListWidget = addChild(new ButtonScrollListWidget());
 
-        categorySelectButtons.keySet().stream().findFirst().ifPresent(this::selectCategory);
+        if (!currentSelectCategory.isEmpty()) selectCategory(currentSelectCategory);
+        else categorySelectButtons.keySet().stream().findFirst().ifPresent(this::selectCategory);
     }
 
     public void openPage(int num) {
