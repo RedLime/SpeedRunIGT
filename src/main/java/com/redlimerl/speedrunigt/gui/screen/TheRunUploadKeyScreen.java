@@ -28,8 +28,8 @@ public class TheRunUploadKeyScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        assert client != null;
-        client.keyboard.enableRepeatEvents(true);
+        assert minecraft != null;
+        minecraft.keyboard.enableRepeatEvents(true);
 
         this.saveButton = addButton(new ButtonWidget(width / 2 - 100, height / 2 + 24, 98, 20, new TranslatableText("selectWorld.edit.save").asFormattedString(),
                 (button) -> {
@@ -55,10 +55,10 @@ public class TheRunUploadKeyScreen extends Screen {
         addButton(new ButtonWidget(width / 2 - 100, height / 2 + 2, 200, 20, new TranslatableText("speedrunigt.therun_gg.get_upload_key").asFormattedString(), (button) -> Util.getOperatingSystem().open("https://therun.gg/upload-key")));
 
 
-        this.uploadKeyBox = new TextFieldWidget(this.textRenderer, this.width / 2 - 110, height / 2 - 32, 220, 20, new TranslatableText("speedrunigt.therun_gg.insert_upload_key").asFormattedString());
+        this.uploadKeyBox = new TextFieldWidget(this.font, this.width / 2 - 110, height / 2 - 32, 220, 20, new TranslatableText("speedrunigt.therun_gg.insert_upload_key").asFormattedString());
         this.uploadKeyBox.setMaxLength(36);
         this.uploadKeyBox.setText(TheRunKeyHelper.UPLOAD_KEY);
-        addChild(this.uploadKeyBox);
+        children.add(this.uploadKeyBox);
         setInitialFocus(this.uploadKeyBox);
     }
 
@@ -75,20 +75,20 @@ public class TheRunUploadKeyScreen extends Screen {
         String beforeText = this.uploadKeyBox.getText();
         this.uploadKeyBox.setText(beforeText.replaceAll("\\w", "*"));
 
-        this.drawCenteredString(textRenderer, title.asFormattedString(), width / 2, 12, 16777215);
+        this.drawCenteredString(font, title.asFormattedString(), width / 2, 12, 16777215);
 
         this.uploadKeyBox.render(mouseX, mouseY, delta);
 
         super.render(mouseX, mouseY, delta);
 
         if (statusCode == 1)
-            this.drawCenteredString(textRenderer, new TranslatableText("speedrunigt.therun_gg.message.loading_upload_key_info").asFormattedString(), width / 2, height / 2 + 50, 16777215);
+            this.drawCenteredString(font, new TranslatableText("speedrunigt.therun_gg.message.loading_upload_key_info").asFormattedString(), width / 2, height / 2 + 50, 16777215);
 
         if (statusCode == 2)
-            this.drawCenteredString(textRenderer, new TranslatableText("speedrunigt.therun_gg.message.upload_key_is_valid").asFormattedString(), width / 2, height / 2 + 50, 16777215);
+            this.drawCenteredString(font, new TranslatableText("speedrunigt.therun_gg.message.upload_key_is_valid").asFormattedString(), width / 2, height / 2 + 50, 16777215);
 
         if (statusCode == 3)
-            this.drawCenteredString(textRenderer, new TranslatableText("speedrunigt.therun_gg.message.upload_key_is_invalid").asFormattedString(), width / 2, height / 2 + 50, 16777215);
+            this.drawCenteredString(font, new TranslatableText("speedrunigt.therun_gg.message.upload_key_is_invalid").asFormattedString(), width / 2, height / 2 + 50, 16777215);
 
         this.uploadKeyBox.setText(beforeText);
     }
@@ -105,6 +105,6 @@ public class TheRunUploadKeyScreen extends Screen {
 
     @Override
     public void removed() {
-        if (client != null) client.keyboard.enableRepeatEvents(false);
+        if (minecraft != null) minecraft.keyboard.enableRepeatEvents(false);
     }
 }
