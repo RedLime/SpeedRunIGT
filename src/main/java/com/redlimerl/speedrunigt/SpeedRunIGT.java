@@ -41,7 +41,7 @@ public class SpeedRunIGT implements ModInitializer {
     public static String DEBUG_DATA = "";
     public static String MOD_VERSION;
 
-    public static final Gson GSON = new GsonBuilder().create();
+    public static final Gson GSON = new GsonBuilder().serializeNulls().disableHtmlEscaping().create();
     public static final Gson PRETTY_GSON = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
     public static final Path FONT_PATH = getGlobalPath().resolve("fonts");
 
