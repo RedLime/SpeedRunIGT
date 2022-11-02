@@ -1,104 +1,70 @@
 package com.redlimerl.speedrunigt.utils;
 
-import com.google.gson.reflect.TypeToken;
-import com.redlimerl.speedrunigt.SpeedRunIGT;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.resource.language.LanguageManager;
-import org.apache.commons.io.IOUtils;
+import net.minecraft.resource.Resource;
+import net.minecraft.util.Language;
+import org.spongepowered.include.com.google.common.collect.Lists;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Type;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.security.CodeSource;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.BiConsumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class TranslateHelper {
-    private static final HashMap<String, Map<String, String>> LANGUAGE_MAPS = new HashMap<>();
-    private static final ArrayList<String> LANGUAGE_KEYS = new ArrayList<>();
-    private static final String DEFAULT_LANG = "en_us";
 
-    public static void init() throws Throwable {
-        LANGUAGE_MAPS.clear();
-        LANGUAGE_KEYS.clear();
+    public static String[] getLangFileNames() throws IOException, URISyntaxException {
+        final String path = "lang";
+        final File jarFile = new File(TranslateHelper.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 
-        Type type = new TypeToken<Map<String, String>>(){}.getType();
+        ArrayList<String> list = Lists.newArrayList();
 
-        for (String langFileName : getLangFileNames()) {
-            if (langFileName.isEmpty()) continue;
-            String resource = getResource("/lang/"+langFileName);
-            if (resource == null) continue;
-            Map<String, String> translations = SpeedRunIGT.GSON.fromJson(resource, type);
-            for (String key : translations.keySet()) {
-                if (!LANGUAGE_KEYS.contains(key)) LANGUAGE_KEYS.add(key);
-            }
-            LANGUAGE_MAPS.put(langFileName.replace(".json", ""), translations);
-        }
-    }
+        if (jarFile.isFile()) {
+            // Run with JAR file
+            ZipInputStream zip = new ZipInputStream(jarFile.toURI().toURL().openStream());
 
-
-    public static String translate(String key) {
-        LanguageManager languageManager = MinecraftClient.getInstance().getLanguageManager();
-        String languageCode = DEFAULT_LANG;
-        if (languageManager != null) {
-            languageCode = languageManager.getLanguage().getCode();
-            if (!LANGUAGE_MAPS.containsKey(languageCode)
-                    || !LANGUAGE_MAPS.get(languageCode).containsKey(key)) {
-                languageCode = DEFAULT_LANG;
-            }
-        }
-
-        return LANGUAGE_MAPS.get(languageCode).getOrDefault(key, key);
-    }
-
-    public static boolean hasTranslate(String key) {
-        return LANGUAGE_KEYS.contains(key);
-    }
-
-
-
-    private static String getResource(String path) throws IOException {
-        InputStream langInputStream = TranslateHelper.class.getResourceAsStream(path);
-        if (langInputStream == null) {
-            SpeedRunIGT.error("Failed to load '" + path + "' resource, try again to get jar resource");
-            return null;
-        }
-
-        String result = IOUtils.toString(langInputStream, StandardCharsets.UTF_8);
-        langInputStream.close();
-        return result;
-    }
-
-    public static String[] getLangFileNames() throws IOException {
-        if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
-            String resource = getResource("/lang");
-            if (resource != null) return resource.split("\n");
-        }
-
-        CodeSource src = TranslateHelper.class.getProtectionDomain().getCodeSource();
-        ArrayList<String> list = new ArrayList<>();
-        if (src != null) {
-            URL jar = src.getLocation();
-            ZipInputStream zip = new ZipInputStream(jar.openStream());
             while(true) {
                 ZipEntry e = zip.getNextEntry();
                 if (e == null)
                     break;
                 String name = e.getName();
-                if (name.startsWith("lang")) {
+                if (name.startsWith(path)) {
                     String[] fileName = name.split("/");
                     String file = fileName[fileName.length-1];
-                    if (!file.isEmpty() && fileName.length > 1) list.add(fileName[fileName.length-1]);
+                    if (!file.isEmpty() && fileName.length > 1) list.add("/" + path + "/" + file);
+                }
+            }
+        } else {
+            // Run with IDE
+            final URL url = TranslateHelper.class.getResource("/" + path);
+            if (url != null) {
+                final File apps = new File(url.toURI());
+                for (File app : Objects.requireNonNull(apps.listFiles())) {
+                    list.add("/" + path + "/" + app.getName());
                 }
             }
         }
 
         return list.toArray(new String[0]);
+    }
+
+    public static void setup(String langCode, BiConsumer<String, String> biConsumer) {
+        try {
+            for (String langFileName : getLangFileNames()) {
+                if (!langFileName.endsWith(langCode + ".json")) continue;
+
+                InputStream inputStream = TranslateHelper.class.getResourceAsStream(langFileName);
+                if (inputStream != null) {
+                    Language.load(inputStream, biConsumer);
+                }
+            }
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 }
