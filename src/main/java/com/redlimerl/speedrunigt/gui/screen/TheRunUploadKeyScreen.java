@@ -31,7 +31,7 @@ public class TheRunUploadKeyScreen extends Screen {
         assert client != null;
         client.keyboard.setRepeatEvents(true);
 
-        this.saveButton = addButton(new ButtonWidget(width / 2 - 100, height / 2 + 24, 98, 20, new TranslatableText("selectWorld.edit.save"),
+        this.saveButton = addDrawableChild(new ButtonWidget(width / 2 - 100, height / 2 + 24, 98, 20, new TranslatableText("selectWorld.edit.save"),
                 (button) -> {
                     this.saveButton.active = false;
                     String key = uploadKeyBox.getText();
@@ -50,15 +50,15 @@ public class TheRunUploadKeyScreen extends Screen {
                     this.keyCheckThread.start();
                 }));
 
-        addButton(new ButtonWidget(width / 2 + 2, height / 2 + 24, 98, 20, ScreenTexts.CANCEL, (button) -> onClose()));
+        addDrawableChild(new ButtonWidget(width / 2 + 2, height / 2 + 24, 98, 20, ScreenTexts.CANCEL, (button) -> onClose()));
 
-        addButton(new ButtonWidget(width / 2 - 100, height / 2 + 2, 200, 20, new TranslatableText("speedrunigt.therun_gg.get_upload_key"), (button) -> Util.getOperatingSystem().open("https://therun.gg/upload-key")));
+        addDrawableChild(new ButtonWidget(width / 2 - 100, height / 2 + 2, 200, 20, new TranslatableText("speedrunigt.therun_gg.get_upload_key"), (button) -> Util.getOperatingSystem().open("https://therun.gg/upload-key")));
 
 
         this.uploadKeyBox = new TextFieldWidget(this.textRenderer, this.width / 2 - 110, height / 2 - 32, 220, 20, new TranslatableText("speedrunigt.therun_gg.insert_upload_key"));
         this.uploadKeyBox.setMaxLength(36);
         this.uploadKeyBox.setText(TheRunKeyHelper.UPLOAD_KEY);
-        addChild(this.uploadKeyBox);
+        addDrawable(this.uploadKeyBox);
         setInitialFocus(this.uploadKeyBox);
     }
 
