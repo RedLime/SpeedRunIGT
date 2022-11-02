@@ -31,7 +31,7 @@ public class TheRunUploadKeyScreen extends Screen {
         assert client != null;
         Keyboard.enableRepeatEvents(true);
 
-        this.saveButton = new ConsumerButtonWidget(width / 2 - 100, height / 2 + 24, 98, 20, new TranslatableText("selectWorld.edit.save").asFormattedString(),
+        this.saveButton = new ConsumerButtonWidget(width / 2 - 100, height / 2 + 24, 98, 20, new TranslatableText("speedrunigt.option.save").asFormattedString(),
                 (button) -> {
                     this.saveButton.active = false;
                     String key = uploadKeyBox.getText();
