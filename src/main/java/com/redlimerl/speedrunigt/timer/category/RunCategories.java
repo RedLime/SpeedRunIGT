@@ -2,14 +2,56 @@ package com.redlimerl.speedrunigt.timer.category;
 
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
+import com.redlimerl.speedrunigt.therun.TheRunCategory;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
+import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import com.redlimerl.speedrunigt.timer.running.RunType;
+import org.apache.commons.lang3.tuple.MutablePair;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class RunCategories {
 
     public static RunCategory ERROR_CATEGORY = new RunCategory("unknown","mc");
 
     public static RunCategory ANY = RunCategoryBuilder.create("ANY", "mc", "speedrunigt.option.timer_category.any")
+            .setTheRunCategory(
+                    new TheRunCategory.Builder()
+                            .setGameName("Minecraft: Java Edition")
+                            .setCategoryName("Any% Glitchless")
+                            .setSplitNameMap(timer -> {
+                                boolean endEnter = false;
+                                boolean foundBastion = false;
+                                for (TimerTimeline timeline : timer.getTimelines()) {
+                                    if (Objects.equals(timeline.getName(), "enter_end")) {
+                                        endEnter = true;
+                                    }
+                                    if (Objects.equals(timeline.getName(), "enter_bastion")) {
+                                        foundBastion = true;
+                                    }
+                                }
+
+                                return endEnter && !foundBastion ?
+                                        asHashMap(
+                                                new MutablePair<>("enter_nether", "Enter Nether"),
+                                                new MutablePair<>("enter_fortress", "Found Fortress"),
+                                                new MutablePair<>("enter_stronghold", "Eye Spy"),
+                                                new MutablePair<>("enter_end", "Enter The End")
+                                        )
+                                        :
+                                        asHashMap(
+                                                new MutablePair<>("enter_nether", "Enter Nether"),
+                                                new MutablePair<>("enter_bastion", "Found Bastion"),
+                                                new MutablePair<>("enter_fortress", "Found Fortress"),
+                                                new MutablePair<>("enter_stronghold", "Eye Spy"),
+                                                new MutablePair<>("enter_end", "Enter The End")
+                                        );
+                            })
+                            .setCompletedSplitName("Defeat Ender Dragon")
+                            .build()
+            )
             .setRetimeFunction(timer ->
                     !timer.isGlitched() && !timer.isCoop() && timer.getRunType() == RunType.RANDOM_SEED &&
                             (SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_USE_AUTO_RETIME) || timer.getInGameTime(false) < 1000 * 60 * 30)
@@ -42,5 +84,14 @@ public class RunCategories {
                 InGameTimer.complete();
             }
         }
+    }
+
+    @SafeVarargs
+    public static LinkedHashMap<String, String> asHashMap(Map.Entry<String, String>... entries) {
+        LinkedHashMap<String, String> linkedHashMap = new LinkedHashMap<>();
+        for (Map.Entry<String, String> entry : entries) {
+            linkedHashMap.put(entry.getKey(), entry.getValue());
+        }
+        return linkedHashMap;
     }
 }
