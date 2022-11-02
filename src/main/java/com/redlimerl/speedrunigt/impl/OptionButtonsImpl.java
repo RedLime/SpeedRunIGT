@@ -6,6 +6,7 @@ import com.redlimerl.speedrunigt.api.SpeedRunIGTApi;
 import com.redlimerl.speedrunigt.gui.ConsumerButtonWidget;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunCategoryScreen;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunIGTInfoScreen;
+import com.redlimerl.speedrunigt.gui.screen.TheRunUploadKeyScreen;
 import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
@@ -401,6 +402,34 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                 )
                 .setToolTip(() -> I18n.translate("speedrunigt.option.auto_save_player_data.description"))
                 .setCategory("speedrunigt.option.category.records")
+        );
+
+        factories.add(screen -> new OptionButtonFactory.Builder()
+                .setButtonWidget(
+                        new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.therun_gg.open_therun_gg").asFormattedString(),
+                                (button) -> Util.getOperatingSystem().method_20236("https://therun.gg/"))
+                )
+                .setCategory("therun.gg")
+        );
+
+        factories.add(screen -> new OptionButtonFactory.Builder()
+                .setButtonWidget(
+                        new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.therun_gg.edit_upload_key").asFormattedString(),
+                                (button) -> MinecraftClient.getInstance().openScreen(new TheRunUploadKeyScreen(screen)))
+                )
+                .setCategory("therun.gg")
+        );
+
+        factories.add(screen -> new OptionButtonFactory.Builder()
+                .setButtonWidget(
+                        new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.therun_gg.toggle_live").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.ENABLE_THERUN_GG_LIVE) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString(),
+                                (button) -> {
+                                    SpeedRunOption.setOption(SpeedRunOptions.ENABLE_THERUN_GG_LIVE, !SpeedRunOption.getOption(SpeedRunOptions.ENABLE_THERUN_GG_LIVE));
+                                    button.message = (new TranslatableText("speedrunigt.option.therun_gg.toggle_live").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.ENABLE_THERUN_GG_LIVE) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
+                                })
+                )
+                .setToolTip(() -> I18n.translate("speedrunigt.option.therun_gg.toggle_live.description"))
+                .setCategory("therun.gg")
         );
 
         factories.add(screen -> new OptionButtonFactory.Builder()

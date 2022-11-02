@@ -4,9 +4,9 @@ import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.api.SpeedRunIGTApi;
 import com.redlimerl.speedrunigt.impl.OptionButtonsImpl;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
+import com.redlimerl.speedrunigt.therun.TheRunKeyHelper;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.utils.KeyBindingRegistry;
-import com.redlimerl.speedrunigt.utils.TranslateHelper;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
@@ -45,13 +45,6 @@ public class SpeedRunIGTClient implements ClientModInitializer {
         // End initializing
         isInitialized = true;
 
-        // Translate initialize
-        try {
-            TranslateHelper.init();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-
         // Key Bindings initialize
         timerResetKeyBinding = KeyBindingRegistry.registerKeyBinding(new KeyBinding(
                 "speedrunigt.controls.start_timer",
@@ -63,6 +56,8 @@ public class SpeedRunIGTClient implements ClientModInitializer {
                 GLFW.GLFW_KEY_I,
                 "speedrunigt.title.options"
         ));
+
+        TheRunKeyHelper.load();
 
         SpeedRunIGT.IS_CLIENT_SIDE = true;
     }
