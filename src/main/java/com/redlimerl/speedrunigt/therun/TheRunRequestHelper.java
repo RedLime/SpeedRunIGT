@@ -1,19 +1,19 @@
 package com.redlimerl.speedrunigt.therun;
 
+import com.google.common.collect.Maps;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -22,6 +22,8 @@ public class TheRunRequestHelper {
 
     private static final String KEY_BASE_URL = "https://therun.gg/api/livesplit";
     private static final ExecutorService threadExecutor = Executors.newSingleThreadExecutor();
+
+    private static final HashMap<TheRunTimer.PacketType, Long> LEAST_REQ_TIME = Maps.newHashMap();
 
     private static void setupConnection(HttpURLConnection connection) {
         connection.setConnectTimeout(10000);
@@ -32,8 +34,7 @@ public class TheRunRequestHelper {
         connection.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
     }
 
-
-    public static void updateTimerData(InGameTimer timer) {
+    public static void updateTimerData(InGameTimer timer, TheRunTimer.PacketType packetType) {
 
         // Skip these all things lol
         if (!timer.isStarted() || timer.isCoop() || timer.isOpenedIntegratedServer() || !SpeedRunIGT.IS_CLIENT_SIDE
@@ -41,6 +42,9 @@ public class TheRunRequestHelper {
             || !SpeedRunOption.getOption(SpeedRunOptions.ENABLE_THERUN_GG_LIVE)) {
             return;
         }
+
+        if (System.currentTimeMillis() - LEAST_REQ_TIME.getOrDefault(packetType, 0L) < 100) return;
+        LEAST_REQ_TIME.put(packetType, System.currentTimeMillis());
 
         TheRunTimer theRunTimer = new TheRunTimer(timer);
 
@@ -54,8 +58,7 @@ public class TheRunRequestHelper {
                 connection.setDoOutput(true);
 
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
-                bw.write(theRunTimer.convertJson().toString());
-                FileUtils.writeStringToFile(new File("C:/Temp/MyTest2.txt"), theRunTimer.convertJson().toString(), StandardCharsets.UTF_8);
+                bw.write(theRunTimer.convertJson(packetType).toString());
                 bw.flush();
                 bw.close();
 
@@ -81,6 +84,9 @@ public class TheRunRequestHelper {
 
     public static boolean checkValidUploadKey(String key) {
         try {
+            if (System.currentTimeMillis() - LEAST_REQ_TIME.getOrDefault(TheRunTimer.PacketType.RESET, 0L) < 100) return false;
+            LEAST_REQ_TIME.put(TheRunTimer.PacketType.RESET, System.currentTimeMillis());
+
             URL url = new URL("https://2uxp372ks6nwrjnk6t7lqov4zu0solno.lambda-url.eu-west-1.on.aws/?filename=Minecraft%3A+Java+Edition-any%25glitchless.lss&uploadKey=" + key);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             setupConnection(connection);
