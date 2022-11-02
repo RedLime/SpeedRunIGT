@@ -56,7 +56,7 @@ public class TheRunUploadKeyScreen extends Screen {
         buttons.add(new ConsumerButtonWidget(width / 2 - 100, height / 2 + 2, 200, 20, new TranslatableText("speedrunigt.therun_gg.get_upload_key").asFormattedString(), (button) -> OperatingUtils.setUrl("https://therun.gg/upload-key")));
 
 
-        this.uploadKeyBox = new TextFieldWidget(0, this.textRenderer, this.width / 2 - 110, height / 2 - 32, 220, 20);
+        this.uploadKeyBox = new TextFieldWidget(this.textRenderer, this.width / 2 - 110, height / 2 - 32, 220, 20);
         this.uploadKeyBox.setMaxLength(36);
         this.uploadKeyBox.setText(TheRunKeyHelper.UPLOAD_KEY);
         this.uploadKeyBox.setFocused(true);
