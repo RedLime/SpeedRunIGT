@@ -29,7 +29,7 @@ public abstract class TranslationStorageMixin {
         for (String lang : list) {
             InputStream inputStream = TranslateHelper.setup(lang);
             try {
-                assert inputStream != null;
+                if (inputStream == null) continue;
                 String json = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
 
                 JsonElement jsonElement = new JsonParser().parse(json);
