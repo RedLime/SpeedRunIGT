@@ -119,6 +119,10 @@
   "speedrunigt.option.current_extensions.description": "Hiện đang sử dụng tiện ích SpeedRunIGT: %s",
   "speedrunigt.option.auto_retime": "Tự động Retime cho Speedrun.com",
   "speedrunigt.option.auto_retime.description": "Lần chạy nào là sub-13 trong 1.16+, sub-17 trong 1.9-1.15 và sub-23 trong trước1.9\nsẽ tự động ngừng hoạt động theo các quy tắc về thời gian hoạt động lại của speedrun.com.\nNếu bạn đang chơi SSG hoặc không phải, điều này sẽ tự động bị vô hiệu hóa.",
+  "speedrunigt.option.therun_gg.open_therun_gg": "Visit therun.gg",
+  "speedrunigt.option.therun_gg.edit_upload_key": "Edit Upload Key",
+  "speedrunigt.option.therun_gg.toggle_live": "Toggle TheRun Live",
+  "speedrunigt.option.therun_gg.toggle_live.description": "Send some timer data to therun.gg live.\nSo your live runs will be public on therun.gg live.",
   "speedrunigt.option.practice_detect": "Detect Practice Map",
   "speedrunigt.option.practice_detect.description": "When a timer is displayed on the action bar,\nit automatically change to practice mode.",
   "speedrunigt.option.teleport_to_practice": "End Practice by TP",
@@ -140,5 +144,10 @@
   "speedrunigt.font.apply_and_save": "Lưu và áp dụng",
   "speedrunigt.font.size": "Kích cỡ",
   "speedrunigt.font.oversample": "Mẫu quá mức",
-  "speedrunigt.font.oversample.description": "Nhấp với, Bình thường: ± 0.1 / Nhấn Shift: ± 1.0"
+  "speedrunigt.font.oversample.description": "Nhấp với, Bình thường: ± 0.1 / Nhấn Shift: ± 1.0",
+  "speedrunigt.therun_gg.insert_upload_key": "Insert \"Upload Key\"",
+  "speedrunigt.therun_gg.get_upload_key": "Get \"Upload Key\" from therun.gg",
+  "speedrunigt.therun_gg.message.loading_upload_key_info": "Checking entered the key correctly...",
+  "speedrunigt.therun_gg.message.upload_key_is_valid": "This \"Upload Key\" is valid, and has been saved :)",
+  "speedrunigt.therun_gg.message.upload_key_is_invalid": "This \"Upload Key\" is invalid :( please check again"
 }
