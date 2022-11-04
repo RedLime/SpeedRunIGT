@@ -117,6 +117,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             if (timer.getCategory() == RunCategories.STACK_OF_LIME_WOOL) {
                 if (itemStack.getItem() == Item.fromBlock(Blocks.WOOL) && itemStack.getDamage() == 5 && itemStack.getCount() == 64) InGameTimer.complete();
             }
+
+            if (itemStack.getItem() == Items.BOOK) timer.tryInsertNewTimeline("pickup_book");
         }
 
         List<Item> items = this.inventory.field_15082.stream().map(ItemStack::getItem).collect(Collectors.toList());
