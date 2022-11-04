@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.therun;
 
 import com.google.common.collect.Maps;
+import com.google.gson.JsonObject;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
@@ -47,6 +48,8 @@ public class TheRunRequestHelper {
         LEAST_REQ_TIME.put(packetType, System.currentTimeMillis());
 
         TheRunTimer theRunTimer = new TheRunTimer(timer);
+        JsonObject payloadData = theRunTimer.convertJson(packetType);
+        if (payloadData == null) return;
 
         threadExecutor.submit(() -> {
             try {
@@ -58,7 +61,7 @@ public class TheRunRequestHelper {
                 connection.setDoOutput(true);
 
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
-                bw.write(theRunTimer.convertJson(packetType).toString());
+                bw.write(payloadData.toString());
                 bw.flush();
                 bw.close();
 
