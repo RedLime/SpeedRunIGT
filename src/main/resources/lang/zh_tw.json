@@ -50,7 +50,7 @@
   "speedrunigt.option.timer_category.kill_wither": "殺死凋零怪",
   "speedrunigt.option.timer_category.kill_elder_guardian": "殺死遠古深海守衛",
   "speedrunigt.option.timer_category.all_advancements": "全進度",
-  "speedrunigt.option.timer_category.all_achievements": "全進度",
+  "speedrunigt.option.timer_category.all_achievements": "全成就",
   "speedrunigt.option.timer_category.half": "半進度",
   "speedrunigt.option.timer_category.enter_nether": "進入地獄",
   "speedrunigt.option.timer_category.enter_end": "進入終界",
@@ -119,6 +119,10 @@
   "speedrunigt.option.current_extensions.description": "目前正在使用的SpeedRunIGT擴展:%s",
   "speedrunigt.option.auto_retime": "自動Retime",
   "speedrunigt.option.auto_retime.description": "適用於1.16+的sub13，1.9-1.15的sub17，pre1.9的sub23的Any%%速通\n會根據speedrun規則自動Retime\n如果你在玩SS Any%%，它將被關閉。",
+  "speedrunigt.option.therun_gg.open_therun_gg": "訪問therun.gg",
+  "speedrunigt.option.therun_gg.edit_upload_key": "編輯上傳金鑰",
+  "speedrunigt.option.therun_gg.toggle_live": "打開TheRun的直播",
+  "speedrunigt.option.therun_gg.toggle_live.description": "將一些計時器數據發送到therun.gg的直播中，\n這樣你的速通直播就會在therun.gg的直播中公開",
   "speedrunigt.option.practice_detect": "檢測練習圖",
   "speedrunigt.option.practice_detect.description": "當計時器在快捷欄上方顯示時，\n它將自動變為練習模式。",
   "speedrunigt.option.teleport_to_practice": "通過tp來結束練習",
@@ -140,5 +144,10 @@
   "speedrunigt.font.apply_and_save": "套用並保存",
   "speedrunigt.font.size": "尺寸",
   "speedrunigt.font.oversample": "過採樣",
-  "speedrunigt.font.oversample.description": "點擊，默認：±0.1 / 按下Shift：±1.0"
+  "speedrunigt.font.oversample.description": "點擊，默認：±0.1 / 按下Shift：±1.0",
+  "speedrunigt.therun_gg.insert_upload_key": "輸入“上傳金鑰”",
+  "speedrunigt.therun_gg.get_upload_key": "從therun.gg上獲取“上傳金鑰”",
+  "speedrunigt.therun_gg.message.loading_upload_key_info": "正在檢查輸入的金鑰是否正確…",
+  "speedrunigt.therun_gg.message.upload_key_is_valid": "“上傳金鑰”有效，已儲存 :)",
+  "speedrunigt.therun_gg.message.upload_key_is_invalid": "“上傳金鑰”無效 :( 請再次檢查是否正確輸入"
 }
