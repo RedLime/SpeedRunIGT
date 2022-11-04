@@ -119,6 +119,10 @@
   "speedrunigt.option.current_extensions.description": "현재 사용중인 SpeedRunIGT 확장 모드: %s",
   "speedrunigt.option.auto_retime": "SRC 규칙 자동 리타임",
   "speedrunigt.option.auto_retime.description": "1.16+에서 sub13, 1.9-1.15에서 sub17, Pre 1.9에서 sub23인\nAny%% 런은 speedrun.com 리타이밍 규칙에 따라 자동 리타임됩니다.\nSet Seed를 플레이 중이거나 Any%%가 아닌 경우 비활성화됩니다.",
+  "speedrunigt.option.therun_gg.open_therun_gg": "Visit therun.gg",
+  "speedrunigt.option.therun_gg.edit_upload_key": "Edit Upload Key",
+  "speedrunigt.option.therun_gg.toggle_live": "Toggle TheRun Live",
+  "speedrunigt.option.therun_gg.toggle_live.description": "Send some timer data to therun.gg live.\nSo your live runs will be public on therun.gg live.",
   "speedrunigt.option.practice_detect": "연습 맵 감지",
   "speedrunigt.option.practice_detect.description": "액션바에 타이머가 표시될 때,\n자동으로 연습 모드로 전환합니다.",
   "speedrunigt.option.teleport_to_practice": "TP로 연습 종료",
@@ -140,5 +144,10 @@
   "speedrunigt.font.apply_and_save": "적용 및 저장",
   "speedrunigt.font.size": "크기",
   "speedrunigt.font.oversample": "오버샘플링",
-  "speedrunigt.font.oversample.description": "일반 클릭: ±0.1 조정 / Shift 클릭: ±1.0 조정"
+  "speedrunigt.font.oversample.description": "일반 클릭: ±0.1 조정 / Shift 클릭: ±1.0 조정",
+  "speedrunigt.therun_gg.insert_upload_key": "Insert \"Upload Key\"",
+  "speedrunigt.therun_gg.get_upload_key": "Get \"Upload Key\" from therun.gg",
+  "speedrunigt.therun_gg.message.loading_upload_key_info": "Checking entered the key correctly...",
+  "speedrunigt.therun_gg.message.upload_key_is_valid": "This \"Upload Key\" is valid, and has been saved :)",
+  "speedrunigt.therun_gg.message.upload_key_is_invalid": "This \"Upload Key\" is invalid :( please check again"
 }
