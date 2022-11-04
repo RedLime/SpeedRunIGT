@@ -119,6 +119,10 @@
   "speedrunigt.option.current_extensions.description": "הרחבות SpeedRunIGT כרגע בשימוש: %s",
   "speedrunigt.option.auto_retime": "חישוב זמן משוכלל לSRC",
   "speedrunigt.option.auto_retime.description": " הזמן הסופי בספידראנים של Any%% שהסתיימו בפחות מ13 דקות ב1.16+, פחות מ17 דקות ב1.9-1.15, ופחות מ23 דקות בגרסאות לפני 1.9 ישוכלל אוטומטית ולפי חוקי speedrun.com.\nאם אתה משחק בקטגוריית סיד קבוע מראש או קטגוריה שהיא לא Any%%, האפשרות הזאת תבוטל אוטומטית.",
+  "speedrunigt.option.therun_gg.open_therun_gg": "Visit therun.gg",
+  "speedrunigt.option.therun_gg.edit_upload_key": "Edit Upload Key",
+  "speedrunigt.option.therun_gg.toggle_live": "Toggle TheRun Live",
+  "speedrunigt.option.therun_gg.toggle_live.description": "Send some timer data to therun.gg live.\nSo your live runs will be public on therun.gg live.",
   "speedrunigt.option.practice_detect": "Detect Practice Map",
   "speedrunigt.option.practice_detect.description": "When a timer is displayed on the action bar,\nit automatically change to practice mode.",
   "speedrunigt.option.teleport_to_practice": "End Practice by TP",
@@ -140,5 +144,10 @@
   "speedrunigt.font.apply_and_save": "שמור והחל",
   "speedrunigt.font.size": "גודל",
   "speedrunigt.font.oversample": "דגימת יתר",
-  "speedrunigt.font.oversample.description": "לחץ קליק שמאלי: ±0.1 / לחץ shift וקליק שמאלי: ±1.0"
+  "speedrunigt.font.oversample.description": "לחץ קליק שמאלי: ±0.1 / לחץ shift וקליק שמאלי: ±1.0",
+  "speedrunigt.therun_gg.insert_upload_key": "Insert \"Upload Key\"",
+  "speedrunigt.therun_gg.get_upload_key": "Get \"Upload Key\" from therun.gg",
+  "speedrunigt.therun_gg.message.loading_upload_key_info": "Checking entered the key correctly...",
+  "speedrunigt.therun_gg.message.upload_key_is_valid": "This \"Upload Key\" is valid, and has been saved :)",
+  "speedrunigt.therun_gg.message.upload_key_is_invalid": "This \"Upload Key\" is invalid :( please check again"
 }
