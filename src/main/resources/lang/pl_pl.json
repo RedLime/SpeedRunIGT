@@ -119,6 +119,10 @@
   "speedrunigt.option.current_extensions.description": "Ilość obecnie zainstalowanych rozszerzeń: %s",
   "speedrunigt.option.auto_retime": "Auto Retime dla SRC",
   "speedrunigt.option.auto_retime.description": "Runy w kategorii Any%%, które są sub-13 w 1.16+, sub-17 w 1.9-1.15 i sub-23 w pre1.9 będą automatycznie retimowane według zasad z speedrun.com. Jeśli nie grasz kategorii Any%% albo grasz na Set Seedzie, ta opcja będzie automatycznie wyłączona.",
+  "speedrunigt.option.therun_gg.open_therun_gg": "Visit therun.gg",
+  "speedrunigt.option.therun_gg.edit_upload_key": "Edit Upload Key",
+  "speedrunigt.option.therun_gg.toggle_live": "Toggle TheRun Live",
+  "speedrunigt.option.therun_gg.toggle_live.description": "Send some timer data to therun.gg live.\nSo your live runs will be public on therun.gg live.",
   "speedrunigt.option.practice_detect": "Wykryj Mapkę Treningową",
   "speedrunigt.option.practice_detect.description": "Jeśli timer wyświetla się na pasku akcji,\ntryb treningowy jest aktywowany automatycznie.",
   "speedrunigt.option.teleport_to_practice": "Teleportow. zatrz. timer",
@@ -140,5 +144,10 @@
   "speedrunigt.font.apply_and_save": "Zastosuj i Zapisz",
   "speedrunigt.font.size": "Rozmiar",
   "speedrunigt.font.oversample": "Nadpróbkowanie",
-  "speedrunigt.font.oversample.description": "Normalne kliknięcie: ±0,1, kliknięcie z shiftem: ±1,0"
+  "speedrunigt.font.oversample.description": "Normalne kliknięcie: ±0,1, kliknięcie z shiftem: ±1,0",
+  "speedrunigt.therun_gg.insert_upload_key": "Insert \"Upload Key\"",
+  "speedrunigt.therun_gg.get_upload_key": "Get \"Upload Key\" from therun.gg",
+  "speedrunigt.therun_gg.message.loading_upload_key_info": "Checking entered the key correctly...",
+  "speedrunigt.therun_gg.message.upload_key_is_valid": "This \"Upload Key\" is valid, and has been saved :)",
+  "speedrunigt.therun_gg.message.upload_key_is_invalid": "This \"Upload Key\" is invalid :( please check again"
 }
