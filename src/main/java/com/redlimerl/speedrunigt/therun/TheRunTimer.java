@@ -81,6 +81,8 @@ public class TheRunTimer {
 
         List<TimerTimeline> timelines = timer.getTimelines();
         LinkedHashMap<String, String> splits = category.getSplitNameMap(timer);
+        if (splits == null) return null;
+
         Collection<String> remainSplits = Lists.newArrayList();
         remainSplits.addAll(splits.values());
 
@@ -133,9 +135,9 @@ public class TheRunTimer {
         jsonObject.addProperty("uploadKey", TheRunKeyHelper.UPLOAD_KEY);
         jsonObject.addProperty("isPaused", timer.isPaused());
         jsonObject.addProperty("isGameTimePaused", timer.isPaused());
-        jsonObject.add("gameTimePauseTime", packetType == PacketType.RESET ? JsonNull.INSTANCE : timeToTimeSpanJson((timer.getTotalTicks() - timer.getTicks()) * 50));
-        jsonObject.add("totalPauseTime", packetType == PacketType.RESET ? JsonNull.INSTANCE : timeToTimeSpanJson(timer.getTotalPauseTime()));
-        jsonObject.add("currentPauseTime", timeToTimeSpanJson(timer.getLatestPauseTime()));
+        jsonObject.add("gameTimePauseTime", JsonNull.INSTANCE);
+        jsonObject.add("totalPauseTime", JsonNull.INSTANCE);
+        jsonObject.add("currentPauseTime", JsonNull.INSTANCE);
         jsonObject.addProperty("timePausedAt", timer.getLatestPauseTime());
         jsonObject.addProperty("wasJustResumed", packetType == PacketType.RESUME);
         jsonObject.add("runData", allSplits);
