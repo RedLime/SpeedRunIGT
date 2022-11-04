@@ -22,7 +22,7 @@ public class TranslateHelper {
 
         if (jarFile.isFile()) {
             // Run with JAR file
-            ZipInputStream zip = new ZipInputStream(jarFile.toURI().toURL().openStream());
+            ZipInputStream zip = new ZipInputStream(TranslateHelper.class.getProtectionDomain().getCodeSource().getLocation().openStream());
 
             while(true) {
                 ZipEntry e = zip.getNextEntry();
