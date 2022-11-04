@@ -24,34 +24,27 @@ public class RunCategories {
                             .setSplitNameMap(timer -> {
                                 if (timer.getRunType() == RunType.SET_SEED) {
                                     return asHashMap(
-                                            new MutablePair<>("enter_nether", "Enter Nether"),
                                             new MutablePair<>("enter_end", "Enter The End")
                                     );
                                 } else if (timer.getRunType() == RunType.RANDOM_SEED) {
-                                    boolean endEnter = false;
-                                    boolean foundBastion = false;
+                                    boolean tower = true;
                                     for (TimerTimeline timeline : timer.getTimelines()) {
-                                        if (Objects.equals(timeline.getName(), "enter_end")) {
-                                            endEnter = true;
-                                        }
-                                        if (Objects.equals(timeline.getName(), "enter_bastion")) {
-                                            foundBastion = true;
+                                        if (Objects.equals(timeline.getName(), "trade_with_villager")) {
+                                            tower = false;
+                                            break;
                                         }
                                     }
-
-                                    return endEnter && !foundBastion ?
+                                    return tower ?
                                             asHashMap(
                                                     new MutablePair<>("enter_nether", "Enter Nether"),
-                                                    new MutablePair<>("enter_fortress", "Found Fortress"),
-                                                    new MutablePair<>("enter_stronghold", "Eye Spy"),
+                                                    new MutablePair<>("kill_blaze", "Kill Blaze"),
+                                                    new MutablePair<>("sleep_on_tower", "Build a Tower"),
                                                     new MutablePair<>("enter_end", "Enter The End")
                                             )
                                             :
                                             asHashMap(
-                                                    new MutablePair<>("enter_nether", "Enter Nether"),
-                                                    new MutablePair<>("enter_bastion", "Found Bastion"),
-                                                    new MutablePair<>("enter_fortress", "Found Fortress"),
-                                                    new MutablePair<>("enter_stronghold", "Eye Spy"),
+                                                    new MutablePair<>("trade_with_villager", "Trade with Villager"),
+                                                    new MutablePair<>("pickup_book", "Mine a Bookshelf"),
                                                     new MutablePair<>("enter_end", "Enter The End")
                                             );
                                 } else {
