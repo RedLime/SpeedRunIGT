@@ -681,7 +681,7 @@ public class TimerCustomizeScreen extends Screen {
             ButtonWidget button = fontSelectButtons.get(i);
             if (c + i < availableFonts.size()) {
                 button.active = !availableFonts.get(c + i).toString().equals(drawer.getTimerFont().toString());
-                if (!button.active && Objects.equals(drawer.getTimerFont().getNamespace(), SpeedRunIGT.MOD_ID)) available = button.method_46427();
+                if (!button.active && Objects.equals(drawer.getTimerFont().getNamespace(), SpeedRunIGT.MOD_ID)) available = button.getY();
                 button.visible = true;
             } else {
                 button.visible = false;
@@ -689,7 +689,7 @@ public class TimerCustomizeScreen extends Screen {
         }
 
         fontConfigButton.visible = currentTab == 3 && available != 0;
-        fontConfigButton.method_46419(available);
+        fontConfigButton.setY(available);
     }
 
     public void initBackgroundButtons() {

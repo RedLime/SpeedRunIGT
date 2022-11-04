@@ -93,11 +93,11 @@ public class SpeedRunCategoryScreen extends Screen {
             }
 
             public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-                this.urlButton.method_46421(x);
-                this.urlButton.method_46419(y);
+                this.urlButton.setX(x);
+                this.urlButton.setY(y);
                 this.urlButton.render(matrices, mouseX, mouseY, tickDelta);
-                this.checkBox.method_46421(x + 34);
-                this.checkBox.method_46419(y);
+                this.checkBox.setX(x + 34);
+                this.checkBox.setY(y);
                 this.checkBox.render(matrices, mouseX, mouseY, tickDelta);
             }
 
@@ -144,9 +144,9 @@ public class SpeedRunCategoryScreen extends Screen {
                     RenderSystem.enableBlend();
                     RenderSystem.defaultBlendFunc();
                     RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
-                    drawTexture(matrices, this.method_46426(), this.method_46427(), this.isFocused() ? 20.0F : 0.0F, this.isChecked() ? 20.0F : 0.0F, 20, this.height, 64, 64);
+                    drawTexture(matrices, this.getX(), this.getY(), this.isFocused() ? 20.0F : 0.0F, this.isChecked() ? 20.0F : 0.0F, 20, this.height, 64, 64);
                     this.renderBackground(matrices, minecraftClient, mouseX, mouseY);
-                    drawTextWithShadow(matrices, textRenderer, this.getMessage(), this.method_46426() + 24, this.method_46427() + (this.height - 8) / 2, 14737632 | MathHelper.ceil(this.alpha * 255.0F) << 24);
+                    drawTextWithShadow(matrices, textRenderer, this.getMessage(), this.getX() + 24, this.getY() + (this.height - 8) / 2, 14737632 | MathHelper.ceil(this.alpha * 255.0F) << 24);
                 }
             }
         }

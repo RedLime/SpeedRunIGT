@@ -205,7 +205,7 @@ public class SpeedRunOptionScreen extends Screen {
 
             public Entry(ClickableWidget buttonWidget) {
                 this.buttonWidget = buttonWidget;
-                this.buttonWidget.method_46421((ButtonScrollListWidget.this.width - this.buttonWidget.getWidth()) / 2);
+                this.buttonWidget.setX((ButtonScrollListWidget.this.width - this.buttonWidget.getWidth()) / 2);
                 children.add(this.buttonWidget);
             }
 
@@ -225,7 +225,7 @@ public class SpeedRunOptionScreen extends Screen {
 
             @Override
             public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-                buttonWidget.method_46419(y);
+                buttonWidget.setY(y);
                 buttonWidget.render(matrices, mouseX, mouseY, tickDelta);
             }
         }
