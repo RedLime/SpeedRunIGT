@@ -12,6 +12,7 @@ import java.io.BufferedWriter;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -76,6 +77,8 @@ public class TheRunRequestHelper {
                     SpeedRunIGT.error(IOUtils.toString(in, StandardCharsets.UTF_8));
                 }
                 in.close();
+            } catch (SocketTimeoutException e) {
+                SpeedRunIGT.error("Failed to upload timer data on therun.gg cause by timeout");
             } catch (Exception e) {
                 e.printStackTrace();
                 SpeedRunIGT.error("Failed to upload timer data on therun.gg");
