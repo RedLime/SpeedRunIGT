@@ -52,7 +52,7 @@ public class InGameTimer implements Serializable {
     static InGameTimer COMPLETED_INSTANCE = new InGameTimer("");
 
     private static final String cryptKey = "faRQOs2GK5j863eP";
-    private static final int DATA_VERSION = 5;
+    private static final int DATA_VERSION = 6;
 
     @NotNull
     public static InGameTimer getInstance() { return INSTANCE; }
@@ -89,7 +89,8 @@ public class InGameTimer implements Serializable {
     private long endIGTTime = 0;
     private long retimedIGTTime = 0;
     private long rebaseIGTime = 0;
-    private long excludedTime = 0; //for AA
+    private long excludedRTA = 0;
+    private long excludedIGT = 0;
     private long leastTickTime = 0;
     private long leastStartTime = 0;
     private long leastPauseTime = 0;
@@ -226,8 +227,8 @@ public class InGameTimer implements Serializable {
                 .append(", Counted Ticks: ").append(timer.activateTicks)
                 .append(", Total Ticks: ").append(timer.loggerTicks);
         if (isRetimed) resultLog.append(", Auto-Retimed IGT Length: ").append(timeToStringFormat(timer.retimedIGTTime));
-        if (timer.getCategory() == RunCategories.ALL_ADVANCEMENTS)
-            resultLog.append(", Excluded RTA Time: ").append(timeToStringFormat(timer.excludedTime));
+        resultLog.append(", Excluded RTA Time: ").append(timeToStringFormat(timer.excludedRTA));
+        resultLog.append(", Excluded IGT Time: ").append(timeToStringFormat(timer.excludedIGT));
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy.MM.dd HH:mm:ss");
         String logInfo = "====================\r\n"
@@ -528,7 +529,7 @@ public class InGameTimer implements Serializable {
     }
 
     public long getRealTimeAttack() {
-        return this.isCompleted && this != COMPLETED_INSTANCE ? COMPLETED_INSTANCE.getRealTimeAttack() : this.getStatus() == TimerStatus.NONE ? 0 : this.getEndTime() - this.getStartTime() - this.excludedTime;
+        return this.isCompleted && this != COMPLETED_INSTANCE ? COMPLETED_INSTANCE.getRealTimeAttack() : this.getStatus() == TimerStatus.NONE ? 0 : this.getEndTime() - this.getStartTime() - this.excludedRTA;
     }
 
     public long getInGameTime() { return getInGameTime(true); }
@@ -547,6 +548,7 @@ public class InGameTimer implements Serializable {
                 (this.getTicks() * 50L) // Tick Based
                         + Math.min(50, smooth && isPlaying() && this.leastTickTime != 0 ? ms - this.leastTickTime : 0) // More smooth timer in playing
                         - this.rebaseIGTime // Subtract Rebased time
+                        - this.excludedIGT
                         + this.endIGTTime;
     }
 
@@ -694,7 +696,7 @@ public class InGameTimer implements Serializable {
                         }
                         this.pauseLogList.clear();
                     }
-                    if (this.getCategory().canSegment() && leaveTime != 0 && leaveTime > startTime) excludedTime += System.currentTimeMillis() - leaveTime;
+                    if (this.getCategory().canSegment() && leaveTime != 0 && leaveTime > startTime) excludedRTA += System.currentTimeMillis() - leaveTime;
                     leaveTime = 0;
                     TheRunRequestHelper.updateTimerData(this, TheRunTimer.PacketType.RESUME);
                 }
@@ -839,5 +841,10 @@ public class InGameTimer implements Serializable {
 
     public void setWriteFiles(boolean writeFiles) {
         this.writeFiles = writeFiles;
+    }
+
+    public void tryExcludeIGT(long igt, String reason) {
+        this.excludedIGT += igt;
+        System.out.printf("[SpeedRunIGT] this play seems to be caught in specific lag(%s). excluded IGT for this time: .%s", reason, igt);
     }
 }
