@@ -163,6 +163,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     }
 
 
+    private Long latestPortalEnter = null;
     private int portalTick = 0;
     @Inject(at = @At("HEAD"), method = "tick")
     public void updateNausea(CallbackInfo ci) {
@@ -171,14 +172,13 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             if (++portalTick >= 81 && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
                 portalTick = 0;
                 if (InGameTimer.getInstance().getStatus() != TimerStatus.IDLE && client.isInSingleplayer()) {
-                    InGameTimerUtils.IS_CHANGING_DIMENSION = true;
-                    InGameTimer.getInstance().setPause(true, TimerStatus.IDLE, "portal ticks");
+                    latestPortalEnter = System.currentTimeMillis();
                 }
             }
         } else {
-            if (portalTick > 0 && InGameTimerUtils.IS_CHANGING_DIMENSION) {
-                InGameTimerUtils.IS_CHANGING_DIMENSION = false;
-                if (InGameTimer.getInstance().isPaused()) InGameTimer.getInstance().setPause(false, TimerStatus.IDLE, "Invalid portal check");
+            if (latestPortalEnter != null) {
+                InGameTimer.getInstance().tryExcludeIGT(System.currentTimeMillis() - latestPortalEnter, "nether portal lag");
+                latestPortalEnter = null;
             }
             portalTick = 0;
         }
