@@ -195,7 +195,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     public void updateNausea(CallbackInfo ci) {
         // Portal time update
         if (this.inNetherPortal) {
-            if (++portalTick >= 81 && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
+            if (latestPortalEnter == null && ++portalTick >= 81 && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
                 portalTick = 0;
                 if (InGameTimer.getInstance().getStatus() != TimerStatus.IDLE && client.isInSingleplayer()) {
                     latestPortalEnter = System.currentTimeMillis();
