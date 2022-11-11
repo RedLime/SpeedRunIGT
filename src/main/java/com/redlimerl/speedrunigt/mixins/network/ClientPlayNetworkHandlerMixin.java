@@ -44,12 +44,6 @@ public class ClientPlayNetworkHandlerMixin {
         }
     }
 
-    @Inject(method = "onPlayerPositionLook", at = @At("RETURN"))
-    public void onPlayerPositionLookMixin(CallbackInfo ci) {
-        if (SpeedRunOption.getOption(SpeedRunOptions.TELEPORT_TO_END_PRACTICE))
-            PracticeTimerManager.stopPractice();
-    }
-
     @Inject(method = "onPlaySoundId", at = @At("RETURN"))
     public void onPlaySoundIdMixin(PlaySoundIdS2CPacket packet, CallbackInfo ci) {
         String packetId = packet.getSoundId().toString();

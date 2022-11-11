@@ -19,7 +19,6 @@
     "ClientAdvancementManagerMixin",
     "ClientPlayerEntityMixin",
     "ClientWorldMixin",
-    "InGameHudMixin",
     "KeyBindingMixin",
     "MinecraftClientMixin",
     "MouseMixin",

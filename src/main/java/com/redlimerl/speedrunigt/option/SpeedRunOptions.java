@@ -260,30 +260,6 @@ public class SpeedRunOptions {
         }
     };
 
-    public static final OptionArgument<Boolean> ENABLE_PRACTICE_DETECT = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "practice_detect"), true) {
-        @Override
-        public Boolean valueFromString(String string) {
-            return Objects.equals(string, "true");
-        }
-
-        @Override
-        public String valueToString(Boolean value) {
-            return String.valueOf(value);
-        }
-    };
-
-    public static final OptionArgument<Boolean> TELEPORT_TO_END_PRACTICE = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "teleport_to_practice"), true) {
-        @Override
-        public Boolean valueFromString(String string) {
-            return Objects.equals(string, "true");
-        }
-
-        @Override
-        public String valueToString(Boolean value) {
-            return String.valueOf(value);
-        }
-    };
-
     public static final OptionArgument<Boolean> AUTO_SAVE_PLAYER_DATA = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "auto_save_player_data"), true) {
         @Override
         public Boolean valueFromString(String string) {
