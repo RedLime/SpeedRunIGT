@@ -206,6 +206,7 @@ public class InGameTimer implements Serializable {
         INSTANCE.writeRecordFile(false);
         InGameTimerUtils.LATEST_TIMER_TIME = System.currentTimeMillis();
         TheRunRequestHelper.updateTimerData(INSTANCE, TheRunTimer.PacketType.COMPLETE);
+        TheRunRequestHelper.submitTimerData(INSTANCE);
 
         for (Consumer<InGameTimer> onCompleteConsumer : onCompleteConsumers) {
             try {
@@ -647,7 +648,7 @@ public class InGameTimer implements Serializable {
                 this.setStatus(toStatus);
 
                 updateRecordString();
-                if (toStatus == TimerStatus.IDLE || toStatus == TimerStatus.PAUSED) TheRunRequestHelper.updateTimerData(this, TheRunTimer.PacketType.PAUSE);
+                if ((toStatus == TimerStatus.IDLE || toStatus == TimerStatus.PAUSED) && !isCompleted()) TheRunRequestHelper.updateTimerData(this, TheRunTimer.PacketType.PAUSE);
                 if (this.isStarted()) {
                     if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE) == SpeedRunOptions.TimerSaveInterval.PAUSE && status != TimerStatus.LEAVE) save();
                     writeRecordFile(true);
@@ -698,7 +699,7 @@ public class InGameTimer implements Serializable {
                     }
                     if (this.getCategory().canSegment() && leaveTime != 0 && leaveTime > startTime) excludedRTA += System.currentTimeMillis() - leaveTime;
                     leaveTime = 0;
-                    TheRunRequestHelper.updateTimerData(this, TheRunTimer.PacketType.RESUME);
+                    if (!isCompleted()) TheRunRequestHelper.updateTimerData(this, TheRunTimer.PacketType.RESUME);
                 }
                 if (this.getStatus() == TimerStatus.IDLE && loggerTicks != 0) {
                     leastStartTime = System.currentTimeMillis();
