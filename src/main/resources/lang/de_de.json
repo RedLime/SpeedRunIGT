@@ -108,8 +108,6 @@
   "speedrunigt.option.generate_record.none": "Keine",
   "speedrunigt.option.delete_all_records": "Alle Rekorde löschen",
   "speedrunigt.option.delete_all_records.description": "Bist du sicher, dass du alle Rekorde im Rekordordner löschen möchtest?",
-  "speedrunigt.option.auto_save_player_data": "Auto Save Player Data",
-  "speedrunigt.option.auto_save_player_data.description": "If you enable it, it will be saved all player(only) data\nwhen you completed the run. [For another programs like AATool]",
   "speedrunigt.option.timer_start_type": "Timer startet bei",
   "speedrunigt.option.timer_start_type.description": "Legen Sie fest, wann der Timer gestartet werden soll.\n- Automatisch: Wenn Sie einen zufälligen Seed verwenden, startet der Timer, sobald die Welt geladen ist. Wenn der Seed gesetzt ist, beginnt er bei der ersten Eingabe.\n- Erste Eingabe: Startet den Timer bei der ersten Eingabe (Tastendruck, Mausbewegung)\n- Laden der Welt: Starten Sie den Timer, wenn die Welt zum ersten Mal rendert.   ",
   "speedrunigt.option.timer_start_type.first_input": "Erste Eingabe",
@@ -119,10 +117,6 @@
   "speedrunigt.option.current_extensions.description": "Derzeit verwendete SpeedRunIGT Erweiterungen: %s",
   "speedrunigt.option.auto_retime": "Automatischer Retime",
   "speedrunigt.option.auto_retime.description": "Automatischer Retime erfolgt bei Any%% Speedruns, die innerhalb von 13 Minuten in 1.16+, 17 Minuten in 1.9-1.15 und 23 Minuten in Pre1.9 beendet werden. Bei allen anderen Kategorien wird diese Funktion automatisch deaktiviert.",
-  "speedrunigt.option.therun_gg.open_therun_gg": "Visit therun.gg",
-  "speedrunigt.option.therun_gg.edit_upload_key": "Edit Upload Key",
-  "speedrunigt.option.therun_gg.toggle_live": "Toggle TheRun Live",
-  "speedrunigt.option.therun_gg.toggle_live.description": "Send some timer data to therun.gg live.\nSo your live runs will be public on therun.gg live.",
   "speedrunigt.option.practice_detect": "Übungs-Map erkennen",
   "speedrunigt.option.practice_detect.description": "Falls ein Timer in der Schnellleiste gefunden wird,\nwird automatisch zum Übungsmodus gewechselt.",
   "speedrunigt.option.teleport_to_practice": "Beende Übung durch TP",
@@ -144,10 +138,5 @@
   "speedrunigt.font.apply_and_save": "Speichern & Anwenden",
   "speedrunigt.font.size": "Größe",
   "speedrunigt.font.oversample": "Oversampling",
-  "speedrunigt.font.oversample.description": "Normal klicken: ±0.1/Shift-Klick: ±1.0",
-  "speedrunigt.therun_gg.insert_upload_key": "Insert \"Upload Key\"",
-  "speedrunigt.therun_gg.get_upload_key": "Get \"Upload Key\" from therun.gg",
-  "speedrunigt.therun_gg.message.loading_upload_key_info": "Checking entered the key correctly...",
-  "speedrunigt.therun_gg.message.upload_key_is_valid": "This \"Upload Key\" is valid, and has been saved :)",
-  "speedrunigt.therun_gg.message.upload_key_is_invalid": "This \"Upload Key\" is invalid :( please check again"
+  "speedrunigt.font.oversample.description": "Normal klicken: ±0.1/Shift-Klick: ±1.0"
 }
