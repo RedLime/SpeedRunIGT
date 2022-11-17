@@ -74,9 +74,6 @@ public abstract class MinecraftClientMixin {
 
     @Inject(method = "openScreen", at = @At("RETURN"))
     public void onSetScreen(Screen screen, CallbackInfo ci) {
-        if (screen instanceof ProgressScreen) {
-            disconnectCheck = true;
-        }
         if (InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN != null) {
             Screen screen1 = InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN;
             InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN = null;
@@ -193,6 +190,9 @@ public abstract class MinecraftClientMixin {
             }
             SpeedRunIGTClient.TIMER_DRAWER.draw();
         }
+
+        if (this.world != null)
+            disconnectCheck = true;
     }
 
 
