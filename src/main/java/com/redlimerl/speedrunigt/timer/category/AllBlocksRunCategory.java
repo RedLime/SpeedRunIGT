@@ -7,10 +7,10 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootTables;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stats;
-import net.minecraft.util.registry.Registry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ public class AllBlocksRunCategory extends RunCategory {
         for (Item item : getAllItems()) {
             for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
                 if (player.getStatHandler().getStat(Stats.USED, item) > 0) {
-                    placedBlocks.add(Registry.ITEM.getId(item).toString());
+                    placedBlocks.add(Registries.ITEM.getId(item).toString());
                     break;
                 }
             }
@@ -106,7 +106,7 @@ public class AllBlocksRunCategory extends RunCategory {
     public static List<Item> getAllItems() {
         ArrayList<Item> items = Lists.newArrayList();
 
-        for (Item item : Registry.ITEM) {
+        for (Item item : Registries.ITEM) {
             if (getItemsForAllBlocks().contains(item)) items.add(item);
 
             if (item instanceof BlockItem blockItem) {

@@ -12,6 +12,7 @@ import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.timer.TimerDrawer.PositionType;
 import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.Tooltip;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -384,7 +385,7 @@ public class TimerCustomizeScreen extends Screen {
                     drawer.setTimerDecimals(TimerDecimals.values()[(++order) % TimerDecimals.values().length]);
                     changed = true;
                     button.setMessage(Text.translatable("speedrunigt.option.timer_position.show_decimals").append(" : ").append(Text.translatable("speedrunigt.option.timer_position.show_decimals.context", drawer.getTimerDecimals().getNumber())));
-                }, (button, matrices, mouseX, mouseY) -> renderTooltip(matrices, Text.translatable("speedrunigt.option.timer_position.show_decimals.description"), mouseX, mouseY)))
+                }, Tooltip.of(Text.translatable("speedrunigt.option.timer_position.show_decimals.description"))))
         );
     }
 

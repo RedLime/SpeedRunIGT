@@ -28,8 +28,6 @@ public class TheRunUploadKeyScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        assert client != null;
-        client.keyboard.setRepeatEvents(true);
 
         this.saveButton = addDrawableChild(ButtonWidgetHelper.create(width / 2 - 100, height / 2 + 24, 98, 20, Text.translatable("selectWorld.edit.save"),
                 (button) -> {
@@ -103,8 +101,4 @@ public class TheRunUploadKeyScreen extends Screen {
         return this.uploadKeyBox.charTyped(chr, keyCode);
     }
 
-    @Override
-    public void removed() {
-        if (client != null) client.keyboard.setRepeatEvents(false);
-    }
 }
