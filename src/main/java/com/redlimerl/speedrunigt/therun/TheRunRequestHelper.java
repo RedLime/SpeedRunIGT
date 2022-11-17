@@ -2,20 +2,25 @@ package com.redlimerl.speedrunigt.therun;
 
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import org.apache.commons.io.IOUtils;
 
-import java.io.BufferedWriter;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -34,6 +39,7 @@ public class TheRunRequestHelper {
         connection.setRequestProperty("Accept", "*/*");
         connection.setRequestProperty("Sec-Fetch-Site", "cross-site");
         connection.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
+        connection.setRequestProperty("Content-Disposition", "attachment");
     }
 
     public static void updateTimerData(InGameTimer timer, TheRunTimer.PacketType packetType) {
@@ -105,4 +111,61 @@ public class TheRunRequestHelper {
         }
     }
 
+    public static void submitTimerData(InGameTimer timer) {
+        // Skip these all things lol
+        if (!timer.isStarted() || timer.isCoop() || timer.isOpenedIntegratedServer() || !SpeedRunIGT.IS_CLIENT_SIDE
+                || timer.isGlitched() || TheRunKeyHelper.UPLOAD_KEY.isEmpty() || timer.getCategory().getTheRunCategory() == null
+                || !SpeedRunOption.getOption(SpeedRunOptions.ENABLE_THERUN_GG_LIVE)) {
+            return;
+        }
+
+        threadExecutor.submit(() -> {
+            try {
+                TheRunTimer theRunTimer = new TheRunTimer(timer);
+
+                DOMSource xmlData = theRunTimer.convertXml();
+                TransformerFactory tf = TransformerFactory.newInstance();
+                Transformer trans = tf.newTransformer();
+                StringWriter sw = new StringWriter();
+                trans.transform(xmlData, new StreamResult(sw));
+                String resultXml = sw.toString();
+
+                URL url = new URL("https://2uxp372ks6nwrjnk6t7lqov4zu0solno.lambda-url.eu-west-1.on.aws/?filename=" +
+                        URLEncoder.encode(timer.getCategory().getTheRunCategory().getGameName(), "UTF-8") + "-" +
+                        URLEncoder.encode(timer.getCategory().getTheRunCategory().getCategoryName().trim().toLowerCase(Locale.ROOT), "UTF-8") + ".lss&uploadKey=" + TheRunKeyHelper.UPLOAD_KEY);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                setupConnection(connection);
+
+                InputStreamReader r = new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8);
+                String targetUrl = new JsonParser().parse(r).getAsJsonObject().get("url").getAsString();
+                SpeedRunIGT.debug(targetUrl);
+
+                URL submitUrl = new URL(targetUrl);
+                HttpURLConnection submitConnection = (HttpURLConnection) submitUrl.openConnection();
+                setupConnection(submitConnection);
+                submitConnection.setRequestMethod("PUT");
+                submitConnection.setDoInput(true);
+                submitConnection.setDoOutput(true);
+
+                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(submitConnection.getOutputStream()));
+                bw.write(resultXml);
+                bw.flush();
+                bw.close();
+
+                int result = submitConnection.getResponseCode();
+                SpeedRunIGT.debug("therun.gg submit status > " + result);
+                InputStream in;
+                if (result >= 200 && result < 300) {
+                    in = submitConnection.getInputStream();
+                    SpeedRunIGT.debug(IOUtils.toString(in, StandardCharsets.UTF_8));
+                } else {
+                    in = submitConnection.getErrorStream();
+                    SpeedRunIGT.error(IOUtils.toString(in, StandardCharsets.UTF_8));
+                }
+                in.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
 }
