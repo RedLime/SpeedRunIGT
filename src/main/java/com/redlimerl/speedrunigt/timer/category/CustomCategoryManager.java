@@ -38,7 +38,7 @@ public class CustomCategoryManager {
                 JsonObject jsonObject = new JsonParser().parse(FileUtils.readFileToString(file, StandardCharsets.UTF_8)).getAsJsonObject();
 
                 if (!VersionPredicate.parse(jsonObject.get("version").getAsString()).test(SemanticVersion.parse(InGameTimerUtils.getMinecraftVersion()))) {
-                    SpeedRunIGT.error(String.format("Failed to add '%s' category file, it doesn't work for this version", file.getName()));
+                    SpeedRunIGT.debug(String.format("Failed to add '%s' category file, it doesn't work for this version", file.getName()));
                     continue;
                 }
 
