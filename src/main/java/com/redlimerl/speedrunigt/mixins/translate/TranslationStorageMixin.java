@@ -2,6 +2,8 @@ package com.redlimerl.speedrunigt.mixins.translate;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.redlimerl.speedrunigt.option.SpeedRunOption;
+import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.utils.TranslateHelper;
 import net.minecraft.client.resource.language.TranslationStorage;
 import net.minecraft.resource.ResourceManager;
@@ -27,7 +29,7 @@ public abstract class TranslationStorageMixin {
     @Inject(method = "method_5945", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resource/language/TranslationStorage;method_5950()V", shift = At.Shift.BEFORE))
     private void onLoad(ResourceManager container, List<String> list, CallbackInfo ci) {
         for (String lang : list) {
-            InputStream inputStream = TranslateHelper.setup(lang);
+            InputStream inputStream = TranslateHelper.setup(lang, SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_ENGLISH_TRANSLATIONS));
             try {
                 if (inputStream == null) continue;
                 String json = IOUtils.toString(inputStream, StandardCharsets.UTF_8);

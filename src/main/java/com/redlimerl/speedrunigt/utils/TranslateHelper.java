@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.utils;
 
+import net.minecraft.client.MinecraftClient;
 import org.spongepowered.include.com.google.common.collect.Lists;
 
 import java.io.File;
@@ -50,9 +51,11 @@ public class TranslateHelper {
         return list.toArray(new String[0]);
     }
 
-    public static InputStream setup(String langCode) {
+    public static InputStream setup(String langCode, boolean englishOnly) {
         try {
             for (String langFileName : getLangFileNames()) {
+                if (englishOnly && !langFileName.endsWith("en_us.json")) continue;
+
                 if (!langFileName.endsWith(langCode.toLowerCase(Locale.ROOT) + ".json")) continue;
 
                 InputStream inputStream = TranslateHelper.class.getResourceAsStream(langFileName);
@@ -64,5 +67,9 @@ public class TranslateHelper {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static void reload() {
+        MinecraftClient.getInstance().stitchTextures();
     }
 }
