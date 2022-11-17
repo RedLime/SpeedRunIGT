@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.utils;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.Resource;
 import net.minecraft.util.Language;
 import org.spongepowered.include.com.google.common.collect.Lists;
@@ -53,9 +54,11 @@ public class TranslateHelper {
         return list.toArray(new String[0]);
     }
 
-    public static void setup(List<Resource> resources, BiConsumer<String, String> biConsumer) {
+    public static void setup(List<Resource> resources, BiConsumer<String, String> biConsumer, boolean englishOnly) {
         try {
             for (String langFileName : getLangFileNames()) {
+                if (englishOnly && !langFileName.endsWith("en_us.json")) continue;
+
                 for (Resource resource : resources) {
                     if (!langFileName.endsWith(resource.getId().getPath())) continue;
 
@@ -68,5 +71,9 @@ public class TranslateHelper {
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void reload() {
+        MinecraftClient.getInstance().reloadResources();
     }
 }
