@@ -20,7 +20,6 @@ import com.redlimerl.speedrunigt.version.ColorMixer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
-import net.minecraft.client.gui.screen.ProgressScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.*;
@@ -79,9 +78,6 @@ public abstract class MinecraftClientMixin {
 
     @Inject(method = "openScreen", at = @At("RETURN"))
     public void onSetScreen(Screen screen, CallbackInfo ci) {
-        if (screen instanceof ProgressScreen) {
-            disconnectCheck = true;
-        }
         if (InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN != null) {
             Screen screen1 = InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN;
             InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN = null;
@@ -200,6 +196,9 @@ public abstract class MinecraftClientMixin {
         }
 
         MixinValues.IS_RENDERED_BEFORE = false;
+
+        if (this.world != null)
+            disconnectCheck = true;
     }
 
 
