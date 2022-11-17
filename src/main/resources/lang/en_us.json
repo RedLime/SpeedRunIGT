@@ -103,7 +103,7 @@
   "speedrunigt.option.category.practice": "Practice",
   "speedrunigt.option.open_records_folder": "Open Records Directory",
   "speedrunigt.option.always_english_translations": "Always use English",
-  "speedrunigt.option.always_english_translations.description": "SpeedrunIGT's translations will apply to English only (it will reload resources)",
+  "speedrunigt.option.always_english_translations.description": "SpeedrunIGT's translations will apply to English only\n(it will reload resources)",
   "speedrunigt.option.generate_record": "Make Record",
   "speedrunigt.option.generate_record.everything": "Every Run",
   "speedrunigt.option.generate_record.complete_only": "Completed Run",
