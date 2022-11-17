@@ -121,7 +121,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                         new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.always_english_translations").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_ENGLISH_TRANSLATIONS) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString(),
                                 (button) -> {
                                     SpeedRunOption.setOption(SpeedRunOptions.ALWAYS_ENGLISH_TRANSLATIONS, !SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_ENGLISH_TRANSLATIONS));
-                                    button.message = (new TranslatableText("speedrunigt.option.always_english_translations").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_ENGLISH_TRANSLATIONS) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
+                                    button.field_22510 = (new TranslatableText("speedrunigt.option.always_english_translations").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_ENGLISH_TRANSLATIONS) ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString());
 
                                     TranslateHelper.reload();
                                 })
