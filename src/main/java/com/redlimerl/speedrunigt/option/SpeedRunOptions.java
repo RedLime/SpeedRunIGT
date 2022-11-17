@@ -308,6 +308,18 @@ public class SpeedRunOptions {
         }
     };
 
+    public static final OptionArgument<Boolean> ALWAYS_ENGLISH_TRANSLATIONS = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "always_english_translations"), false) {
+        @Override
+        public Boolean valueFromString(String string) {
+            return Objects.equals(string, "true");
+        }
+
+        @Override
+        public String valueToString(Boolean value) {
+            return String.valueOf(value);
+        }
+    };
+
     public static final OptionArgument<Float> TIMER_RTA_POSITION_X = new OptionArgument<Float>(new Identifier(SpeedRunIGT.MOD_ID, "timer_rta_pos_x"), 0.983f) {
         @Override
         public Float valueFromString(String string) {
