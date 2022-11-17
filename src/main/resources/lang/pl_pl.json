@@ -102,6 +102,8 @@
   "speedrunigt.option.category.retime": "Retime",
   "speedrunigt.option.category.practice": "Ćwiczenie",
   "speedrunigt.option.open_records_folder": "Otwórz Folder Rejestru",
+  "speedrunigt.option.always_english_translations": "Zawsze po angielsku",
+  "speedrunigt.option.always_english_translations.description": "Powyższe tłumaczenia dotyczą tylko języka angielskiego\n(zasoby zostaną przeładowane)",
   "speedrunigt.option.generate_record": "Zarejestruj",
   "speedrunigt.option.generate_record.everything": "Każdy Run",
   "speedrunigt.option.generate_record.complete_only": "Ukończony Run",
