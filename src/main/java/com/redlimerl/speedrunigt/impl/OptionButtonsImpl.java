@@ -11,6 +11,7 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
+import com.redlimerl.speedrunigt.utils.TranslateHelper;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ConfirmScreen;
@@ -109,6 +110,20 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                                 })
                 )
                 .setToolTip(() -> I18n.translate("speedrunigt.option.safe_font_mode.description"))
+                .setCategory("speedrunigt.option.category.general")
+        );
+
+        factories.add(screen -> new OptionButtonFactory.Builder()
+                .setButtonWidget(
+                        ButtonWidgetHelper.create(0, 0, 150, 20, Text.translatable("speedrunigt.option.always_english_translations").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_ENGLISH_TRANSLATIONS) ? ScreenTexts.ON : ScreenTexts.OFF),
+                                (ButtonWidget button) -> {
+                                    SpeedRunOption.setOption(SpeedRunOptions.ALWAYS_ENGLISH_TRANSLATIONS, !SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_ENGLISH_TRANSLATIONS));
+                                    button.setMessage(Text.translatable("speedrunigt.option.always_english_translations").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_ENGLISH_TRANSLATIONS) ? ScreenTexts.ON : ScreenTexts.OFF));
+
+                                    TranslateHelper.reload();
+                                })
+                )
+                .setToolTip(() -> I18n.translate("speedrunigt.option.always_english_translations.description"))
                 .setCategory("speedrunigt.option.category.general")
         );
 

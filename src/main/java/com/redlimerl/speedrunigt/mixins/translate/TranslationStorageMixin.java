@@ -1,5 +1,7 @@
 package com.redlimerl.speedrunigt.mixins.translate;
 
+import com.redlimerl.speedrunigt.option.SpeedRunOption;
+import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.utils.TranslateHelper;
 import net.minecraft.client.resource.language.TranslationStorage;
 import net.minecraft.resource.Resource;
@@ -16,6 +18,6 @@ public class TranslationStorageMixin {
 
     @Inject(method = "load(Ljava/lang/String;Ljava/util/List;Ljava/util/Map;)V", at = @At("RETURN"))
     private static void onLoad(String langCode, List<Resource> resourceRefs, Map<String, String> translations, CallbackInfo ci) {
-        TranslateHelper.setup(langCode, translations::put);
+        TranslateHelper.setup(langCode, translations::put, SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_ENGLISH_TRANSLATIONS));
     }
 }
