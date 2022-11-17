@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -52,7 +53,7 @@ public class TranslateHelper {
     public static InputStream setup(String langCode) {
         try {
             for (String langFileName : getLangFileNames()) {
-                if (!langFileName.endsWith(langCode + ".json")) continue;
+                if (!langFileName.endsWith(langCode.toLowerCase(Locale.ROOT) + ".json")) continue;
 
                 InputStream inputStream = TranslateHelper.class.getResourceAsStream(langFileName);
                 if (inputStream != null) {
