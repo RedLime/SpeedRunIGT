@@ -10,9 +10,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(MinecraftDedicatedServer.class)
 public class DedicatedServerMixin {
-
     @Inject(method = "setupServer", at = @At("RETURN"))
     private void onCreate(CallbackInfoReturnable<Boolean> cir) {
-        SpeedRunIGT.DEDICATED_SERVER = ((MinecraftServer) (Object) this);
+        SpeedRunIGT.DEDICATED_SERVER = (MinecraftServer) (Object) this;
     }
 }

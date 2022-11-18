@@ -2,7 +2,6 @@ package com.redlimerl.speedrunigt;
 
 import net.fabricmc.loader.api.FabricLoader;
 import org.objectweb.asm.tree.ClassNode;
-import org.spongepowered.asm.mixin.Mixins;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
@@ -10,11 +9,6 @@ import java.util.List;
 import java.util.Set;
 
 public class SpeedRunIGTMixinPlugin implements IMixinConfigPlugin {
-
-    private boolean isUsingMod(String modid) {
-        return FabricLoader.getInstance().getModContainer(modid).isPresent();
-    }
-
     @Override
     public void onLoad(String mixinPackage) {}
 
@@ -25,10 +19,7 @@ public class SpeedRunIGTMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        if (targetClassName.startsWith("me.jellysquid.mods.sodium") && !isUsingMod("sodium")) {
-            return false;
-        }
-        return true;
+        return !targetClassName.startsWith("me.jellysquid.mods.sodium") || FabricLoader.getInstance().getModContainer("sodium").isPresent();
     }
 
     @Override
@@ -44,5 +35,4 @@ public class SpeedRunIGTMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {}
-
 }

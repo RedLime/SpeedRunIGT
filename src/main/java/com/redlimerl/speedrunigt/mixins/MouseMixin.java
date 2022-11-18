@@ -14,23 +14,23 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Mouse.class)
 public abstract class MouseMixin {
-
     @Shadow public abstract boolean isCursorLocked();
 
     @Inject(at = @At("HEAD"), method = "onCursorPos")
     public void onMove(CallbackInfo ci) {
-        unlock();
+        this.unlock();
     }
 
     @Inject(at = @At("HEAD"), method = "onMouseScroll")
     public void onMouseScroll(CallbackInfo ci) {
-        unlock();
+        this.unlock();
     }
 
     private void unlock() {
-        @NotNull
-        InGameTimer timer = InGameTimer.getInstance();
-        if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
+        @NotNull InGameTimer timer = InGameTimer.getInstance();
+        if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED_LEGACY) {
+            return;
+        }
 
         if (InGameTimerClientUtils.canUnpauseTimer(false)) {
             timer.setPause(false, "moved mouse");

@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.function.Function;
 
 public class TheRunCategory {
-
     private final String gameName;
     private final String categoryName;
     private final Function<InGameTimer, LinkedHashMap<String, String>> splitNameMap;
@@ -20,11 +19,11 @@ public class TheRunCategory {
     }
 
     public String getGameName() {
-        return gameName;
+        return this.gameName;
     }
 
     public String getCategoryName() {
-        return categoryName;
+        return this.categoryName;
     }
 
     public LinkedHashMap<String, String> getSplitNameMap(InGameTimer timer) {
@@ -32,7 +31,7 @@ public class TheRunCategory {
     }
 
     public String getCompletedSplitName() {
-        return completedSplitName;
+        return this.completedSplitName;
     }
 
     public static class Builder {

@@ -12,11 +12,11 @@ public enum RunType {
     }
 
     public String getContext() {
-        return context;
+        return this.context;
     }
 
     public int getCode() {
-        return code;
+        return this.code;
     }
 
     public static RunType fromBoolean(boolean isSetSeed) {
@@ -24,8 +24,11 @@ public enum RunType {
     }
 
     public static RunType fromInt(int code) {
-        if (code == 0) return RANDOM_SEED;
-        if (code == 1) return SET_SEED;
-        return OLD_WORLD;
+        for (RunType type : RunType.values()) {
+            if (type.getCode() == code) {
+                return type;
+            }
+        }
+        return RANDOM_SEED;
     }
 }

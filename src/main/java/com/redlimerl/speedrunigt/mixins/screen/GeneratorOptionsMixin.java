@@ -11,7 +11,6 @@ import java.util.OptionalLong;
 
 @Mixin(GeneratorOptions.class)
 public class GeneratorOptionsMixin {
-
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     @Inject(method = "withHardcore", at = @At("HEAD"))
     public void onGenerate(boolean hardcore, OptionalLong optionalLong, CallbackInfoReturnable<GeneratorOptions> cir) {

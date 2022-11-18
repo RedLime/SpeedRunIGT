@@ -20,9 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
-
     @Shadow protected boolean dead;
-
     @Shadow @Nullable protected PlayerEntity attackingPlayer;
 
     public LivingEntityMixin(EntityType<?> type, World world) {
@@ -40,27 +38,25 @@ public abstract class LivingEntityMixin extends Entity {
         if (this.getType() == EntityType.ELDER_GUARDIAN && this.attackingPlayer != null) timer.tryInsertNewTimeline("kill_elder_guardian");
         if (this.getType() == EntityType.ENDER_DRAGON) timer.tryInsertNewTimeline("kill_ender_dragon");
 
-        //Kill All Bosses
+        // Kill All Bosses
         if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {
             if (this.getType() == EntityType.ENDER_DRAGON) {
                 timer.updateMoreData(0, 1);
-            }
-            if (this.getType() == EntityType.WITHER && this.attackingPlayer != null) {
+            } else if (this.getType() == EntityType.WITHER && this.attackingPlayer != null) {
                 timer.updateMoreData(1, 1);
                 RunCategories.checkAllBossesCompleted();
-            }
-            if (this.getType() == EntityType.ELDER_GUARDIAN && this.attackingPlayer != null) {
+            } else if (this.getType() == EntityType.ELDER_GUARDIAN && this.attackingPlayer != null) {
                 timer.updateMoreData(2, 1);
                 RunCategories.checkAllBossesCompleted();
             }
         }
 
-        //Kill Wither
+        // Kill Wither
         if (timer.getCategory() == RunCategories.KILL_WITHER && this.getType() == EntityType.WITHER && this.attackingPlayer != null) {
             InGameTimer.complete();
         }
 
-        //Kill Elder Guardian
+        // Kill Elder Guardian
         if (timer.getCategory() == RunCategories.KILL_ELDER_GUARDIAN && this.getType() == EntityType.ELDER_GUARDIAN && this.attackingPlayer != null) {
             InGameTimer.complete();
         }

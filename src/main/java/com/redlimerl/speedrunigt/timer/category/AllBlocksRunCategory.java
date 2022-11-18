@@ -13,11 +13,11 @@ import net.minecraft.stat.Stats;
 import net.minecraft.util.registry.Registry;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 public class AllBlocksRunCategory extends RunCategory {
-
     public AllBlocksRunCategory() {
         super("all_blocks", "", "All Blocks");
     }
@@ -43,57 +43,57 @@ public class AllBlocksRunCategory extends RunCategory {
     }
 
     private static boolean isIncludedAllBlocks(Block block) {
-        if (block.getLootTableId() == LootTables.EMPTY) return false;
-        if (block == Blocks.NETHER_PORTAL) return false;
-        if (block == Blocks.FARMLAND) return false;
-        if (block == Blocks.GRASS_PATH) return false;
-        if (block == Blocks.CHORUS_PLANT) return false;
-        if (block == Blocks.LILY_PAD) return false;
-        if (block == Blocks.PISTON_HEAD) return false;
-        if (block == Blocks.TALL_SEAGRASS) return false;
-        if (block == Blocks.NETHER_WART) return false;
-        if (block == Blocks.SPAWNER) return false;
-        if (block == Blocks.BUBBLE_COLUMN) return false;
-        if (block == Blocks.BAMBOO_SAPLING) return false;
-        if (block == Blocks.PETRIFIED_OAK_SLAB) return false;
-        if (block == Blocks.FROSTED_ICE) return false;
-        if (block == Blocks.PLAYER_HEAD) return false;
-        if (block instanceof InfestedBlock) return false;
+        List<Block> excludeBlocks = Arrays.asList(
+                Blocks.NETHER_PORTAL,
+                Blocks.FARMLAND,
+                Blocks.GRASS_PATH,
+                Blocks.CHORUS_PLANT,
+                Blocks.LILY_PAD,
+                Blocks.PISTON_HEAD,
+                Blocks.TALL_SEAGRASS,
+                Blocks.NETHER_WART,
+                Blocks.SPAWNER,
+                Blocks.BUBBLE_COLUMN,
+                Blocks.BAMBOO_SAPLING,
+                Blocks.PETRIFIED_OAK_SLAB,
+                Blocks.FROSTED_ICE,
+                Blocks.PLAYER_HEAD,
+                Blocks.REDSTONE_WIRE,
+                Blocks.TRIPWIRE,
+                Blocks.SWEET_BERRY_BUSH,
+                Blocks.KELP,
+                Blocks.COCOA,
+                Blocks.AIR
+        );
 
-        if (block == Blocks.REDSTONE_WIRE) return false;
-        if (block == Blocks.TRIPWIRE) return false;
-        if (block == Blocks.SWEET_BERRY_BUSH) return false;
-        if (block == Blocks.KELP) return false;
-        if (block == Blocks.COCOA) return false;
+        if (block.getLootTableId() == LootTables.EMPTY) return false;
+        if (block instanceof InfestedBlock) return false;
         if (block instanceof FluidBlock) return false;
         if (block instanceof CropBlock) return false;
         if (block instanceof AttachedStemBlock) return false;
         if (block instanceof StemBlock) return false;
 
-        return block != Blocks.AIR;
+        return !excludeBlocks.contains(block);
     }
 
     private static List<Item> getItemsForAllBlocks() {
-        ArrayList<Item> items = Lists.newArrayList();
-
-        items.add(Items.SWEET_BERRIES);
-        items.add(Items.NETHER_WART);
-        items.add(Items.KELP);
-        items.add(Items.REDSTONE);
-        items.add(Items.STRING);
-        items.add(Items.WATER_BUCKET);
-        items.add(Items.LAVA_BUCKET);
-        items.add(Items.WHEAT_SEEDS);
-        items.add(Items.BEETROOT_SEEDS);
-        items.add(Items.POTATO);
-        items.add(Items.CARROT);
-        items.add(Items.MELON_SEEDS);
-        items.add(Items.PUMPKIN_SEEDS);
-        items.add(Items.COCOA_BEANS);
-
-        return items;
+        return Arrays.asList(
+                Items.SWEET_BERRIES,
+                Items.NETHER_WART,
+                Items.KELP,
+                Items.REDSTONE,
+                Items.STRING,
+                Items.WATER_BUCKET,
+                Items.LAVA_BUCKET,
+                Items.WHEAT_SEEDS,
+                Items.BEETROOT_SEEDS,
+                Items.POTATO,
+                Items.CARROT,
+                Items.MELON_SEEDS,
+                Items.PUMPKIN_SEEDS,
+                Items.COCOA_BEANS
+        );
     }
-
 
     public static List<Item> getAllItems() {
         ArrayList<Item> items = Lists.newArrayList();

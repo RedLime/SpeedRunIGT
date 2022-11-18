@@ -21,41 +21,41 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin extends PlayerEntity {
-
     @Shadow public abstract ServerWorld getServerWorld();
+    private ServerWorld beforeWorld = null;
+    private Vec3d lastPortalPos = null;
 
     public ServerPlayerEntityMixin(World world, BlockPos blockPos, GameProfile gameProfile) {
         super(world, blockPos, gameProfile);
     }
 
-    private ServerWorld beforeWorld = null;
-    private Vec3d lastPortalPos = null;
-
     @Inject(method = "changeDimension", at = @At("HEAD"))
     public void onChangeDimension(ServerWorld destination, CallbackInfoReturnable<Entity> cir) {
-        beforeWorld = this.getServerWorld();
-        lastPortalPos = this.getPos();
+        this.beforeWorld = this.getServerWorld();
+        this.lastPortalPos = this.getPos();
         InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = !InGameTimer.getInstance().isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY;
     }
 
     @Inject(method = "changeDimension", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;onPlayerChangeDimension(Lnet/minecraft/server/network/ServerPlayerEntity;)V", shift = At.Shift.AFTER))
     public void onChangedDimension(ServerWorld destination, CallbackInfoReturnable<Entity> cir) {
-        RegistryKey<World> oldRegistryKey = beforeWorld.getRegistryKey();
-        RegistryKey<World> newRegistryKey = world.getRegistryKey();
+        RegistryKey<World> oldRegistryKey = this.beforeWorld.getRegistryKey();
+        RegistryKey<World> newRegistryKey = this.world.getRegistryKey();
 
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() != TimerStatus.NONE) {
             if (oldRegistryKey == World.OVERWORLD && newRegistryKey == World.NETHER) {
-                if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY)
-                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.NETHER, this.getPos().add(0, 0, 0), lastPortalPos.add(0, 0, 0));
+                if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY) {
+                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.NETHER, this.getPos().add(0, 0, 0), this.lastPortalPos.add(0, 0, 0));
+                }
             }
 
             if (oldRegistryKey == World.NETHER && newRegistryKey == World.OVERWORLD) {
-                if (InGameTimerUtils.isBlindTraveled(lastPortalPos)) {
+                if (InGameTimerUtils.isBlindTraveled(this.lastPortalPos)) {
                     InGameTimer.getInstance().tryInsertNewTimeline("nether_travel");
                 }
-                if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY)
-                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.OVERWORLD, lastPortalPos.add(0, 0, 0), this.getPos().add(0, 0, 0));
+                if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY) {
+                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.OVERWORLD, this.lastPortalPos.add(0, 0, 0), this.getPos().add(0, 0, 0));
+                }
             }
         }
     }

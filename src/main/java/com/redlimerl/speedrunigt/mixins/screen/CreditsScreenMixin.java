@@ -14,15 +14,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(CreditsScreen.class)
 public class CreditsScreenMixin {
-
     @Inject(method = "init()V", at = @At("TAIL"))
     private void initMixin(CallbackInfo ci) {
-        @NotNull
-        InGameTimer timer = InGameTimer.getInstance();
+        @NotNull InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() != TimerStatus.NONE) {
             int anyToAATime = SpeedRunOption.getOption(SpeedRunOptions.CHANGE_ANY_TO_AA_OVER);
             if (anyToAATime > 0 && (timer.getCategory() == RunCategories.ANY || timer.getCategory() == RunCategories.ALL_ADVANCEMENTS)) {
-                if (timer.getInGameTime() < 1000L*60*anyToAATime) {
+                if (timer.getInGameTime() < 1000L * 60 * anyToAATime) {
                     timer.setCategory(RunCategories.ANY, true);
                 } else {
                     timer.setCategory(RunCategories.ALL_ADVANCEMENTS, true);
@@ -32,6 +30,7 @@ public class CreditsScreenMixin {
             if (timer.getCategory() == RunCategories.ANY) {
                 InGameTimer.complete();
             }
+
             RunCategories.checkAllBossesCompleted();
         }
     }

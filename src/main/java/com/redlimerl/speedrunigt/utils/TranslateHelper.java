@@ -18,7 +18,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class TranslateHelper {
-
     public static String[] getLangFileNames() throws IOException, URISyntaxException {
         final String path = "lang";
         final File jarFile = new File(TranslateHelper.class.getProtectionDomain().getCodeSource().getLocation().toURI());
@@ -29,14 +28,13 @@ public class TranslateHelper {
             // Run with JAR file
             ZipInputStream zip = new ZipInputStream(TranslateHelper.class.getProtectionDomain().getCodeSource().getLocation().openStream());
 
-            while(true) {
+            while (true) {
                 ZipEntry e = zip.getNextEntry();
-                if (e == null)
-                    break;
+                if (e == null) break;
                 String name = e.getName();
                 if (name.startsWith(path)) {
                     String[] fileName = name.split("/");
-                    String file = fileName[fileName.length-1];
+                    String file = fileName[fileName.length - 1];
                     if (!file.isEmpty() && fileName.length > 1) list.add("/" + path + "/" + file);
                 }
             }

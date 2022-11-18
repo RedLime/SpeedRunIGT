@@ -33,10 +33,10 @@ import java.util.Set;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class SpeedRunIGT implements ModInitializer {
-
     public static final String MOD_ID = "speedrunigt";
-    private static boolean isInitialized = false;
-    public static boolean isInitialized() { return isInitialized; }
+    private static final Logger LOGGER = LogManager.getLogger("SpeedRunIGT");
+
+    private static boolean initialized = false;
     public static boolean IS_CLIENT_SIDE = false;
     public static boolean IS_DEBUG_MODE = FabricLoader.getInstance().isDevelopmentEnvironment();
     public static MinecraftServer DEDICATED_SERVER = null;
@@ -63,7 +63,7 @@ public class SpeedRunIGT implements ModInitializer {
         getRecordsPath().toFile().mkdirs();
         FONT_PATH.toFile().mkdirs();
 
-        //Delete all old timer data
+        // Delete all old timer data
         File oldWorlds = getMainPath().resolve("worlds").toFile();
         if (oldWorlds.exists()) {
             try {
@@ -84,7 +84,7 @@ public class SpeedRunIGT implements ModInitializer {
         CategoryCondition.registerCondition(new ConditionsRegistryImpl().registerConditions());
 
 
-        // Registry API's
+        // Registry APIs
         for (EntrypointContainer<SpeedRunIGTApi> entryPoint : FabricLoader.getInstance().getEntrypointContainers("speedrunigt", SpeedRunIGTApi.class)) {
             SpeedRunIGTApi api = entryPoint.getEntrypoint();
 
@@ -110,7 +110,7 @@ public class SpeedRunIGT implements ModInitializer {
         CustomCategoryManager.init();
 
         // End initializing
-        isInitialized = true;
+        initialized = true;
 
         // Set properties
         System.setProperty("speedrunigt.version", MOD_VERSION.split("\\+")[0]);
@@ -123,10 +123,16 @@ public class SpeedRunIGT implements ModInitializer {
         TimerPackets.init();
     }
 
-    private static final Logger LOGGER = LogManager.getLogger("SpeedRunIGT");
+    public static boolean isInitialized() {
+        return initialized;
+    }
+
     public static void debug(Object obj) {
         if (IS_DEBUG_MODE) LOGGER.info(obj);
     }
-    public static void error(Object obj) { LOGGER.error(obj); }
+
+    public static void error(Object obj) {
+        LOGGER.error(obj);
+    }
 }
 //Void was here :)

@@ -37,8 +37,8 @@ public class TimerInitializePacket extends TimerPacket {
     @Environment(EnvType.CLIENT)
     @Override
     protected TimerPacketBuf convertClient2ServerPacket(TimerPacketBuf buf, MinecraftClient client) {
-        buf.writeInt(runType.getCode());
-        buf.writeString(category.getID());
+        buf.writeInt(this.runType.getCode());
+        buf.writeString(this.category.getID());
         return buf;
     }
 
@@ -54,8 +54,8 @@ public class TimerInitializePacket extends TimerPacket {
 
     @Override
     protected TimerPacketBuf convertServer2ClientPacket(TimerPacketBuf buf, MinecraftServer server) {
-        buf.writeInt(runType.getCode());
-        buf.writeString(category.getID());
+        buf.writeInt(this.runType.getCode());
+        buf.writeString(this.category.getID());
 
         TimerPacketBuf copiedBuf = buf.copy();
         init(copiedBuf, true);

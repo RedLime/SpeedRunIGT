@@ -2,38 +2,36 @@ package com.redlimerl.speedrunigt.timer.packet;
 
 import com.redlimerl.speedrunigt.timer.packet.packets.*;
 
-import static com.redlimerl.speedrunigt.timer.packet.TimerPacket.registryPacket;
-
 public class TimerPackets {
     public static void init() {
-        registryPacket(
+        TimerPacket.registryPacket(
                 TimerStartPacket.IDENTIFIER, TimerStartPacket::new
         );
-        registryPacket(
+        TimerPacket.registryPacket(
                 TimerInitializePacket.IDENTIFIER, TimerInitializePacket::new
         );
-        registryPacket(
+        TimerPacket.registryPacket(
                 TimerCompletePacket.IDENTIFIER, TimerCompletePacket::new
         );
-        registryPacket(
+        TimerPacket.registryPacket(
                 TimerUncompletedPacket.IDENTIFIER, TimerUncompletedPacket::new
         );
-        registryPacket(
+        TimerPacket.registryPacket(
                 TimerChangeCategoryPacket.IDENTIFIER, TimerChangeCategoryPacket::new
         );
-        registryPacket(
+        TimerPacket.registryPacket(
                 TimerDataConditionPacket.IDENTIFIER, TimerDataConditionPacket::new
         );
-        registryPacket(
+        TimerPacket.registryPacket(
                 TimerCustomConditionPacket.IDENTIFIER, TimerCustomConditionPacket::new
         );
-        registryPacket(
+        TimerPacket.registryPacket(
                 TimerTimelinePacket.IDENTIFIER, TimerTimelinePacket::new
         );
-        registryPacket(
+        TimerPacket.registryPacket(
                 TimerAchieveAdvancementPacket.IDENTIFIER, TimerAchieveAdvancementPacket::new
         );
-        registryPacket(
+        TimerPacket.registryPacket(
                 TimerAchieveCriteriaPacket.IDENTIFIER, TimerAchieveCriteriaPacket::new
         );
     }

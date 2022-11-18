@@ -12,16 +12,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ConditionsRegistryImpl implements SpeedRunIGTApi {
-
     @Override
     public Map<String, CategoryConditionRegisterHelper> registerConditions() {
         HashMap<String, CategoryConditionRegisterHelper> hashMap = Maps.newHashMap();
+
         hashMap.put("achieve_advancement", AdvancementCategoryCondition::new);
         hashMap.put("obtain_item", ObtainItemCategoryCondition::new);
         hashMap.put("player_stat", StatCategoryCondition::new);
         hashMap.put("dummy", DummyCategoryCondition::new);
+
         return hashMap;
     }
-
 }
 

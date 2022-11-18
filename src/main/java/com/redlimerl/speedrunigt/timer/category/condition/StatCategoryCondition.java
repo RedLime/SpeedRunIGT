@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
 
 public class StatCategoryCondition extends CategoryCondition.Condition<JsonObject> {
-
     private final String statType;
     private final String stat;
     private final int goal;
@@ -24,9 +23,8 @@ public class StatCategoryCondition extends CategoryCondition.Condition<JsonObjec
     @Override
     public boolean checkConditionComplete(JsonObject statObject) {
         try {
-            int count = statObject.getAsJsonObject(statType)
-                    .get(stat).getAsInt();
-            if (count >= goal) return true;
+            int count = statObject.getAsJsonObject(this.statType).get(this.stat).getAsInt();
+            if (count >= this.goal) return true;
         } catch (Exception e) {
             return false;
         }

@@ -14,13 +14,11 @@ import java.util.HashMap;
 import java.util.function.Supplier;
 
 public abstract class TimerPacket {
-
+    private final Identifier identifier;
     private static final HashMap<String, Supplier<? extends TimerPacket>> registered = Maps.newHashMap();
-    static void registryPacket(Identifier identifier, Supplier<? extends TimerPacket> packet) {
-        registered.put(identifier.toString(), packet);
-    }
-    public static Identifier identifier(String id) {
-        return new Identifier(SpeedRunIGT.MOD_ID, id);
+
+    public TimerPacket(Identifier identifier) {
+        this.identifier = identifier;
     }
 
     @SuppressWarnings("unchecked")
@@ -36,24 +34,26 @@ public abstract class TimerPacket {
         return null;
     }
 
-    private final Identifier identifier;
+    static void registryPacket(Identifier identifier, Supplier<? extends TimerPacket> packet) {
+        registered.put(identifier.toString(), packet);
+    }
 
-    public TimerPacket(Identifier identifier) {
-        this.identifier = identifier;
+    public static Identifier identifier(String id) {
+        return new Identifier(SpeedRunIGT.MOD_ID, id);
     }
 
     public Identifier getIdentifier() {
-        return identifier;
+        return this.identifier;
     }
 
     @Environment(EnvType.CLIENT)
     final CustomPayloadC2SPacket createClient2ServerPacket(MinecraftClient client) {
         TimerPacketBuf buf = TimerPacketBuf.create();
-        return new CustomPayloadC2SPacket(identifier, convertClient2ServerPacket(buf, client).getBuffer());
+        return new CustomPayloadC2SPacket(this.identifier, convertClient2ServerPacket(buf, client).getBuffer());
     }
 
     final CustomPayloadS2CPacket createServer2ClientPacket(MinecraftServer server, TimerPacketBuf buf) {
-        return new CustomPayloadS2CPacket(identifier, convertServer2ClientPacket(buf.copy(), server).getBuffer());
+        return new CustomPayloadS2CPacket(this.identifier, convertServer2ClientPacket(buf.copy(), server).getBuffer());
     }
 
     final CustomPayloadS2CPacket createServer2ClientPacket(MinecraftServer server) {

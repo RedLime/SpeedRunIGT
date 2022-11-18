@@ -53,30 +53,28 @@ import java.util.stream.Collectors;
 
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin {
-
     @Shadow @Final public GameOptions options;
-
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    @Shadow public abstract boolean isPaused();
-
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted") @Shadow public abstract boolean isPaused();
     @Shadow @Nullable public Screen currentScreen;
-
     @Shadow @Nullable public ClientWorld world;
-
     @Shadow @Final private ReloadableResourceManager resourceManager;
-
     @Shadow private boolean paused;
-
     @Shadow @Final public TextRenderer textRenderer;
     @Shadow @Final private Window window;
     private boolean disconnectCheck = false;
+    private int saveTickCount = 0;
+    private PositionType currentPositionType = PositionType.DEFAULT;
+    private boolean previousNoUI = false;
 
-    @Inject(at = @At("HEAD"), method = "method_29607(Ljava/lang/String;Lnet/minecraft/world/level/LevelInfo;Lnet/minecraft/util/registry/RegistryTracker$Modifiable;Lnet/minecraft/world/gen/GeneratorOptions;)V")
+    @Inject(
+            at = @At("HEAD"),
+            method = "method_29607(Ljava/lang/String;Lnet/minecraft/world/level/LevelInfo;Lnet/minecraft/util/registry/RegistryTracker$Modifiable;Lnet/minecraft/world/gen/GeneratorOptions;)V"
+    )
     public void onCreate(String worldName, LevelInfo levelInfo, RegistryTracker.Modifiable registryTracker, GeneratorOptions generatorOptions, CallbackInfo ci) {
         RunCategory category = SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY);
         if (category.isAutoStart()) InGameTimer.start(worldName, RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
         InGameTimerUtils.IS_CHANGING_DIMENSION = true;
-        disconnectCheck = false;
+        this.disconnectCheck = false;
     }
 
     @Inject(at = @At("HEAD"), method = "startIntegratedServer(Ljava/lang/String;)V")
@@ -90,13 +88,13 @@ public abstract class MinecraftClientMixin {
             e.printStackTrace();
         }
         InGameTimerUtils.IS_CHANGING_DIMENSION = true;
-        disconnectCheck = false;
+        this.disconnectCheck = false;
     }
 
     @Inject(method = "openScreen", at = @At("RETURN"))
     public void onSetScreen(Screen screen, CallbackInfo ci) {
         if (screen instanceof LevelLoadingScreen) {
-            disconnectCheck = true;
+            this.disconnectCheck = true;
         }
         if (InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN != null) {
             Screen screen1 = InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN;
@@ -120,13 +118,13 @@ public abstract class MinecraftClientMixin {
             timer.tryInsertNewTimeline("enter_end");
         }
 
-        //Enter Nether
+        // Enter Nether
         if (timer.getCategory() == RunCategories.ENTER_NETHER && targetWorld.getDimensionRegistryKey() == DimensionType.THE_NETHER_REGISTRY_KEY) {
             InGameTimer.complete();
             return;
         }
 
-        //Enter End
+        // Enter End
         if (timer.getCategory() == RunCategories.ENTER_END && targetWorld.getDimensionRegistryKey() == DimensionType.THE_END_REGISTRY_KEY) {
             InGameTimer.complete();
         }
@@ -134,12 +132,11 @@ public abstract class MinecraftClientMixin {
         RunCategories.checkAllBossesCompleted();
     }
 
-    private int saveTickCount = 0;
     @Inject(method = "tick", at = @At("RETURN"))
     private void onTickMixin(CallbackInfo ci) {
-        if (++saveTickCount >= 20) {
+        if (++this.saveTickCount >= 20) {
             SpeedRunOption.checkSave();
-            saveTickCount = 0;
+            this.saveTickCount = 0;
         }
     }
 
@@ -157,11 +154,14 @@ public abstract class MinecraftClientMixin {
         }
     }
 
-
-    private PositionType currentPositionType = PositionType.DEFAULT;
-    private boolean previousNoUI = false;
-    @Inject(method = "render", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/client/toast/ToastManager;draw(Lnet/minecraft/client/util/math/MatrixStack;)V", shift = At.Shift.AFTER))
+    @Inject(
+            method = "render",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/toast/ToastManager;draw(Lnet/minecraft/client/util/math/MatrixStack;)V",
+                    shift = At.Shift.AFTER
+            )
+    )
     private void drawTimer(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
@@ -176,34 +176,41 @@ public abstract class MinecraftClientMixin {
         long time = System.currentTimeMillis() - InGameTimerUtils.LATEST_TIMER_TIME;
         if (time < 2950) {
             String text = "SpeedRunIGT v" + (SpeedRunIGT.MOD_VERSION.split("\\+")[0]);
-            this.textRenderer.draw(new MatrixStack(), text, this.currentScreen != null ? ((this.window.getScaledWidth() - this.textRenderer.getWidth(text)) / 2f) : 4, this.window.getScaledHeight() - 12,
+            this.textRenderer.draw(
+                    new MatrixStack(),
+                    text,
+                    this.currentScreen != null
+                            ? ((this.window.getScaledWidth() - this.textRenderer.getWidth(text)) / 2f)
+                            : 4,
+                    this.window.getScaledHeight() - 12,
                     BackgroundHelper.ColorMixer.getArgb((int) (MathHelper.clamp((3000 - time) / 1000.0, 0, 1) * (this.currentScreen != null ? 90 : 130)), 255, 255, 255));
         }
 
         SpeedRunIGT.DEBUG_DATA = timer.getStatus().name();
-        if (!this.options.hudHidden && this.world != null && timer.getStatus() != TimerStatus.NONE
+        if (
+                !this.options.hudHidden && this.world != null && timer.getStatus() != TimerStatus.NONE
                 && (!this.isPaused() || this.currentScreen instanceof CreditsScreen || this.currentScreen instanceof GameMenuScreen || !SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS))
                 && !(!this.isPaused() && SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) && this.options.debugEnabled)
-                && !(this.currentScreen instanceof TimerCustomizeScreen)) {
-
+                && !(this.currentScreen instanceof TimerCustomizeScreen)
+        ) {
             boolean needUpdate = SpeedRunIGTClient.TIMER_DRAWER.isNeedUpdate();
             boolean enableSplit = SpeedRunOption.getOption(SpeedRunOptions.ENABLE_TIMER_SPLIT_POS);
             if (needUpdate || enableSplit) {
                 PositionType updatePositionType = PositionType.DEFAULT;
-                if (enableSplit && this.options.debugEnabled)
-                    updatePositionType = PositionType.WHILE_F3;
-                if (enableSplit && this.isPaused() && !(this.currentScreen instanceof DownloadingTerrainScreen) && (this.currentScreen instanceof GameMenuScreen && !this.previousNoUI))
+                if (enableSplit && this.options.debugEnabled) updatePositionType = PositionType.WHILE_F3;
+                if (enableSplit && this.isPaused() && !(this.currentScreen instanceof DownloadingTerrainScreen) && (this.currentScreen instanceof GameMenuScreen && !this.previousNoUI)) {
                     updatePositionType = PositionType.WHILE_PAUSED;
+                }
 
-                if (currentPositionType != updatePositionType || needUpdate) {
-                    currentPositionType = updatePositionType;
-                    Vec2f igtPos = currentPositionType == PositionType.DEFAULT
+                if (this.currentPositionType != updatePositionType || needUpdate) {
+                    this.currentPositionType = updatePositionType;
+                    Vec2f igtPos = this.currentPositionType == PositionType.DEFAULT
                             ? new Vec2f(SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_POSITION_X), SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_POSITION_Y))
-                            : SpeedRunOption.getOption(currentPositionType == PositionType.WHILE_F3 ? SpeedRunOptions.TIMER_IGT_POSITION_FOR_F3 : SpeedRunOptions.TIMER_IGT_POSITION_FOR_PAUSE);
+                            : SpeedRunOption.getOption(this.currentPositionType == PositionType.WHILE_F3 ? SpeedRunOptions.TIMER_IGT_POSITION_FOR_F3 : SpeedRunOptions.TIMER_IGT_POSITION_FOR_PAUSE);
 
                     Vec2f rtaPos = currentPositionType == PositionType.DEFAULT
                             ? new Vec2f(SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_POSITION_X), SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_POSITION_Y))
-                            : SpeedRunOption.getOption(currentPositionType == PositionType.WHILE_F3 ? SpeedRunOptions.TIMER_RTA_POSITION_FOR_F3 : SpeedRunOptions.TIMER_RTA_POSITION_FOR_PAUSE);
+                            : SpeedRunOption.getOption(this.currentPositionType == PositionType.WHILE_F3 ? SpeedRunOptions.TIMER_RTA_POSITION_FOR_F3 : SpeedRunOptions.TIMER_RTA_POSITION_FOR_PAUSE);
 
                     SpeedRunIGTClient.TIMER_DRAWER.setRTA_XPos(rtaPos.x);
                     SpeedRunIGTClient.TIMER_DRAWER.setRTA_YPos(rtaPos.y);
@@ -217,7 +224,7 @@ public abstract class MinecraftClientMixin {
 
     @Inject(method = "openPauseMenu", at = @At("HEAD"))
     public void onOpenPauseMenu(boolean pause, CallbackInfo ci) {
-        previousNoUI = pause;
+        this.previousNoUI = pause;
     }
 
 
@@ -273,13 +280,17 @@ public abstract class MinecraftClientMixin {
     // Crash safety
     @Inject(method = "cleanUpAfterCrash", at = @At("HEAD"))
     public void onCrash(CallbackInfo ci) {
-        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) InGameTimer.leave();
+        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) {
+            InGameTimer.leave();
+        }
     }
 
     // Crash safety
     @Inject(method = "printCrashReport", at = @At("HEAD"))
     private static void onCrash(CrashReport crashReport, CallbackInfo ci) {
-        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) InGameTimer.leave();
+        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) {
+            InGameTimer.leave();
+        }
     }
 
     // Record save
@@ -291,7 +302,7 @@ public abstract class MinecraftClientMixin {
     // Disconnecting fix
     @Inject(at = @At("HEAD"), method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V")
     public void disconnect(CallbackInfo ci) {
-        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE && disconnectCheck) {
+        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE && this.disconnectCheck) {
             InGameTimer.leave();
         }
     }

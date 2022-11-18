@@ -20,21 +20,29 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(EndPortalBlock.class)
 public class EndPortalBlockMixin {
-
-    @Inject(method = "onEntityCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;changeDimension(Lnet/minecraft/server/world/ServerWorld;)Lnet/minecraft/entity/Entity;", shift = At.Shift.BEFORE))
+    @Inject(
+            method = "onEntityCollision",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/entity/Entity;changeDimension(Lnet/minecraft/server/world/ServerWorld;)Lnet/minecraft/entity/Entity;",
+                    shift = At.Shift.BEFORE
+            )
+    )
     public void onCollisionPlayer(BlockState state, World world, BlockPos pos, Entity entity, CallbackInfo ci) {
         if (entity instanceof PlayerEntity && world instanceof ServerWorld) {
             InGameTimer timer = InGameTimer.getInstance();
 
-            //All Portals
+            // All Portals
             if (entity.world.getRegistryKey() == World.OVERWORLD) {
                 boolean isNewPortal = true;
+
                 for (RunPortalPos runPortalPos : timer.getEndPortalPosList()) {
                     if (runPortalPos.squaredDistanceTo(pos) < 100) {
                         isNewPortal = false;
                         break;
                     }
                 }
+
                 if (isNewPortal) {
                     timer.getEndPortalPosList().add(new RunPortalPos(pos));
                     timer.tryInsertNewTimeline("portal_no_"+timer.getEndPortalPosList().size());
@@ -43,8 +51,13 @@ public class EndPortalBlockMixin {
             }
 
             SpeedRunIGT.debug("Current portals : " + timer.getEndPortalPosList().size());
-            if (InGameTimerUtils.IS_KILLED_ENDER_DRAGON && timer.getStatus() != TimerStatus.NONE
-                    && timer.getCategory() == RunCategories.ALL_PORTALS && timer.getEndPortalPosList().size() >= 128) {
+
+            if (
+                    InGameTimerUtils.IS_KILLED_ENDER_DRAGON
+                    && timer.getStatus() != TimerStatus.NONE
+                    && timer.getCategory() == RunCategories.ALL_PORTALS
+                    && timer.getEndPortalPosList().size() >= 128
+            ) {
                 InGameTimer.complete();
             }
         }

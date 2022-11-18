@@ -15,7 +15,6 @@ import java.util.Map;
 
 @Mixin(TranslationStorage.class)
 public class TranslationStorageMixin {
-
     @Inject(method = "load(Ljava/util/List;Ljava/util/Map;)V", at = @At("RETURN"))
     private static void onLoad(List<Resource> resources, Map<String, String> translationMap, CallbackInfo ci) {
         TranslateHelper.setup(resources, translationMap::put, SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_ENGLISH_TRANSLATIONS));

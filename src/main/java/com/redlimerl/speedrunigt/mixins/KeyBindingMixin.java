@@ -20,7 +20,6 @@ import java.util.Objects;
 
 @Mixin(KeyBinding.class)
 public abstract class KeyBindingMixin {
-
     @Shadow @Final private static Map<InputUtil.Key, KeyBinding> keyToBindings;
 
     @Inject(method = "setKeyPressed", at = @At("TAIL"))
@@ -30,9 +29,12 @@ public abstract class KeyBindingMixin {
         if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
         if (keyBinding != null && pressed) {
             if (InGameTimerClientUtils.isFocusedClick() &&
-                    (keyBinding == MinecraftClient.getInstance().options.keyAdvancements // Advancement
-                    || Objects.equals(keyBinding.getCategory(), "key.categories.inventory")
-                    || Objects.equals(keyBinding.getCategory(), "key.categories.gameplay"))) {
+                    (
+                            keyBinding == MinecraftClient.getInstance().options.keyAdvancements // Advancement
+                            || Objects.equals(keyBinding.getCategory(), "key.categories.inventory")
+                            || Objects.equals(keyBinding.getCategory(), "key.categories.gameplay")
+                    )
+            ) {
                 if (InGameTimerClientUtils.canUnpauseTimer(false)) {
                     timer.setPause(false, "pressed key");
                 }

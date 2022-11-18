@@ -15,31 +15,37 @@ import java.util.Locale;
 public class FailedCategoryInitScreen extends Screen {
     private final String fileName;
     private final InvalidCategoryException exception;
+    private static final int TEXT_WHITE = BackgroundHelper.ColorMixer.getArgb(255, 255, 255, 255);
+    private static final int TEXT_RED = BackgroundHelper.ColorMixer.getArgb(255, 255, 70, 70);
 
     // Stat, Advancement, Kill, Obtain Item
 
     public FailedCategoryInitScreen(String fileName, InvalidCategoryException exception) {
         super(new LiteralText(""));
+
         this.fileName = fileName;
         this.exception = exception;
+
         exception.printStackTrace();
+
         SpeedRunIGT.error(String.format("Failed to add %s, because of %s", fileName, exception));
         if (!exception.getDetails().isEmpty()) SpeedRunIGT.error(String.format("Details : %s", exception.getDetails()));
     }
 
     @Override
     protected void init() {
-        addButton(new ButtonWidget(width / 2 - 100, height / 2 + 15, 200, 20, ScreenTexts.DONE, button -> onClose()));
+        this.addButton(new ButtonWidget(this.width / 2 - 100, this.height / 2 + 15, 200, 20, ScreenTexts.DONE, button -> onClose()));
     }
 
-    private static final int TEXT_WHITE = BackgroundHelper.ColorMixer.getArgb(255, 255, 255, 255);
-    private static final int TEXT_RED = BackgroundHelper.ColorMixer.getArgb(255, 255, 70, 70);
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        renderBackground(matrices);
+        this.renderBackground(matrices);
+
+        this.drawCenteredText(matrices, this.textRenderer, new TranslatableText("speedrunigt.message.failed_add_category", this.fileName), this.width / 2, this.height / 2 - 35, TEXT_RED);
+        this.drawCenteredText(matrices, this.textRenderer, new TranslatableText("speedrunigt.message.failed_add_category." + exception.getReason().name().toLowerCase(Locale.ROOT)), this.width / 2, this.height / 2 - 10, TEXT_WHITE);
+
+        this.drawCenteredString(matrices, this.textRenderer, exception.getDetails(), this.width / 2, this.height / 2 + 2, TEXT_WHITE);
+
         super.render(matrices, mouseX, mouseY, delta);
-        drawCenteredText(matrices, this.textRenderer, new TranslatableText("speedrunigt.message.failed_add_category", this.fileName), width / 2, height / 2 - 35, TEXT_RED);
-        drawCenteredText(matrices, this.textRenderer, new TranslatableText("speedrunigt.message.failed_add_category."+exception.getReason().name().toLowerCase(Locale.ROOT)), width / 2, height / 2 - 10, TEXT_WHITE);
-        drawCenteredString(matrices, this.textRenderer, exception.getDetails(), width / 2, height / 2 + 2, TEXT_WHITE);
     }
 }

@@ -22,6 +22,7 @@ public class SpeedRunIGTUpdateChecker {
         if (UPDATE_STATUS != UpdateStatus.NONE) {
             return;
         }
+
         new Thread(() -> {
             try {
                 URL u = new URL("https://api.github.com/repos/RedLime/SpeedRunIGT/releases");
@@ -44,8 +45,11 @@ public class SpeedRunIGTUpdateChecker {
                                 String targetVersionName = versionName.split("\\+")[0].split("-")[1];
                                 String currentVersionName = SpeedRunIGT.MOD_VERSION.split("\\+")[0];
                                 String currentMCVersionName = SpeedRunIGT.MOD_VERSION.split("\\+")[1];
-                                if (versionName.endsWith(currentMCVersionName + ".jar") &&
-                                        isOutdatedVersion(targetVersionName, currentVersionName) && isOutdatedVersion(targetVersionName, UPDATE_VERSION)) {
+                                if (
+                                        versionName.endsWith(currentMCVersionName + ".jar")
+                                        && isOutdatedVersion(targetVersionName, currentVersionName)
+                                        && isOutdatedVersion(targetVersionName, UPDATE_VERSION)
+                                ) {
                                     UPDATE_STATUS = UpdateStatus.OUTDATED;
                                     UPDATE_URL = assetData.get("browser_download_url").getAsString();
                                     UPDATE_VERSION = assetData.get("name").getAsString().split("\\+")[0].split("-")[1];

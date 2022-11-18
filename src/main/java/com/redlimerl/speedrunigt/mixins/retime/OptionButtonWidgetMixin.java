@@ -10,12 +10,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(AbstractPressableButtonWidget.class)
 public class OptionButtonWidgetMixin {
-
     @SuppressWarnings("ConstantConditions")
     @Inject(method = "onClick", at = @At("TAIL"))
     public void onClickOption(double mouseX, double mouseY, CallbackInfo ci) {
-        if (((Object) this) instanceof OptionButtonWidget) {
-            OptionButtonWidget optionButton = (OptionButtonWidget) ((Object) this);
+        if ((Object) this instanceof OptionButtonWidget) {
+            OptionButtonWidget optionButton = (OptionButtonWidget) (Object) this;
             InGameTimerUtils.CHANGED_OPTIONS.add(optionButton.getOption());
         }
     }

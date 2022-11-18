@@ -19,12 +19,14 @@ import java.util.List;
 import java.util.Map;
 
 public class CategoryCondition implements Serializable {
+    private static final HashMap<String, CategoryConditionRegisterHelper> CONDITION_HASHMAP = Maps.newHashMap();
+    private final ArrayList<Conditions> availableConditions = new ArrayList<>();
 
     public static class Conditions implements Serializable {
         private final ArrayList<Condition<?>> conditions = new ArrayList<>();
 
         public List<Condition<?>> getConditions() {
-            return conditions;
+            return this.conditions;
         }
     }
 
@@ -35,22 +37,23 @@ public class CategoryCondition implements Serializable {
         boolean isCompleted = false;
 
         public Condition(JsonObject jsonObject) throws InvalidCategoryException {
-            if (!jsonObject.has("name"))
+            if (!jsonObject.has("name")) {
                 throw new InvalidCategoryException(InvalidCategoryException.Reason.INVALID_JSON_DATA, "condition \"name\" is undefined.");
+            }
             this.name = jsonObject.get("name").getAsString();
             this.jsonObject = jsonObject;
         }
 
         public final boolean isCompleted() {
-            return isCompleted;
+            return this.isCompleted;
         }
 
         public final void setCompleted(boolean completed) {
-            isCompleted = completed;
+            this.isCompleted = completed;
         }
 
         public final String getName() {
-            return name;
+            return this.name;
         }
 
         public boolean checkConditionComplete(T obj) {
@@ -58,7 +61,6 @@ public class CategoryCondition implements Serializable {
         }
     }
 
-    private static final HashMap<String, CategoryConditionRegisterHelper> CONDITION_HASHMAP = Maps.newHashMap();
     private static Condition<?> getConditionType(JsonObject jsonObject) throws InvalidCategoryException {
         if (!jsonObject.has("type"))
             throw new InvalidCategoryException(InvalidCategoryException.Reason.INVALID_JSON_DATA, "condition \"type\" is undefined");
@@ -70,8 +72,10 @@ public class CategoryCondition implements Serializable {
 
         throw new InvalidCategoryException(InvalidCategoryException.Reason.UNKNOWN_EVENT_TYPE, "");
     }
+
     public static void registerCondition(Map<String, CategoryConditionRegisterHelper> register) {
         if (SpeedRunIGT.isInitialized()) return;
+
         for (Map.Entry<String, CategoryConditionRegisterHelper> helper : register.entrySet()) {
             if (CONDITION_HASHMAP.containsKey(helper.getKey())) {
                 throw new IllegalArgumentException("ID \"" + helper.getKey() + "\" is an already registered Condition ID.");
@@ -80,8 +84,6 @@ public class CategoryCondition implements Serializable {
 
         CONDITION_HASHMAP.putAll(register);
     }
-
-    private final ArrayList<Conditions> availableConditions = new ArrayList<>();
 
     public CategoryCondition(JsonArray jsonArray) throws InvalidCategoryException {
         ArrayList<Conditions> conditions = new ArrayList<>();
@@ -110,9 +112,8 @@ public class CategoryCondition implements Serializable {
         this.availableConditions.addAll(conditions);
     }
 
-
     public boolean isDone() {
-        for (Conditions conditionList : availableConditions) {
+        for (Conditions conditionList : this.availableConditions) {
             int done = 0;
             for (Condition<?> condition : conditionList.conditions) {
                 if (condition.isCompleted) done++;
@@ -124,16 +125,16 @@ public class CategoryCondition implements Serializable {
 
     public List<? extends Condition<?>> getConditionList() {
         ArrayList<Condition<?>> list = Lists.newArrayList();
-        for (Conditions availableCondition : availableConditions) list.addAll(availableCondition.conditions);
+        for (Conditions availableCondition : this.availableConditions) list.addAll(availableCondition.conditions);
         return list;
     }
 
     public List<Conditions> getConditions() {
-        return availableConditions;
+        return this.availableConditions;
     }
 
     public void refreshConditionClasses() {
-        for (Conditions conditions : availableConditions) {
+        for (Conditions conditions : this.availableConditions) {
             ArrayList<Condition<?>> newConditionList = Lists.newArrayList();
             for (Condition<?> condition : conditions.conditions) {
                 try {

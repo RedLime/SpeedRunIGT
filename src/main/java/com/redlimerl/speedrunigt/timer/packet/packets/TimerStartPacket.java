@@ -16,7 +16,6 @@ import java.util.Enumeration;
 import java.util.Objects;
 
 public class TimerStartPacket extends TimerPacket {
-
     public static final Identifier IDENTIFIER = TimerPacket.identifier("timer_start");
     private final InGameTimer sendTimer;
     private final String customData;
@@ -45,12 +44,12 @@ public class TimerStartPacket extends TimerPacket {
     @Environment(EnvType.CLIENT)
     @Override
     protected TimerPacketBuf convertClient2ServerPacket(TimerPacketBuf buf, MinecraftClient client) {
-        if (sendTimer != null) {
-            buf.writeString(sendTimer.getUuid().toString());
-            buf.writeString(sendTimer.getCategory().getID());
-            buf.writeLong(sendRTA);
-            buf.writeInt(sendTimer.getRunType().getCode());
-            buf.writeString(customData);
+        if (this.sendTimer != null) {
+            buf.writeString(this.sendTimer.getUuid().toString());
+            buf.writeString(this.sendTimer.getCategory().getID());
+            buf.writeLong(this.sendRTA);
+            buf.writeInt(this.sendTimer.getRunType().getCode());
+            buf.writeString(this.customData);
         }
         return buf;
     }
@@ -67,12 +66,12 @@ public class TimerStartPacket extends TimerPacket {
 
     @Override
     protected TimerPacketBuf convertServer2ClientPacket(TimerPacketBuf buf, MinecraftServer server) {
-        if (sendTimer != null) {
-            buf.writeString(sendTimer.getUuid().toString());
-            buf.writeString(sendTimer.getCategory().getID());
-            buf.writeLong(sendRTA);
-            buf.writeInt(sendTimer.getRunType().getCode());
-            buf.writeString(customData);
+        if (this.sendTimer != null) {
+            buf.writeString(this.sendTimer.getUuid().toString());
+            buf.writeString(this.sendTimer.getCategory().getID());
+            buf.writeLong(this.sendRTA);
+            buf.writeInt(this.sendTimer.getRunType().getCode());
+            buf.writeString(this.customData);
 
             TimerPacketBuf copiedBuf = buf.copy();
             timerInit(copiedBuf, true);

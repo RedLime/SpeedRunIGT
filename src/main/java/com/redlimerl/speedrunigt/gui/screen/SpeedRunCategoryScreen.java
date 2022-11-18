@@ -31,23 +31,24 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class SpeedRunCategoryScreen extends Screen {
-
     private final Screen parent;
     private CategorySelectionListWidget listWidget;
 
     public SpeedRunCategoryScreen(Screen parent) {
         super(new TranslatableText("speedrunigt.option.timer_category"));
-        CustomCategoryManager.init(false);
         this.parent = parent;
+        
+        CustomCategoryManager.init(false);
     }
 
     @Override
     protected void init() {
-        assert client != null;
-        addButton(new ButtonWidget(width / 2 - 100, height - 35, 200, 20, ScreenTexts.CANCEL, button -> client.openScreen(parent)));
+        if (this.client == null) { return; }
 
-        this.listWidget = new CategorySelectionListWidget(client);
-        addChild(listWidget);
+        this.addButton(new ButtonWidget(width / 2 - 100, height - 35, 200, 20, ScreenTexts.CANCEL, button -> this.client.openScreen(this.parent)));
+
+        this.listWidget = new CategorySelectionListWidget(this.client);
+        this.addChild(this.listWidget);
     }
 
     @Override
@@ -58,8 +59,10 @@ public class SpeedRunCategoryScreen extends Screen {
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         this.listWidget.render(matrices, mouseX, mouseY, delta);
+        
         this.drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 16, 16777215);
         this.drawCenteredString(matrices, this.textRenderer, "(" + I18n.translate("speedrunigt.option.timer_category.warning") + ")", this.width / 2, this.height - 46, 8421504);
+        
         super.render(matrices, mouseX, mouseY, delta);
     }
 
@@ -78,7 +81,6 @@ public class SpeedRunCategoryScreen extends Screen {
 
         @Environment(EnvType.CLIENT)
         public class CategoryEntry extends ElementListWidget.Entry<CategoryEntry> {
-
             private final ArrayList<AbstractPressableButtonWidget> children = new ArrayList<>();
             private final CategoryCheckBoxWidget checkBox;
             private final ButtonWidget urlButton;
@@ -86,14 +88,15 @@ public class SpeedRunCategoryScreen extends Screen {
             public CategoryEntry(RunCategory category) {
                 this.checkBox = new CategoryCheckBoxWidget(category);
                 this.urlButton = new ButtonWidget(0, 0, 30, 20, new TranslatableText("speedrunigt.option.more"), button -> Util.getOperatingSystem().open(category.getLeaderboardUrl()));
-                children.add(urlButton);
-                children.add(checkBox);
+                this.children.add(this.urlButton);
+                this.children.add(this.checkBox);
             }
 
             public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
                 this.urlButton.x = x;
                 this.urlButton.y = y;
                 this.urlButton.render(matrices, mouseX, mouseY, tickDelta);
+
                 this.checkBox.x = x + 34;
                 this.checkBox.y = y;
                 this.checkBox.render(matrices, mouseX, mouseY, tickDelta);
@@ -101,7 +104,7 @@ public class SpeedRunCategoryScreen extends Screen {
 
             @Override
             public List<? extends Element> children() {
-                return children;
+                return this.children;
             }
 
             private class CategoryCheckBoxWidget extends CheckboxWidget {
@@ -115,16 +118,20 @@ public class SpeedRunCategoryScreen extends Screen {
 
                 @Override
                 public void onPress() {
-                    super.onPress();
                     SpeedRunOption.setOption(SpeedRunOptions.TIMER_CATEGORY, this.category);
                     InGameTimer.getInstance().setCategory(this.category, true);
                     InGameTimer.getInstance().setUncompleted(true);
+
+                    super.onPress();
                 }
 
                 @Override
                 public boolean isChecked() {
-                    return (InGameTimer.getInstance().getStatus() != TimerStatus.NONE ? InGameTimer.getInstance().getCategory()
-                            : SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY)) == category;
+                    return (
+                            InGameTimer.getInstance().getStatus() != TimerStatus.NONE
+                                    ? InGameTimer.getInstance().getCategory()
+                                    : SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY)
+                    ) == category;
                 }
 
                 @SuppressWarnings("deprecation")

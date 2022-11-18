@@ -20,11 +20,15 @@ import java.util.List;
 
 public class SpeedRunOption {
     private static boolean isInit = false;
-
     private static final Path oldConfigPath = FabricLoader.getInstance().getConfigDir().resolve(SpeedRunIGT.MOD_ID);
     public static final Path configPath = SpeedRunIGT.getMainPath().resolve("options.txt");
     public static final Path globalConfigPath;
     private static final Path useGlobalPath = SpeedRunIGT.getMainPath().resolve(".useglobaloption");
+    private static final HashMap<Identifier, String> options = new HashMap<>();
+    private static final ArrayList<OptionButtonFactory> optionButtonFactories = new ArrayList<>();
+    private static boolean needSave = false;
+
+
     static {
         File globalDir = new File(System.getProperty("user.home").replace("\\", "/"), SpeedRunIGT.MOD_ID);
         if (!globalDir.exists() && !globalDir.mkdirs()) {
@@ -32,12 +36,15 @@ public class SpeedRunOption {
         }
         globalConfigPath = globalDir.toPath().resolve("options.txt");
     }
+
     public static Path getConfigPath() {
         return isUsingGlobalConfig() ? globalConfigPath : configPath;
     }
+
     public static boolean isUsingGlobalConfig() {
         return useGlobalPath.toFile().exists();
     }
+
     public static void setUseGlobalConfig(boolean b) {
         try {
             if (b) FileUtils.writeStringToFile(useGlobalPath.toFile(), "", StandardCharsets.UTF_8);
@@ -46,8 +53,6 @@ public class SpeedRunOption {
             e.printStackTrace();
         }
     }
-
-    private static final HashMap<Identifier, String> options = new HashMap<>();
 
     public static <T> T getOption(OptionArgument<T> option) {
         if (!isInit) init();
@@ -60,7 +65,6 @@ public class SpeedRunOption {
         needSave = true;
     }
 
-    private static boolean needSave = false;
     public static void checkSave() {
         if (needSave) {
             save();
@@ -92,6 +96,7 @@ public class SpeedRunOption {
                     }
                 }
             }
+
             isInit = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -115,13 +120,12 @@ public class SpeedRunOption {
         SpeedRunIGTClient.TIMER_DRAWER = new TimerDrawer(false);
     }
 
-    private static final ArrayList<OptionButtonFactory> optionButtonFactories = new ArrayList<>();
     public static List<OptionButtonFactory> getOptionButtonFactories() {
         return optionButtonFactories;
     }
 
     public static void addOptionButtonFactories(OptionButtonFactory... factories) {
-        if (SpeedRunIGTClient.isInitialized) return;
+        if (SpeedRunIGTClient.initialized) { return; }
         optionButtonFactories.addAll(Arrays.asList(factories));
     }
 }

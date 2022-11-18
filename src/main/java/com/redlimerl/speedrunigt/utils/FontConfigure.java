@@ -6,11 +6,17 @@ import com.google.gson.JsonParser;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 
 public class FontConfigure {
-
     public float size;
     public float oversample;
     public float[] shift;
     public String skip;
+
+    public FontConfigure(float size, float oversample, float[] shift, String skip) {
+        this.size = size;
+        this.oversample = oversample;
+        this.shift = shift;
+        this.skip = skip;
+    }
 
     public static FontConfigure create() {
         return new FontConfigure(11, 6, new float[] { 0, 0 }, "");
@@ -32,14 +38,8 @@ public class FontConfigure {
         }
         if (configure.has("size")) fontConfigure.size = configure.get("size").getAsFloat();
         if (configure.has("skip")) fontConfigure.skip = configure.get("skip").getAsString();
-        return fontConfigure;
-    }
 
-    public FontConfigure(float size, float oversample, float[] shift, String skip) {
-        this.size = size;
-        this.oversample = oversample;
-        this.shift = shift;
-        this.skip = skip;
+        return fontConfigure;
     }
 
     @Override

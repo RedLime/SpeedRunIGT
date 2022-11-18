@@ -29,7 +29,14 @@ public class TimerTickLog implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("Tick %s(%s), Delay %s ms, IGT %s, RTA %s-%s"+(wl ? ", due world load" : ""),
-                tt, t, td, InGameTimerUtils.timeToStringFormat(igt), InGameTimerUtils.timeToStringFormat(ct-td), InGameTimerUtils.timeToStringFormat(ct));
+        return String.format(
+                "Tick %s(%s), Delay %s ms, IGT %s, RTA %s-%s" + (wl ? ", due world load" : ""),
+                tt,
+                t,
+                td,
+                InGameTimerUtils.timeToStringFormat(igt),
+                InGameTimerUtils.timeToStringFormat(ct - td),
+                InGameTimerUtils.timeToStringFormat(ct)
+        );
     }
 }

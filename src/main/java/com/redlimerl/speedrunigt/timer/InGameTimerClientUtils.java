@@ -1,7 +1,7 @@
 package com.redlimerl.speedrunigt.timer;
 
 import com.redlimerl.speedrunigt.gui.screen.FailedCategoryInitScreen;
-import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessorForAttack;
+import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
 import com.redlimerl.speedrunigt.mixins.access.WorldRendererAccessor;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
 import net.fabricmc.api.EnvType;
@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Environment(EnvType.CLIENT)
 public class InGameTimerClientUtils {
+    public static @Nullable FailedCategoryInitScreen FAILED_CATEGORY_INIT_SCREEN = null;
 
     public static boolean canUnpauseTimer(boolean checkRender) {
         MinecraftClient client = MinecraftClient.getInstance();
@@ -60,10 +61,10 @@ public class InGameTimerClientUtils {
         return null;
     }
 
-    public static @Nullable FailedCategoryInitScreen FAILED_CATEGORY_INIT_SCREEN = null;
     static void setCategoryWarningScreen(@Nullable String conditionFileName, InvalidCategoryException exception) {
-        if (MinecraftClient.getInstance().currentScreen == null)
+        if (MinecraftClient.getInstance().currentScreen == null) {
             FAILED_CATEGORY_INIT_SCREEN = new FailedCategoryInitScreen(conditionFileName, exception);
+        }
         else MinecraftClient.getInstance().openScreen(new FailedCategoryInitScreen(conditionFileName, exception));
     }
 
@@ -72,7 +73,8 @@ public class InGameTimerClientUtils {
     }
 
     public static boolean isFocusedClick() {
-        return MinecraftClient.getInstance().player != null && !MinecraftClient.getInstance().player.isUsingItem()
-                && ((MinecraftClientAccessorForAttack) MinecraftClient.getInstance()).getAttackCoolDown() <= 0;
+        return MinecraftClient.getInstance().player != null
+                && !MinecraftClient.getInstance().player.isUsingItem()
+                && ((MinecraftClientAccessor) MinecraftClient.getInstance()).getAttackCoolDown() <= 0;
     }
 }

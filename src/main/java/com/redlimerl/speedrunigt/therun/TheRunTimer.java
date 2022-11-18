@@ -23,12 +23,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public class TheRunTimer {
-
-    public enum PacketType {
-        PLAYING, RESUME, PAUSE, RESET, COMPLETE
-    }
-
     private final InGameTimer timer;
+    public enum PacketType { PLAYING, RESUME, PAUSE, RESET, COMPLETE }
 
     public TheRunTimer(InGameTimer timer) {
         this.timer = timer;
@@ -67,11 +63,11 @@ public class TheRunTimer {
     }
 
     public JsonObject convertJson(PacketType packetType) {
-        @Nullable TheRunCategory category = timer.getCategory().getTheRunCategory();
+        @Nullable TheRunCategory category = this.timer.getCategory().getTheRunCategory();
         if (category == null) throw new NullPointerException();
 
-        List<TimerTimeline> timelines = timer.getTimelines();
-        LinkedHashMap<String, String> splits = category.getSplitNameMap(timer);
+        List<TimerTimeline> timelines = this.timer.getTimelines();
+        LinkedHashMap<String, String> splits = category.getSplitNameMap(this.timer);
         if (splits == null) return null;
 
         Collection<String> remainSplits = Lists.newArrayList();
@@ -94,17 +90,16 @@ public class TheRunTimer {
             if (timeline.getIGT() > latestIgtPoint) latestIgtPoint = timeline.getIGT();
         }
 
-        if (!timer.isCompleted()) {
+        if (!this.timer.isCompleted()) {
             for (String remainSplit : remainSplits) {
                 allSplits.add(timelineToJsonObject(remainSplit, null));
             }
         } else {
             completedSplits.add(category.getCompletedSplitName());
-            latestIgtPoint = timer.getInGameTime(false);
+            latestIgtPoint = this.timer.getInGameTime(false);
         }
 
-        allSplits.add(timelineToJsonObject(category.getCompletedSplitName(), timer.isCompleted() ? timer.getInGameTime() : null));
-
+        allSplits.add(timelineToJsonObject(category.getCompletedSplitName(), this.timer.isCompleted() ? this.timer.getInGameTime() : null));
 
         JsonObject jsonObject = new JsonObject();
 
@@ -117,22 +112,21 @@ public class TheRunTimer {
         metaData.add("variables", new JsonObject());
         jsonObject.add("metadata", metaData);
 
-        jsonObject.addProperty("currentTime", packetType == PacketType.RESET ? 0 : timer.getInGameTime(false));
-
+        jsonObject.addProperty("currentTime", packetType == PacketType.RESET ? 0 : this.timer.getInGameTime(false));
 
         jsonObject.addProperty("currentSplitName", packetType != PacketType.RESET && completedSplits.size() > 0 ? completedSplits.get(completedSplits.size() - 1) : "");
         jsonObject.addProperty("currentSplitIndex", packetType == PacketType.RESET ? -1 : completedSplits.size());
         jsonObject.addProperty("timingMethod", 1);
-        jsonObject.addProperty("currentDuration", packetType == PacketType.RESET ? 0 : (timer.getRealTimeAttack() - latestIgtPoint));
-        jsonObject.addProperty("startTime", ("/Date(" + Instant.ofEpochMilli(timer.getStartTime()).atZone(ZoneOffset.UTC).toInstant().toEpochMilli() + ")/").trim());
-        jsonObject.addProperty("endTime", ("/Date(" + (timer.isCompleted() ? Instant.ofEpochMilli(timer.getEndTime()).atZone(ZoneOffset.UTC).toInstant().toEpochMilli() : "0") + ")/").trim());
+        jsonObject.addProperty("currentDuration", packetType == PacketType.RESET ? 0 : (this.timer.getRealTimeAttack() - latestIgtPoint));
+        jsonObject.addProperty("startTime", ("/Date(" + Instant.ofEpochMilli(this.timer.getStartTime()).atZone(ZoneOffset.UTC).toInstant().toEpochMilli() + ")/").trim());
+        jsonObject.addProperty("endTime", ("/Date(" + (this.timer.isCompleted() ? Instant.ofEpochMilli(this.timer.getEndTime()).atZone(ZoneOffset.UTC).toInstant().toEpochMilli() : "0") + ")/").trim());
         jsonObject.addProperty("uploadKey", TheRunKeyHelper.UPLOAD_KEY);
-        jsonObject.addProperty("isPaused", timer.isPaused());
-        jsonObject.addProperty("isGameTimePaused", timer.isPaused());
+        jsonObject.addProperty("isPaused", this.timer.isPaused());
+        jsonObject.addProperty("isGameTimePaused", this.timer.isPaused());
         jsonObject.add("gameTimePauseTime", JsonNull.INSTANCE);
         jsonObject.add("totalPauseTime", JsonNull.INSTANCE);
         jsonObject.add("currentPauseTime", JsonNull.INSTANCE);
-        jsonObject.addProperty("timePausedAt", timer.getLatestPauseTime());
+        jsonObject.addProperty("timePausedAt", this.timer.getLatestPauseTime());
         jsonObject.addProperty("wasJustResumed", packetType == PacketType.RESUME);
         jsonObject.add("runData", allSplits);
 
@@ -140,43 +134,34 @@ public class TheRunTimer {
     }
 
     public DOMSource convertXml() throws Exception {
-
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 
-        @Nullable TheRunCategory category = timer.getCategory().getTheRunCategory();
+        @Nullable TheRunCategory category = this.timer.getCategory().getTheRunCategory();
         if (category == null) throw new NullPointerException();
 
-        List<TimerTimeline> timelines = timer.getTimelines();
-        LinkedHashMap<String, String> splits = category.getSplitNameMap(timer);
+        List<TimerTimeline> timelines = this.timer.getTimelines();
+        LinkedHashMap<String, String> splits = category.getSplitNameMap(this.timer);
         if (splits == null) return null;
-
-
 
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
         Document doc = docBuilder.newDocument();
         doc.setXmlStandalone(true);
 
-
         Element run = doc.createElement("Run");
         doc.appendChild(run);
 
-
         run.appendChild(doc.createElement("GameIcon"));
-
 
         Element gameName = doc.createElement("GameName");
         gameName.appendChild(doc.createTextNode(category.getGameName()));
         run.appendChild(gameName);
 
-
         Element categoryName = doc.createElement("CategoryName");
         categoryName.appendChild(doc.createTextNode(category.getCategoryName()));
         run.appendChild(categoryName);
 
-
         run.appendChild(doc.createElement("LayoutPath"));
-
 
         Element metadata = doc.createElement("Metadata");
 
@@ -194,35 +179,31 @@ public class TheRunTimer {
 
         run.appendChild(metadata);
 
-
         Element offset = doc.createElement("Offset");
         offset.appendChild(doc.createTextNode("00:00:00"));
         run.appendChild(offset);
-
 
         Element attemptCount = doc.createElement("AttemptCount");
         attemptCount.appendChild(doc.createTextNode("1"));
         run.appendChild(attemptCount);
 
-
         Element attemptHistory = doc.createElement("AttemptHistory");
 
         Element attemptData = doc.createElement("Attempt");
         attemptData.setAttribute("id", "1");
-        attemptData.setAttribute("started", dateFormat.format(new Date(timer.getStartTime())));
-        attemptData.setAttribute("ended", dateFormat.format(new Date(timer.getEndTime())));
+        attemptData.setAttribute("started", dateFormat.format(new Date(this.timer.getStartTime())));
+        attemptData.setAttribute("ended", dateFormat.format(new Date(this.timer.getEndTime())));
         attemptData.setAttribute("isStartedSynced", "true");
         attemptData.setAttribute("isEndedSynced", "true");
         Element realTimeData = doc.createElement("RealTime");
-        realTimeData.appendChild(doc.createTextNode(InGameTimerUtils.timeToStringFormat(timer.getRealTimeAttack())));
+        realTimeData.appendChild(doc.createTextNode(InGameTimerUtils.timeToStringFormat(this.timer.getRealTimeAttack())));
         attemptData.appendChild(realTimeData);
         Element gameTimeData = doc.createElement("GameTime");
-        gameTimeData.appendChild(doc.createTextNode(InGameTimerUtils.timeToStringFormat(timer.getInGameTime(false))));
+        gameTimeData.appendChild(doc.createTextNode(InGameTimerUtils.timeToStringFormat(this.timer.getInGameTime(false))));
         attemptData.appendChild(gameTimeData);
         attemptHistory.appendChild(attemptData);
 
         run.appendChild(attemptHistory);
-
 
         Element segments = doc.createElement("Segments");
         for (TimerTimeline timeline : timelines) {
@@ -253,11 +234,9 @@ public class TheRunTimer {
 
             segments.appendChild(segment);
         }
+
         run.appendChild(segments);
-
-
         run.appendChild(doc.createElement("AutoSplitterSettings"));
-
 
         return new DOMSource(doc);
     }

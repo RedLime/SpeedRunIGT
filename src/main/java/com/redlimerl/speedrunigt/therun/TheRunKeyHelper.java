@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public class TheRunKeyHelper {
-
     public static final File KEY_FILE = SpeedRunIGT.getGlobalPath().resolve("therun.gg.txt").toFile();
     public static String UPLOAD_KEY = "";
 
@@ -38,5 +37,4 @@ public class TheRunKeyHelper {
             SpeedRunIGT.error("Failed to save file for therun.gg.key");
         }
     }
-
 }

@@ -38,6 +38,7 @@ public interface OptionButtonFactory {
         private final String category;
         private final AbstractButtonWidget buttonWidget;
         private final Supplier<String> tooltip;
+
         public Storage(String category, AbstractButtonWidget buttonWidget, Supplier<String> tooltip) {
             this.category = category;
             this.buttonWidget = buttonWidget;

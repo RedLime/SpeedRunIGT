@@ -45,32 +45,11 @@ import static com.redlimerl.speedrunigt.timer.InGameTimerUtils.timeToStringForma
  */
 @SuppressWarnings("unused")
 public class InGameTimer implements Serializable {
-
-    @NotNull
-    static InGameTimer INSTANCE = new InGameTimer("");
-    @NotNull
-    static InGameTimer COMPLETED_INSTANCE = new InGameTimer("");
+    @NotNull static InGameTimer INSTANCE = new InGameTimer();
+    @NotNull static InGameTimer COMPLETED_INSTANCE = new InGameTimer();
 
     private static final String cryptKey = "faRQOs2GK5j863eP";
     private static final int DATA_VERSION = 6;
-
-    @NotNull
-    public static InGameTimer getInstance() { return INSTANCE; }
-
-    private static final ArrayList<Consumer<InGameTimer>> onCompleteConsumers = new ArrayList<>();
-
-    @SuppressWarnings("unused")
-    public static void onComplete(Consumer<InGameTimer> supplier) {
-        onCompleteConsumers.add(supplier);
-    }
-
-    public InGameTimer(String worldName) {
-        this(worldName, true);
-    }
-    public InGameTimer(String worldName, boolean isResettable) {
-        this.worldName = worldName;
-        this.isResettable = isResettable;
-    }
 
     String worldName;
     final UUID uuid = UUID.randomUUID();
@@ -126,11 +105,41 @@ public class InGameTimer implements Serializable {
 
     private final Integer dataVersion = DATA_VERSION;
 
-    @NotNull
-    private TimerStatus status = TimerStatus.NONE;
+    @NotNull private TimerStatus status = TimerStatus.NONE;
 
     private final ConcurrentHashMap<Integer, Integer> moreData = new ConcurrentHashMap<>();
     private CategoryCondition customCondition = null;
+    
+    private static final ArrayList<Consumer<InGameTimer>> onCompleteConsumers = new ArrayList<>();
+
+    private static boolean waitingSaveTask = false;
+    private static final ExecutorService saveManagerThread = Executors.newFixedThreadPool(2);
+
+    private String resultRecord = "";
+
+    private long firstRenderedTime = 0;
+
+    @SuppressWarnings("unused")
+    public static void onComplete(Consumer<InGameTimer> supplier) {
+        onCompleteConsumers.add(supplier);
+    }
+    
+    public InGameTimer() {
+        this("");
+    }
+
+    public InGameTimer(String worldName) {
+        this(worldName, true);
+    }
+
+    public InGameTimer(String worldName, boolean isResettable) {
+        this.worldName = worldName;
+        this.isResettable = isResettable;
+    }
+
+    @NotNull public static InGameTimer getInstance() {
+        return INSTANCE;
+    }
 
     /**
      * Start the Timer, Trigger when player to join(created) the world
@@ -222,17 +231,40 @@ public class InGameTimer implements Serializable {
 
         StringBuilder resultLog = new StringBuilder();
         boolean isRetimed = timer.getRetimedInGameTime() != timer.getInGameTime(false);
-        resultLog.append("Result > IGT: ").append(timeToStringFormat(timer.getInGameTime(false)));
-        if (isRetimed) resultLog.append(", Auto-Retimed IGT: ").append(timeToStringFormat(timer.getRetimedInGameTime()));
-        resultLog.append(", RTA: ").append(timeToStringFormat(timer.getRealTimeAttack()))
-                .append(", Counted Ticks: ").append(timer.activateTicks)
-                .append(", Total Ticks: ").append(timer.loggerTicks);
-        if (isRetimed) resultLog.append(", Auto-Retimed IGT Length: ").append(timeToStringFormat(timer.retimedIGTTime));
-        resultLog.append(", Excluded RTA Time: ").append(timeToStringFormat(timer.excludedRTA));
-        resultLog.append(", Excluded IGT Time: ").append(timeToStringFormat(timer.excludedIGT));
+        
+        resultLog
+                .append("Result > IGT: ")
+                .append(timeToStringFormat(timer.getInGameTime(false)));
+        
+        if (isRetimed) {
+            resultLog
+                    .append(", Auto-Retimed IGT: ")
+                    .append(timeToStringFormat(timer.getRetimedInGameTime()));
+        }
+        
+        resultLog
+                .append(", RTA: ")
+                .append(timeToStringFormat(timer.getRealTimeAttack()))
+                .append(", Counted Ticks: ")
+                .append(timer.activateTicks)
+                .append(", Total Ticks: ")
+                .append(timer.loggerTicks);
+        
+        if (isRetimed) {
+            resultLog
+                    .append(", Auto-Retimed IGT Length: ")
+                    .append(timeToStringFormat(timer.retimedIGTTime));
+        }
+        
+        resultLog
+                .append(", Excluded RTA Time: ")
+                .append(timeToStringFormat(timer.excludedRTA))
+                .append(", Excluded IGT Time: ")
+                .append(timeToStringFormat(timer.excludedIGT));
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy.MM.dd HH:mm:ss");
-        String logInfo = "====================\r\n"
+        String logInfo =
+                "====================\r\n"
                 + resultLog + "\r\n"
                 + timer.firstInput + "\r\n"
                 + "MC Version : " + InGameTimerUtils.getMinecraftVersion() + "\r\n"
@@ -248,14 +280,17 @@ public class InGameTimer implements Serializable {
                 tickFile = new File(worldDir, "igt_freeze" + timer.getLogSuffix()),
                 categoryFile = new File(worldDir, "igt_category" + timer.getLogSuffix()),
                 debugFile = new File(worldDir, "igt_debug.txt");
+        
         String advancementLog = SpeedRunIGT.GSON.toJson(timer.getAdvancementsTracker().getAdvancements()),
                 pauseLog = InGameTimerUtils.pauseLogListToString(timer.pauseLogList, !pauseFile.exists(), pauseFile.exists() ? 0 : timer.completeCount) + logInfo,
                 freezeLog = InGameTimerUtils.logListToString(timer.freezeLogList, tickFile.exists() ? 0 : timer.completeCount),
                 categoryRaw = timer.getCategory().getConditionJson() != null ? SpeedRunIGT.PRETTY_GSON.toJson(timer.getCategory().getConditionJson()) : "",
                 debugRaw = StringUtils.join(timer.debugLogList.iterator(), '\n');
+        
         timer.freezeLogList.clear();
         timer.pauseLogList.clear();
         timer.debugLogList.clear();
+        
         saveManagerThread.submit(() -> {
             try {
                 FileUtils.writeStringToFile(advancementFile, advancementLog, StandardCharsets.UTF_8);
@@ -286,10 +321,11 @@ public class InGameTimer implements Serializable {
 
         INSTANCE.setStatus(TimerStatus.NONE);
     }
-
-    private static boolean waitingSaveTask = false;
-    private static final ExecutorService saveManagerThread = Executors.newFixedThreadPool(2);
-    private static void save() { save(false); }
+    
+    private static void save() {
+        save(false);
+    }
+    
     private static synchronized void save(boolean withLeave) {
         if (waitingSaveTask || saveManagerThread.isShutdown() || saveManagerThread.isTerminated() || !INSTANCE.isServerIntegrated || INSTANCE.worldName.isEmpty() || !INSTANCE.writeFiles) return;
 
@@ -328,8 +364,7 @@ public class InGameTimer implements Serializable {
                             }
                             FileUtils.moveFile(timerCompleteFile, oldTimerCompleteFile);
                             SpeedRunIGT.debug("renamed backup timer data *c");
-                        }
-                        else if (oldTimerCompleteFile.exists())  {
+                        } else if (oldTimerCompleteFile.exists())  {
                             FileUtils.deleteQuietly(oldTimerCompleteFile);
                             SpeedRunIGT.debug("deleted old backup timer data *c");
                         }
@@ -372,7 +407,7 @@ public class InGameTimer implements Serializable {
                     SpeedRunIGT.debug("Loaded Timer Saved Data! " + isOld);
                     INSTANCE.setStatus(TimerStatus.LEAVE);
 
-                    //noinspection ConstantConditions
+                    // noinspection ConstantConditions
                     if (INSTANCE.dataVersion == null || INSTANCE.dataVersion == 0 || INSTANCE.dataVersion != DATA_VERSION) {
                         FileUtils.moveFile(file, new File(worldDir, "timer.igt.backup"));
                         SpeedRunIGT.error("The timer data has found, but it is an old version. timer file is renamed to \"*.igt.backup\"");
@@ -398,26 +433,25 @@ public class InGameTimer implements Serializable {
             } else return false;
         }
     }
-
-    private String resultRecord = "";
+    
     private void updateRecordString() {
-        resultRecord = SpeedRunIGT.PRETTY_GSON.toJson(InGameTimerUtils.convertTimelineJson(this));
+        this.resultRecord = SpeedRunIGT.PRETTY_GSON.toJson(InGameTimerUtils.convertTimelineJson(this));
     }
+    
     public void writeRecordFile(boolean worldOnly) {
         File recordFile = new File(SpeedRunIGT.getRecordsPath().toFile(), uuid + ".json");
         File worldFile = InGameTimerUtils.getTimerLogDir(this.worldName, "");
-        if (worldFile == null && isServerIntegrated) return;
-        File worldRecordFile = !isServerIntegrated ? null : new File(worldFile, "record.json");
-        if (resultRecord.isEmpty()) return;
+        if (worldFile == null && this.isServerIntegrated) return;
+        File worldRecordFile = !this.isServerIntegrated ? null : new File(worldFile, "record.json");
+        if (this.resultRecord.isEmpty()) return;
 
         SpeedRunOptions.RecordGenerateType optionType = SpeedRunOption.getOption(SpeedRunOptions.GENERATE_RECORD_FILE);
-        if (optionType == SpeedRunOptions.RecordGenerateType.NONE
-                || (optionType == SpeedRunOptions.RecordGenerateType.COMPLETE_ONLY && !this.isCompleted())) return;
+        if (optionType == SpeedRunOptions.RecordGenerateType.NONE || (optionType == SpeedRunOptions.RecordGenerateType.COMPLETE_ONLY && !this.isCompleted())) return;
 
         saveManagerThread.submit(() -> {
             try {
-                if (!worldOnly && writeFiles) FileUtils.writeStringToFile(recordFile, resultRecord, StandardCharsets.UTF_8);
-                if (worldRecordFile != null) FileUtils.writeStringToFile(worldRecordFile, resultRecord, StandardCharsets.UTF_8);
+                if (!worldOnly && this.writeFiles) FileUtils.writeStringToFile(recordFile, this.resultRecord, StandardCharsets.UTF_8);
+                if (worldRecordFile != null) FileUtils.writeStringToFile(worldRecordFile, this.resultRecord, StandardCharsets.UTF_8);
                 System.setProperty("speedrunigt.record", recordFile.getName());
                 SpeedRunIGT.debug("Saved record file" + (worldOnly ? "" : "s (with global save)"));
             } catch (IOException e) {
@@ -430,7 +464,7 @@ public class InGameTimer implements Serializable {
     }
 
     public @NotNull RunCategory getCategory() {
-        return RunCategory.getCategory(category);
+        return RunCategory.getCategory(this.category);
     }
 
     public void setCategory(RunCategory category, boolean canSendPacket) {
@@ -446,7 +480,7 @@ public class InGameTimer implements Serializable {
     }
 
     public boolean isCoop() {
-        return isCoop;
+        return this.isCoop;
     }
 
     public long getTicks() {
@@ -466,11 +500,11 @@ public class InGameTimer implements Serializable {
     }
 
     public int getMoreData(int key) {
-        return moreData.getOrDefault(key, 0);
+        return this.moreData.getOrDefault(key, 0);
     }
 
     public Enumeration<Integer> getMoreDataKeys() {
-        return moreData.keys();
+        return this.moreData.keys();
     }
 
     public void updateMoreData(int key, int value) {
@@ -478,12 +512,12 @@ public class InGameTimer implements Serializable {
     }
 
     public void updateMoreData(int key, int value, boolean canSendPacket) {
-        moreData.put(key, value);
+        this.moreData.put(key, value);
         if (this.isCoop() && canSendPacket && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerDataConditionPacket(key, value));
     }
 
     public @NotNull TimerStatus getStatus() {
-        return status;
+        return this.status;
     }
 
     public void setStatus(@NotNull TimerStatus status) {
@@ -502,7 +536,7 @@ public class InGameTimer implements Serializable {
     }
 
     public int getPauseCount() {
-        return pauseCount;
+        return this.pauseCount;
     }
 
     public boolean isStarted() {
@@ -526,7 +560,7 @@ public class InGameTimer implements Serializable {
     }
 
     public long getStartTime() {
-        return this.isStarted() ? startTime : System.currentTimeMillis();
+        return this.isStarted() ? this.startTime : System.currentTimeMillis();
     }
 
     public long getRealTimeAttack() {
@@ -560,23 +594,21 @@ public class InGameTimer implements Serializable {
         }
         return base;
     }
-
-    private long firstRenderedTime = 0;
+    
     public void updateFirstInput() {
-        if (firstInput.isEmpty() && SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT).isWorldLoad(this)) {
-            firstInput = "First Input: IGT " + timeToStringFormat(getInGameTime(false)) + (leastTickTime == 0 ? "" : " (+ " + (System.currentTimeMillis() - this.leastTickTime) + "ms)") + ", RTA " + timeToStringFormat(getRealTimeAttack());
+        if (this.firstInput.isEmpty() && SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT).isWorldLoad(this)) {
+            this.firstInput = "First Input: IGT " + timeToStringFormat(getInGameTime(false)) + (leastTickTime == 0 ? "" : " (+ " + (System.currentTimeMillis() - this.leastTickTime) + "ms)") + ", RTA " + timeToStringFormat(getRealTimeAttack());
         }
-        if (firstRenderedTime != 0) {
-            firstInput = "First World Rendered: " + millisecondToStringFormat(System.currentTimeMillis() - this.firstRenderedTime) + "ms before first input";
+        if (this.firstRenderedTime != 0) {
+            this.firstInput = "First World Rendered: " + millisecondToStringFormat(System.currentTimeMillis() - this.firstRenderedTime) + "ms before first input";
         }
     }
 
     public void updateFirstRendered() {
-        if (firstInput.isEmpty() && firstRenderedTime == 0 && SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT).isFirstInput(this)) {
-            firstRenderedTime = System.currentTimeMillis();
+        if (this.firstInput.isEmpty() && this.firstRenderedTime == 0 && SpeedRunOption.getOption(SpeedRunOptions.WAITING_FIRST_INPUT).isFirstInput(this)) {
+            this.firstRenderedTime = System.currentTimeMillis();
         }
     }
-
 
     public void tick() {
         if (this.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
@@ -587,24 +619,23 @@ public class InGameTimer implements Serializable {
         this.loggerTicks++;
 
         long currentTime = System.currentTimeMillis();
-        long tickDelays = currentTime - leastTickTime;
+        long tickDelays = currentTime - this.leastTickTime;
 
         //Rebase time (When a joined world or changed dimension)
-        if (leastStartTime != 0 && leastTickTime != 0 && leastStartTime != currentTime) {
-            double value = MathHelper.clamp((leastStartTime - leastTickTime) * 1.0 / tickDelays, 0, 1) * 50.0;
-            rebaseIGTime += value;
-            leastStartTime = 0;
+        if (this.leastStartTime != 0 && this.leastTickTime != 0 && this.leastStartTime != currentTime) {
+            double value = MathHelper.clamp((this.leastStartTime - this.leastTickTime) * 1.0 / tickDelays, 0, 1) * 50.0;
+            this.rebaseIGTime += value;
+            this.leastStartTime = 0;
         }
 
         this.leastTickTime = currentTime;
 
         //Logger
         if (tickDelays != currentTime && Math.abs(50 - tickDelays) > 4 && !this.isCoop()) {
-            this.freezeLogList.add(new TimerTickLog(activateTicks, loggerTicks, getRealTimeAttack(),
-                    tickDelays, getInGameTime(false), this.getStatus() == TimerStatus.IDLE));
+            this.freezeLogList.add(new TimerTickLog(this.activateTicks, this.loggerTicks, getRealTimeAttack(), tickDelays, getInGameTime(false), this.getStatus() == TimerStatus.IDLE));
             if (this.freezeLogList.size() >= 1000) {
-                if (this.isServerIntegrated && writeFiles) {
-                    File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "logs");
+                if (this.isServerIntegrated && this.writeFiles) {
+                    File worldDir = InGameTimerUtils.getTimerLogDir(this.worldName, "logs");
                     if (worldDir == null) return;
                     File tickFile = new File(worldDir, "igt_freeze" + this.getLogSuffix());
                     String freezeLog = InGameTimerUtils.logListToString(this.freezeLogList, tickFile.exists() ? 0 : this.completeCount);
@@ -624,7 +655,10 @@ public class InGameTimer implements Serializable {
         if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE) == SpeedRunOptions.TimerSaveInterval.TICKS) save();
     }
 
-    public void setPause(boolean isPause, String reason) { this.setPause(isPause, TimerStatus.PAUSED, reason); }
+    public void setPause(boolean isPause, String reason) {
+        this.setPause(isPause, TimerStatus.PAUSED, reason);
+    }
+    
     public void setPause(boolean toPause, TimerStatus toStatus, String reason) {
         if (this.getStatus() == TimerStatus.COMPLETED_LEGACY || this.isCoop()) {
             if (!(this.isCoop() && !toPause && !this.isStarted())) {
@@ -637,9 +671,9 @@ public class InGameTimer implements Serializable {
         if (toPause) {
             if (this.getStatus().getPause() <= toStatus.getPause()) {
                 if (this.getStatus().getPause() < 1 && this.isStarted()) {
-                    loggerPausedTime = getRealTimeAttack();
-                    prevPauseReason = reason;
-                    pauseCount++;
+                    this.loggerPausedTime = getRealTimeAttack();
+                    this.prevPauseReason = reason;
+                    this.pauseCount++;
                 }
                 InGameTimerUtils.CHANGED_OPTIONS.clear();
                 InGameTimerUtils.RETIME_IS_WAITING_LOAD = false;
@@ -650,39 +684,39 @@ public class InGameTimer implements Serializable {
                 updateRecordString();
                 if ((toStatus == TimerStatus.IDLE || toStatus == TimerStatus.PAUSED) && !isCompleted()) TheRunRequestHelper.updateTimerData(this, TheRunTimer.PacketType.PAUSE);
                 if (this.isStarted()) {
-                    if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE) == SpeedRunOptions.TimerSaveInterval.PAUSE && status != TimerStatus.LEAVE) save();
+                    if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE) == SpeedRunOptions.TimerSaveInterval.PAUSE && this.status != TimerStatus.LEAVE) save();
                     writeRecordFile(true);
                 }
             }
         } else {
             if (this.isStarted()) {
                 long nowTime = getRealTimeAttack();
-                long beforeRetime = retimedIGTTime;
+                long beforeRetime = this.retimedIGTTime;
                 TimerPauseLog.Retime retime = new TimerPauseLog.Retime(0, "");
                 if (this.getStatus() == TimerStatus.PAUSED) {
                     if (this.getCategory() == RunCategories.ANY) {
                         if (InGameTimerUtils.RETIME_IS_WAITING_LOAD && InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD) {
-                            retime = new TimerPauseLog.Retime(retimedIGTTime - beforeRetime, "prob. world load pause");
+                            retime = new TimerPauseLog.Retime(this.retimedIGTTime - beforeRetime, "prob. world load pause");
                         } else {
                             if (InGameTimerUtils.CHANGED_OPTIONS.size() > 0) {
                                 int options = InGameTimerUtils.CHANGED_OPTIONS.size();
-                                retimedIGTTime += Math.max(nowTime - loggerPausedTime - 5000L, 0);
-                                retime = new TimerPauseLog.Retime(retimedIGTTime - beforeRetime, "changed option" + (options > 1 ? ("s (" + options + ")") : ""));
+                                this.retimedIGTTime += Math.max(nowTime - this.loggerPausedTime - 5000L, 0);
+                                retime = new TimerPauseLog.Retime(this.retimedIGTTime - beforeRetime, "changed option" + (options > 1 ? ("s (" + options + ")") : ""));
                                 InGameTimerUtils.CHANGED_OPTIONS.clear();
                             } else {
-                                retimedIGTTime += nowTime - loggerPausedTime;
-                                retime = new TimerPauseLog.Retime(retimedIGTTime - beforeRetime, "");
+                                this.retimedIGTTime += nowTime - this.loggerPausedTime;
+                                retime = new TimerPauseLog.Retime(this.retimedIGTTime - beforeRetime, "");
                             }
                         }
                     }
                 }
                 if (isPaused()) {
-                    this.leastPauseTime = nowTime - loggerPausedTime;
+                    this.leastPauseTime = nowTime - this.loggerPausedTime;
                     this.totalPauseTime += this.leastPauseTime;
-                    this.pauseLogList.add(new TimerPauseLog(prevPauseReason, reason, getInGameTime(false), getRealTimeAttack(), this.leastPauseTime, pauseCount, retime));
+                    this.pauseLogList.add(new TimerPauseLog(this.prevPauseReason, reason, getInGameTime(false), getRealTimeAttack(), this.leastPauseTime, this.pauseCount, retime));
                     if (this.pauseLogList.size() >= 100) {
-                        if (this.isServerIntegrated && writeFiles) {
-                            File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "logs");
+                        if (this.isServerIntegrated && this.writeFiles) {
+                            File worldDir = InGameTimerUtils.getTimerLogDir(this.worldName, "logs");
                             if (worldDir == null) return;
                             File pauseFile = new File(worldDir, "igt_timer" + this.getLogSuffix());
                             String pauseLog = InGameTimerUtils.pauseLogListToString(this.pauseLogList, !pauseFile.exists(), pauseFile.exists() ? 0 : this.completeCount);
@@ -697,17 +731,17 @@ public class InGameTimer implements Serializable {
                         }
                         this.pauseLogList.clear();
                     }
-                    if (this.getCategory().canSegment() && leaveTime != 0 && leaveTime > startTime) excludedRTA += System.currentTimeMillis() - leaveTime;
-                    leaveTime = 0;
+                    if (this.getCategory().canSegment() && this.leaveTime != 0 && this.leaveTime > this.startTime) this.excludedRTA += System.currentTimeMillis() - this.leaveTime;
+                    this.leaveTime = 0;
                     if (!isCompleted()) TheRunRequestHelper.updateTimerData(this, TheRunTimer.PacketType.RESUME);
                 }
-                if (this.getStatus() == TimerStatus.IDLE && loggerTicks != 0) {
-                    leastStartTime = System.currentTimeMillis();
+                if (this.getStatus() == TimerStatus.IDLE && this.loggerTicks != 0) {
+                    this.leastStartTime = System.currentTimeMillis();
                 }
             } else {
-                startTime = System.currentTimeMillis();
+                this.startTime = System.currentTimeMillis();
                 if (this.isGlitched) save();
-                if (loggerTicks != 0) leastStartTime = startTime;
+                if (this.loggerTicks != 0) this.leastStartTime = this.startTime;
                 if (this.isCoop()) {
                     if (SpeedRunIGT.IS_CLIENT_SIDE) {
                         TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerStartPacket(InGameTimer.getInstance(), 0));
@@ -722,26 +756,27 @@ public class InGameTimer implements Serializable {
     }
 
     public boolean isResettable() {
-        return isResettable || SpeedRunOption.getOption(SpeedRunOptions.TIMER_LIMITLESS_RESET);
+        return this.isResettable || SpeedRunOption.getOption(SpeedRunOptions.TIMER_LIMITLESS_RESET);
     }
 
     @SuppressWarnings("UnusedReturnValue")
     public boolean tryInsertNewTimeline(String name) {
         return tryInsertNewTimeline(name, true);
     }
+
     @SuppressWarnings("UnusedReturnValue")
     public boolean tryInsertNewTimeline(String name, boolean canSendPacket) {
-        for (TimerTimeline timeline : timelines) {
+        for (TimerTimeline timeline : this.timelines) {
             if (Objects.equals(timeline.getName(), name)) return false;
         }
-        timelines.add(new TimerTimeline(name, getInGameTime(false), getRealTimeAttack()));
+        this.timelines.add(new TimerTimeline(name, getInGameTime(false), getRealTimeAttack()));
         TheRunRequestHelper.updateTimerData(this, TheRunTimer.PacketType.PLAYING);
         if (canSendPacket && this.isCoop() && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerTimelinePacket(name));
         return true;
     }
 
     public void tryInsertNewAdvancement(String advancementID, String criteriaKey, boolean isAdvancement) {
-        TimerAdvancementTracker.AdvancementTrack advancementTrack = advancementsTracker.getOrCreateTrack(advancementID);
+        TimerAdvancementTracker.AdvancementTrack advancementTrack = this.advancementsTracker.getOrCreateTrack(advancementID);
         if (criteriaKey == null) {
             if (advancementTrack.isComplete()) return;
             advancementTrack.setComplete(true);
@@ -753,27 +788,27 @@ public class InGameTimer implements Serializable {
     }
 
     public List<TimerTimeline> getTimelines() {
-        return timelines;
+        return this.timelines;
     }
 
     public TimerAdvancementTracker getAdvancementsTracker() {
-        return advancementsTracker;
+        return this.advancementsTracker;
     }
 
     public boolean isHardcore() {
-        return isHardcore;
+        return this.isHardcore;
     }
 
     public boolean isGlitched() {
-        return isGlitched;
+        return this.isGlitched;
     }
 
     public RunType getRunType() {
-        return runType;
+        return this.runType;
     }
 
     public boolean isLegacyIGT() {
-        return isGlitched;
+        return this.isGlitched;
     }
 
     String getLogSuffix() {
@@ -781,7 +816,7 @@ public class InGameTimer implements Serializable {
     }
 
     static String getLogSuffix(int count) {
-        return (count == 0 ? "" : "_"+count) + ".log";
+        return (count == 0 ? "" : "_" + count) + ".log";
     }
 
     public void openedLanIntegratedServer() {
@@ -793,7 +828,7 @@ public class InGameTimer implements Serializable {
     }
 
     public void checkConditions() {
-        if (customCondition != null && customCondition.isDone()) {
+        if (this.customCondition != null && this.customCondition.isDone()) {
             complete();
         }
     }
@@ -809,23 +844,23 @@ public class InGameTimer implements Serializable {
     }
 
     public CategoryCondition getCustomCondition() {
-        return customCondition;
+        return this.customCondition;
     }
 
     public List<RunPortalPos> getNetherPortalPosList() {
-        return lastNetherPortalPos;
+        return this.lastNetherPortalPos;
     }
 
     public List<RunPortalPos> getOverWorldPortalPosList() {
-        return lastOverWorldPortalPos;
+        return this.lastOverWorldPortalPos;
     }
 
     public void setServerIntegrated(boolean serverIntegrated) {
-        isServerIntegrated = serverIntegrated;
+        this.isServerIntegrated = serverIntegrated;
     }
 
     public void setCoop(boolean coop) {
-        isCoop = coop;
+        this.isCoop = coop;
     }
 
     public void setStartTime(long startTime) {
@@ -833,11 +868,11 @@ public class InGameTimer implements Serializable {
     }
 
     public UUID getUuid() {
-        return uuid;
+        return this.uuid;
     }
 
     public CopyOnWriteArrayList<RunPortalPos> getEndPortalPosList() {
-        return endPortalPosList;
+        return this.endPortalPosList;
     }
 
     public void setWriteFiles(boolean writeFiles) {

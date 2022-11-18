@@ -25,17 +25,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class TheRunRequestHelper {
-
-
     private static final String KEY_BASE_URL = "https://therun.gg/api/livesplit";
     private static final ExecutorService threadExecutor = Executors.newSingleThreadExecutor();
-
     private static final HashMap<TheRunTimer.PacketType, Long> LEAST_REQ_TIME = Maps.newHashMap();
 
     private static void setupConnection(HttpURLConnection connection) {
         connection.setConnectTimeout(10000);
         connection.setReadTimeout(10000);
-        connection.setRequestProperty("User-Agent", "SpeedRunIGT/"+SpeedRunIGT.MOD_VERSION);
+        connection.setRequestProperty("User-Agent", "SpeedRunIGT/" + SpeedRunIGT.MOD_VERSION);
         connection.setRequestProperty("Accept", "*/*");
         connection.setRequestProperty("Sec-Fetch-Site", "cross-site");
         connection.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
@@ -43,11 +40,17 @@ public class TheRunRequestHelper {
     }
 
     public static void updateTimerData(InGameTimer timer, TheRunTimer.PacketType packetType) {
-
         // Skip these all things lol
-        if (!timer.isStarted() || timer.isCoop() || timer.isOpenedIntegratedServer() || !SpeedRunIGT.IS_CLIENT_SIDE
-            || timer.isGlitched() || TheRunKeyHelper.UPLOAD_KEY.isEmpty() || timer.getCategory().getTheRunCategory() == null
-            || !SpeedRunOption.getOption(SpeedRunOptions.ENABLE_THERUN_GG_LIVE)) {
+        if (
+                !timer.isStarted()
+                || timer.isCoop()
+                || timer.isOpenedIntegratedServer()
+                || !SpeedRunIGT.IS_CLIENT_SIDE
+                || timer.isGlitched()
+                || TheRunKeyHelper.UPLOAD_KEY.isEmpty()
+                || timer.getCategory().getTheRunCategory() == null
+                || !SpeedRunOption.getOption(SpeedRunOptions.ENABLE_THERUN_GG_LIVE)
+        ) {
             return;
         }
 
@@ -90,9 +93,7 @@ public class TheRunRequestHelper {
                 SpeedRunIGT.error("Failed to upload timer data on therun.gg");
             }
         });
-
     }
-
 
     public static boolean checkValidUploadKey(String key) {
         try {
@@ -113,9 +114,16 @@ public class TheRunRequestHelper {
 
     public static void submitTimerData(InGameTimer timer) {
         // Skip these all things lol
-        if (!timer.isStarted() || timer.isCoop() || timer.isOpenedIntegratedServer() || !SpeedRunIGT.IS_CLIENT_SIDE
-                || timer.isGlitched() || TheRunKeyHelper.UPLOAD_KEY.isEmpty() || timer.getCategory().getTheRunCategory() == null
-                || !SpeedRunOption.getOption(SpeedRunOptions.ENABLE_THERUN_GG_LIVE)) {
+        if (
+                !timer.isStarted()
+                || timer.isCoop()
+                || timer.isOpenedIntegratedServer()
+                || !SpeedRunIGT.IS_CLIENT_SIDE
+                || timer.isGlitched()
+                || TheRunKeyHelper.UPLOAD_KEY.isEmpty()
+                || timer.getCategory().getTheRunCategory() == null
+                || !SpeedRunOption.getOption(SpeedRunOptions.ENABLE_THERUN_GG_LIVE)
+        ) {
             return;
         }
 

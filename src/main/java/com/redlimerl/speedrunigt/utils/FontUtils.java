@@ -72,7 +72,7 @@ public class FontUtils {
     private static void copyResourceToFont(String fileName) {
         File fontFile = SpeedRunIGT.FONT_PATH.resolve(fileName).toFile();
         if (!fontFile.exists()) {
-            InputStream fontInput = FontUtils.class.getResourceAsStream("/font/"+fileName);
+            InputStream fontInput = FontUtils.class.getResourceAsStream("/font/" + fileName);
             if (fontInput == null) return;
             try {
                 FileOutputStream output = new FileOutputStream(fontFile);

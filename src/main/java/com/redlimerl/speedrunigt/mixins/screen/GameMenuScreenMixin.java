@@ -13,14 +13,22 @@ import org.spongepowered.asm.mixin.injection.Slice;
 
 @Mixin(GameMenuScreen.class)
 public class GameMenuScreenMixin extends Screen {
-
     protected GameMenuScreenMixin(Text title) {
         super(title);
     }
 
-    @ModifyArg(method = "render",
-            slice = @Slice(from = @At("HEAD"), to = @At("TAIL")),
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/GameMenuScreen;drawCenteredText(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/text/StringRenderable;III)V"), index = 2)
+    @ModifyArg(
+            method = "render",
+            slice = @Slice(
+                    from = @At("HEAD"),
+                    to = @At("TAIL")
+            ),
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/gui/screen/GameMenuScreen;drawCenteredText(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/text/StringRenderable;III)V"
+            ),
+            index = 2
+    )
     public StringRenderable onRender(StringRenderable string) {
         if (InGameTimer.getInstance().isPaused() && InGameTimer.getInstance().isStarted() && !InGameTimer.getInstance().isCoop()) {
             return new LiteralText(string.getString() + " (#" + InGameTimer.getInstance().getPauseCount() + ")");

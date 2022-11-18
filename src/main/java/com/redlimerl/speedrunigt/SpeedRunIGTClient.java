@@ -19,17 +19,16 @@ import java.util.Collection;
 
 public class SpeedRunIGTClient implements ClientModInitializer {
     public static TimerDrawer TIMER_DRAWER = new TimerDrawer(true);
-
     public static KeyBinding timerResetKeyBinding;
     public static KeyBinding timerStopKeyBinding;
-    public static boolean isInitialized = false;
+    public static boolean initialized = false;
 
     @Override
     public void onInitializeClient() {
         // init default option buttons
         SpeedRunOption.addOptionButtonFactories(new OptionButtonsImpl().createOptionButtons().toArray(new OptionButtonFactory[0]));
 
-        // Registry API's
+        // Registry APIs
         for (EntrypointContainer<SpeedRunIGTApi> entryPoint : FabricLoader.getInstance().getEntrypointContainers("speedrunigt", SpeedRunIGTApi.class)) {
             SpeedRunIGTApi api = entryPoint.getEntrypoint();
 
@@ -45,7 +44,7 @@ public class SpeedRunIGTClient implements ClientModInitializer {
         }
 
         // End initializing
-        isInitialized = true;
+        initialized = true;
 
         // Key Bindings initialize
         timerResetKeyBinding = KeyBindingRegistry.registerKeyBinding(new KeyBinding(
@@ -69,3 +68,4 @@ public class SpeedRunIGTClient implements ClientModInitializer {
         SpeedRunIGT.IS_CLIENT_SIDE = true;
     }
 }
+// Maya was here :)

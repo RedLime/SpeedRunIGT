@@ -14,7 +14,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 
 public class TimerChangeCategoryPacket extends TimerPacket {
-
     public static final Identifier IDENTIFIER = TimerPacket.identifier("timer_category");
     private final String sendCategory;
 
@@ -30,8 +29,8 @@ public class TimerChangeCategoryPacket extends TimerPacket {
     @Environment(EnvType.CLIENT)
     @Override
     protected TimerPacketBuf convertClient2ServerPacket(TimerPacketBuf buf, MinecraftClient client) {
-        if (sendCategory != null) {
-            buf.writeString(sendCategory);
+        if (this.sendCategory != null) {
+            buf.writeString(this.sendCategory);
         }
         return buf;
     }
@@ -50,8 +49,8 @@ public class TimerChangeCategoryPacket extends TimerPacket {
 
     @Override
     protected TimerPacketBuf convertServer2ClientPacket(TimerPacketBuf buf, MinecraftServer server) {
-        if (sendCategory != null) {
-            buf.writeString(sendCategory);
+        if (this.sendCategory != null) {
+            buf.writeString(this.sendCategory);
         }
         return buf;
     }

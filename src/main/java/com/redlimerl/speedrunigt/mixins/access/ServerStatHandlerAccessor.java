@@ -6,8 +6,5 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(ServerStatHandler.class)
 public interface ServerStatHandlerAccessor {
-
-    @Invoker("asString")
-    String invokeAsString();
-
+    @Invoker("asString") String invokeAsString();
 }

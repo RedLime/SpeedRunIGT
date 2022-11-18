@@ -31,13 +31,9 @@ import java.util.Set;
 
 @Mixin(ClientAdvancementManager.class)
 public abstract class ClientAdvancementManagerMixin {
-
     @Shadow @Final private AdvancementManager manager;
-
     @Shadow @Final private MinecraftClient client;
-
     @Shadow public abstract AdvancementManager getManager();
-
     @Shadow @Final private Map<Advancement, AdvancementProgress> advancementProgresses;
 
     @ModifyVariable(method = "onAdvancements", at = @At(value = "INVOKE", target = "Ljava/util/Map$Entry;getValue()Ljava/lang/Object;"))
@@ -46,7 +42,7 @@ public abstract class ClientAdvancementManagerMixin {
         
         Advancement advancement = this.manager.get(entry.getKey());
         AdvancementProgress advancementProgress = entry.getValue();
-        assert advancement != null;
+        if (advancement == null) { return null; }
         advancementProgress.init(advancement.getCriteria(), advancement.getRequirements());
 
         if (advancementProgress.isDone() && timer.getStatus() != TimerStatus.NONE) {
@@ -62,7 +58,7 @@ public abstract class ClientAdvancementManagerMixin {
 
             timer.tryInsertNewAdvancement(advancement.getId().toString(), null, advancement.getDisplay() != null);
             if (timer.isCoop() && advancement.getDisplay() != null) {
-                TimerPacketUtils.sendClient2ServerPacket(client, new TimerAchieveAdvancementPacket(advancement));
+                TimerPacketUtils.sendClient2ServerPacket(this.client, new TimerAchieveAdvancementPacket(advancement));
             }
 
             // Custom Json category
@@ -101,30 +97,32 @@ public abstract class ClientAdvancementManagerMixin {
     @Inject(at = @At("RETURN"), method = "onAdvancements")
     public void onComplete(AdvancementUpdateS2CPacket packet, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
-
         int maxCount = timer.getMoreData(7441) == 0 ? 80 : timer.getMoreData(7441);
 
-        //All Advancements
-        if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategories.ALL_ADVANCEMENTS) {
-            if (getCompleteAdvancementsCount() >= maxCount) InGameTimer.complete();
-        }
-
-        //Half%
-        if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategories.HALF) {
-            if (getCompleteAdvancementsCount() >= MathHelper.ceil(maxCount / 2.0f)) InGameTimer.complete();
-        }
-
-        //(PogLoot) Quater
-        if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategories.POGLOOT_QUATER) {
-            if (getCompleteAdvancementsCount() >= MathHelper.ceil(maxCount / 4.0f)) InGameTimer.complete();
+        if (timer.getStatus() != TimerStatus.NONE) {
+            if (timer.getCategory() == RunCategories.ALL_ADVANCEMENTS) {
+                if (getCompleteAdvancementsCount() >= maxCount) {
+                    InGameTimer.complete();
+                }
+            } else if (timer.getCategory() == RunCategories.HALF) {
+                if (getCompleteAdvancementsCount() >= MathHelper.ceil(maxCount / 2.0f)) {
+                    InGameTimer.complete();
+                }
+            } else if (timer.getCategory() == RunCategories.POGLOOT_QUATER) {
+                if (getCompleteAdvancementsCount() >= MathHelper.ceil(maxCount / 4.0f)) {
+                    InGameTimer.complete();
+                }
+            }
         }
     }
 
     private int getCompleteAdvancementsCount() {
         Set<String> completedAdvancements = Sets.newHashSet();
+
         for (Map.Entry<String, TimerAdvancementTracker.AdvancementTrack> track : InGameTimer.getInstance().getAdvancementsTracker().getAdvancements().entrySet()) {
             if (track.getValue().isAdvancement() && track.getValue().isComplete()) completedAdvancements.add(track.getKey());
         }
+
         for (Advancement advancement : this.getManager().getAdvancements()) {
             if (this.advancementProgresses.containsKey(advancement) && advancement.getDisplay() != null) {
                 AdvancementProgress advancementProgress = this.advancementProgresses.get(advancement);
@@ -137,6 +135,7 @@ public abstract class ClientAdvancementManagerMixin {
                 }
             }
         }
+
         return completedAdvancements.size();
     }
 }

@@ -11,10 +11,6 @@ import java.util.Map;
 
 @Mixin(FontManager.class)
 public interface FontManagerAccessor {
-
-    @Accessor("fontStorages")
-    Map<Identifier, FontStorage> getFontStorages();
-
-    @Accessor("textureManager")
-    TextureManager getTextureManager();
+    @Accessor("fontStorages") Map<Identifier, FontStorage> getFontStorages();
+    @Accessor("textureManager") TextureManager getTextureManager();
 }

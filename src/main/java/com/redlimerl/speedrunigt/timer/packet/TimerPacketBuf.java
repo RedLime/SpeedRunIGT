@@ -27,11 +27,7 @@ public class TimerPacketBuf {
     }
 
     public TimerPacketBuf copy() {
-        return new TimerPacketBuf(
-                new PacketByteBuf(
-                        this.buf.copy()
-                )
-        );
+        return new TimerPacketBuf(new PacketByteBuf(this.buf.copy()));
     }
 
     public void writeString(String string) {

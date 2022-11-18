@@ -12,22 +12,27 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Mixin(DownloadingTerrainScreen.class)
 public abstract class DownloadingTerrainScreenMixin extends Screen {
-
     protected DownloadingTerrainScreenMixin(Text title) {
         super(title);
     }
 
     @Override
     protected void init() {
-        super.init();
         InGameTimer timer = InGameTimer.getInstance();
-        if (client != null && client.isInSingleplayer() && !timer.isCoop() && timer.getStatus() != TimerStatus.IDLE) {
+        if (this.client != null && this.client.isInSingleplayer() && !timer.isCoop() && timer.getStatus() != TimerStatus.IDLE) {
             timer.setPause(true, TimerStatus.IDLE, "dimension load?");
             InGameTimerUtils.IS_CHANGING_DIMENSION = false;
         }
     }
 
-    @ModifyArg(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/DownloadingTerrainScreen;drawCenteredString(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/font/TextRenderer;Ljava/lang/String;III)V"), index = 2)
+    @ModifyArg(
+            method = "render",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/gui/screen/DownloadingTerrainScreen;drawCenteredString(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/font/TextRenderer;Ljava/lang/String;III)V"
+            ),
+            index = 2
+    )
     public String onRender(String string) {
         if (InGameTimer.getInstance().isPaused() && InGameTimer.getInstance().isStarted() && !InGameTimer.getInstance().isCoop()) {
             return string + " (#" + InGameTimer.getInstance().getPauseCount() + ")";

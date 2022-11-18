@@ -9,7 +9,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import java.util.Collection;
 
 public class TimerPacketUtils {
-
     @Environment(EnvType.CLIENT)
     public static void sendClient2ServerPacket(MinecraftClient client, TimerPacket packet) {
         if (client.getNetworkHandler() != null) client.getNetworkHandler().sendPacket(packet.createClient2ServerPacket(client));

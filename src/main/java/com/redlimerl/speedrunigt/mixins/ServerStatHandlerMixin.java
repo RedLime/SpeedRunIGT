@@ -29,12 +29,9 @@ import java.util.Map;
 
 @Mixin(ServerStatHandler.class)
 public abstract class ServerStatHandlerMixin extends StatHandler {
-
-    @Shadow
-    private static <T> Identifier getStatId(Stat<T> stat) {
+    @Shadow private static <T> Identifier getStatId(Stat<T> stat) {
         return null;
     }
-
     @Shadow @Final private MinecraftServer server;
 
     @Inject(method = "setStat", at = @At("TAIL"))
@@ -55,8 +52,9 @@ public abstract class ServerStatHandlerMixin extends StatHandler {
 
         // All Blocks
         if (timer.getCategory() == RunCategories.ALL_BLOCKS) {
-            if (RunCategories.ALL_BLOCKS.isCompleted(this.server))
+            if (RunCategories.ALL_BLOCKS.isCompleted(this.server)) {
                 InGameTimer.complete();
+            }
         }
     }
 

@@ -35,7 +35,6 @@ import java.util.function.Supplier;
 import static com.redlimerl.speedrunigt.SpeedRunIGTClient.TIMER_DRAWER;
 
 public class OptionButtonsImpl implements SpeedRunIGTApi {
-
     @Override
     public Collection<OptionButtonFactory> createOptionButtons() {
         ArrayList<OptionButtonFactory> factories = new ArrayList<>();

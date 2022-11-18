@@ -3,7 +3,6 @@ package com.redlimerl.speedrunigt.timer.logs;
 import java.io.Serializable;
 
 public class TimerPauseLog implements Serializable {
-
     // Pause reason
     private final String rp;
     // Unpause reason
@@ -19,7 +18,6 @@ public class TimerPauseLog implements Serializable {
     // retimed amount
     private final Retime r;
 
-
     public TimerPauseLog(String pauseReason, String unpauseReason, long currentIGT, long currentRTA, long pauseLength, int pauseCount, Retime retime) {
         this.rp = pauseReason;
         this.ru = unpauseReason;
@@ -31,47 +29,48 @@ public class TimerPauseLog implements Serializable {
     }
 
     public String getPauseReason() {
-        return rp;
+        return this.rp;
     }
 
     public String getUnpauseReason() {
-        return ru;
+        return this.ru;
     }
 
     public long getIGT() {
-        return igt;
+        return this.igt;
     }
 
     public long getUnpauseRTA() {
-        return ct;
+        return this.ct;
     }
 
     public long getPauseLength() {
-        return pt;
+        return this.pt;
     }
 
     public int getPauseCount() {
-        return n;
+        return this.n;
     }
 
     public Retime getRetimeData() {
-        return r;
+        return this.r;
     }
 
     public static class Retime implements Serializable {
         private final long i;
         private final String t;
+
         public Retime(long retimed, String notice) {
             this.i = retimed;
             this.t = notice;
         }
 
         public long getRetimeNeedAmount() {
-            return i;
+            return this.i;
         }
 
         public String getNoticeInfo() {
-            return t;
+            return this.t;
         }
     }
 }

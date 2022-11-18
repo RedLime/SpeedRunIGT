@@ -7,7 +7,6 @@ import java.util.function.Function;
 
 @SuppressWarnings("unused")
 public class RunCategoryBuilder {
-
     private final String id;
     private final String categoryUrl;
     private final String translateKey;
@@ -18,34 +17,31 @@ public class RunCategoryBuilder {
     private Function<InGameTimer, Boolean> retimeFunction = (value) -> false;
     private TheRunCategory theRunCategory = null;
 
-    public static RunCategoryBuilder create(String id, String categoryUrl, String translateKey) {
-        return new RunCategoryBuilder(id, categoryUrl, translateKey);
-    }
-
-
-
     RunCategoryBuilder(String id, String categoryUrl, String translateKey) {
         this.id = id;
         this.categoryUrl = categoryUrl;
         this.translateKey = translateKey;
     }
 
-    public RunCategory build() {
-        return new RunCategory(
-                id,
-                categoryUrl,
-                translateKey,
-                null,
-                null,
-                autoStart,
-                canSegment,
-                customUrl,
-                hideCategory,
-                retimeFunction,
-                theRunCategory);
+    public static RunCategoryBuilder create(String id, String categoryUrl, String translateKey) {
+        return new RunCategoryBuilder(id, categoryUrl, translateKey);
     }
 
-
+    public RunCategory build() {
+        return new RunCategory(
+                this.id,
+                this.categoryUrl,
+                this.translateKey,
+                null,
+                null,
+                this.autoStart,
+                this.canSegment,
+                this.customUrl,
+                this.hideCategory,
+                this.retimeFunction,
+                this.theRunCategory
+        );
+    }
 
     public RunCategoryBuilder setAutoStart(boolean autoStart) {
         this.autoStart = autoStart;

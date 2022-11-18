@@ -7,7 +7,6 @@ import net.minecraft.advancement.Advancement;
 import java.util.Objects;
 
 public class AdvancementCategoryCondition extends CategoryCondition.Condition<Advancement> {
-
     private final String advancement;
 
     public AdvancementCategoryCondition(JsonObject jsonObject) throws InvalidCategoryException {

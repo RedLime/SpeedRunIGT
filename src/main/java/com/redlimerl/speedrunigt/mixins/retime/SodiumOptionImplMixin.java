@@ -11,7 +11,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Pseudo
 @Mixin(targets = "me.jellysquid.mods.sodium.client.gui.options.OptionImpl", remap = false)
 public class SodiumOptionImplMixin {
-
     @Inject(method = "setValue", remap = false, at = @At("HEAD"))
     public void onSetValue(CallbackInfo ci) {
         InGameTimerUtils.CHANGED_OPTIONS.add(this);

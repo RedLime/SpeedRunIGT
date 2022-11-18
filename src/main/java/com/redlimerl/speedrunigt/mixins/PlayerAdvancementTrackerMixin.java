@@ -21,7 +21,6 @@ import java.util.Map;
 
 @Mixin(PlayerAdvancementTracker.class)
 public abstract class PlayerAdvancementTrackerMixin {
-
     @Shadow private ServerPlayerEntity owner;
 
     @Inject(method = "beginTrackingAllAdvancements", at = @At("RETURN"))
@@ -33,7 +32,13 @@ public abstract class PlayerAdvancementTrackerMixin {
         InGameTimer.getInstance().updateMoreData(7441, count);
     }
 
-    @ModifyArgs(method = "endTrackingCompleted", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancement/criterion/Criterion$ConditionsContainer;<init>(Lnet/minecraft/advancement/criterion/CriterionConditions;Lnet/minecraft/advancement/Advancement;Ljava/lang/String;)V"))
+    @ModifyArgs(
+            method = "endTrackingCompleted",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/advancement/criterion/Criterion$ConditionsContainer;<init>(Lnet/minecraft/advancement/criterion/CriterionConditions;Lnet/minecraft/advancement/Advancement;Ljava/lang/String;)V"
+            )
+    )
     private void getCriteria(Args args) {
         Advancement advancement = args.get(1);
         String criteriaKey = args.get(2);
@@ -48,7 +53,7 @@ public abstract class PlayerAdvancementTrackerMixin {
 
         if (timer.getStatus() != TimerStatus.NONE) {
             timer.tryInsertNewAdvancement(advancement.getId().toString(), criteriaKey, advancement.getDisplay() != null);
-            if (timer.isCoop()) TimerPacketUtils.sendServer2ClientPacket(owner.server, new TimerAchieveCriteriaPacket(advancement.getId().toString(), criteriaKey, advancement.getDisplay() != null));
+            if (timer.isCoop()) TimerPacketUtils.sendServer2ClientPacket(this.owner.server, new TimerAchieveCriteriaPacket(advancement.getId().toString(), criteriaKey, advancement.getDisplay() != null));
         }
     }
 }

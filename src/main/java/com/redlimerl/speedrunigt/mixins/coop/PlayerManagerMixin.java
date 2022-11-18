@@ -18,9 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerManager.class)
 public abstract class PlayerManagerMixin {
-
     @Shadow public abstract int getCurrentPlayerCount();
-
     @Shadow @Final private MinecraftServer server;
 
     @Inject(method = "onPlayerConnect", at = @At("TAIL"))

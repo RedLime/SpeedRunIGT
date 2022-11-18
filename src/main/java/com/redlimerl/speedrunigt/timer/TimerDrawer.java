@@ -25,10 +25,7 @@ import java.util.HashMap;
 
 @Environment(EnvType.CLIENT)
 public class TimerDrawer {
-
-    public enum PositionType {
-        DEFAULT, WHILE_F3, WHILE_PAUSED
-    }
+    public enum PositionType { DEFAULT, WHILE_F3, WHILE_PAUSED }
 
     public static final HashMap<String, Float> fontHeightMap = new HashMap<>();
 
@@ -60,7 +57,8 @@ public class TimerDrawer {
     private Identifier timerFont;
 
     public TimerDrawer(boolean translateZ) {
-        this(translateZ,
+        this(
+                translateZ,
                 SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_POSITION_X),
                 SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_POSITION_Y),
                 SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_SCALE),
@@ -78,14 +76,31 @@ public class TimerDrawer {
                 SpeedRunOption.getOption(SpeedRunOptions.TOGGLE_TIMER),
                 SpeedRunOption.getOption(SpeedRunOptions.LOCK_TIMER_POSITION),
                 SpeedRunOption.getOption(SpeedRunOptions.DISPLAY_DECIMALS),
-                SpeedRunOption.getOption(SpeedRunOptions.TIMER_TEXT_FONT));
+                SpeedRunOption.getOption(SpeedRunOptions.TIMER_TEXT_FONT)
+        );
     }
 
-    public TimerDrawer(boolean translateZ,
-                       float igtXPos, float igtYPos, float igtScale, Integer igtColor, TimerDecoration igtDecoration,
-                       float rtaXPos, float rtaYPos, float rtaScale, Integer rtaColor, TimerDecoration rtaDecoration,
-                       int igtPadding, int rtaPadding, float bgOpacity,
-                       boolean simply, boolean toggle, boolean isLocked, TimerDecimals timerDecimals, Identifier timerFont) {
+    public TimerDrawer(
+            boolean translateZ,
+            float igtXPos,
+            float igtYPos,
+            float igtScale,
+            Integer igtColor,
+            TimerDecoration igtDecoration,
+            float rtaXPos,
+            float rtaYPos,
+            float rtaScale,
+            Integer rtaColor,
+            TimerDecoration rtaDecoration,
+            int igtPadding,
+            int rtaPadding,
+            float bgOpacity,
+            boolean simply,
+            boolean toggle,
+            boolean isLocked,
+            TimerDecimals timerDecimals,
+            Identifier timerFont
+    ) {
         this.translateZ = translateZ;
         this.igtXPos = igtXPos;
         this.igtYPos = igtYPos;
@@ -108,7 +123,7 @@ public class TimerDrawer {
     }
 
     public float getIGT_XPos() {
-        return igtXPos;
+        return this.igtXPos;
     }
 
     public void setIGT_XPos(float igtXPos) {
@@ -116,7 +131,7 @@ public class TimerDrawer {
     }
 
     public float getIGT_YPos() {
-        return igtYPos;
+        return this.igtYPos;
     }
 
     public void setIGT_YPos(float igtYPos) {
@@ -124,7 +139,7 @@ public class TimerDrawer {
     }
 
     public float getRTA_XPos() {
-        return rtaXPos;
+        return this.rtaXPos;
     }
 
     public void setRTA_XPos(float rtaXPos) {
@@ -132,7 +147,7 @@ public class TimerDrawer {
     }
 
     public float getRTA_YPos() {
-        return rtaYPos;
+        return this.rtaYPos;
     }
 
     public void setRTA_YPos(float rtaYPos) {
@@ -140,27 +155,27 @@ public class TimerDrawer {
     }
 
     public float getIGTScale() {
-        return igtScale;
+        return this.igtScale;
     }
 
     public float getRTAScale() {
-        return rtaScale;
+        return this.rtaScale;
     }
 
     public boolean isSimplyTimer() {
-        return simply;
+        return this.simply;
     }
 
     public boolean isToggle() {
-        return toggle;
+        return this.toggle;
     }
 
     public Integer getIGTColor() {
-        return igtColor;
+        return this.igtColor;
     }
 
     public Integer getRTAColor() {
-        return rtaColor;
+        return this.rtaColor;
     }
 
     public void setIGTScale(float igtScale) {
@@ -188,7 +203,7 @@ public class TimerDrawer {
     }
 
     public TimerDecoration getIGTDecoration() {
-        return igtDecoration;
+        return this.igtDecoration;
     }
 
     public void setIGTDecoration(TimerDecoration igtDecoration) {
@@ -196,7 +211,7 @@ public class TimerDrawer {
     }
 
     public TimerDecoration getRTADecoration() {
-        return rtaDecoration;
+        return this.rtaDecoration;
     }
 
     public void setRTADecoration(TimerDecoration rtaDecoration) {
@@ -204,15 +219,15 @@ public class TimerDrawer {
     }
 
     public boolean isLocked() {
-        return isLocked;
+        return this.isLocked;
     }
 
     public void setLocked(boolean locked) {
-        isLocked = locked;
+        this.isLocked = locked;
     }
 
     public TimerDecimals getTimerDecimals() {
-        return timerDecimals;
+        return this.timerDecimals;
     }
 
     public void setTimerDecimals(TimerDecimals timerDecimals) {
@@ -220,7 +235,7 @@ public class TimerDrawer {
     }
 
     public Identifier getTimerFont() {
-        return timerFont;
+        return this.timerFont;
     }
 
     public void setTimerFont(Identifier timerFont) {
@@ -228,7 +243,7 @@ public class TimerDrawer {
     }
 
     public int getIGTPadding() {
-        return igtPadding;
+        return this.igtPadding;
     }
 
     public void setIGTPadding(int igtPadding) {
@@ -236,7 +251,7 @@ public class TimerDrawer {
     }
 
     public int getRTAPadding() {
-        return rtaPadding;
+        return this.rtaPadding;
     }
 
     public void setRTAPadding(int rtaPadding) {
@@ -244,7 +259,7 @@ public class TimerDrawer {
     }
 
     public float getBGOpacity() {
-        return bgOpacity;
+        return this.bgOpacity;
     }
 
     public void setBGOpacity(float bgOpacity) {
@@ -262,21 +277,21 @@ public class TimerDrawer {
     }
 
     private String getTimeFormat(long time) {
-        if ((InGameTimer.getInstance().isCompleted() || InGameTimer.getInstance().isPaused()) && translateZ) {
+        if ((InGameTimer.getInstance().isCompleted() || InGameTimer.getInstance().isPaused()) && this.translateZ) {
             return InGameTimerUtils.timeToStringFormat(time);
         }
-        String millsString = String.format("%03d", time % 1000).substring(0, timerDecimals.getNumber());
+        String millsString = String.format("%03d", time % 1000).substring(0, this.timerDecimals.getNumber());
         int seconds = ((int) (time / 1000)) % 60;
         int minutes = ((int) (time / 1000)) / 60;
         if (minutes > 59) {
             int hours = minutes / 60;
             minutes = minutes % 60;
-            if (timerDecimals == TimerDecimals.NONE) {
+            if (this.timerDecimals == TimerDecimals.NONE) {
                 return String.format("%d:%02d:%02d", hours, minutes, seconds);
             }
             return String.format("%d:%02d:%02d.%s", hours, minutes, seconds, millsString);
         } else {
-            if (timerDecimals == TimerDecimals.NONE) {
+            if (this.timerDecimals == TimerDecimals.NONE) {
                 return String.format("%02d:%02d", minutes, seconds);
             }
             return String.format("%02d:%02d.%s", minutes, seconds, millsString);
@@ -285,10 +300,14 @@ public class TimerDrawer {
 
     public MutableText getIGTText() {
         InGameTimer timer = InGameTimer.getInstance();
-        long igt = timer.isCompleted() && SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE)
-                && timer.getCategory() == RunCategories.ANY && timer.getRunType() == RunType.RANDOM_SEED
-                && (System.currentTimeMillis() / 3000) % 2 == 0
-                ? timer.getRetimedInGameTime() : timer.getInGameTime();
+        long igt =
+                (
+                        timer.isCompleted()
+                        && SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE)
+                        && timer.getCategory() == RunCategories.ANY
+                        && timer.getRunType() == RunType.RANDOM_SEED
+                        && (System.currentTimeMillis() / 3000) % 2 == 0
+                ) ? timer.getRetimedInGameTime() : timer.getInGameTime();
         return new LiteralText((this.simply ? "" : "IGT: ") + getTimeFormat(igt));
     }
 
@@ -298,12 +317,11 @@ public class TimerDrawer {
 
     @SuppressWarnings("deprecation")
     public void draw() {
-        if (!toggle) return;
+        if (!this.toggle) return;
 
         MutableText igtText = getIGTText();
         MutableText rtaText = getRTAText();
 
-        //폰트 조정
         float fontHeight = 8;
         if (!SpeedRunOption.getOption(SpeedRunOptions.CUSTOM_FONT_SAFE_MODE)) {
 
@@ -319,40 +337,46 @@ public class TimerDrawer {
 
         }
 
-        //초기 값 조정
         TimerElement igtTimerElement = new TimerElement();
         TimerElement rtaTimerElement = new TimerElement();
-        rtaTimerElement.init(rtaXPos, rtaYPos, rtaScale, rtaText, rtaColor, rtaDecoration, fontHeight);
-        igtTimerElement.init(igtXPos, igtYPos, igtScale, igtText, igtColor, igtDecoration, fontHeight);
+        rtaTimerElement.init(this.rtaXPos, this.rtaYPos, this.rtaScale, rtaText, this.rtaColor, this.rtaDecoration, fontHeight);
+        igtTimerElement.init(this.igtXPos, this.igtYPos, this.igtScale, igtText, this.igtColor, this.igtDecoration, fontHeight);
 
         MatrixStack matrixStack = new MatrixStack();
-
-        //배경 렌더
         RenderSystem.pushMatrix();
-        if (translateZ) RenderSystem.translatef(0, 0, 998);
-        if (bgOpacity > 0.01f) {
-            Position rtaMin = new Position(rtaTimerElement.getPosition().getX() - rtaPadding, rtaTimerElement.getPosition().getY() - rtaPadding);
-            Position rtaMax = new Position(rtaMin.getX() + rtaTimerElement.getScaledTextWidth() + ((rtaPadding - 1) + rtaPadding), rtaMin.getY() + rtaTimerElement.getScaledTextHeight() + ((rtaPadding - 1) + rtaPadding));
-            Position igtMin = new Position(igtTimerElement.getPosition().getX() - igtPadding, igtTimerElement.getPosition().getY() - igtPadding);
-            Position igtMax = new Position(igtMin.getX() + igtTimerElement.getScaledTextWidth() + ((igtPadding - 1) + igtPadding), igtMin.getY() + igtTimerElement.getScaledTextHeight() + ((igtPadding - 1) + igtPadding));
-            int opacity = BackgroundHelper.ColorMixer.getArgb((int) (bgOpacity * 255), 0, 0, 0);
-            if (rtaMin.getX() < igtMax.getX() && rtaMin.getY() < igtMax.getY() &&
-                    igtMin.getX() < rtaMax.getX() && igtMin.getY() < rtaMax.getY()) {
-                DrawableHelper.fill(matrixStack, Math.min(rtaMin.getX(), igtMin.getX()), Math.min(rtaMin.getY(), igtMin.getY()),
-                        Math.max(rtaMax.getX(), igtMax.getX()), Math.max(rtaMax.getY(), igtMax.getY()), opacity);
+
+        if (this.translateZ) RenderSystem.translatef(0, 0, 998);
+        if (this.bgOpacity > 0.01f) {
+            Position rtaMin = new Position(rtaTimerElement.getPosition().getX() - this.rtaPadding, rtaTimerElement.getPosition().getY() - this.rtaPadding);
+            Position rtaMax = new Position(rtaMin.getX() + rtaTimerElement.getScaledTextWidth() + ((this.rtaPadding - 1) + this.rtaPadding), rtaMin.getY() + rtaTimerElement.getScaledTextHeight() + ((this.rtaPadding - 1) + this.rtaPadding));
+            Position igtMin = new Position(igtTimerElement.getPosition().getX() - this.igtPadding, igtTimerElement.getPosition().getY() - this.igtPadding);
+            Position igtMax = new Position(igtMin.getX() + igtTimerElement.getScaledTextWidth() + ((this.igtPadding - 1) + this.igtPadding), igtMin.getY() + igtTimerElement.getScaledTextHeight() + ((this.igtPadding - 1) + this.igtPadding));
+            int opacity = BackgroundHelper.ColorMixer.getArgb((int) (this.bgOpacity * 255), 0, 0, 0);
+            if (
+                    rtaMin.getX() < igtMax.getX()
+                    && rtaMin.getY() < igtMax.getY()
+                    && igtMin.getX() < rtaMax.getX()
+                    && igtMin.getY() < rtaMax.getY()
+            ) {
+                DrawableHelper.fill(
+                        matrixStack,
+                        Math.min(rtaMin.getX(), igtMin.getX()),
+                        Math.min(rtaMin.getY(), igtMin.getY()),
+                        Math.max(rtaMax.getX(), igtMax.getX()),
+                        Math.max(rtaMax.getY(), igtMax.getY()),
+                        opacity
+                );
             } else {
-                if (rtaScale != 0) DrawableHelper.fill(matrixStack, rtaMin.getX(), rtaMin.getY(), rtaMax.getX(), rtaMax.getY(), opacity);
-                if (igtScale != 0) DrawableHelper.fill(matrixStack, igtMin.getX(), igtMin.getY(), igtMax.getX(), igtMax.getY(), opacity);
+                if (this.rtaScale != 0) DrawableHelper.fill(matrixStack, rtaMin.getX(), rtaMin.getY(), rtaMax.getX(), rtaMax.getY(), opacity);
+                if (this.igtScale != 0) DrawableHelper.fill(matrixStack, igtMin.getX(), igtMin.getY(), igtMax.getX(), igtMax.getY(), opacity);
             }
         }
 
-        //렌더
-        if (igtScale != 0) igtTimerElement.draw(matrixStack, translateZ);
-        if (rtaScale != 0) rtaTimerElement.draw(matrixStack, translateZ);
+        if (this.igtScale != 0) igtTimerElement.draw(matrixStack, this.translateZ);
+        if (this.rtaScale != 0) rtaTimerElement.draw(matrixStack, this.translateZ);
+
         RenderSystem.popMatrix();
-
     }
-
 
     public static class Position {
         private int x;
@@ -364,7 +388,7 @@ public class TimerDrawer {
         }
 
         public int getX() {
-            return x;
+            return this.x;
         }
 
         public void setX(int x) {
@@ -372,7 +396,7 @@ public class TimerDrawer {
         }
 
         public int getY() {
-            return y;
+            return this.y;
         }
 
         public void setY(int y) {

@@ -1,4 +1,4 @@
-package com.redlimerl.speedrunigt.mixins.keybinding;
+package com.redlimerl.speedrunigt.mixins.access;
 
 import net.minecraft.client.options.KeyBinding;
 import org.spongepowered.asm.mixin.Mixin;

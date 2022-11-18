@@ -11,7 +11,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 
 public class TimerUncompletedPacket extends TimerPacket {
-
     public static final Identifier IDENTIFIER = TimerPacket.identifier("timer_uncompleted");
 
     public TimerUncompletedPacket() {

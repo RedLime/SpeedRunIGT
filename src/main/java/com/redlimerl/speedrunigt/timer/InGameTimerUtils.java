@@ -95,10 +95,16 @@ public class InGameTimerUtils {
 
         StringBuilder stringBuilder = new StringBuilder();
         if (completeCount > 0) {
-            stringBuilder.append("/* The timer/log is segmented. If you need previous logs, check the igt_timer").append(InGameTimer.getLogSuffix(completeCount)).append(" file.").append(" */\n");
+            stringBuilder
+                    .append("/* The timer/log is segmented. If you need previous logs, check the igt_timer")
+                    .append(InGameTimer.getLogSuffix(completeCount))
+                    .append(" file.")
+                    .append(" */\n");
         }
+
         if (makeHeader) {
-            stringBuilder.append(makeLogText(5, "No"))
+            stringBuilder
+                    .append(makeLogText(5, "No"))
                     .append(makeLogText(15, "IGT"))
                     .append(makeLogText(15, "Start RTA"))
                     .append(makeLogText(15, "End RTA"))
@@ -119,6 +125,7 @@ public class InGameTimerUtils {
                     .append(String.format("Paused by %s, Unpause by %s%s", pause.getPauseReason(), pause.getUnpauseReason(), pause.getRetimeData().getNoticeInfo().isEmpty() ? "" : " / "+pause.getRetimeData().getNoticeInfo()))
                     .append("\n");
         }
+
         return stringBuilder.toString();
     }
 

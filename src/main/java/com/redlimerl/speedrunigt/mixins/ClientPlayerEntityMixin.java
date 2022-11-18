@@ -29,20 +29,19 @@ import java.util.stream.Collectors;
 
 @Mixin(ClientPlayerEntity.class)
 public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
-
     @Shadow @Final protected MinecraftClient client;
+    private Long latestPortalEnter = null;
+    private int portalTick = 0;
 
     public ClientPlayerEntityMixin(ClientWorld world, GameProfile profile) {
         super(world, profile);
     }
 
-    @Inject(method = "move(Lnet/minecraft/entity/MovementType;Lnet/minecraft/util/math/Vec3d;)V",
-            at = @At("TAIL"))
+    @Inject(method = "move(Lnet/minecraft/entity/MovementType;Lnet/minecraft/util/math/Vec3d;)V", at = @At("TAIL"))
     private void onMove(MovementType movementType, Vec3d vec3d, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
         if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
-
         if (timer.getStatus() == TimerStatus.IDLE && !InGameTimerUtils.IS_CHANGING_DIMENSION && (vec3d.x != 0 || vec3d.z != 0 || this.jumping || this.isSneaking())) {
             timer.setPause(false, "moved player");
         }
@@ -79,21 +78,19 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                         }
                     }
                 }
-
             }
             timer.checkConditions();
         }
 
-        //HIGH%
         if (timer.getCategory() == RunCategories.HIGH && this.getY() >= 420) {
             InGameTimer.complete();
             return;
         }
 
-        //Full Inventory
         if (timer.getCategory() == RunCategories.FULL_INV) {
-            if (this.inventory.main.stream().filter(itemStack -> itemStack != null && itemStack != ItemStack.EMPTY && itemStack.getItem() != Items.AIR).map(ItemStack::getItem).distinct().toArray().length == 36)
+            if (this.inventory.main.stream().filter(itemStack -> itemStack != null && itemStack != ItemStack.EMPTY && itemStack.getItem() != Items.AIR).map(ItemStack::getItem).distinct().toArray().length == 36) {
                 InGameTimer.complete();
+            }
             return;
         }
 
@@ -105,13 +102,12 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             // Timelines
             if (itemStack.getItem() == Items.TRIDENT) {
                 timer.tryInsertNewTimeline("got_trident");
-            }
-            if (itemStack.getItem() == Items.NAUTILUS_SHELL) {
+            } else if (itemStack.getItem() == Items.NAUTILUS_SHELL) {
                 shells += itemStack.getCount();
-            }
-            if (itemStack.getItem() == Items.SHULKER_BOX) {
+            } else if (itemStack.getItem() == Items.SHULKER_BOX) {
                 shells += InGameTimerUtils.getItemCountFromShulkerBox(itemStack, Items.NAUTILUS_SHELL);
             }
+
             if (shells > timer.getMoreData(1541)) {
                 int i = 1;
                 while (shells >= timer.getMoreData(1541) + i) {
@@ -120,9 +116,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                 timer.updateMoreData(1541, shells);
             }
 
-
-
-            //Stack of Lime Wool
             if (timer.getCategory() == RunCategories.STACK_OF_LIME_WOOL) {
                 if (itemStack.getItem() == Items.LIME_WOOL && itemStack.getCount() == 64) InGameTimer.complete();
             }
@@ -131,9 +124,9 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         List<Item> items = this.inventory.main.stream().map(ItemStack::getItem).collect(Collectors.toList());
         List<Item> armors = this.inventory.armor.stream().map(ItemStack::getItem).collect(Collectors.toList());
 
-        //All Workstations
         if (timer.getCategory() == RunCategories.ALL_WORKSTATIONS) {
-            if (items.contains(Items.BLAST_FURNACE) &&
+            if (
+                    items.contains(Items.BLAST_FURNACE) &&
                     items.contains(Items.SMOKER) &&
                     items.contains(Items.CARTOGRAPHY_TABLE) &&
                     items.contains(Items.BREWING_STAND) &&
@@ -145,26 +138,28 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                     items.contains(Items.STONECUTTER) &&
                     items.contains(Items.LOOM) &&
                     items.contains(Items.SMITHING_TABLE) &&
-                    items.contains(Items.GRINDSTONE)) {
+                    items.contains(Items.GRINDSTONE)
+            ) {
                 InGameTimer.complete();
             }
         }
 
-        //All Swords
         if (timer.getCategory() == RunCategories.ALL_SWORDS) {
-            if (items.contains(Items.STONE_SWORD) &&
+            if (
+                    items.contains(Items.STONE_SWORD) &&
                     items.contains(Items.DIAMOND_SWORD) &&
                     items.contains(Items.GOLDEN_SWORD) &&
                     items.contains(Items.IRON_SWORD) &&
                     items.contains(Items.NETHERITE_SWORD) &&
-                    items.contains(Items.WOODEN_SWORD)) {
+                    items.contains(Items.WOODEN_SWORD)
+            ) {
                 InGameTimer.complete();
             }
         }
 
-        //All Minerals
         if (timer.getCategory() == RunCategories.ALL_MINERALS) {
-            if (items.contains(Items.COAL) &&
+            if (
+                    items.contains(Items.COAL) &&
                     items.contains(Items.IRON_INGOT) &&
                     items.contains(Items.GOLD_INGOT) &&
                     items.contains(Items.DIAMOND) &&
@@ -172,41 +167,41 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                     items.contains(Items.LAPIS_LAZULI) &&
                     items.contains(Items.EMERALD) &&
                     items.contains(Items.QUARTZ) &&
-                    items.contains(Items.NETHERITE_INGOT)) {
+                    items.contains(Items.NETHERITE_INGOT)
+            ) {
                 InGameTimer.complete();
             }
         }
 
-        //Iron Armors & lvl 15
         if (timer.getCategory() == RunCategories.FULL_IA_15_LVL) {
-            if (armors.contains(Items.IRON_HELMET) &&
+            if (
+                    armors.contains(Items.IRON_HELMET) &&
                     armors.contains(Items.IRON_CHESTPLATE) &&
                     armors.contains(Items.IRON_BOOTS) &&
-                    armors.contains(Items.IRON_LEGGINGS) && experienceLevel >= 15) {
+                    armors.contains(Items.IRON_LEGGINGS) &&
+                    experienceLevel >= 15
+            ) {
                 InGameTimer.complete();
             }
         }
     }
-
-
-    private Long latestPortalEnter = null;
-    private int portalTick = 0;
+    
     @Inject(at = @At("HEAD"), method = "tick")
     public void updateNausea(CallbackInfo ci) {
         // Portal time update
         if (this.inNetherPortal) {
-            if (++portalTick >= 81 && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
-                portalTick = 0;
-                if (InGameTimer.getInstance().getStatus() != TimerStatus.IDLE && client.isInSingleplayer()) {
-                    latestPortalEnter = System.currentTimeMillis();
+            if (++this.portalTick >= 81 && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
+                this.portalTick = 0;
+                if (InGameTimer.getInstance().getStatus() != TimerStatus.IDLE && this.client.isInSingleplayer()) {
+                    this.latestPortalEnter = System.currentTimeMillis();
                 }
             }
         } else {
-            if (latestPortalEnter != null) {
-                InGameTimer.getInstance().tryExcludeIGT(System.currentTimeMillis() - latestPortalEnter, "nether portal lag");
-                latestPortalEnter = null;
+            if (this.latestPortalEnter != null) {
+                InGameTimer.getInstance().tryExcludeIGT(System.currentTimeMillis() - this.latestPortalEnter, "nether portal lag");
+                this.latestPortalEnter = null;
             }
-            portalTick = 0;
+            this.portalTick = 0;
         }
     }
 

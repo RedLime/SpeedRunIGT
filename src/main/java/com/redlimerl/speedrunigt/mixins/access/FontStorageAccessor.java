@@ -7,8 +7,5 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(FontStorage.class)
 public interface FontStorageAccessor {
-
-    @Invoker("getRenderableGlyph")
-    RenderableGlyph invokeRenderableGlyph(int c);
-
+    @Invoker("getRenderableGlyph") RenderableGlyph invokeRenderableGlyph(int c);
 }

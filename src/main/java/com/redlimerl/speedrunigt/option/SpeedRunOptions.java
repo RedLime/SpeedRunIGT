@@ -11,6 +11,41 @@ import net.minecraft.util.math.Vec2f;
 import java.util.Objects;
 
 public class SpeedRunOptions {
+    public enum TimerDecimals {
+        NONE(0),
+        ONE(1),
+        TWO(2),
+        THREE(3);
+
+        private final int number;
+
+        TimerDecimals(int number) {
+            this.number = number;
+        }
+
+        public int getNumber() {
+            return this.number;
+        }
+    }
+
+    public enum TimerStartType {
+        FIRST_INPUT,
+        WORLD_LOAD,
+        AUTOMATIC;
+
+        public boolean isFirstInput(InGameTimer timer) {
+            return this == FIRST_INPUT || (this == AUTOMATIC && timer.getRunType() != RunType.RANDOM_SEED);
+        }
+
+        public boolean isWorldLoad(InGameTimer timer) {
+            return this == WORLD_LOAD || (this == AUTOMATIC && timer.getRunType() == RunType.RANDOM_SEED);
+        }
+    }
+
+    public enum TimerSaveInterval { NONE, PAUSE, TICKS }
+
+    public enum TimerDecoration { NONE, OUTLINE, SHADOW }
+
     public static final OptionArgument<RunCategory> TIMER_CATEGORY = new OptionArgument<RunCategory>(new Identifier(SpeedRunIGT.MOD_ID, "timer_category_v7"), RunCategories.ANY) {
         @Override
         public RunCategory valueFromString(String string) {
@@ -36,15 +71,6 @@ public class SpeedRunOptions {
         }
     };
 
-    public enum TimerDecimals { NONE(0), ONE(1), TWO(2), THREE(3);
-        private final int number;
-        TimerDecimals(int number) {
-            this.number = number;
-        }
-        public int getNumber() {
-            return number;
-        }
-    }
     public static final OptionArgument<TimerDecimals> DISPLAY_DECIMALS = new OptionArgument<TimerDecimals>(new Identifier(SpeedRunIGT.MOD_ID, "timer_display_decimals"), TimerDecimals.THREE) {
         @Override
         public TimerDecimals valueFromString(String string) {
@@ -93,15 +119,6 @@ public class SpeedRunOptions {
         }
     };
 
-    public enum TimerStartType {
-        FIRST_INPUT, WORLD_LOAD, AUTOMATIC;
-        public boolean isFirstInput(InGameTimer timer) {
-            return this == FIRST_INPUT || (this == AUTOMATIC && timer.getRunType() != RunType.RANDOM_SEED);
-        }
-        public boolean isWorldLoad(InGameTimer timer) {
-            return this == WORLD_LOAD || (this == AUTOMATIC && timer.getRunType() == RunType.RANDOM_SEED);
-        }
-    }
     public static final OptionArgument<TimerStartType> WAITING_FIRST_INPUT = new OptionArgument<TimerStartType>(new Identifier(SpeedRunIGT.MOD_ID, "waiting_first_input_v2"), TimerStartType.AUTOMATIC) {
         @Override
         public TimerStartType valueFromString(String string) {
@@ -186,7 +203,6 @@ public class SpeedRunOptions {
         }
     };
 
-    public enum TimerSaveInterval { NONE, PAUSE, TICKS }
     public static final OptionArgument<TimerSaveInterval> TIMER_DATA_AUTO_SAVE = new OptionArgument<TimerSaveInterval>(new Identifier(SpeedRunIGT.MOD_ID, "auto_save_interval"), TimerSaveInterval.PAUSE) {
         @Override
         public TimerSaveInterval valueFromString(String string) {
@@ -212,6 +228,7 @@ public class SpeedRunOptions {
     };
 
     public enum RecordGenerateType { EVERYTHING, COMPLETE_ONLY, NONE }
+
     public static final OptionArgument<RecordGenerateType> GENERATE_RECORD_FILE = new OptionArgument<RecordGenerateType>(new Identifier(SpeedRunIGT.MOD_ID, "generate_record"), RecordGenerateType.EVERYTHING) {
         @Override
         public RecordGenerateType valueFromString(String string) {
@@ -456,7 +473,6 @@ public class SpeedRunOptions {
         }
     };
 
-    public enum TimerDecoration { NONE, OUTLINE, SHADOW }
     public static final OptionArgument<TimerDecoration> TIMER_RTA_DECO = new OptionArgument<TimerDecoration>(new Identifier(SpeedRunIGT.MOD_ID, "timer_rta_decoration"), TimerDecoration.OUTLINE) {
         @Override
         public TimerDecoration valueFromString(String string) {
