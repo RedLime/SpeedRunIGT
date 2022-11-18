@@ -1,39 +1,34 @@
 {
   "schemaVersion": 1,
+  "name": "SpeedRunIGT",
   "id": "speedrunigt",
   "version": "${version}",
-
-  "name": "SpeedRunIGT",
-  "description": "Displays the timer with RTA, IGT in Minecraft",
+  "description": "Adds a speedrun timer to Minecraft",
   "authors": [
     "RedLime"
   ],
   "contact": {
-    "sources": "https://github.com/RedLime/SpeedRunIGT"
+    "sources": "https://github.com/RedLime/SpeedRunIGT",
+    "homepage": "https://redlime.github.io/SpeedRunIGT/"
   },
-
   "license": "MIT",
   "icon": "assets/speedrunigt/icon.png",
-
   "environment": "*",
   "entrypoints": {
-    "client": [
-      "com.redlimerl.speedrunigt.SpeedRunIGTClient"
-    ],
     "main": [
       "com.redlimerl.speedrunigt.SpeedRunIGT"
+    ],
+    "client": [
+      "com.redlimerl.speedrunigt.SpeedRunIGTClient"
     ]
   },
-
   "mixins": [
     "speedrunigt.mixins.json"
   ],
-
   "depends": {
     "fabricloader": ">=0.12.2",
     "minecraft": "{{MC_VERSION}}"
   },
-
   "breaks": {
     "ghostrunner": "<=3.0"
   }
