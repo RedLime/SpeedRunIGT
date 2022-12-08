@@ -9,8 +9,7 @@ import com.redlimerl.speedrunigt.timer.packet.TimerPacketBuf;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
-import net.minecraft.network.packet.s2c.play.PlaySoundIdS2CPacket;
-import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
+import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -52,9 +51,9 @@ public class ClientPlayNetworkHandlerMixin {
             PracticeTimerManager.stopPractice();
     }
 
-    @Inject(method = "onPlaySoundId", at = @At("RETURN"))
-    public void onPlaySoundIdMixin(PlaySoundIdS2CPacket packet, CallbackInfo ci) {
-        String packetId = packet.getSoundId().toString();
+    @Inject(method = "onPlaySound", at = @At("RETURN"))
+    public void onPlaySoundIdMixin(PlaySoundS2CPacket packet, CallbackInfo ci) {
+        String packetId = packet.getSound().value().getId().toString();
         if (packetId.equals("speedrunigt:start_practice")) {
             PracticeTimerManager.startPractice(0);
         }
