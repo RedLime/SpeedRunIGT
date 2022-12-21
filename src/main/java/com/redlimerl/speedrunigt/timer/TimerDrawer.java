@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.timer;
 
+import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.mixins.access.FontManagerAccessor;
 import com.redlimerl.speedrunigt.mixins.access.FontStorageAccessor;
 import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
