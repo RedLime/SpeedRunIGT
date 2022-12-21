@@ -3,6 +3,7 @@ package com.redlimerl.speedrunigt.mixins;
 import com.google.gson.JsonObject;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
+import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.category.condition.StatCategoryCondition;
 import net.minecraft.advancement.criterion.Criterions;
@@ -26,6 +27,8 @@ public abstract class ServerStatHandlerMixin extends StatHandler {
 
     @Shadow @Final private static Logger LOGGER;
 
+    private int updateTick = 0;
+
     @Inject(method = "method_8270", at = @At("RETURN"))
     public void onInit(CallbackInfo ci) {
         SpeedRunIGT.debug("Detected Achievements: "+ Criterions.ACHIEVEMENTS.size());
@@ -44,6 +47,11 @@ public abstract class ServerStatHandlerMixin extends StatHandler {
                 }
             }
             timer.checkConditions();
+        }
+
+        if (this.updateTick++ > 20) {
+            InGameTimerUtils.updateStatsJson(timer);
+            this.updateTick = 0;
         }
     }
 
