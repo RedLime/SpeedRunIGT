@@ -54,6 +54,7 @@ public abstract class MinecraftClientMixin {
     @Shadow public TextRenderer textRenderer;
     @Shadow public int width;
     @Shadow public int height;
+    @Shadow public boolean skipGameRender;
     private boolean disconnectCheck = false;
 
     @Inject(at = @At("HEAD"), method = "startGame")
@@ -121,7 +122,7 @@ public abstract class MinecraftClientMixin {
         }
     }
 
-    @Inject(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;render(FJ)V", shift = At.Shift.AFTER))
+    @Inject(method = "runGameLoop", at = @At("TAIL"))
     private void renderMixin(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
@@ -136,7 +137,7 @@ public abstract class MinecraftClientMixin {
     }
 
     private PositionType currentPositionType = PositionType.DEFAULT;
-    @Inject(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;renderStreamIndicator(F)V", shift = At.Shift.AFTER))
+    @Inject(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/AchievementNotification;tick()V", shift = At.Shift.AFTER))
     private void drawTimer(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
@@ -161,7 +162,8 @@ public abstract class MinecraftClientMixin {
                 && (!this.isPaused() || this.currentScreen instanceof CreditsScreen || this.currentScreen instanceof GameMenuScreen || !SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS))
                 && !(!this.isPaused() && SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) && this.options.debugEnabled)
                 && !(this.currentScreen instanceof TimerCustomizeScreen)
-                && MixinValues.IS_RENDERED_BEFORE) {
+                && MixinValues.IS_RENDERED_BEFORE
+                && !this.skipGameRender) {
             boolean needUpdate = SpeedRunIGTClient.TIMER_DRAWER.isNeedUpdate();
             boolean enableSplit = SpeedRunOption.getOption(SpeedRunOptions.ENABLE_TIMER_SPLIT_POS);
             if (needUpdate || enableSplit) {
