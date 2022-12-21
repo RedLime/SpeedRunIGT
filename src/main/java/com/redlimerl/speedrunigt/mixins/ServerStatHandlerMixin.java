@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
+import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
@@ -37,6 +38,8 @@ public abstract class ServerStatHandlerMixin extends StatHandler {
 
     @Shadow @Final private MinecraftServer server;
 
+    private int updateTick = 0;
+
     @Inject(method = "setStat", at = @At("TAIL"))
     public void onUpdate(PlayerEntity player, Stat<?> stat, int value, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
@@ -57,6 +60,11 @@ public abstract class ServerStatHandlerMixin extends StatHandler {
         if (timer.getCategory() == RunCategories.ALL_BLOCKS) {
             if (RunCategories.ALL_BLOCKS.isCompleted(this.server))
                 InGameTimer.complete();
+        }
+
+        if (this.updateTick++ > 20) {
+            InGameTimerUtils.updateStatsJson(timer);
+            this.updateTick = 0;
         }
     }
 

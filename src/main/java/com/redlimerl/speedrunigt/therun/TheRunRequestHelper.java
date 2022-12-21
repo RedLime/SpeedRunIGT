@@ -46,7 +46,7 @@ public class TheRunRequestHelper {
 
         // Skip these all things lol
         if (!timer.isStarted() || timer.isCoop() || timer.isOpenedIntegratedServer() || !SpeedRunIGT.IS_CLIENT_SIDE
-            || timer.isGlitched() || TheRunKeyHelper.UPLOAD_KEY.isEmpty() || timer.getCategory().getTheRunCategory() == null
+            || TheRunKeyHelper.UPLOAD_KEY.isEmpty() || timer.getCategory().getTheRunCategory() == null
             || !SpeedRunOption.getOption(SpeedRunOptions.ENABLE_THERUN_GG_LIVE)) {
             return;
         }
@@ -114,7 +114,7 @@ public class TheRunRequestHelper {
     public static void submitTimerData(InGameTimer timer) {
         // Skip these all things lol
         if (!timer.isStarted() || timer.isCoop() || timer.isOpenedIntegratedServer() || !SpeedRunIGT.IS_CLIENT_SIDE
-                || timer.isGlitched() || TheRunKeyHelper.UPLOAD_KEY.isEmpty() || timer.getCategory().getTheRunCategory() == null
+                || TheRunKeyHelper.UPLOAD_KEY.isEmpty() || timer.getCategory().getTheRunCategory() == null
                 || !SpeedRunOption.getOption(SpeedRunOptions.ENABLE_THERUN_GG_LIVE)) {
             return;
         }
@@ -131,8 +131,8 @@ public class TheRunRequestHelper {
                 String resultXml = sw.toString();
 
                 URL url = new URL("https://2uxp372ks6nwrjnk6t7lqov4zu0solno.lambda-url.eu-west-1.on.aws/?filename=" +
-                        URLEncoder.encode(timer.getCategory().getTheRunCategory().getGameName(), "UTF-8") + "-" +
-                        URLEncoder.encode(timer.getCategory().getTheRunCategory().getCategoryName().trim().toLowerCase(Locale.ROOT), "UTF-8") + ".lss&uploadKey=" + TheRunKeyHelper.UPLOAD_KEY);
+                        URLEncoder.encode(timer.getCategory().getTheRunCategory().getGameName(), StandardCharsets.UTF_8) + "-" +
+                        URLEncoder.encode(timer.getCategory().getTheRunCategory().getCategoryName().trim().toLowerCase(Locale.ROOT), StandardCharsets.UTF_8) + ".lss&uploadKey=" + TheRunKeyHelper.UPLOAD_KEY);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 setupConnection(connection);
 

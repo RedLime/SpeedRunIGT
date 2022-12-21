@@ -1,11 +1,14 @@
 package com.redlimerl.speedrunigt.timer;
 
+import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.mixins.access.FontManagerAccessor;
 import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecimals;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
+import com.redlimerl.speedrunigt.timer.category.RunCategories;
+import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -279,7 +282,18 @@ public class TimerDrawer {
     }
 
     public MutableText getIGTText() {
-        return Text.literal((this.simply ? "" : "IGT: ") + getTimeFormat(InGameTimer.getInstance().getInGameTime()));
+        InGameTimer timer = InGameTimer.getInstance();
+
+        if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE) && timer.isServerIntegrated && InGameTimerUtils.getServer() != null && SpeedRunIGT.IS_CLIENT_SIDE) {
+            Long inGameTime = timer.isCompleted() ? timer.getCompleteStatIGT() : InGameTimerClientUtils.getPlayerTime();
+            if (inGameTime != null) return Text.literal((this.simply ? "" : "IGT: ") + getTimeFormat(inGameTime));
+        }
+
+        long igt = timer.isCompleted() && SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE)
+                && timer.getCategory() == RunCategories.ANY && timer.getRunType() == RunType.RANDOM_SEED
+                && (System.currentTimeMillis() / 3000) % 2 == 0
+                ? timer.getRetimedInGameTime() : timer.getInGameTime();
+        return Text.literal((this.simply ? "" : "IGT: ") + getTimeFormat(igt));
     }
 
     public MutableText getRTAText() {
