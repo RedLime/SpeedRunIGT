@@ -4,6 +4,9 @@ import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
+import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
+import com.redlimerl.speedrunigt.timer.TimerStatus;
+import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.category.condition.StatCategoryCondition;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
@@ -31,6 +34,8 @@ public abstract class ServerStatHandlerMixin extends StatHandler {
         return null;
     }
 
+    private int updateTick = 0;
+
     @Inject(method = "setStat", at = @At("TAIL"))
     public void onUpdate(PlayerEntity player, Stat<?> stat, int value, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
@@ -43,6 +48,11 @@ public abstract class ServerStatHandlerMixin extends StatHandler {
                 }
             }
             timer.checkConditions();
+        }
+
+        if (this.updateTick++ > 20) {
+            InGameTimerUtils.updateStatsJson(timer);
+            this.updateTick = 0;
         }
     }
 

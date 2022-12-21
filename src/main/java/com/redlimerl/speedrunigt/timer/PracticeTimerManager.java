@@ -14,7 +14,7 @@ public class PracticeTimerManager {
             return;
         String worldName = InGameTimer.getInstance().worldName;
         InGameTimer.start(worldName, RunType.OLD_WORLD);
-        InGameTimer.getInstance().setCoop(true);
+        InGameTimer.getInstance().setRTAMode(true);
         InGameTimer.getInstance().setStartTime(System.currentTimeMillis() - (long) (offsetTime * 1000));
         InGameTimer.getInstance().setWriteFiles(false);
         InGameTimer.getInstance().setCategory(PRACTICE_CATEGORY, false);
