@@ -51,6 +51,7 @@ public abstract class MinecraftClientMixin {
     @Shadow private boolean paused;
 
     @Shadow public TextRenderer textRenderer;
+    @Shadow public boolean skipGameRender;
     private boolean disconnectCheck = false;
 
     @Inject(at = @At("HEAD"), method = "startGame")
@@ -133,7 +134,7 @@ public abstract class MinecraftClientMixin {
     }
 
     private PositionType currentPositionType = PositionType.DEFAULT;
-    @Inject(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;render(FJ)V", shift = At.Shift.AFTER))
+    @Inject(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/AchievementNotification;tick()V", shift = At.Shift.AFTER))
     private void drawTimer(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
@@ -161,7 +162,8 @@ public abstract class MinecraftClientMixin {
         if (!this.options.hudHidden && this.world != null && timer.getStatus() != TimerStatus.NONE
                 && (!this.isPaused() || this.currentScreen instanceof CreditsScreen || this.currentScreen instanceof GameMenuScreen || !SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS))
                 && !(!this.isPaused() && SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) && this.options.debugEnabled)
-                && !(this.currentScreen instanceof TimerCustomizeScreen)) {
+                && !(this.currentScreen instanceof TimerCustomizeScreen)
+                && !this.skipGameRender) {
 
             boolean needUpdate = SpeedRunIGTClient.TIMER_DRAWER.isNeedUpdate();
             boolean enableSplit = SpeedRunOption.getOption(SpeedRunOptions.ENABLE_TIMER_SPLIT_POS);
