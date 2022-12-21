@@ -82,6 +82,7 @@ public class InGameTimer implements Serializable {
     RunType runType = RunType.RANDOM_SEED;
     private boolean isGlitched = false;
     private int completeCount = 0;
+    private boolean isRTAMode = false;
 
     //Timer time
     long startTime = 0;
@@ -393,7 +394,7 @@ public class InGameTimer implements Serializable {
                 }
             } else if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_START_GENERATED_WORLD) && isOld.isEmpty()) {
                 InGameTimer.start(name, RunType.OLD_WORLD);
-                SpeedRunIGT.debug("Couldn't find any file, created new timer.");
+                SpeedRunIGT.error("Couldn't find any file, created new timer.");
                 return true;
             } else return false;
         }
@@ -537,7 +538,7 @@ public class InGameTimer implements Serializable {
 
     public long getInGameTime(boolean smooth) {
         if (this.isCompleted && this != COMPLETED_INSTANCE) return COMPLETED_INSTANCE.getInGameTime(smooth);
-        if (this.isCoop) return getRealTimeAttack();
+        if (this.isRTAMode) return getRealTimeAttack();
 
         if (this.isGlitched && this.isServerIntegrated && InGameTimerUtils.getServer() != null && SpeedRunIGT.IS_CLIENT_SIDE) {
             Long inGameTime = InGameTimerClientUtils.getPlayerTime();
@@ -826,6 +827,7 @@ public class InGameTimer implements Serializable {
 
     public void setCoop(boolean coop) {
         isCoop = coop;
+        if (coop) this.setRTAMode(true);
     }
 
     public void setStartTime(long startTime) {
@@ -847,5 +849,13 @@ public class InGameTimer implements Serializable {
     public void tryExcludeIGT(long igt, String reason) {
         this.excludedIGT += igt;
         System.out.printf("[SpeedRunIGT] this play seems to be caught in specific lag(%s). excluded IGT for this time: .%s", reason, igt);
+    }
+
+    public boolean isRTAMode() {
+        return isRTAMode;
+    }
+
+    public void setRTAMode(boolean RTAMode) {
+        isRTAMode = RTAMode;
     }
 }
