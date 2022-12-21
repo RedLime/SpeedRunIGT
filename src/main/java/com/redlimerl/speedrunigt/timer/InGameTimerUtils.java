@@ -40,6 +40,7 @@ public class InGameTimerUtils {
     public static boolean IS_KILLED_ENDER_DRAGON = false;
     public static boolean IS_CAN_WAIT_WORLD_LOAD = false;
     public static final HashSet<Object> CHANGED_OPTIONS = Sets.newHashSet();
+    public static JsonObject STATS_UPDATE = null;
     public static boolean RETIME_IS_WAITING_LOAD = false;
     public static boolean IS_SET_SEED = false;
     public static long LATEST_TIMER_TIME = 0;
@@ -183,6 +184,10 @@ public class InGameTimerUtils {
     }
 
     public static JsonObject getStatsJson(InGameTimer timer) {
+        return timer.isServerIntegrated ? STATS_UPDATE : new JsonObject();
+    }
+
+    public static void updateStatsJson(InGameTimer timer) {
         JsonObject jsonObject = new JsonObject();
         MinecraftServer server = getServer();
         if (timer.isServerIntegrated && server != null && server.getPlayerManager() != null) {
@@ -191,7 +196,7 @@ public class InGameTimerUtils {
                 jsonObject.add(serverPlayerEntity.getUuidAsString(), SpeedRunIGT.GSON.fromJson(((ServerStatHandlerAccessor) serverPlayerEntity.getStatHandler()).invokeAsString(), JsonObject.class));
             }
         }
-        return jsonObject;
+        STATS_UPDATE = jsonObject;
     }
 
     public static boolean isHardcoreWorld() {
