@@ -122,7 +122,7 @@ public abstract class MinecraftClientMixin {
         }
     }
 
-    @Inject(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;method_9775(F)V", shift = At.Shift.AFTER))
+    @Inject(method = "runGameLoop", at = @At("TAIL"))
     private void renderMixin(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
