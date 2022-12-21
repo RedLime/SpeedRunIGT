@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.timer;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecimals;
@@ -262,6 +263,12 @@ public class TimerDrawer {
 
     public String getIGTText() {
         InGameTimer timer = InGameTimer.getInstance();
+
+        if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE) && timer.isServerIntegrated && InGameTimerUtils.getServer() != null && SpeedRunIGT.IS_CLIENT_SIDE) {
+            Long inGameTime = timer.isCompleted() ? timer.getCompleteStatIGT() : InGameTimerClientUtils.getPlayerTime();
+            if (inGameTime != null) return (this.simply ? "" : "IGT: ") + getTimeFormat(inGameTime);
+        }
+
         long igt = timer.isCompleted() && SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE)
                 && timer.getCategory() == RunCategories.ANY && timer.getRunType() == RunType.RANDOM_SEED
                 && (System.currentTimeMillis() / 3000) % 2 == 0
