@@ -39,6 +39,7 @@ public class InGameTimerUtils {
     public static boolean IS_KILLED_ENDER_DRAGON = false;
     public static boolean IS_CAN_WAIT_WORLD_LOAD = false;
     public static final HashSet<Object> CHANGED_OPTIONS = Sets.newHashSet();
+    public static JsonObject STATS_UPDATE = null;
     public static boolean RETIME_IS_WAITING_LOAD = false;
     public static boolean IS_SET_SEED = false;
     public static long LATEST_TIMER_TIME = 0;
@@ -147,11 +148,11 @@ public class InGameTimerUtils {
         jsonObject.addProperty("is_completed", timer.isCompleted());
         jsonObject.addProperty("is_coop", timer.isCoop());
         jsonObject.addProperty("is_hardcore", timer.isHardcore());
-        jsonObject.addProperty("is_legacy_igt", timer.isLegacyIGT());
         jsonObject.addProperty("world_name", timer.worldName);
         jsonObject.addProperty("date", System.currentTimeMillis());
         jsonObject.addProperty("retimed_igt", timer.getRetimedInGameTime());
         jsonObject.addProperty("final_igt", timer.getInGameTime(false));
+        jsonObject.addProperty("stats_igt", timer.getCompleteStatIGT());
         jsonObject.addProperty("final_rta", timer.getRealTimeAttack());
         if (timer.lanOpenedTime == null) jsonObject.add("open_lan", JsonNull.INSTANCE);
         else jsonObject.addProperty("open_lan", timer.lanOpenedTime);
@@ -182,6 +183,10 @@ public class InGameTimerUtils {
     }
 
     public static JsonObject getStatsJson(InGameTimer timer) {
+        return timer.isServerIntegrated ? STATS_UPDATE : new JsonObject();
+    }
+
+    public static void updateStatsJson(InGameTimer timer) {
         JsonObject jsonObject = new JsonObject();
         MinecraftServer server = getServer();
         if (timer.isServerIntegrated && server != null && server.getPlayerManager() != null) {
@@ -190,7 +195,7 @@ public class InGameTimerUtils {
                 jsonObject.add(serverPlayerEntity.getUuid().toString(), SpeedRunIGT.GSON.fromJson(((ServerStatHandlerAccessor) serverPlayerEntity.getStatHandler()).invokeAsString(), JsonObject.class));
             }
         }
-        return jsonObject;
+        STATS_UPDATE = jsonObject;
     }
 
     public static boolean isHardcoreWorld() {

@@ -3,6 +3,7 @@ package com.redlimerl.speedrunigt.mixins;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
+import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.category.condition.StatCategoryCondition;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
@@ -30,6 +31,8 @@ public abstract class ServerStatHandlerMixin extends StatHandler {
         return null;
     }
 
+    private int updateTick = 0;
+
     @Inject(method = "method_8300", at = @At("TAIL"))
     public void onUpdate(PlayerEntity playerEntity, class_4472<?> arg, int i, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
@@ -42,6 +45,11 @@ public abstract class ServerStatHandlerMixin extends StatHandler {
                 }
             }
             timer.checkConditions();
+        }
+
+        if (this.updateTick++ > 20) {
+            InGameTimerUtils.updateStatsJson(timer);
+            this.updateTick = 0;
         }
     }
 
