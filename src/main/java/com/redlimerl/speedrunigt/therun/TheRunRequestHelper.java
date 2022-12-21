@@ -46,7 +46,7 @@ public class TheRunRequestHelper {
 
         // Skip these all things lol
         if (!timer.isStarted() || timer.isCoop() || timer.isOpenedIntegratedServer() || !SpeedRunIGT.IS_CLIENT_SIDE
-            || timer.isGlitched() || TheRunKeyHelper.UPLOAD_KEY.isEmpty() || timer.getCategory().getTheRunCategory() == null
+            || TheRunKeyHelper.UPLOAD_KEY.isEmpty() || timer.getCategory().getTheRunCategory() == null
             || !SpeedRunOption.getOption(SpeedRunOptions.ENABLE_THERUN_GG_LIVE)) {
             return;
         }
@@ -114,7 +114,7 @@ public class TheRunRequestHelper {
     public static void submitTimerData(InGameTimer timer) {
         // Skip these all things lol
         if (!timer.isStarted() || timer.isCoop() || timer.isOpenedIntegratedServer() || !SpeedRunIGT.IS_CLIENT_SIDE
-                || timer.isGlitched() || TheRunKeyHelper.UPLOAD_KEY.isEmpty() || timer.getCategory().getTheRunCategory() == null
+                || TheRunKeyHelper.UPLOAD_KEY.isEmpty() || timer.getCategory().getTheRunCategory() == null
                 || !SpeedRunOption.getOption(SpeedRunOptions.ENABLE_THERUN_GG_LIVE)) {
             return;
         }

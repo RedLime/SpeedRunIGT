@@ -80,7 +80,6 @@ public class InGameTimer implements Serializable {
     boolean isServerIntegrated = true;
     boolean isCoop = false;
     RunType runType = RunType.RANDOM_SEED;
-    private boolean isGlitched = false;
     private int completeCount = 0;
     private boolean isRTAMode = false;
 
@@ -88,6 +87,7 @@ public class InGameTimer implements Serializable {
     long startTime = 0;
     long endTime = 0;
     private long endIGTTime = 0;
+    private long completeStatIGT = 0;
     private long retimedIGTTime = 0;
     private long rebaseIGTime = 0;
     private long excludedRTA = 0;
@@ -143,7 +143,6 @@ public class InGameTimer implements Serializable {
         INSTANCE = new InGameTimer(worldName);
         INSTANCE.setCategory(SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY), false);
         INSTANCE.setPause(true, TimerStatus.IDLE, "startup");
-        INSTANCE.isGlitched = SpeedRunOption.getOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE);
         INSTANCE.runType = runType;
     }
 
@@ -152,13 +151,11 @@ public class InGameTimer implements Serializable {
      */
     public static void reset() {
         RunType runType = INSTANCE.getRunType();
-        boolean isGlitched = INSTANCE.isGlitched;
         boolean isCoop = INSTANCE.isCoop;
 
         INSTANCE = new InGameTimer(INSTANCE.worldName, false);
         INSTANCE.setCategory(RunCategories.CUSTOM, false);
         INSTANCE.runType = runType;
-        INSTANCE.isGlitched = isGlitched;
         INSTANCE.isCoop = isCoop;
         INSTANCE.setPause(true, TimerStatus.IDLE, "reset");
         INSTANCE.setPause(false, "reset");
@@ -194,7 +191,16 @@ public class InGameTimer implements Serializable {
 
         timer.endTime = endTime;
         timer.endIGTTime = timer.endTime - timer.leastTickTime;
+        if (timer.isServerIntegrated && SpeedRunIGT.IS_CLIENT_SIDE) {
+            Long inGameTime = InGameTimerClientUtils.getPlayerTime();
+            if (inGameTime != null) {
+                timer.completeStatIGT = inGameTime;
+                INSTANCE.completeStatIGT = inGameTime;
+            }
+        }
+
         timer.setStatus(TimerStatus.COMPLETED_LEGACY);
+
 
         if (timer.isCoop() && canSendPacket && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerCompletePacket(timer.getRealTimeAttack()));
 
@@ -540,11 +546,6 @@ public class InGameTimer implements Serializable {
         if (this.isCompleted && this != COMPLETED_INSTANCE) return COMPLETED_INSTANCE.getInGameTime(smooth);
         if (this.isRTAMode) return getRealTimeAttack();
 
-        if (this.isGlitched && this.isServerIntegrated && InGameTimerUtils.getServer() != null && SpeedRunIGT.IS_CLIENT_SIDE) {
-            Long inGameTime = InGameTimerClientUtils.getPlayerTime();
-            if (inGameTime != null) return inGameTime;
-        }
-
         long ms = System.currentTimeMillis();
         return !isStarted() ? 0 :
                 (this.getTicks() * 50L) // Tick Based
@@ -707,7 +708,7 @@ public class InGameTimer implements Serializable {
                 }
             } else {
                 startTime = System.currentTimeMillis();
-                if (this.isGlitched) save();
+                if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE)) save();
                 if (loggerTicks != 0) leastStartTime = startTime;
                 if (this.isCoop()) {
                     if (SpeedRunIGT.IS_CLIENT_SIDE) {
@@ -765,16 +766,8 @@ public class InGameTimer implements Serializable {
         return isHardcore;
     }
 
-    public boolean isGlitched() {
-        return isGlitched;
-    }
-
     public RunType getRunType() {
         return runType;
-    }
-
-    public boolean isLegacyIGT() {
-        return isGlitched;
     }
 
     String getLogSuffix() {
@@ -857,5 +850,9 @@ public class InGameTimer implements Serializable {
 
     public void setRTAMode(boolean RTAMode) {
         isRTAMode = RTAMode;
+    }
+
+    public Long getCompleteStatIGT() {
+        return completeStatIGT;
     }
 }

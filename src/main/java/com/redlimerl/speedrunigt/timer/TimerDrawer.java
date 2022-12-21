@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.timer;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.mixins.access.FontManagerAccessor;
 import com.redlimerl.speedrunigt.mixins.access.FontStorageAccessor;
 import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
@@ -285,6 +286,12 @@ public class TimerDrawer {
 
     public MutableText getIGTText() {
         InGameTimer timer = InGameTimer.getInstance();
+
+        if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE) && timer.isServerIntegrated && InGameTimerUtils.getServer() != null && SpeedRunIGT.IS_CLIENT_SIDE) {
+            Long inGameTime = timer.isCompleted() ? timer.getCompleteStatIGT() : InGameTimerClientUtils.getPlayerTime();
+            if (inGameTime != null) return new LiteralText((this.simply ? "" : "IGT: ") + getTimeFormat(inGameTime));
+        }
+
         long igt = timer.isCompleted() && SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE)
                 && timer.getCategory() == RunCategories.ANY && timer.getRunType() == RunType.RANDOM_SEED
                 && (System.currentTimeMillis() / 3000) % 2 == 0
