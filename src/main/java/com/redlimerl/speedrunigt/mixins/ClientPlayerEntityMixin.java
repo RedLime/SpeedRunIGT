@@ -7,11 +7,13 @@ import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.category.condition.ObtainItemCategoryCondition;
+import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.MovementType;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -109,7 +111,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             if (itemStack.getItem() == Items.NAUTILUS_SHELL) {
                 shells += itemStack.getCount();
             }
-            if (itemStack.getItem() == Items.SHULKER_BOX) {
+            if (itemStack.getItem() instanceof BlockItem && ((BlockItem) itemStack.getItem()).getBlock() instanceof ShulkerBoxBlock) {
                 shells += InGameTimerUtils.getItemCountFromShulkerBox(itemStack, Items.NAUTILUS_SHELL);
             }
             if (shells > timer.getMoreData(1541)) {
