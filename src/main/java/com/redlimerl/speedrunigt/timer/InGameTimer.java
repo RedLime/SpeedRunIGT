@@ -292,6 +292,7 @@ public class InGameTimer implements Serializable {
         INSTANCE.setPause(true, TimerStatus.LEAVE, "leave the world");
 
         save(true);
+        InGameTimerUtils.STATS_UPDATE = null;
 
         INSTANCE.setStatus(TimerStatus.NONE);
     }
