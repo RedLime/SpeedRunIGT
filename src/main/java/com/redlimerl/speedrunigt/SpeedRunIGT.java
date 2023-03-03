@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt;
 
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.redlimerl.speedrunigt.api.CategoryConditionRegisterHelper;
@@ -21,7 +22,6 @@ import net.minecraft.util.Identifier;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.spongepowered.include.com.google.common.collect.Sets;
 
 import java.io.File;
 import java.io.IOException;
