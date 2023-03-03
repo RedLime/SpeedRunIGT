@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.therun;
 
+import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
@@ -7,7 +8,6 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.include.com.google.common.collect.Lists;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
