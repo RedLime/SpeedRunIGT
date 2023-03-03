@@ -144,6 +144,7 @@ public class InGameTimer implements Serializable {
         INSTANCE.setCategory(SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY), false);
         INSTANCE.setPause(true, TimerStatus.IDLE, "startup");
         INSTANCE.runType = runType;
+        InGameTimerUtils.STATS_UPDATE = null;
     }
 
     /**
@@ -159,6 +160,7 @@ public class InGameTimer implements Serializable {
         INSTANCE.isCoop = isCoop;
         INSTANCE.setPause(true, TimerStatus.IDLE, "reset");
         INSTANCE.setPause(false, "reset");
+        InGameTimerUtils.STATS_UPDATE = null;
         if (isCoop && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerStartPacket(INSTANCE, INSTANCE.getRealTimeAttack()));
     }
 
@@ -290,6 +292,7 @@ public class InGameTimer implements Serializable {
         INSTANCE.setPause(true, TimerStatus.LEAVE, "leave the world");
 
         save(true);
+        InGameTimerUtils.STATS_UPDATE = null;
 
         INSTANCE.setStatus(TimerStatus.NONE);
     }
@@ -391,6 +394,7 @@ public class InGameTimer implements Serializable {
                     COMPLETED_INSTANCE.worldName = name;
 
                     INSTANCE.customCondition.refreshConditionClasses();
+                    InGameTimerUtils.STATS_UPDATE = null;
 
                     SpeedRunIGT.debug("End timer data loading...");
                     return true;
