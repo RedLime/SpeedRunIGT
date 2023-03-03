@@ -178,16 +178,15 @@ public class InGameTimerUtils {
         return result;
     }
 
-    @SuppressWarnings("unchecked")
     public static JsonObject getStatsJson(InGameTimer timer) {
-        return timer.isServerIntegrated ? STATS_UPDATE : new JsonObject();
+        return timer.isServerIntegrated && STATS_UPDATE != null ? STATS_UPDATE : new JsonObject();
     }
 
     public static void updateStatsJson(InGameTimer timer) {
         JsonObject jsonObject = new JsonObject();
         MinecraftServer server = getServer();
         if (timer.isServerIntegrated && server != null && server.getPlayerManager() != null) {
-            ArrayList<ServerPlayerEntity> serverPlayerEntities = Lists.newArrayList(server.getPlayerManager().players);
+            ArrayList<ServerPlayerEntity> serverPlayerEntities = Lists.newArrayList(server.getPlayerManager().getPlayers());
             for (ServerPlayerEntity serverPlayerEntity : serverPlayerEntities) {
                 jsonObject.add(serverPlayerEntity.getUuid().toString(), SpeedRunIGT.GSON.fromJson(ServerStatHandler.method_8272(((ServerStatHandlerAccessor) serverPlayerEntity.getStatHandler()).getStatMap()), JsonObject.class));
             }
