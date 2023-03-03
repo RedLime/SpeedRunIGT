@@ -1,5 +1,7 @@
 package com.redlimerl.speedrunigt.timer.category.condition;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -9,8 +11,6 @@ import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
 import net.fabricmc.loader.api.SemanticVersion;
 import net.fabricmc.loader.api.metadata.version.VersionPredicate;
-import org.spongepowered.include.com.google.common.collect.Lists;
-import org.spongepowered.include.com.google.common.collect.Maps;
 
 import java.io.Serializable;
 import java.util.ArrayList;

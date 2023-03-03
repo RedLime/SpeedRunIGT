@@ -1,8 +1,8 @@
 package com.redlimerl.speedrunigt.utils;
 
+import com.google.common.collect.Lists;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Language;
-import org.spongepowered.include.com.google.common.collect.Lists;
 
 import java.io.File;
 import java.io.IOException;
