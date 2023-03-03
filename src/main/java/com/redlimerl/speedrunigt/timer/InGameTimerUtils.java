@@ -184,7 +184,7 @@ public class InGameTimerUtils {
     }
 
     public static JsonObject getStatsJson(InGameTimer timer) {
-        return timer.isServerIntegrated ? STATS_UPDATE : new JsonObject();
+        return timer.isServerIntegrated && STATS_UPDATE != null ? STATS_UPDATE : new JsonObject();
     }
 
     public static void updateStatsJson(InGameTimer timer) {
