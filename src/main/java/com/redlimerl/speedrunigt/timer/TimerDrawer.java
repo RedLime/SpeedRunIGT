@@ -13,6 +13,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import org.lwjgl.opengl.GL11;
+import net.minecraft.client.util.Window;
 
 @Environment(EnvType.CLIENT)
 public class TimerDrawer {
@@ -293,7 +294,15 @@ public class TimerDrawer {
         igtTimerElement.init(igtXPos, igtYPos, igtScale, igtText, igtColor, igtDecoration, 9);
 
         //배경 렌더
+        Window window = new Window(this.client, this.client.width, this.client.height);
         GL11.glPushMatrix();
+        GL11.glClear(256);
+        GL11.glMatrixMode(5889);
+        GL11.glLoadIdentity();
+        GL11.glOrtho(0.0, window.getWidth(), window.getHeight(), 0.0, 1000.0, 3000.0);
+        GL11.glMatrixMode(5888);
+        GL11.glLoadIdentity();
+        GL11.glTranslatef(0.0f, 0.0f, -2000.0f);
         if (translateZ) GL11.glTranslatef(0, 0, 998);
         if (bgOpacity > 0.01f) {
             Position rtaMin = new Position(rtaTimerElement.getPosition().getX() - rtaPadding, rtaTimerElement.getPosition().getY() - rtaPadding);
