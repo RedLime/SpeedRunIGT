@@ -6,6 +6,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SettingsScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.util.Identifier;
+import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -37,9 +38,12 @@ public class OptionsScreenMixin extends Screen {
     @Inject(method = "method_21925", at = @At("TAIL"))
     private void renderEnderPearl(int mouseX, int mouseY, float delta, CallbackInfo ci) {
         if (this.field_22534 != null) {
+            GL11.glPushMatrix();
+            GL11.glTranslatef(-.5f, -.5f, 0);
             this.field_22534.getTextureManager().bindTexture(timerButton.method_21885() ? ENDER_EYE :
                     SpeedRunIGTUpdateChecker.UPDATE_STATUS == SpeedRunIGTUpdateChecker.UpdateStatus.OUTDATED ? BLAZE_POWDER : ENDER_PEARL);
             method_21875(timerButton.x + 2, timerButton.y + 2, 0.0F, 0.0F, 16, 16, 16, 16);
+            GL11.glPopMatrix();
         }
     }
 }
