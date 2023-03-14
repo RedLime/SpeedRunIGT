@@ -291,17 +291,17 @@ public class TimerCustomizeScreen extends Screen {
 
         drawer.draw();
 
-        drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 15, 16777215);
+        drawCenteredTextWithShadow(matrices, this.textRenderer, this.title, this.width / 2, 15, 16777215);
 
         if (!hide) {
             if (!igtButton.active || !rtaButton.active) {
                 if (drawer.isLocked()) {
-                    drawCenteredText(matrices, this.textRenderer,
+                    drawCenteredTextWithShadow(matrices, this.textRenderer,
                             Text.translatable("speedrunigt.option.timer_position.description.lock"), this.width / 2, this.height / 2 - 80, 16777215);
                 } else {
-                    drawCenteredText(matrices, this.textRenderer,
+                    drawCenteredTextWithShadow(matrices, this.textRenderer,
                             Text.translatable("speedrunigt.option.timer_position.description"), this.width / 2, this.height / 2 - 80, 16777215);
-                    drawCenteredText(matrices, this.textRenderer,
+                    drawCenteredTextWithShadow(matrices, this.textRenderer,
                             Text.translatable("speedrunigt.option.timer_position.description.move"), this.width / 2, this.height / 2 - 69, 16777215);
                 }
             }
@@ -323,7 +323,7 @@ public class TimerCustomizeScreen extends Screen {
                         if (fontIdentifier.toString().equals(drawer.getTimerFont().toString())) {
                             text.append(" [Selected]").formatted(Formatting.ITALIC);
                         }
-                        drawCenteredText(matrices, this.textRenderer, text, this.width / 2 - 30,
+                        drawCenteredTextWithShadow(matrices, this.textRenderer, text, this.width / 2 - 30,
                                 this.height / 2 - 11 + (i * 22), 16777215);
                     }
                 }

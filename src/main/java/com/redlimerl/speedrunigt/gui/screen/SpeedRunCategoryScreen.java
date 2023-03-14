@@ -60,8 +60,8 @@ public class SpeedRunCategoryScreen extends Screen {
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         this.listWidget.render(matrices, mouseX, mouseY, delta);
-        drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 16, 16777215);
-        drawCenteredText(matrices, this.textRenderer, "(" + I18n.translate("speedrunigt.option.timer_category.warning") + ")", this.width / 2, this.height - 46, 8421504);
+        drawCenteredTextWithShadow(matrices, this.textRenderer, this.title, this.width / 2, 16, 16777215);
+        drawCenteredTextWithShadow(matrices, this.textRenderer, "(" + I18n.translate("speedrunigt.option.timer_category.warning") + ")", this.width / 2, this.height - 46, 8421504);
         super.render(matrices, mouseX, mouseY, delta);
     }
 
@@ -145,7 +145,6 @@ public class SpeedRunCategoryScreen extends Screen {
                     RenderSystem.defaultBlendFunc();
                     RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
                     drawTexture(matrices, this.getX(), this.getY(), this.isFocused() ? 20.0F : 0.0F, this.isChecked() ? 20.0F : 0.0F, 20, this.height, 64, 64);
-                    this.renderBackground(matrices, minecraftClient, mouseX, mouseY);
                     drawTextWithShadow(matrices, textRenderer, this.getMessage(), this.getX() + 24, this.getY() + (this.height - 8) / 2, 14737632 | MathHelper.ceil(this.alpha * 255.0F) << 24);
                 }
             }

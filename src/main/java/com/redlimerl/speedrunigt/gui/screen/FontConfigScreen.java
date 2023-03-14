@@ -63,11 +63,11 @@ public class FontConfigScreen extends Screen {
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         renderBackground(matrices);
 
-        drawCenteredText(matrices, textRenderer, Text.literal("IGT: 01:23.456").setStyle(Style.EMPTY.withFont(fontIdentifier.getIdentifier())), width / 2, 30, 16777215);
+        drawCenteredTextWithShadow(matrices, textRenderer, Text.literal("IGT: 01:23.456").setStyle(Style.EMPTY.withFont(fontIdentifier.getIdentifier())), width / 2, 30, 16777215);
 
-        drawCenteredText(matrices, textRenderer, "§l" + I18n.translate("speedrunigt.font.size") + ": " + ((int) newFontConfigure.size), width / 2, height / 2 - 55, 16777215);
-        drawCenteredText(matrices, textRenderer, "§l" + I18n.translate("speedrunigt.font.oversample") + ": " + newFontConfigure.oversample, width / 2, height / 2 - 5, 16777215);
-        drawCenteredText(matrices, textRenderer, I18n.translate("speedrunigt.font.oversample.description"), width / 2, height / 2 + 27, 16777215);
+        drawCenteredTextWithShadow(matrices, textRenderer, "§l" + I18n.translate("speedrunigt.font.size") + ": " + ((int) newFontConfigure.size), width / 2, height / 2 - 55, 16777215);
+        drawCenteredTextWithShadow(matrices, textRenderer, "§l" + I18n.translate("speedrunigt.font.oversample") + ": " + newFontConfigure.oversample, width / 2, height / 2 - 5, 16777215);
+        drawCenteredTextWithShadow(matrices, textRenderer, I18n.translate("speedrunigt.font.oversample.description"), width / 2, height / 2 + 27, 16777215);
 
         super.render(matrices, mouseX, mouseY, delta);
     }

@@ -43,18 +43,18 @@ public class SpeedRunIGTInfoScreen extends Screen {
         this.renderBackground(matrices);
         matrices.push();
         matrices.scale(1.5F, 1.5F, 1.5F);
-        drawCenteredText(matrices, this.textRenderer, this.title, this.width / 3, 15, 16777215);
+        drawCenteredTextWithShadow(matrices, this.textRenderer, this.title, this.width / 3, 15, 16777215);
         matrices.pop();
-        drawCenteredText(matrices, this.textRenderer, Text.literal("Made by RedLime"), this.width / 2, 50, 16777215);
-        drawCenteredText(matrices, this.textRenderer, Text.literal("Discord : RedLime#0817"), this.width / 2, 62, 16777215);
-        drawCenteredText(matrices, this.textRenderer,
+        drawCenteredTextWithShadow(matrices, this.textRenderer, Text.literal("Made by RedLime"), this.width / 2, 50, 16777215);
+        drawCenteredTextWithShadow(matrices, this.textRenderer, Text.literal("Discord : RedLime#0817"), this.width / 2, 62, 16777215);
+        drawCenteredTextWithShadow(matrices, this.textRenderer,
                 Text.literal("Version : "+ SpeedRunIGT.MOD_VERSION.split("\\+")[0]), this.width / 2, 78, 16777215);
         if (UPDATE_STATUS != UpdateStatus.NONE) {
             if (UPDATE_STATUS == UpdateStatus.OUTDATED) {
                 update.active = true;
-                drawCenteredText(matrices, this.textRenderer, Text.literal("Updated Version : "+ UPDATE_VERSION).formatted(Formatting.YELLOW), this.width / 2, 88, 16777215);
+                drawCenteredTextWithShadow(matrices, this.textRenderer, Text.literal("Updated Version : "+ UPDATE_VERSION).formatted(Formatting.YELLOW), this.width / 2, 88, 16777215);
             }
-            drawCenteredText(matrices, this.textRenderer,
+            drawCenteredTextWithShadow(matrices, this.textRenderer,
                     Text.translatable("speedrunigt.message.update."+UPDATE_STATUS.name().toLowerCase(Locale.ROOT)),
                     this.width / 2, 116, 16777215);
         }

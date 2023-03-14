@@ -38,8 +38,8 @@ public class FailedCategoryInitScreen extends Screen {
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         renderBackground(matrices);
         super.render(matrices, mouseX, mouseY, delta);
-        drawCenteredText(matrices, this.textRenderer, Text.translatable("speedrunigt.message.failed_add_category", this.fileName), width / 2, height / 2 - 35, TEXT_RED);
-        drawCenteredText(matrices, this.textRenderer, Text.translatable("speedrunigt.message.failed_add_category."+exception.getReason().name().toLowerCase(Locale.ROOT)), width / 2, height / 2 - 10, TEXT_WHITE);
-        drawCenteredText(matrices, this.textRenderer, exception.getDetails(), width / 2, height / 2 + 2, TEXT_WHITE);
+        drawCenteredTextWithShadow(matrices, this.textRenderer, Text.translatable("speedrunigt.message.failed_add_category", this.fileName), width / 2, height / 2 - 35, TEXT_RED);
+        drawCenteredTextWithShadow(matrices, this.textRenderer, Text.translatable("speedrunigt.message.failed_add_category."+exception.getReason().name().toLowerCase(Locale.ROOT)), width / 2, height / 2 - 10, TEXT_WHITE);
+        drawCenteredTextWithShadow(matrices, this.textRenderer, exception.getDetails(), width / 2, height / 2 + 2, TEXT_WHITE);
     }
 }

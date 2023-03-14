@@ -116,8 +116,8 @@ public class SpeedRunOptionScreen extends Screen {
         this.renderBackground(matrices);
         this.buttonListWidget.render(matrices, mouseX, mouseY, delta);
         super.render(matrices, mouseX, mouseY, delta);
-        drawCenteredText(matrices, textRenderer, this.title, this.width / 2, 10, 16777215);
-        drawStringWithShadow(matrices, textRenderer, "v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215);
+        drawCenteredTextWithShadow(matrices, textRenderer, this.title, this.width / 2, 10, 16777215);
+        drawTextWithShadow(matrices, textRenderer, "v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215);
 
         ArrayList<Text> tooltip = getToolTip(mouseX, mouseY);
         if (!tooltip.isEmpty() && !this.isDragging()) this.renderTooltip(matrices, tooltip, 0, height);

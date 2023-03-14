@@ -73,20 +73,20 @@ public class TheRunUploadKeyScreen extends Screen {
         String beforeText = this.uploadKeyBox.getText();
         this.uploadKeyBox.setText(beforeText.replaceAll("\\w", "*"));
 
-        drawCenteredText(matrices, textRenderer, title, width / 2, 12, 16777215);
+        drawCenteredTextWithShadow(matrices, textRenderer, title, width / 2, 12, 16777215);
 
         this.uploadKeyBox.render(matrices, mouseX, mouseY, delta);
 
         super.render(matrices, mouseX, mouseY, delta);
 
         if (statusCode == 1)
-            drawCenteredText(matrices, textRenderer, Text.translatable("speedrunigt.therun_gg.message.loading_upload_key_info"), width / 2, height / 2 + 50, 16777215);
+            drawCenteredTextWithShadow(matrices, textRenderer, Text.translatable("speedrunigt.therun_gg.message.loading_upload_key_info"), width / 2, height / 2 + 50, 16777215);
 
         if (statusCode == 2)
-            drawCenteredText(matrices, textRenderer, Text.translatable("speedrunigt.therun_gg.message.upload_key_is_valid"), width / 2, height / 2 + 50, 16777215);
+            drawCenteredTextWithShadow(matrices, textRenderer, Text.translatable("speedrunigt.therun_gg.message.upload_key_is_valid"), width / 2, height / 2 + 50, 16777215);
 
         if (statusCode == 3)
-            drawCenteredText(matrices, textRenderer, Text.translatable("speedrunigt.therun_gg.message.upload_key_is_invalid"), width / 2, height / 2 + 50, 16777215);
+            drawCenteredTextWithShadow(matrices, textRenderer, Text.translatable("speedrunigt.therun_gg.message.upload_key_is_invalid"), width / 2, height / 2 + 50, 16777215);
 
         this.uploadKeyBox.setText(beforeText);
     }
