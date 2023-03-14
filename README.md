@@ -34,7 +34,7 @@ The **Timer** Mod for Minecraft Speedrunning
 - Some of subversions aren't supported. Check the available versions on the download page.
 ### Unsupported Versions
 ###### It was released before, but NO LONGER support any update
-- 1.18.1, 1.19, 1.19.1, 1.19.2
+- 1.18.1, 1.19 - 1.19.3
 
 ## FaQ
 - Is it allowed in *[Speedrun.com](https://speedrun.com/mc)* run verification? ✅
