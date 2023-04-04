@@ -13,6 +13,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -128,8 +129,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             }
         }
 
-        List<Item> items = this.getInventory().main.stream().map(ItemStack::getItem).collect(Collectors.toList());
-        List<Item> armors = this.getInventory().armor.stream().map(ItemStack::getItem).collect(Collectors.toList());
+        List<Item> items = this.getInventory().main.stream().map(ItemStack::getItem).toList();
+        List<Item> armors = this.getInventory().armor.stream().map(ItemStack::getItem).toList();
 
         //All Workstations
         if (timer.getCategory() == RunCategories.ALL_WORKSTATIONS) {
@@ -196,7 +197,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     @Inject(at = @At("HEAD"), method = "tick")
     public void updateNausea(CallbackInfo ci) {
         // Portal time update
-        if (this.inNetherPortal) {
+        if (this.field_44082 != Entity.class_8401.NO) {
             if (++portalTick >= 81 && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
                 portalTick = 0;
                 if (InGameTimer.getInstance().getStatus() != TimerStatus.IDLE && client.isInSingleplayer()) {
