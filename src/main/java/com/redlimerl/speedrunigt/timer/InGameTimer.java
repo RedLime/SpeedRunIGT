@@ -20,7 +20,6 @@ import com.redlimerl.speedrunigt.timer.running.RunPortalPos;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.level.LevelInfo;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -83,7 +82,7 @@ public class InGameTimer implements Serializable {
     RunType runType = RunType.RANDOM_SEED;
     private int completeCount = 0;
     private boolean isRTAMode = false;
-    private int defaultGameMode = LevelInfo.GameMode.SURVIVAL.getId();
+    private int defaultGameMode = 0;
     private boolean isCheatAvailable = false;
 
     //Timer time
@@ -147,7 +146,6 @@ public class InGameTimer implements Serializable {
         INSTANCE.setCategory(SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY), false);
         INSTANCE.setPause(true, TimerStatus.IDLE, "startup");
         INSTANCE.runType = runType;
-        INSTANCE.defaultGameMode = InGameTimerUtils.getCurrentWorldDefaultGameMode();
         InGameTimerUtils.STATS_UPDATE = null;
     }
 
@@ -713,7 +711,8 @@ public class InGameTimer implements Serializable {
                         }
                         this.pauseLogList.clear();
                     }
-                    this.isCheatAvailable = InGameTimerUtils.isCurrentWorldCheatAvailable();
+                    this.setCheatAvailable(InGameTimerUtils.isCurrentWorldCheatAvailable());
+                    this.setDefaultGameMode(InGameTimerUtils.getCurrentWorldDefaultGameMode());
                     if (this.getCategory().canSegment() && leaveTime != 0 && leaveTime > startTime) excludedRTA += System.currentTimeMillis() - leaveTime;
                     leaveTime = 0;
                     //if (!isCompleted()) TheRunRequestHelper.updateTimerData(this, TheRunTimer.PacketType.RESUME);
@@ -875,7 +874,15 @@ public class InGameTimer implements Serializable {
         return defaultGameMode;
     }
 
+    public void setDefaultGameMode(int defaultGameMode) {
+        this.defaultGameMode = defaultGameMode;
+    }
+
     public boolean isCheatAvailable() {
         return isCheatAvailable;
+    }
+
+    public void setCheatAvailable(boolean cheatAvailable) {
+        isCheatAvailable = cheatAvailable;
     }
 }

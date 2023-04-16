@@ -18,7 +18,6 @@ import com.redlimerl.speedrunigt.utils.MixinValues;
 import com.redlimerl.speedrunigt.utils.Vec2f;
 import com.redlimerl.speedrunigt.version.ColorMixer;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.MouseInput;
 import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -53,7 +52,6 @@ public abstract class MinecraftClientMixin {
 
     @Shadow private boolean paused;
 
-    @Shadow public MouseInput mouse;
     @Shadow public TextRenderer textRenderer;
     @Shadow public boolean skipGameRender;
     private boolean disconnectCheck = false;
@@ -63,7 +61,11 @@ public abstract class MinecraftClientMixin {
         try {
             if (levelInfo != null) {
                 RunCategory category = SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY);
-                if (category.isAutoStart()) InGameTimer.start(name, RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
+                if (category.isAutoStart()) {
+                    InGameTimer.start(name, RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
+                    InGameTimer.getInstance().setDefaultGameMode(levelInfo.getGameMode().getId());
+                    InGameTimer.getInstance().setCheatAvailable(levelInfo.allowCommands());
+                }
             } else {
                 boolean loaded = InGameTimer.load(name);
                 if (!loaded) InGameTimer.end();
