@@ -70,7 +70,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
     private boolean isEnoughTravel() {
         boolean eye = false, pearl = false, rod = false;
-        for (ItemStack itemStack : this.inventory.main) {
+        for (ItemStack itemStack : this.getInventory().main) {
             if (itemStack != null) {
                 if (itemStack.getItem() == Items.ENDER_EYE) eye = true;
                 if (itemStack.getItem() == Items.ENDER_PEARL) pearl = true;
