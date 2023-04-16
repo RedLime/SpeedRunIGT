@@ -401,12 +401,13 @@ public class InGameTimer implements Serializable {
                     INSTANCE.worldName = name;
                     COMPLETED_INSTANCE.worldName = name;
 
-                    INSTANCE.customCondition.refreshConditionClasses();
+                    INSTANCE.getCustomCondition().ifPresent(CategoryCondition::refreshConditionClasses);
                     InGameTimerUtils.STATS_UPDATE = null;
 
                     SpeedRunIGT.debug("End timer data loading...");
                     return true;
                 } catch (Throwable e) {
+                    e.printStackTrace();
                     if (!isOld.isEmpty()) return false;
                     isOld = ".old";
                 }
@@ -800,7 +801,7 @@ public class InGameTimer implements Serializable {
     }
 
     public void checkConditions() {
-        if (customCondition != null && customCondition.isDone()) {
+        if (this.getCustomCondition().map(CategoryCondition::isDone).orElse(false)) {
             complete();
         }
     }
@@ -815,8 +816,8 @@ public class InGameTimer implements Serializable {
         }
     }
 
-    public CategoryCondition getCustomCondition() {
-        return customCondition;
+    public Optional<CategoryCondition> getCustomCondition() {
+        return Optional.ofNullable(customCondition);
     }
 
     public List<RunPortalPos> getNetherPortalPosList() {
