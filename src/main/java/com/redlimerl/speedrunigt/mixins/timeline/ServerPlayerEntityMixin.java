@@ -54,8 +54,8 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
             }
 
             if (oldRegistryKey == World.NETHER && newRegistryKey == World.OVERWORLD) {
-                if (this.inventory.contains(SetTag.of(Sets.newHashSet(Items.ENDER_EYE))) ||
-                        (this.inventory.contains(SetTag.of(Sets.newHashSet(Items.ENDER_PEARL))) && this.inventory.containsAny(Sets.newHashSet(Items.BLAZE_POWDER, Items.BLAZE_ROD)))) {
+                if (this.getInventory().contains(SetTag.of(Sets.newHashSet(Items.ENDER_EYE))) ||
+                        (this.getInventory().contains(SetTag.of(Sets.newHashSet(Items.ENDER_PEARL))) && this.getInventory().containsAny(Sets.newHashSet(Items.BLAZE_POWDER, Items.BLAZE_ROD)))) {
                     int portalIndex = InGameTimerUtils.isBlindTraveled(lastPortalPos);
                     InGameTimer.getInstance().tryInsertNewTimeline("nether_travel");
                     if (portalIndex == 0) {
