@@ -73,7 +73,12 @@ public abstract class MinecraftClientMixin {
         try {
             if (levelInfo != null) {
                 RunCategory category = SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY);
-                if (category.isAutoStart()) InGameTimer.start(name, RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
+                if (category.isAutoStart()) {
+                    InGameTimer.start(name, RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
+                    InGameTimer.getInstance().setDefaultGameMode(levelInfo.getGameMode().getId());
+                    // wrong mapping OMEGALUL
+                    InGameTimer.getInstance().setCheatAvailable(levelInfo.isHardcore());
+                }
             } else {
                 boolean loaded = InGameTimer.load(name);
                 if (!loaded) InGameTimer.end();
