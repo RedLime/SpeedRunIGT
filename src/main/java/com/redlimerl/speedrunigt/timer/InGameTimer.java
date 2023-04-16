@@ -20,6 +20,7 @@ import com.redlimerl.speedrunigt.timer.running.RunPortalPos;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.GameMode;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +53,7 @@ public class InGameTimer implements Serializable {
     static InGameTimer COMPLETED_INSTANCE = new InGameTimer("");
 
     private static final String cryptKey = "faRQOs2GK5j863eP";
-    private static final int DATA_VERSION = 6;
+    private static final int DATA_VERSION = 7;
 
     @NotNull
     public static InGameTimer getInstance() { return INSTANCE; }
@@ -82,6 +83,8 @@ public class InGameTimer implements Serializable {
     RunType runType = RunType.RANDOM_SEED;
     private int completeCount = 0;
     private boolean isRTAMode = false;
+    private int defaultGameMode = GameMode.SURVIVAL.getId();
+    private boolean isCheatAvailable = false;
 
     //Timer time
     long startTime = 0;
@@ -144,6 +147,7 @@ public class InGameTimer implements Serializable {
         INSTANCE.setCategory(SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY), false);
         INSTANCE.setPause(true, TimerStatus.IDLE, "startup");
         INSTANCE.runType = runType;
+        INSTANCE.defaultGameMode = InGameTimerUtils.getCurrentWorldDefaultGameMode();
         InGameTimerUtils.STATS_UPDATE = null;
     }
 
@@ -153,11 +157,15 @@ public class InGameTimer implements Serializable {
     public static void reset() {
         RunType runType = INSTANCE.getRunType();
         boolean isCoop = INSTANCE.isCoop;
+        int defaultGameMode = INSTANCE.defaultGameMode;
+        boolean isCheatAvailable = INSTANCE.isCheatAvailable;
 
         INSTANCE = new InGameTimer(INSTANCE.worldName, false);
         INSTANCE.setCategory(RunCategories.CUSTOM, false);
         INSTANCE.runType = runType;
         INSTANCE.isCoop = isCoop;
+        INSTANCE.isCheatAvailable = isCheatAvailable;
+        INSTANCE.defaultGameMode = defaultGameMode;
         INSTANCE.setPause(true, TimerStatus.IDLE, "reset");
         INSTANCE.setPause(false, "reset");
         InGameTimerUtils.STATS_UPDATE = null;
@@ -703,6 +711,7 @@ public class InGameTimer implements Serializable {
                         }
                         this.pauseLogList.clear();
                     }
+                    this.isCheatAvailable = InGameTimerUtils.isCurrentWorldCheatAvailable();
                     if (this.getCategory().canSegment() && leaveTime != 0 && leaveTime > startTime) excludedRTA += System.currentTimeMillis() - leaveTime;
                     leaveTime = 0;
                     //if (!isCompleted()) TheRunRequestHelper.updateTimerData(this, TheRunTimer.PacketType.RESUME);
@@ -858,5 +867,13 @@ public class InGameTimer implements Serializable {
 
     public Long getCompleteStatIGT() {
         return completeStatIGT;
+    }
+
+    public int getDefaultGameMode() {
+        return defaultGameMode;
+    }
+
+    public boolean isCheatAvailable() {
+        return isCheatAvailable;
     }
 }

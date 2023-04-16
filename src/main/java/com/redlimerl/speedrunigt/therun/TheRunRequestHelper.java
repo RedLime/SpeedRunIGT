@@ -48,7 +48,8 @@ public class TheRunRequestHelper {
         // Skip these all things lol
         if (!timer.isStarted() || timer.isCoop() || timer.isOpenedIntegratedServer() || !SpeedRunIGT.IS_CLIENT_SIDE
             || TheRunKeyHelper.UPLOAD_KEY.isEmpty() || timer.getCategory().getTheRunCategory() == null
-            || !SpeedRunOption.getOption(SpeedRunOptions.ENABLE_THERUN_GG_LIVE) || timer.isRTAMode() || timer.getRunType() == RunType.OLD_WORLD) {
+            || !SpeedRunOption.getOption(SpeedRunOptions.ENABLE_THERUN_GG_LIVE) || timer.isRTAMode() || timer.getRunType() == RunType.OLD_WORLD
+            || timer.isCheatAvailable() || timer.getDefaultGameMode() != 0) {
             return;
         }
 
