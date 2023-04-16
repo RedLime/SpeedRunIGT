@@ -8,13 +8,13 @@ import java.util.function.Function;
 public class TheRunCategory {
 
     private final String gameName;
-    private final String categoryName;
+    private final Function<InGameTimer, String> categoryNameFunction;
     private final Function<InGameTimer, LinkedHashMap<String, String>> splitNameMap;
     private final String completedSplitName;
 
-    private TheRunCategory(String gameName, String categoryName, Function<InGameTimer, LinkedHashMap<String, String>> splitNameMap, String completedSplitName) {
+    private TheRunCategory(String gameName, Function<InGameTimer, String> categoryNameFunction, Function<InGameTimer, LinkedHashMap<String, String>> splitNameMap, String completedSplitName) {
         this.gameName = gameName;
-        this.categoryName = categoryName;
+        this.categoryNameFunction = categoryNameFunction;
         this.splitNameMap = splitNameMap;
         this.completedSplitName = completedSplitName;
     }
@@ -23,8 +23,8 @@ public class TheRunCategory {
         return gameName;
     }
 
-    public String getCategoryName() {
-        return categoryName;
+    public String getCategoryName(InGameTimer timer) {
+        return categoryNameFunction.apply(timer);
     }
 
     public LinkedHashMap<String, String> getSplitNameMap(InGameTimer timer) {
@@ -37,9 +37,9 @@ public class TheRunCategory {
 
     public static class Builder {
         private String gameName;
-        private String categoryName;
         private Function<InGameTimer, LinkedHashMap<String, String>> splitNameMap;
         private String completedSplitName;
+        private Function<InGameTimer, String> categoryNameFunction;
 
         public Builder setGameName(String gameName) {
             this.gameName = gameName;
@@ -47,7 +47,12 @@ public class TheRunCategory {
         }
 
         public Builder setCategoryName(String categoryName) {
-            this.categoryName = categoryName;
+            this.categoryNameFunction = timer -> categoryName;
+            return this;
+        }
+
+        public Builder setCategoryNameFunction(Function<InGameTimer, String> categoryNameFunction) {
+            this.categoryNameFunction = categoryNameFunction;
             return this;
         }
 
@@ -62,8 +67,8 @@ public class TheRunCategory {
         }
 
         public TheRunCategory build() {
-            if (this.gameName == null || this.categoryName == null || this.splitNameMap == null || this.completedSplitName == null) throw new IllegalArgumentException();
-            return new TheRunCategory(this.gameName, this.categoryName, this.splitNameMap, this.completedSplitName);
+            if (this.gameName == null || this.categoryNameFunction == null || this.splitNameMap == null || this.completedSplitName == null) throw new IllegalArgumentException();
+            return new TheRunCategory(this.gameName, this.categoryNameFunction, this.splitNameMap, this.completedSplitName);
         }
     }
 }
