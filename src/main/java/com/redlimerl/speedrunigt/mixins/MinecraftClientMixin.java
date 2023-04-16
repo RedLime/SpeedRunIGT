@@ -64,7 +64,7 @@ public abstract class MinecraftClientMixin {
                 RunCategory category = SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY);
                 if (category.isAutoStart()) {
                     InGameTimer.start(name, RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
-                    InGameTimer.getInstance().setDefaultGameMode(levelInfo.getGameMode().getId());
+                    InGameTimer.getInstance().setDefaultGameMode(levelInfo.method_3758().getGameModeId());
                     InGameTimer.getInstance().setCheatAvailable(levelInfo.allowCommands());
                 }
             } else {
