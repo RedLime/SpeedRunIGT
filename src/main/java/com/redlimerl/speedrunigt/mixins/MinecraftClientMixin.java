@@ -33,7 +33,6 @@ import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.level.LevelInfo;
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -75,8 +74,7 @@ public abstract class MinecraftClientMixin {
                 if (category.isAutoStart()) {
                     InGameTimer.start(name, RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
                     InGameTimer.getInstance().setDefaultGameMode(levelInfo.getGameMode().getId());
-                    // wrong mapping OMEGALUL
-                    InGameTimer.getInstance().setCheatAvailable(levelInfo.isHardcore());
+                    InGameTimer.getInstance().setCheatAvailable(levelInfo.allowCommands());
                 }
             } else {
                 boolean loaded = InGameTimer.load(name);
