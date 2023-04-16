@@ -62,7 +62,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
         // Custom Json category
         if (timer.getCategory().getConditionJson() != null) {
-            for (CategoryCondition.Conditions conditions : timer.getCustomCondition().getConditions()) {
+            for (CategoryCondition.Conditions conditions : timer.getCustomCondition().map(CategoryCondition::getConditions).orElse(Lists.newArrayList())) {
                 int strict = 0;
                 for (CategoryCondition.Condition<?> condition : conditions.getConditions()) {
                     if (condition instanceof ObtainItemCategoryCondition) {
