@@ -26,6 +26,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.DefaultedList;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.GameMode;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -149,6 +150,8 @@ public class InGameTimerUtils {
         jsonObject.addProperty("is_coop", timer.isCoop());
         jsonObject.addProperty("is_hardcore", timer.isHardcore());
         jsonObject.addProperty("world_name", timer.worldName);
+        jsonObject.addProperty("is_cheat_allowed", timer.isCheatAvailable());
+        jsonObject.addProperty("default_gamemode", timer.getDefaultGameMode());
         jsonObject.addProperty("date", System.currentTimeMillis());
         jsonObject.addProperty("retimed_igt", timer.getRetimedInGameTime());
         jsonObject.addProperty("final_igt", timer.getInGameTime(false));
@@ -264,5 +267,17 @@ public class InGameTimerUtils {
         }
 
         return count;
+    }
+
+    public static int getCurrentWorldDefaultGameMode() {
+        MinecraftServer server = getServer();
+        if (server == null) return GameMode.SURVIVAL.getId();
+        return server.getDefaultGameMode().getId();
+    }
+
+    public static boolean isCurrentWorldCheatAvailable() {
+        MinecraftServer server = getServer();
+        if (server == null) return false;
+        return server.getPlayerManager().areCheatsAllowed();
     }
 }
