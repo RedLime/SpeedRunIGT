@@ -43,6 +43,7 @@ public class RunCategories {
                                             asHashMap(
                                                     new MutablePair<>("enter_nether", "Enter Nether"),
                                                     new MutablePair<>("enter_fortress", "Found Fortress"),
+                                                    new MutablePair<>("nether_travel", "Blind Travel"),
                                                     new MutablePair<>("enter_stronghold", "Eye Spy"),
                                                     new MutablePair<>("enter_end", "Enter The End")
                                             )
@@ -51,6 +52,7 @@ public class RunCategories {
                                                     new MutablePair<>("enter_nether", "Enter Nether"),
                                                     new MutablePair<>("enter_bastion", "Found Bastion"),
                                                     new MutablePair<>("enter_fortress", "Found Fortress"),
+                                                    new MutablePair<>("nether_travel", "Blind Travel"),
                                                     new MutablePair<>("enter_stronghold", "Eye Spy"),
                                                     new MutablePair<>("enter_end", "Enter The End")
                                             );

@@ -43,11 +43,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.io.File;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin {
@@ -73,6 +71,9 @@ public abstract class MinecraftClientMixin {
     public void onCreate(String worldName, LevelInfo levelInfo, DynamicRegistryManager.Impl registryTracker, GeneratorOptions generatorOptions, CallbackInfo ci) {
         RunCategory category = SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY);
         if (category.isAutoStart()) InGameTimer.start(worldName, RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
+        InGameTimer.getInstance().setDefaultGameMode(levelInfo.getGameMode().getId());
+        // wrong mapping OMEGALUL
+        InGameTimer.getInstance().setCheatAvailable(levelInfo.isHardcore());
         InGameTimerUtils.IS_CHANGING_DIMENSION = true;
         disconnectCheck = false;
     }
@@ -234,7 +235,7 @@ public abstract class MinecraftClientMixin {
                 File[] fontFiles = SpeedRunIGT.FONT_PATH.toFile().listFiles();
                 if (fontFiles == null) return new HashMap<>();
 
-                for (File file : Arrays.stream(fontFiles).filter(file -> file.getName().endsWith(".ttf") || file.getName().endsWith(".otf")).collect(Collectors.toList())) {
+                for (File file : Arrays.stream(fontFiles).filter(file -> file.getName().endsWith(".ttf") || file.getName().endsWith(".otf")).toList()) {
                     try {
                         File config = SpeedRunIGT.FONT_PATH.resolve(file.getName().substring(0, file.getName().length() - 4) + ".json").toFile();
                         if (config.exists()) {
