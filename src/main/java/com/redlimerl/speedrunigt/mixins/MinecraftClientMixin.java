@@ -73,7 +73,7 @@ public abstract class MinecraftClientMixin {
         if (category.isAutoStart()) InGameTimer.start(worldName, RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
         InGameTimer.getInstance().setDefaultGameMode(levelInfo.getGameMode().getId());
         // wrong mapping OMEGALUL
-        InGameTimer.getInstance().setCheatAvailable(levelInfo.isHardcore());
+        InGameTimer.getInstance().setCheatAvailable(levelInfo.areCommandsAllowed());
         InGameTimerUtils.IS_CHANGING_DIMENSION = true;
         disconnectCheck = false;
     }
