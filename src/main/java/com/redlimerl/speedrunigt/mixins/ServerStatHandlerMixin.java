@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.mixins;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
@@ -39,7 +40,7 @@ public abstract class ServerStatHandlerMixin extends StatHandler {
         // Custom Json category
         if (timer.getCategory().getConditionJson() != null) {
             JsonObject jsonObject = getStatJson();
-            for (CategoryCondition.Condition<?> condition : timer.getCustomCondition().getConditionList()) {
+            for (CategoryCondition.Condition<?> condition : timer.getCustomCondition().map(CategoryCondition::getConditionList).orElse(Lists.newArrayList())) {
                 if (condition instanceof StatCategoryCondition) {
                     timer.updateCondition((StatCategoryCondition) condition, jsonObject);
                 }
