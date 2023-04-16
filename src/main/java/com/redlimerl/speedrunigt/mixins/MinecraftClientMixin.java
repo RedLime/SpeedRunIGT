@@ -76,7 +76,6 @@ public abstract class MinecraftClientMixin {
                 if (category.isAutoStart()) {
                     InGameTimer.start(name, RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
                     InGameTimer.getInstance().setDefaultGameMode(levelInfo.getGameMode().getId());
-                    // wrong mapping OMEGALUL
                     InGameTimer.getInstance().setCheatAvailable(levelInfo.allowCommands());
                 }
             } else {
