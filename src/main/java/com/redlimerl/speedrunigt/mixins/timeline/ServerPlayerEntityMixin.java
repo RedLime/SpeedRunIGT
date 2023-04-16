@@ -11,7 +11,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.tag.SetTag;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.RegistryKey;
@@ -54,8 +53,8 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
             }
 
             if (oldRegistryKey == World.NETHER && newRegistryKey == World.OVERWORLD) {
-                if (this.getInventory().contains(SetTag.of(Sets.newHashSet(Items.ENDER_EYE))) ||
-                        (this.getInventory().contains(SetTag.of(Sets.newHashSet(Items.ENDER_PEARL))) && this.getInventory().containsAny(Sets.newHashSet(Items.BLAZE_POWDER, Items.BLAZE_ROD)))) {
+                if (this.getInventory().containsAny(Sets.newHashSet(Items.ENDER_EYE)) ||
+                        (this.getInventory().containsAny(Sets.newHashSet(Items.ENDER_PEARL)) && this.getInventory().containsAny(Sets.newHashSet(Items.BLAZE_POWDER, Items.BLAZE_ROD)))) {
                     int portalIndex = InGameTimerUtils.isBlindTraveled(lastPortalPos);
                     InGameTimer.getInstance().tryInsertNewTimeline("nether_travel");
                     if (portalIndex == 0) {
