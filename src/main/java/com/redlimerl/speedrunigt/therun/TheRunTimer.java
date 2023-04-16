@@ -110,7 +110,7 @@ public class TheRunTimer {
 
         JsonObject metaData = new JsonObject();
         metaData.addProperty("game", category.getGameName());
-        metaData.addProperty("category", category.getCategoryName());
+        metaData.addProperty("category", category.getCategoryName(timer));
         metaData.addProperty("platform", "");
         metaData.addProperty("region", "");
         metaData.addProperty("emulator", false);
@@ -171,7 +171,7 @@ public class TheRunTimer {
 
 
         Element categoryName = doc.createElement("CategoryName");
-        categoryName.appendChild(doc.createTextNode(category.getCategoryName()));
+        categoryName.appendChild(doc.createTextNode(category.getCategoryName(timer)));
         run.appendChild(categoryName);
 
 
@@ -232,21 +232,24 @@ public class TheRunTimer {
             name.appendChild(doc.createTextNode(splits.get(timeline.getName())));
             segment.appendChild(name);
 
+            Element realTimeSegment = doc.createElement("RealTime");
+            realTimeSegment.appendChild(doc.createTextNode(InGameTimerUtils.timeToStringFormat(timeline.getRTA())));
+            Element gameTimeSegment = doc.createElement("GameTime");
+            gameTimeSegment.appendChild(doc.createTextNode(InGameTimerUtils.timeToStringFormat(timeline.getIGT())));
+
             segment.appendChild(doc.createElement("Icon"));
             Element splitTimes = doc.createElement("SplitTimes");
             Element pbSplit = doc.createElement("SplitTime");
             pbSplit.setAttribute("name", "Personal Best");
+            pbSplit.appendChild(realTimeSegment.cloneNode(true));
+            pbSplit.appendChild(gameTimeSegment.cloneNode(true));
             splitTimes.appendChild(pbSplit);
             segment.appendChild(splitTimes);
             segment.appendChild(doc.createElement("BestSegmentTime"));
 
             Element segmentHistory = doc.createElement("SegmentHistory");
 
-            Element realTimeSegment = doc.createElement("RealTime");
-            realTimeSegment.appendChild(doc.createTextNode(InGameTimerUtils.timeToStringFormat(timeline.getRTA())));
             segmentHistory.appendChild(realTimeSegment);
-            Element gameTimeSegment = doc.createElement("GameTime");
-            gameTimeSegment.appendChild(doc.createTextNode(InGameTimerUtils.timeToStringFormat(timeline.getIGT())));
             segmentHistory.appendChild(gameTimeSegment);
 
             segment.appendChild(segmentHistory);

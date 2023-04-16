@@ -20,7 +20,7 @@ public class RunCategories {
             .setTheRunCategory(
                     new TheRunCategory.Builder()
                             .setGameName("Minecraft: Java Edition")
-                            .setCategoryName("Any% Glitchless")
+                            .setCategoryNameFunction(timer -> timer.getRunType() == RunType.RANDOM_SEED ? "Any% RSG" : "Any% SSG")
                             .setSplitNameMap(timer -> {
                                 if (timer.getRunType() == RunType.SET_SEED) {
                                     return asHashMap(
