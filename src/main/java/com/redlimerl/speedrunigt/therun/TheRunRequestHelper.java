@@ -7,6 +7,7 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
+import com.redlimerl.speedrunigt.timer.running.RunType;
 import org.apache.commons.io.IOUtils;
 
 import javax.xml.transform.Transformer;
@@ -47,7 +48,8 @@ public class TheRunRequestHelper {
         // Skip these all things lol
         if (!timer.isStarted() || timer.isCoop() || timer.isOpenedIntegratedServer() || !SpeedRunIGT.IS_CLIENT_SIDE
             || TheRunKeyHelper.UPLOAD_KEY.isEmpty() || timer.getCategory().getTheRunCategory() == null
-            || !SpeedRunOption.getOption(SpeedRunOptions.ENABLE_THERUN_GG_LIVE)) {
+            || !SpeedRunOption.getOption(SpeedRunOptions.ENABLE_THERUN_GG_LIVE) || timer.isRTAMode() || timer.getRunType() == RunType.OLD_WORLD
+            || timer.isCheatAvailable() || timer.getDefaultGameMode() != 0) {
             return;
         }
 
@@ -129,10 +131,11 @@ public class TheRunRequestHelper {
                 StringWriter sw = new StringWriter();
                 trans.transform(xmlData, new StreamResult(sw));
                 String resultXml = sw.toString();
+                SpeedRunIGT.debug(resultXml);
 
                 URL url = new URL("https://2uxp372ks6nwrjnk6t7lqov4zu0solno.lambda-url.eu-west-1.on.aws/?filename=" +
                         URLEncoder.encode(timer.getCategory().getTheRunCategory().getGameName(), StandardCharsets.UTF_8) + "-" +
-                        URLEncoder.encode(timer.getCategory().getTheRunCategory().getCategoryName().trim().toLowerCase(Locale.ROOT), StandardCharsets.UTF_8) + ".lss&uploadKey=" + TheRunKeyHelper.UPLOAD_KEY);
+                        URLEncoder.encode(timer.getCategory().getTheRunCategory().getCategoryName(timer).trim().toLowerCase(Locale.ROOT), StandardCharsets.UTF_8) + ".lss&uploadKey=" + TheRunKeyHelper.UPLOAD_KEY);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 setupConnection(connection);
 
