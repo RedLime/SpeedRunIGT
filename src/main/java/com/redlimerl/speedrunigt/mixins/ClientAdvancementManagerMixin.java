@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.mixins;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerAdvancementTracker;
@@ -65,7 +66,7 @@ public abstract class ClientAdvancementManagerMixin {
 
             // Custom Json category
             if (timer.getCategory().getConditionJson() != null) {
-                for (CategoryCondition.Condition<?> condition : timer.getCustomCondition().getConditionList()) {
+                for (CategoryCondition.Condition<?> condition : timer.getCustomCondition().map(CategoryCondition::getConditionList).orElse(Lists.newArrayList())) {
                     if (condition instanceof AdvancementCategoryCondition) {
                         timer.updateCondition((AdvancementCategoryCondition) condition, advancement);
                     }
