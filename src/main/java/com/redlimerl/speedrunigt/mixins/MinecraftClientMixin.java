@@ -43,7 +43,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.io.File;
 import java.util.*;
@@ -73,6 +72,9 @@ public abstract class MinecraftClientMixin {
     public void onCreate(String worldName, LevelInfo levelInfo, DynamicRegistryManager.Impl registryTracker, GeneratorOptions generatorOptions, CallbackInfo ci) {
         RunCategory category = SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY);
         if (category.isAutoStart()) InGameTimer.start(worldName, RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
+        InGameTimer.getInstance().setDefaultGameMode(levelInfo.getGameMode().getId());
+        // wrong mapping OMEGALUL
+        InGameTimer.getInstance().setCheatAvailable(levelInfo.isHardcore());
         InGameTimerUtils.IS_CHANGING_DIMENSION = true;
         disconnectCheck = false;
     }
