@@ -20,10 +20,10 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stat.ServerStatHandler;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.GameMode;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.OverworldDimension;
 import net.minecraft.world.dimension.TheNetherDimension;
-import net.minecraft.world.level.LevelInfo;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -246,8 +246,8 @@ public class InGameTimerUtils {
 
     public static int getCurrentWorldDefaultGameMode() {
         MinecraftServer server = getServer();
-        if (server == null) return LevelInfo.GameMode.SURVIVAL.getId();
-        return server.getDefaultGameMode().getId();
+        if (server == null) return GameMode.SURVIVAL.getGameModeId();
+        return server.method_3026().getGameModeId();
     }
 
     public static boolean isCurrentWorldCheatAvailable() {

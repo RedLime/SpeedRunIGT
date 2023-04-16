@@ -20,7 +20,7 @@ import com.redlimerl.speedrunigt.timer.running.RunPortalPos;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.level.LevelInfo;
+import net.minecraft.world.GameMode;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -83,7 +83,7 @@ public class InGameTimer implements Serializable {
     RunType runType = RunType.RANDOM_SEED;
     private int completeCount = 0;
     private boolean isRTAMode = false;
-    private int defaultGameMode = LevelInfo.GameMode.SURVIVAL.getId();
+    private int defaultGameMode = GameMode.SURVIVAL.getGameModeId();
     private boolean isCheatAvailable = false;
 
     //Timer time
