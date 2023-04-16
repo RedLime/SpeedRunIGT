@@ -83,7 +83,7 @@ public class InGameTimer implements Serializable {
     RunType runType = RunType.RANDOM_SEED;
     private int completeCount = 0;
     private boolean isRTAMode = false;
-    private int defaultGameMode = GameMode.SURVIVAL.getId();
+    private int defaultGameMode = GameMode.SURVIVAL.getGameModeId();
     private boolean isCheatAvailable = false;
 
     //Timer time
