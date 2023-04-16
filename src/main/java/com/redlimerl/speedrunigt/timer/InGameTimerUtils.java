@@ -229,12 +229,12 @@ public class InGameTimerUtils {
         return true;
     }
 
-    public static boolean isBlindTraveled(Vec3d netherPos) {
+    public static int isBlindTraveled(Vec3d netherPos) {
         InGameTimer timer = InGameTimer.getInstance();
-        for (RunPortalPos portalPos : timer.lastNetherPortalPos) {
-            if (portalPos.squaredDistanceTo(netherPos) < 16) return false;
+        for (int i = 0; i < timer.lastNetherPortalPos.size(); i++) {
+            if (timer.lastNetherPortalPos.get(i).squaredDistanceTo(netherPos) < 16) return i;
         }
-        return true;
+        return -1;
     }
 
     public static void setCategoryWarningScreen(@Nullable String conditionFileName, InvalidCategoryException exception) {
