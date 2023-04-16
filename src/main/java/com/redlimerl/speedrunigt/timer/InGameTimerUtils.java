@@ -6,6 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.mixins.access.PlayerManagerAccessor;
 import com.redlimerl.speedrunigt.mixins.access.ServerStatHandlerAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
@@ -20,6 +21,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.stat.ServerStatHandler;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.GameMode;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -143,6 +145,8 @@ public class InGameTimerUtils {
         jsonObject.addProperty("is_coop", timer.isCoop());
         jsonObject.addProperty("is_hardcore", timer.isHardcore());
         jsonObject.addProperty("world_name", timer.worldName);
+        jsonObject.addProperty("is_cheat_allowed", timer.isCheatAvailable());
+        jsonObject.addProperty("default_gamemode", timer.getDefaultGameMode());
         jsonObject.addProperty("date", System.currentTimeMillis());
         jsonObject.addProperty("retimed_igt", timer.getRetimedInGameTime());
         jsonObject.addProperty("final_igt", timer.getInGameTime(false));
@@ -236,5 +240,17 @@ public class InGameTimerUtils {
 
     public static MinecraftServer getServer() {
         return SpeedRunIGT.IS_CLIENT_SIDE ? InGameTimerClientUtils.getClientServer() : SpeedRunIGT.DEDICATED_SERVER;
+    }
+
+    public static int getCurrentWorldDefaultGameMode() {
+        MinecraftServer server = getServer();
+        if (server == null) return GameMode.SURVIVAL.getGameModeId();
+        return server.method_3026().getGameModeId();
+    }
+
+    public static boolean isCurrentWorldCheatAvailable() {
+        MinecraftServer server = getServer();
+        if (server == null) return false;
+        return ((PlayerManagerAccessor) server.getPlayerManager()).isCheatsAllowedInject();
     }
 }
