@@ -58,7 +58,7 @@ public abstract class ServerPlayerEntityMixin {
 
     private boolean isEnoughTravel(ServerPlayerEntity serverPlayerEntity) {
         boolean eye = false, pearl = false, rod = false;
-        for (ItemStack itemStack : serverPlayerEntity.inventory.field_15082) {
+        for (ItemStack itemStack : serverPlayerEntity.inventory.main) {
             if (itemStack != null) {
                 if (itemStack.getItem() == Items.EYE_OF_ENDER) eye = true;
                 if (itemStack.getItem() == Items.ENDER_PEARL) pearl = true;
