@@ -1,6 +1,5 @@
 package com.redlimerl.speedrunigt.mixins.timeline;
 
-import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
@@ -8,10 +7,10 @@ import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.tag.SetTag;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.RegistryKey;
@@ -54,8 +53,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
             }
 
             if (oldRegistryKey == World.NETHER && newRegistryKey == World.OVERWORLD) {
-                if (this.getInventory().contains(SetTag.of(Sets.newHashSet(Items.ENDER_EYE))) ||
-                        (this.getInventory().contains(SetTag.of(Sets.newHashSet(Items.ENDER_PEARL))) && this.getInventory().containsAny(Sets.newHashSet(Items.BLAZE_POWDER, Items.BLAZE_ROD)))) {
+                if (this.isEnoughTravel()) {
                     int portalIndex = InGameTimerUtils.isBlindTraveled(lastPortalPos);
                     InGameTimer.getInstance().tryInsertNewTimeline("nether_travel");
                     if (portalIndex == 0) {
@@ -68,5 +66,18 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
                     InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.OVERWORLD, lastPortalPos.add(0, 0, 0), this.getPos().add(0, 0, 0));
             }
         }
+    }
+
+    private boolean isEnoughTravel() {
+        boolean eye = false, pearl = false, rod = false;
+        for (ItemStack itemStack : this.inventory.main) {
+            if (itemStack != null) {
+                if (itemStack.getItem() == Items.ENDER_EYE) eye = true;
+                if (itemStack.getItem() == Items.ENDER_PEARL) pearl = true;
+                if (itemStack.getItem() == Items.BLAZE_POWDER || itemStack.getItem() == Items.BLAZE_ROD) rod = true;
+            }
+        }
+
+        return eye || (pearl && rod);
     }
 }
