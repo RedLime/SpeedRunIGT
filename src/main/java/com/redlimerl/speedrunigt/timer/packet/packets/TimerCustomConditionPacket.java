@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.timer.packet.packets;
 
+import com.google.common.collect.Lists;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
@@ -58,7 +59,7 @@ public class TimerCustomConditionPacket extends TimerPacket {
 
     public void timerCondition(TimerPacketBuf buf) {
         String conditionName = buf.readString();
-        for (CategoryCondition.Condition<?> condition : InGameTimer.getInstance().getCustomCondition().getConditionList()) {
+        for (CategoryCondition.Condition<?> condition : InGameTimer.getInstance().getCustomCondition().map(CategoryCondition::getConditionList).orElse(Lists.newArrayList())) {
             if (Objects.equals(condition.getName(), conditionName)) {
                 condition.setCompleted(true);
                 InGameTimer.getInstance().tryInsertNewTimeline(condition.getName(), false);
