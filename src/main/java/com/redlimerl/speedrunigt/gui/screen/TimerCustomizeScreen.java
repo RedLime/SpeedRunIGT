@@ -11,13 +11,13 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.timer.TimerDrawer.PositionType;
 import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.SliderWidget;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -284,24 +284,24 @@ public class TimerCustomizeScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         saveButton.active = changed;
 
-        this.renderBackground(matrices);
+        this.renderBackground(context);
 
-        drawer.draw();
+        drawer.draw(context);
 
-        drawCenteredTextWithShadow(matrices, this.textRenderer, this.title, this.width / 2, 15, 16777215);
+        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 15, 16777215);
 
         if (!hide) {
             if (!igtButton.active || !rtaButton.active) {
                 if (drawer.isLocked()) {
-                    drawCenteredTextWithShadow(matrices, this.textRenderer,
+                    context.drawCenteredTextWithShadow(this.textRenderer,
                             Text.translatable("speedrunigt.option.timer_position.description.lock"), this.width / 2, this.height / 2 - 80, 16777215);
                 } else {
-                    drawCenteredTextWithShadow(matrices, this.textRenderer,
+                    context.drawCenteredTextWithShadow(this.textRenderer,
                             Text.translatable("speedrunigt.option.timer_position.description"), this.width / 2, this.height / 2 - 80, 16777215);
-                    drawCenteredTextWithShadow(matrices, this.textRenderer,
+                    context.drawCenteredTextWithShadow(this.textRenderer,
                             Text.translatable("speedrunigt.option.timer_position.description.move"), this.width / 2, this.height / 2 - 69, 16777215);
                 }
             }
@@ -323,13 +323,13 @@ public class TimerCustomizeScreen extends Screen {
                         if (fontIdentifier.toString().equals(drawer.getTimerFont().toString())) {
                             text.append(" [Selected]").formatted(Formatting.ITALIC);
                         }
-                        drawCenteredTextWithShadow(matrices, this.textRenderer, text, this.width / 2 - 30,
+                        context.drawCenteredTextWithShadow(this.textRenderer, text, this.width / 2 - 30,
                                 this.height / 2 - 11 + (i * 22), 16777215);
                     }
                 }
             }
         }
-        super.render(matrices, mouseX, mouseY, delta);
+        super.render(context, mouseX, mouseY, delta);
     }
 
     @Override

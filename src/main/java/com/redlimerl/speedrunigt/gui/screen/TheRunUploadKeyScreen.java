@@ -4,10 +4,10 @@ import com.redlimerl.speedrunigt.therun.TheRunKeyHelper;
 import com.redlimerl.speedrunigt.therun.TheRunRequestHelper;
 import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
@@ -68,25 +68,25 @@ public class TheRunUploadKeyScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        this.renderBackground(matrices);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        this.renderBackground(context);
         String beforeText = this.uploadKeyBox.getText();
         this.uploadKeyBox.setText(beforeText.replaceAll("\\w", "*"));
 
-        drawCenteredTextWithShadow(matrices, textRenderer, title, width / 2, 12, 16777215);
+        context.drawCenteredTextWithShadow(textRenderer, title, width / 2, 12, 16777215);
 
-        this.uploadKeyBox.render(matrices, mouseX, mouseY, delta);
+        this.uploadKeyBox.render(context, mouseX, mouseY, delta);
 
-        super.render(matrices, mouseX, mouseY, delta);
+        super.render(context, mouseX, mouseY, delta);
 
         if (statusCode == 1)
-            drawCenteredTextWithShadow(matrices, textRenderer, Text.translatable("speedrunigt.therun_gg.message.loading_upload_key_info"), width / 2, height / 2 + 50, 16777215);
+            context.drawCenteredTextWithShadow(textRenderer, Text.translatable("speedrunigt.therun_gg.message.loading_upload_key_info"), width / 2, height / 2 + 50, 16777215);
 
         if (statusCode == 2)
-            drawCenteredTextWithShadow(matrices, textRenderer, Text.translatable("speedrunigt.therun_gg.message.upload_key_is_valid"), width / 2, height / 2 + 50, 16777215);
+            context.drawCenteredTextWithShadow(textRenderer, Text.translatable("speedrunigt.therun_gg.message.upload_key_is_valid"), width / 2, height / 2 + 50, 16777215);
 
         if (statusCode == 3)
-            drawCenteredTextWithShadow(matrices, textRenderer, Text.translatable("speedrunigt.therun_gg.message.upload_key_is_invalid"), width / 2, height / 2 + 50, 16777215);
+            context.drawCenteredTextWithShadow(textRenderer, Text.translatable("speedrunigt.therun_gg.message.upload_key_is_invalid"), width / 2, height / 2 + 50, 16777215);
 
         this.uploadKeyBox.setText(beforeText);
     }

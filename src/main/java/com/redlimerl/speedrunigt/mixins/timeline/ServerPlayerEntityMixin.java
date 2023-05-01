@@ -7,9 +7,9 @@ import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -24,18 +24,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
+    @Shadow public abstract ServerWorld getServerWorld();
+
     public ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
         super(world, pos, yaw, gameProfile);
     }
-
-    @Shadow public abstract ServerWorld getWorld();
 
     private ServerWorld beforeWorld = null;
     private Vec3d lastPortalPos = null;
 
     @Inject(method = "moveToWorld", at = @At("HEAD"))
     public void onChangeDimension(ServerWorld destination, CallbackInfoReturnable<Entity> cir) {
-        beforeWorld = this.getWorld();
+        beforeWorld = this.getServerWorld();
         lastPortalPos = this.getPos();
         InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = !InGameTimer.getInstance().isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY;
     }
@@ -43,7 +43,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
     @Inject(method = "moveToWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;onPlayerChangeDimension(Lnet/minecraft/server/network/ServerPlayerEntity;)V", shift = At.Shift.AFTER))
     public void onChangedDimension(ServerWorld destination, CallbackInfoReturnable<Entity> cir) {
         RegistryKey<World> oldRegistryKey = beforeWorld.getRegistryKey();
-        RegistryKey<World> newRegistryKey = world.getRegistryKey();
+        RegistryKey<World> newRegistryKey = getServerWorld().getRegistryKey();
 
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() != TimerStatus.NONE) {

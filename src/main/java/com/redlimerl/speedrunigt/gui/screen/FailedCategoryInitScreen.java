@@ -3,9 +3,8 @@ package com.redlimerl.speedrunigt.gui.screen;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
 import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.ColorHelper;
@@ -35,11 +34,11 @@ public class FailedCategoryInitScreen extends Screen {
     private static final int TEXT_WHITE = ColorHelper.Argb.getArgb(255, 255, 255, 255);
     private static final int TEXT_RED = ColorHelper.Argb.getArgb(255, 255, 70, 70);
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        renderBackground(matrices);
-        super.render(matrices, mouseX, mouseY, delta);
-        drawCenteredTextWithShadow(matrices, this.textRenderer, Text.translatable("speedrunigt.message.failed_add_category", this.fileName), width / 2, height / 2 - 35, TEXT_RED);
-        drawCenteredTextWithShadow(matrices, this.textRenderer, Text.translatable("speedrunigt.message.failed_add_category."+exception.getReason().name().toLowerCase(Locale.ROOT)), width / 2, height / 2 - 10, TEXT_WHITE);
-        drawCenteredTextWithShadow(matrices, this.textRenderer, exception.getDetails(), width / 2, height / 2 + 2, TEXT_WHITE);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        renderBackground(context);
+        super.render(context, mouseX, mouseY, delta);
+        context.drawCenteredTextWithShadow(this.textRenderer, Text.translatable("speedrunigt.message.failed_add_category", this.fileName), width / 2, height / 2 - 35, TEXT_RED);
+        context.drawCenteredTextWithShadow(this.textRenderer, Text.translatable("speedrunigt.message.failed_add_category."+exception.getReason().name().toLowerCase(Locale.ROOT)), width / 2, height / 2 - 10, TEXT_WHITE);
+        context.drawCenteredTextWithShadow(this.textRenderer, exception.getDetails(), width / 2, height / 2 + 2, TEXT_WHITE);
     }
 }

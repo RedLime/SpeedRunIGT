@@ -13,16 +13,16 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.CheckboxWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.client.resource.language.I18n;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
@@ -58,11 +58,11 @@ public class SpeedRunCategoryScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        this.listWidget.render(matrices, mouseX, mouseY, delta);
-        drawCenteredTextWithShadow(matrices, this.textRenderer, this.title, this.width / 2, 16, 16777215);
-        drawCenteredTextWithShadow(matrices, this.textRenderer, "(" + I18n.translate("speedrunigt.option.timer_category.warning") + ")", this.width / 2, this.height - 46, 8421504);
-        super.render(matrices, mouseX, mouseY, delta);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        this.listWidget.render(context, mouseX, mouseY, delta);
+        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 16, 16777215);
+        context.drawCenteredTextWithShadow(this.textRenderer, "(" + I18n.translate("speedrunigt.option.timer_category.warning") + ")", this.width / 2, this.height - 46, 8421504);
+        super.render(context, mouseX, mouseY, delta);
     }
 
     @Environment(EnvType.CLIENT)
@@ -92,13 +92,13 @@ public class SpeedRunCategoryScreen extends Screen {
                 children.add(checkBox);
             }
 
-            public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+            public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
                 this.urlButton.setX(x);
                 this.urlButton.setY(y);
-                this.urlButton.render(matrices, mouseX, mouseY, tickDelta);
+                this.urlButton.render(context, mouseX, mouseY, tickDelta);
                 this.checkBox.setX(x + 34);
                 this.checkBox.setY(y);
-                this.checkBox.render(matrices, mouseX, mouseY, tickDelta);
+                this.checkBox.render(context, mouseX, mouseY, tickDelta);
             }
 
             @Override
@@ -135,7 +135,7 @@ public class SpeedRunCategoryScreen extends Screen {
                 }
 
                 @Override
-                public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+                public void render(DrawContext context, int mouseX, int mouseY, float delta) {
                     MinecraftClient minecraftClient = MinecraftClient.getInstance();
                     RenderSystem.setShaderTexture(0, TEXTURE);
                     RenderSystem.enableDepthTest();
@@ -144,8 +144,8 @@ public class SpeedRunCategoryScreen extends Screen {
                     RenderSystem.enableBlend();
                     RenderSystem.defaultBlendFunc();
                     RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
-                    drawTexture(matrices, this.getX(), this.getY(), this.isFocused() ? 20.0F : 0.0F, this.isChecked() ? 20.0F : 0.0F, 20, this.height, 64, 64);
-                    drawTextWithShadow(matrices, textRenderer, this.getMessage(), this.getX() + 24, this.getY() + (this.height - 8) / 2, 14737632 | MathHelper.ceil(this.alpha * 255.0F) << 24);
+                    context.drawTexture(TEXTURE, this.getX(), this.getY(), this.isFocused() ? 20.0F : 0.0F, this.isChecked() ? 20.0F : 0.0F, 20, this.height, 64, 64);
+                    context.drawText(textRenderer, this.getMessage(), this.getX() + 24, this.getY() + (this.height - 8) / 2, 14737632 | MathHelper.ceil(this.alpha * 255.0F) << 24, true);
                 }
             }
         }

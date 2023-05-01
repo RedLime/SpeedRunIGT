@@ -47,7 +47,7 @@ public class InGameTimerClientUtils {
 
     public static boolean isHardcoreWorld() {
         MinecraftClient client = MinecraftClient.getInstance();
-        return client.player != null && client.player.world.getLevelProperties().isHardcore();
+        return client.player != null && client.player.getWorld().getLevelProperties().isHardcore();
     }
 
     public static Long getPlayerTime() {

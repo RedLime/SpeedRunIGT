@@ -4,11 +4,10 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
 import com.redlimerl.speedrunigt.utils.FontConfigure;
 import com.redlimerl.speedrunigt.utils.FontIdentifier;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.resource.language.I18n;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -60,15 +59,15 @@ public class FontConfigScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        renderBackground(matrices);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        renderBackground(context);
 
-        drawCenteredTextWithShadow(matrices, textRenderer, Text.literal("IGT: 01:23.456").setStyle(Style.EMPTY.withFont(fontIdentifier.getIdentifier())), width / 2, 30, 16777215);
+        context.drawCenteredTextWithShadow(textRenderer, Text.literal("IGT: 01:23.456").setStyle(Style.EMPTY.withFont(fontIdentifier.getIdentifier())), width / 2, 30, 16777215);
 
-        drawCenteredTextWithShadow(matrices, textRenderer, "§l" + I18n.translate("speedrunigt.font.size") + ": " + ((int) newFontConfigure.size), width / 2, height / 2 - 55, 16777215);
-        drawCenteredTextWithShadow(matrices, textRenderer, "§l" + I18n.translate("speedrunigt.font.oversample") + ": " + newFontConfigure.oversample, width / 2, height / 2 - 5, 16777215);
-        drawCenteredTextWithShadow(matrices, textRenderer, I18n.translate("speedrunigt.font.oversample.description"), width / 2, height / 2 + 27, 16777215);
+        context.drawCenteredTextWithShadow(textRenderer, "§l" + I18n.translate("speedrunigt.font.size") + ": " + ((int) newFontConfigure.size), width / 2, height / 2 - 55, 16777215);
+        context.drawCenteredTextWithShadow(textRenderer, "§l" + I18n.translate("speedrunigt.font.oversample") + ": " + newFontConfigure.oversample, width / 2, height / 2 - 5, 16777215);
+        context.drawCenteredTextWithShadow(textRenderer, I18n.translate("speedrunigt.font.oversample.description"), width / 2, height / 2 + 27, 16777215);
 
-        super.render(matrices, mouseX, mouseY, delta);
+        super.render(context, mouseX, mouseY, delta);
     }
 }

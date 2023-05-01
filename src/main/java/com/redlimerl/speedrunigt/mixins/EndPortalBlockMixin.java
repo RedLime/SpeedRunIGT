@@ -27,7 +27,7 @@ public class EndPortalBlockMixin {
             InGameTimer timer = InGameTimer.getInstance();
 
             //All Portals
-            if (entity.world.getRegistryKey() == World.OVERWORLD) {
+            if (entity.getWorld().getRegistryKey() == World.OVERWORLD) {
                 boolean isNewPortal = true;
                 for (RunPortalPos runPortalPos : timer.getEndPortalPosList()) {
                     if (runPortalPos.squaredDistanceTo(pos) < 100) {

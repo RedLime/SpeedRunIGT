@@ -127,8 +127,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             }
         }
 
-        List<Item> items = this.getInventory().main.stream().map(ItemStack::getItem).collect(Collectors.toList());
-        List<Item> armors = this.getInventory().armor.stream().map(ItemStack::getItem).collect(Collectors.toList());
+        List<Item> items = this.getInventory().main.stream().map(ItemStack::getItem).toList();
+        List<Item> armors = this.getInventory().armor.stream().map(ItemStack::getItem).toList();
 
         //All Workstations
         if (timer.getCategory() == RunCategories.ALL_WORKSTATIONS) {

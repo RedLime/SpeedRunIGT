@@ -2,7 +2,6 @@ package com.redlimerl.speedrunigt.api;
 
 import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
 
