@@ -21,7 +21,6 @@
     "ClientAdvancementManagerMixin",
     "ClientPlayerEntityMixin",
     "ClientWorldMixin",
-    "GameRendererMixin",
     "InGameHudMixin",
     "IntegratedServerLoaderMixin",
     "KeyBindingMixin",

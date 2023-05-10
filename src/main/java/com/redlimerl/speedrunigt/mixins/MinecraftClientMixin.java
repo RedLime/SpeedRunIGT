@@ -1,9 +1,12 @@
 package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.SpeedRunIGTClient;
+import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
 import com.redlimerl.speedrunigt.mixins.access.FontManagerAccessor;
 import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
+import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.*;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.utils.FontUtils;
@@ -11,15 +14,20 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
 import net.minecraft.client.font.Font;
 import net.minecraft.client.font.FontStorage;
-import net.minecraft.client.gui.screen.LevelLoadingScreen;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.screen.*;
 import net.minecraft.client.option.GameOptions;
+import net.minecraft.client.util.Window;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.resource.ReloadableResourceManagerImpl;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.SinglePreparationResourceReloader;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.crash.CrashReport;
+import net.minecraft.util.math.ColorHelper;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.dimension.DimensionTypes;
 import org.jetbrains.annotations.Nullable;
@@ -43,6 +51,14 @@ public abstract class MinecraftClientMixin {
     @Shadow @Final private ReloadableResourceManagerImpl resourceManager;
 
     @Shadow private boolean paused;
+
+    @Shadow @Final public TextRenderer textRenderer;
+
+    @Shadow @Nullable public Screen currentScreen;
+
+    @Shadow @Final private Window window;
+
+    @Shadow public abstract boolean isPaused();
 
     @Inject(method = "setScreen", at = @At("RETURN"))
     public void onSetScreen(Screen screen, CallbackInfo ci) {
@@ -108,6 +124,71 @@ public abstract class MinecraftClientMixin {
         } else if (timer.getStatus() == TimerStatus.PAUSED && !this.paused) {
             timer.setPause(false, "player");
         }
+    }
+
+
+
+
+    private TimerDrawer.PositionType currentPositionType = TimerDrawer.PositionType.DEFAULT;
+    private boolean previousNoUI = false;
+    @Inject(method = "render", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/client/toast/ToastManager;draw(Lnet/minecraft/client/util/math/MatrixStack;)V", shift = At.Shift.AFTER))
+    private void drawTimer(CallbackInfo ci) {
+        InGameTimer timer = InGameTimer.getInstance();
+
+        if (InGameTimerClientUtils.canUnpauseTimer(true)) {
+            if (!(InGameTimerUtils.isWaitingFirstInput() && !timer.isStarted())) {
+                timer.setPause(false, "rendered");
+            } else {
+                timer.updateFirstRendered();
+            }
+        }
+
+        long time = System.currentTimeMillis() - InGameTimerUtils.LATEST_TIMER_TIME;
+        if (time < 2950) {
+            String text = "SpeedRunIGT v" + (SpeedRunIGT.MOD_VERSION.split("\\+")[0]);
+            this.textRenderer.draw(new MatrixStack(), text, this.currentScreen != null ? ((this.window.getScaledWidth() - this.textRenderer.getWidth(text)) / 2f) : 4, this.window.getScaledHeight() - 12,
+                    ColorHelper.Argb.getArgb((int) (MathHelper.clamp((3000 - time) / 1000.0, 0, 1) * (this.currentScreen != null ? 90 : 130)), 255, 255, 255));
+        }
+
+        SpeedRunIGT.DEBUG_DATA = timer.getStatus().name();
+        if (!this.options.hudHidden && this.world != null && timer.getStatus() != TimerStatus.NONE
+                && (!this.isPaused() || this.currentScreen instanceof CreditsScreen || this.currentScreen instanceof GameMenuScreen || !SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS))
+                && !(!this.isPaused() && SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) && this.options.debugEnabled)
+                && !(this.currentScreen instanceof TimerCustomizeScreen)) {
+
+            boolean needUpdate = SpeedRunIGTClient.TIMER_DRAWER.isNeedUpdate();
+            boolean enableSplit = SpeedRunOption.getOption(SpeedRunOptions.ENABLE_TIMER_SPLIT_POS);
+            if (needUpdate || enableSplit) {
+                TimerDrawer.PositionType updatePositionType = TimerDrawer.PositionType.DEFAULT;
+                if (enableSplit && this.options.debugEnabled)
+                    updatePositionType = TimerDrawer.PositionType.WHILE_F3;
+                if (enableSplit && this.isPaused() && !(this.currentScreen instanceof DownloadingTerrainScreen) && (this.currentScreen instanceof GameMenuScreen && !this.previousNoUI))
+                    updatePositionType = TimerDrawer.PositionType.WHILE_PAUSED;
+
+                if (currentPositionType != updatePositionType || needUpdate) {
+                    currentPositionType = updatePositionType;
+                    Vec2f igtPos = currentPositionType == TimerDrawer.PositionType.DEFAULT
+                            ? new Vec2f(SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_POSITION_X), SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_POSITION_Y))
+                            : SpeedRunOption.getOption(currentPositionType == TimerDrawer.PositionType.WHILE_F3 ? SpeedRunOptions.TIMER_IGT_POSITION_FOR_F3 : SpeedRunOptions.TIMER_IGT_POSITION_FOR_PAUSE);
+
+                    Vec2f rtaPos = currentPositionType == TimerDrawer.PositionType.DEFAULT
+                            ? new Vec2f(SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_POSITION_X), SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_POSITION_Y))
+                            : SpeedRunOption.getOption(currentPositionType == TimerDrawer.PositionType.WHILE_F3 ? SpeedRunOptions.TIMER_RTA_POSITION_FOR_F3 : SpeedRunOptions.TIMER_RTA_POSITION_FOR_PAUSE);
+
+                    SpeedRunIGTClient.TIMER_DRAWER.setRTA_XPos(rtaPos.x);
+                    SpeedRunIGTClient.TIMER_DRAWER.setRTA_YPos(rtaPos.y);
+                    SpeedRunIGTClient.TIMER_DRAWER.setIGT_XPos(igtPos.x);
+                    SpeedRunIGTClient.TIMER_DRAWER.setIGT_YPos(igtPos.y);
+                }
+            }
+            SpeedRunIGTClient.TIMER_DRAWER.draw();
+        }
+    }
+
+    @Inject(method = "openPauseMenu", at = @At("HEAD"))
+    public void onOpenPauseMenu(boolean pause, CallbackInfo ci) {
+        previousNoUI = pause;
     }
 
 

@@ -44,7 +44,7 @@ public class OptionsScreenMixin extends Screen {
             matrices.translate(-.5f, -.5f, 0);
             RenderSystem.setShaderTexture(0, timerButton.isHovered() ? ENDER_EYE :
                     SpeedRunIGTUpdateChecker.UPDATE_STATUS == SpeedRunIGTUpdateChecker.UpdateStatus.OUTDATED ? BLAZE_POWDER : ENDER_PEARL);
-            drawTexture(matrices, timerButton.getX() + 2, timerButton.getY() + 2, 0.0F, 0.0F, 16, 16, 16, 16);
+            drawTexture(matrices, timerButton.x + 2, timerButton.y + 2, 0.0F, 0.0F, 16, 16, 16, 16);
             matrices.pop();
         }
     }

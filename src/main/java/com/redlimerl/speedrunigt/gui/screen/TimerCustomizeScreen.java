@@ -12,7 +12,6 @@ import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.timer.TimerDrawer.PositionType;
 import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -291,17 +290,17 @@ public class TimerCustomizeScreen extends Screen {
 
         drawer.draw();
 
-        drawCenteredTextWithShadow(matrices, this.textRenderer, this.title, this.width / 2, 15, 16777215);
+        drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 15, 16777215);
 
         if (!hide) {
             if (!igtButton.active || !rtaButton.active) {
                 if (drawer.isLocked()) {
-                    drawCenteredTextWithShadow(matrices, this.textRenderer,
+                    drawCenteredText(matrices, this.textRenderer,
                             Text.translatable("speedrunigt.option.timer_position.description.lock"), this.width / 2, this.height / 2 - 80, 16777215);
                 } else {
-                    drawCenteredTextWithShadow(matrices, this.textRenderer,
+                    drawCenteredText(matrices, this.textRenderer,
                             Text.translatable("speedrunigt.option.timer_position.description"), this.width / 2, this.height / 2 - 80, 16777215);
-                    drawCenteredTextWithShadow(matrices, this.textRenderer,
+                    drawCenteredText(matrices, this.textRenderer,
                             Text.translatable("speedrunigt.option.timer_position.description.move"), this.width / 2, this.height / 2 - 69, 16777215);
                 }
             }
@@ -323,7 +322,7 @@ public class TimerCustomizeScreen extends Screen {
                         if (fontIdentifier.toString().equals(drawer.getTimerFont().toString())) {
                             text.append(" [Selected]").formatted(Formatting.ITALIC);
                         }
-                        drawCenteredTextWithShadow(matrices, this.textRenderer, text, this.width / 2 - 30,
+                        drawCenteredText(matrices, this.textRenderer, text, this.width / 2 - 30,
                                 this.height / 2 - 11 + (i * 22), 16777215);
                     }
                 }
@@ -380,12 +379,12 @@ public class TimerCustomizeScreen extends Screen {
         );
 
         normalOptions.add(
-                addDrawableChild(ButtonWidgetHelper.create(width / 2 - 80, height / 2 + 28, 160, 20, Text.translatable("speedrunigt.option.timer_position.show_decimals").append(" : ").append(Text.translatable("speedrunigt.option.timer_position.show_decimals.context", drawer.getTimerDecimals().getNumber())), (ButtonWidget button) -> {
+                addDrawableChild(new ButtonWidget(width / 2 - 80, height / 2 + 28, 160, 20, Text.translatable("speedrunigt.option.timer_position.show_decimals").append(" : ").append(Text.translatable("speedrunigt.option.timer_position.show_decimals.context", drawer.getTimerDecimals().getNumber())), (ButtonWidget button) -> {
                     int order = drawer.getTimerDecimals().ordinal();
                     drawer.setTimerDecimals(TimerDecimals.values()[(++order) % TimerDecimals.values().length]);
                     changed = true;
                     button.setMessage(Text.translatable("speedrunigt.option.timer_position.show_decimals").append(" : ").append(Text.translatable("speedrunigt.option.timer_position.show_decimals.context", drawer.getTimerDecimals().getNumber())));
-                }, Tooltip.of(Text.translatable("speedrunigt.option.timer_position.show_decimals.description"))))
+                }, (button, matrices, mouseX, mouseY) -> renderTooltip(matrices, Text.translatable("speedrunigt.option.timer_position.show_decimals.description"), mouseX, mouseY)))
         );
     }
 
@@ -682,7 +681,7 @@ public class TimerCustomizeScreen extends Screen {
             ButtonWidget button = fontSelectButtons.get(i);
             if (c + i < availableFonts.size()) {
                 button.active = !availableFonts.get(c + i).toString().equals(drawer.getTimerFont().toString());
-                if (!button.active && Objects.equals(drawer.getTimerFont().getNamespace(), SpeedRunIGT.MOD_ID)) available = button.getY();
+                if (!button.active && Objects.equals(drawer.getTimerFont().getNamespace(), SpeedRunIGT.MOD_ID)) available = button.y;
                 button.visible = true;
             } else {
                 button.visible = false;
@@ -690,7 +689,7 @@ public class TimerCustomizeScreen extends Screen {
         }
 
         fontConfigButton.visible = currentTab == 3 && available != 0;
-        fontConfigButton.setY(available);
+        fontConfigButton.y = available;
     }
 
     public void initBackgroundButtons() {

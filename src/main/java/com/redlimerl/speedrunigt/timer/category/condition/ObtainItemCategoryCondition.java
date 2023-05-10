@@ -6,7 +6,7 @@ import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.StringNbtReader;
-import net.minecraft.registry.Registries;
+import net.minecraft.util.registry.Registry;
 
 import java.util.List;
 import java.util.Objects;
@@ -43,7 +43,7 @@ public class ObtainItemCategoryCondition extends CategoryCondition.Condition<Lis
         int amount = 0;
 
         for (ItemStack itemStack : itemStacks) {
-            if (itemStack != null && Objects.equals(Registries.ITEM.getId(itemStack.getItem()).toString(), itemID) && (itemDamage == null || itemStack.getDamage() == itemDamage)) {
+            if (itemStack != null && Objects.equals(Registry.ITEM.getId(itemStack.getItem()).toString(), itemID) && (itemDamage == null || itemStack.getDamage() == itemDamage)) {
                 if (!nbtTag.isEmpty()) {
                     if (itemStack.getNbt() == null) continue;
                     NbtCompound itemTag = itemStack.getNbt();

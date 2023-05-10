@@ -116,8 +116,8 @@ public class SpeedRunOptionScreen extends Screen {
         this.renderBackground(matrices);
         this.buttonListWidget.render(matrices, mouseX, mouseY, delta);
         super.render(matrices, mouseX, mouseY, delta);
-        drawCenteredTextWithShadow(matrices, textRenderer, this.title, this.width / 2, 10, 16777215);
-        drawTextWithShadow(matrices, textRenderer, "v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215);
+        drawCenteredText(matrices, textRenderer, this.title, this.width / 2, 10, 16777215);
+        drawStringWithShadow(matrices, textRenderer, "v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215);
 
         ArrayList<Text> tooltip = getToolTip(mouseX, mouseY);
         if (!tooltip.isEmpty() && !this.isDragging()) this.renderTooltip(matrices, tooltip, 0, height);
@@ -186,7 +186,7 @@ public class SpeedRunOptionScreen extends Screen {
             if (this.client == null) return;
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder bufferBuilder = tessellator.getBuffer();
-            RenderSystem.setShader(GameRenderer::getPositionTexColorProgram);
+            RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
             RenderSystem.setShaderTexture(0, OPTIONS_BACKGROUND_TEXTURE);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             float f = 32.0F;
@@ -205,7 +205,7 @@ public class SpeedRunOptionScreen extends Screen {
 
             public Entry(ClickableWidget buttonWidget) {
                 this.buttonWidget = buttonWidget;
-                this.buttonWidget.setX((ButtonScrollListWidget.this.width - this.buttonWidget.getWidth()) / 2);
+                this.buttonWidget.x = (ButtonScrollListWidget.this.width - this.buttonWidget.getWidth()) / 2;
                 children.add(this.buttonWidget);
             }
 
@@ -225,7 +225,7 @@ public class SpeedRunOptionScreen extends Screen {
 
             @Override
             public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-                buttonWidget.setY(y);
+                buttonWidget.y = y;
                 buttonWidget.render(matrices, mouseX, mouseY, tickDelta);
             }
         }
