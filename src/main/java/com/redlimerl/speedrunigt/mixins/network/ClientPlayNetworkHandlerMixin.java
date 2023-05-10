@@ -10,7 +10,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundIdS2CPacket;
-import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -42,6 +41,12 @@ public class ClientPlayNetworkHandlerMixin {
                 ci.cancel();
             }
         }
+    }
+
+    @Inject(method = "onPlayerPositionLook", at = @At("RETURN"))
+    public void onPlayerPositionLookMixin(CallbackInfo ci) {
+        if (SpeedRunOption.getOption(SpeedRunOptions.TELEPORT_TO_END_PRACTICE))
+            PracticeTimerManager.stopPractice();
     }
 
     @Inject(method = "onPlaySoundId", at = @At("RETURN"))
