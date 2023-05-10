@@ -28,7 +28,7 @@ public class InGameHudMixin {
         Float time = null;
 
         if (string.contains(":")) {
-            Matcher matcher = Pattern.compile("(\\d*):\\d*(:\\d*)?").matcher(string);
+            Matcher matcher = Pattern.compile("(\\d+):\\d+(:\\d+)?").matcher(string);
             if (matcher.find()) {
                 PracticeTimerManager.startPractice(0);
                 return;
