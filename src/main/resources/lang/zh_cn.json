@@ -102,6 +102,8 @@
   "speedrunigt.option.category.retime": "Retime",
   "speedrunigt.option.category.practice": "练习",
   "speedrunigt.option.open_records_folder": "打开纪录文件夹",
+  "speedrunigt.option.always_english_translations": "总是使用英语",
+  "speedrunigt.option.always_english_translations.description": "SpeedrunIGT的翻译将仅应用于英文\n(将重新加载资源)",
   "speedrunigt.option.generate_record": "保存纪录",
   "speedrunigt.option.generate_record.everything": "每次速通",
   "speedrunigt.option.generate_record.complete_only": "每次完成的速通",
