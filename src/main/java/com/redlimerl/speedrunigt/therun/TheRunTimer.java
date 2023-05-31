@@ -15,12 +15,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.dom.DOMSource;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.util.Collection;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.time.ZoneId;
+import java.util.*;
 
 public class TheRunTimer {
 
@@ -124,8 +120,8 @@ public class TheRunTimer {
         jsonObject.addProperty("currentSplitIndex", packetType == PacketType.RESET ? -1 : completedSplits.size());
         jsonObject.addProperty("timingMethod", 1);
         jsonObject.addProperty("currentDuration", packetType == PacketType.RESET ? 0 : (timer.getRealTimeAttack() - latestIgtPoint));
-        jsonObject.addProperty("startTime", ("/Date(" + Instant.ofEpochMilli(timer.getStartTime()).atZone(ZoneOffset.UTC).toInstant().toEpochMilli() + ")/").trim());
-        jsonObject.addProperty("endTime", ("/Date(" + (timer.isCompleted() ? Instant.ofEpochMilli(timer.getEndTime()).atZone(ZoneOffset.UTC).toInstant().toEpochMilli() : "0") + ")/").trim());
+        jsonObject.addProperty("startTime", ("/Date(" + timer.getStartTime() + ")/").trim());
+        jsonObject.addProperty("endTime", ("/Date(" + (timer.isCompleted() ? timer.getEndTime() : "0") + ")/").trim());
         jsonObject.addProperty("uploadKey", TheRunKeyHelper.UPLOAD_KEY);
         jsonObject.addProperty("isPaused", timer.isPaused());
         jsonObject.addProperty("isGameTimePaused", timer.isPaused());
@@ -142,6 +138,7 @@ public class TheRunTimer {
     public DOMSource convertXml() throws Exception {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        dateFormat.setTimeZone(TimeZone.getTimeZone(ZoneId.of("UTC")));
 
         @Nullable TheRunCategory category = timer.getCategory().getTheRunCategory();
         if (category == null) throw new NullPointerException();
