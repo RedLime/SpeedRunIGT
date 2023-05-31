@@ -39,7 +39,7 @@ public class RunCategories {
                             .build()
             )
             .setRetimeFunction(timer ->
-                    !SpeedRunOption.getOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE) && !timer.isCoop() && timer.getRunType() == RunType.RANDOM_SEED &&
+                    !SpeedRunOption.getOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE) && !timer.isCoop() && timer.getRunType() == RunType.RANDOM_SEED && !timer.isRTAMode() &&
                             (SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_USE_AUTO_RETIME) || timer.getInGameTime(false) < 1000 * 60 * 30)
             ).build();
     public static RunCategory CUSTOM = new RunCategory("CUSTOM","mc#");
