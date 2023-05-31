@@ -42,8 +42,9 @@ public abstract class ClientWorldMixin extends World {
             for (int x = chunkPos.getStartX(); x < chunkPos.getEndX() + 1; x++) {
                 for (int y = getBedrockMaxHeight(); y < getDimensionHeight(); y++) {
                     for (int z = chunkPos.getStartZ(); z < chunkPos.getEndZ() + 1; z++) {
-                        Block block = getBlockState(new BlockPos(x, y, z)).getBlock();
-                        if (block != Blocks.BEDROCK && block != Blocks.AIR) {
+                        BlockState blockState = getBlockState(new BlockPos(x, y, z));
+                        Block block = blockState.getBlock();
+                        if (block != Blocks.BEDROCK && !blockState.isAir()) {
                             return;
                         }
                     }
