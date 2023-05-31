@@ -4,13 +4,11 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.therun.TheRunCategory;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
-import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import org.apache.commons.lang3.tuple.MutablePair;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class RunCategories {
 
@@ -44,7 +42,7 @@ public class RunCategories {
                             .build()
             )
             .setRetimeFunction(timer ->
-                    !SpeedRunOption.getOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE) && !timer.isCoop() && timer.getRunType() == RunType.RANDOM_SEED &&
+                    !SpeedRunOption.getOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE) && !timer.isCoop() && timer.getRunType() == RunType.RANDOM_SEED && !timer.isRTAMode()  &&
                             (SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_USE_AUTO_RETIME) || timer.getInGameTime(false) < 1000 * 60 * 17)
             ).build();
     public static RunCategory CUSTOM = new RunCategory("CUSTOM","mc#");
