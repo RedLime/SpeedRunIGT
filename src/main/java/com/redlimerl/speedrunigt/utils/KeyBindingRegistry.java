@@ -19,7 +19,6 @@
 package com.redlimerl.speedrunigt.utils;
 
 import com.google.common.collect.Lists;
-import com.redlimerl.speedrunigt.SpeedRunIGTClient;
 import net.minecraft.client.options.KeyBinding;
 
 import java.util.List;
@@ -37,18 +36,6 @@ public final class KeyBindingRegistry {
      * we can make sure that there are no duplicates this way.
      */
     public static KeyBinding[] process(KeyBinding[] keysAll) {
-        // Key Bindings initialize
-        SpeedRunIGTClient.timerResetKeyBinding = registerKeyBinding(new KeyBinding(
-                "speedrunigt.controls.start_timer",
-                22,
-                "speedrunigt.title.options"
-        ));
-        SpeedRunIGTClient.timerStopKeyBinding = registerKeyBinding(new KeyBinding(
-                "speedrunigt.controls.stop_timer",
-                23,
-                "speedrunigt.title.options"
-        ));
-
         List<KeyBinding> newKeysAll = Lists.newArrayList(keysAll);
         newKeysAll.removeAll(moddedKeyBindings);
         newKeysAll.addAll(moddedKeyBindings);

@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.mixins.keybinding;
 
+import com.redlimerl.speedrunigt.SpeedRunIGTClient;
 import com.redlimerl.speedrunigt.utils.KeyBindingRegistry;
 import net.minecraft.client.options.GameOptions;
 import net.minecraft.client.options.KeyBinding;
@@ -16,6 +17,17 @@ public class GameOptionsMixin {
 
     @Inject(at = @At("HEAD"), method = "load()V")
     public void loadHook(CallbackInfo info) {
+        // Key Bindings initialize
+        SpeedRunIGTClient.timerResetKeyBinding = KeyBindingRegistry.registerKeyBinding(new KeyBinding(
+                "speedrunigt.controls.start_timer",
+                22,
+                "speedrunigt.title.options"
+        ));
+        SpeedRunIGTClient.timerStopKeyBinding = KeyBindingRegistry.registerKeyBinding(new KeyBinding(
+                "speedrunigt.controls.stop_timer",
+                23,
+                "speedrunigt.title.options"
+        ));
         keysAll = KeyBindingRegistry.process(keysAll);
     }
 }
