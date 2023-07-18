@@ -5,6 +5,7 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.crypt.Crypto;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
+import com.redlimerl.speedrunigt.paceman.PacemanRequestHelper;
 import com.redlimerl.speedrunigt.therun.TheRunRequestHelper;
 import com.redlimerl.speedrunigt.therun.TheRunTimer;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
@@ -193,7 +194,7 @@ public class InGameTimer implements Serializable {
         // Init additional data
         INSTANCE.isHardcore = InGameTimerUtils.isHardcoreWorld();
 
-        COMPLETED_INSTANCE = new Gson().fromJson(new Gson().toJson(INSTANCE) + "", InGameTimer.class);
+        COMPLETED_INSTANCE = new Gson().fromJson(new Gson().toJson(INSTANCE), InGameTimer.class);
         INSTANCE.isCompleted = true;
         InGameTimer timer = COMPLETED_INSTANCE;
 
@@ -222,6 +223,7 @@ public class InGameTimer implements Serializable {
         InGameTimerUtils.LATEST_TIMER_TIME = System.currentTimeMillis();
         TheRunRequestHelper.updateTimerData(INSTANCE, TheRunTimer.PacketType.COMPLETE);
         TheRunRequestHelper.submitTimerData(INSTANCE);
+        PacemanRequestHelper.updateTimerData(INSTANCE, false);
 
         for (Consumer<InGameTimer> onCompleteConsumer : onCompleteConsumers) {
             try {
@@ -295,6 +297,7 @@ public class InGameTimer implements Serializable {
         INSTANCE.leaveTime = System.currentTimeMillis();
         INSTANCE.pauseCount = 0;
         TheRunRequestHelper.updateTimerData(INSTANCE, TheRunTimer.PacketType.RESET);
+        PacemanRequestHelper.updateTimerData(INSTANCE, true);
         INSTANCE.setPause(true, TimerStatus.LEAVE, "leave the world");
 
         save(true);
@@ -309,7 +312,7 @@ public class InGameTimer implements Serializable {
     private static synchronized void save(boolean withLeave) {
         if (waitingSaveTask || saveManagerThread.isShutdown() || saveManagerThread.isTerminated() || !INSTANCE.isServerIntegrated || INSTANCE.worldName.isEmpty() || !INSTANCE.writeFiles) return;
 
-        String worldName = INSTANCE.worldName, timerData = SpeedRunIGT.GSON.toJson(INSTANCE) + "", completeData = SpeedRunIGT.GSON.toJson(COMPLETED_INSTANCE) + "";
+        String worldName = INSTANCE.worldName, timerData = SpeedRunIGT.GSON.toJson(INSTANCE), completeData = SpeedRunIGT.GSON.toJson(COMPLETED_INSTANCE);
         File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "data");
         if (worldDir == null) {
             SpeedRunIGT.debug("Tried to saving timer data, but couldn't find world directory");
@@ -731,6 +734,7 @@ public class InGameTimer implements Serializable {
                     }
                 }
                 TheRunRequestHelper.updateTimerData(this, TheRunTimer.PacketType.PLAYING);
+                PacemanRequestHelper.updateTimerData(INSTANCE, false);
             }
             this.setStatus(TimerStatus.RUNNING);
         }
@@ -751,6 +755,7 @@ public class InGameTimer implements Serializable {
         }
         timelines.add(new TimerTimeline(name, getInGameTime(false), getRealTimeAttack()));
         TheRunRequestHelper.updateTimerData(this, TheRunTimer.PacketType.PLAYING);
+        PacemanRequestHelper.updateTimerData(INSTANCE, false);
         if (canSendPacket && this.isCoop() && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerTimelinePacket(name));
         return true;
     }

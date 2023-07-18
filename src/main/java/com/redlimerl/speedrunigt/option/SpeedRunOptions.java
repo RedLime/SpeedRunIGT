@@ -308,6 +308,18 @@ public class SpeedRunOptions {
         }
     };
 
+    public static final OptionArgument<Boolean> ENABLE_PACEMAN_GG_LIVE = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "paceman_gg_live"), false) {
+        @Override
+        public Boolean valueFromString(String string) {
+            return Objects.equals(string, "true");
+        }
+
+        @Override
+        public String valueToString(Boolean value) {
+            return String.valueOf(value);
+        }
+    };
+
     public static final OptionArgument<Boolean> ENABLE_TIMER_SPLIT_POS = new OptionArgument<Boolean>(new Identifier(SpeedRunIGT.MOD_ID, "enable_timer_split_position"), false) {
         @Override
         public Boolean valueFromString(String string) {

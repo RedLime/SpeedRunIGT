@@ -452,6 +452,26 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
 
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
+                        new ButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.paceman_gg.open_paceman_gg"),
+                                (ButtonWidget button) -> Util.getOperatingSystem().open("https://paceman.gg/"))
+                )
+                .setCategory("paceman.gg")
+        );
+
+        factories.add(screen -> new OptionButtonFactory.Builder()
+                .setButtonWidget(
+                        new ButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.paceman_gg.toggle_live").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.ENABLE_PACEMAN_GG_LIVE) ? ScreenTexts.ON : ScreenTexts.OFF),
+                                (ButtonWidget button) -> {
+                                    SpeedRunOption.setOption(SpeedRunOptions.ENABLE_PACEMAN_GG_LIVE, !SpeedRunOption.getOption(SpeedRunOptions.ENABLE_PACEMAN_GG_LIVE));
+                                    button.setMessage(new TranslatableText("speedrunigt.option.paceman_gg.toggle_live").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.ENABLE_PACEMAN_GG_LIVE) ? ScreenTexts.ON : ScreenTexts.OFF));
+                                })
+                )
+                .setToolTip(() -> I18n.translate("speedrunigt.option.paceman_gg.toggle_live.description"))
+                .setCategory("paceman.gg")
+        );
+
+        factories.add(screen -> new OptionButtonFactory.Builder()
+                .setButtonWidget(
                         new ButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.debug_mode").append(" : ").append(SpeedRunIGT.IS_DEBUG_MODE ? ScreenTexts.ON : ScreenTexts.OFF),
                                 (ButtonWidget button) -> {
                                     SpeedRunIGT.IS_DEBUG_MODE = !SpeedRunIGT.IS_DEBUG_MODE;

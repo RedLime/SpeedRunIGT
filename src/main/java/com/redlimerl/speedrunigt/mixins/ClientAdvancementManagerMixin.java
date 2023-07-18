@@ -2,6 +2,7 @@ package com.redlimerl.speedrunigt.mixins;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.redlimerl.speedrunigt.paceman.PacemanRequestHelper;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerAdvancementTracker;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
@@ -21,6 +22,7 @@ import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -65,6 +67,8 @@ public abstract class ClientAdvancementManagerMixin {
             if (timer.isCoop() && advancement.getDisplay() != null) {
                 TimerPacketUtils.sendClient2ServerPacket(client, new TimerAchieveAdvancementPacket(advancement));
             }
+            if (advancement.getDisplay() != null)
+                PacemanRequestHelper.updateTimerData(timer, false);
 
             // Custom Json category
             if (timer.getCategory().getConditionJson() != null) {
@@ -121,6 +125,7 @@ public abstract class ClientAdvancementManagerMixin {
         }
     }
 
+    @Unique
     private int getCompleteAdvancementsCount() {
         Set<String> completedAdvancements = Sets.newHashSet();
         for (Map.Entry<String, TimerAdvancementTracker.AdvancementTrack> track : InGameTimer.getInstance().getAdvancementsTracker().getAdvancements().entrySet()) {
