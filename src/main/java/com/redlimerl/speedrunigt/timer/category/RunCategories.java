@@ -51,13 +51,4 @@ public class RunCategories {
             }
         }
     }
-
-    @SafeVarargs
-    public static LinkedHashMap<String, String> asHashMap(Map.Entry<String, String>... entries) {
-        LinkedHashMap<String, String> linkedHashMap = new LinkedHashMap<>();
-        for (Map.Entry<String, String> entry : entries) {
-            linkedHashMap.put(entry.getKey(), entry.getValue());
-        }
-        return linkedHashMap;
-    }
 }

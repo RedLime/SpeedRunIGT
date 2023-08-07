@@ -191,7 +191,7 @@ public class InGameTimer implements Serializable {
         // Init additional data
         INSTANCE.isHardcore = InGameTimerUtils.isHardcoreWorld();
 
-        COMPLETED_INSTANCE = new Gson().fromJson(new Gson().toJson(INSTANCE) + "", InGameTimer.class);
+        COMPLETED_INSTANCE = new Gson().fromJson(new Gson().toJson(INSTANCE), InGameTimer.class);
         INSTANCE.isCompleted = true;
         InGameTimer timer = COMPLETED_INSTANCE;
 
@@ -304,7 +304,7 @@ public class InGameTimer implements Serializable {
     private static synchronized void save(boolean withLeave) {
         if (waitingSaveTask || saveManagerThread.isShutdown() || saveManagerThread.isTerminated() || !INSTANCE.isServerIntegrated || INSTANCE.worldName.isEmpty() || !INSTANCE.writeFiles) return;
 
-        String worldName = INSTANCE.worldName, timerData = SpeedRunIGT.GSON.toJson(INSTANCE) + "", completeData = SpeedRunIGT.GSON.toJson(COMPLETED_INSTANCE) + "";
+        String worldName = INSTANCE.worldName, timerData = SpeedRunIGT.GSON.toJson(INSTANCE), completeData = SpeedRunIGT.GSON.toJson(COMPLETED_INSTANCE);
         File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "data");
         if (worldDir == null) {
             SpeedRunIGT.debug("Tried to saving timer data, but couldn't find world directory");
@@ -600,7 +600,7 @@ public class InGameTimer implements Serializable {
         //Rebase time (When a joined world or changed dimension)
         if (leastStartTime != 0 && leastTickTime != 0 && leastStartTime != currentTime) {
             double value = MathHelper.clamp((leastStartTime - leastTickTime) * 1.0 / tickDelays, 0, 1) * 50.0;
-            rebaseIGTime += value;
+            rebaseIGTime += (long) value;
             leastStartTime = 0;
         }
 
@@ -672,7 +672,7 @@ public class InGameTimer implements Serializable {
                         if (InGameTimerUtils.RETIME_IS_WAITING_LOAD && InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD) {
                             retime = new TimerPauseLog.Retime(retimedIGTTime - beforeRetime, "prob. world load pause");
                         } else {
-                            if (InGameTimerUtils.CHANGED_OPTIONS.size() > 0) {
+                            if (!InGameTimerUtils.CHANGED_OPTIONS.isEmpty()) {
                                 int options = InGameTimerUtils.CHANGED_OPTIONS.size();
                                 retimedIGTTime += Math.max(nowTime - loggerPausedTime - 5000L, 0);
                                 retime = new TimerPauseLog.Retime(retimedIGTTime - beforeRetime, "changed option" + (options > 1 ? ("s (" + options + ")") : ""));
