@@ -5,9 +5,6 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 public class RunCategories {
 
     public static RunCategory ERROR_CATEGORY = new RunCategory("unknown","mc");
