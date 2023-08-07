@@ -4,7 +4,6 @@ import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.api.SpeedRunIGTApi;
 import com.redlimerl.speedrunigt.impl.OptionButtonsImpl;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
-import com.redlimerl.speedrunigt.therun.TheRunKeyHelper;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.utils.FontUtils;
 import com.redlimerl.speedrunigt.utils.KeyBindingRegistry;
@@ -63,8 +62,6 @@ public class SpeedRunIGTClient implements ClientModInitializer {
 
         // Add default fonts
         FontUtils.copyDefaultFonts();
-
-        TheRunKeyHelper.load();
 
         SpeedRunIGT.IS_CLIENT_SIDE = true;
     }

@@ -5,8 +5,6 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.crypt.Crypto;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
-import com.redlimerl.speedrunigt.therun.TheRunRequestHelper;
-import com.redlimerl.speedrunigt.therun.TheRunTimer;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.category.RunCategory;
@@ -220,8 +218,6 @@ public class InGameTimer implements Serializable {
         INSTANCE.updateRecordString();
         INSTANCE.writeRecordFile(false);
         InGameTimerUtils.LATEST_TIMER_TIME = System.currentTimeMillis();
-        TheRunRequestHelper.updateTimerData(INSTANCE, TheRunTimer.PacketType.COMPLETE);
-        TheRunRequestHelper.submitTimerData(INSTANCE);
 
         for (Consumer<InGameTimer> onCompleteConsumer : onCompleteConsumers) {
             try {
@@ -294,7 +290,6 @@ public class InGameTimer implements Serializable {
 
         INSTANCE.leaveTime = System.currentTimeMillis();
         INSTANCE.pauseCount = 0;
-        TheRunRequestHelper.updateTimerData(INSTANCE, TheRunTimer.PacketType.RESET);
         INSTANCE.setPause(true, TimerStatus.LEAVE, "leave the world");
 
         save(true);
@@ -730,7 +725,6 @@ public class InGameTimer implements Serializable {
                         TimerPacketUtils.sendServer2ClientPacket(SpeedRunIGT.DEDICATED_SERVER, new TimerStartPacket(InGameTimer.getInstance(), 0));
                     }
                 }
-                TheRunRequestHelper.updateTimerData(this, TheRunTimer.PacketType.PLAYING);
             }
             this.setStatus(TimerStatus.RUNNING);
         }
@@ -750,7 +744,6 @@ public class InGameTimer implements Serializable {
             if (Objects.equals(timeline.getName(), name)) return false;
         }
         timelines.add(new TimerTimeline(name, getInGameTime(false), getRealTimeAttack()));
-        TheRunRequestHelper.updateTimerData(this, TheRunTimer.PacketType.PLAYING);
         if (canSendPacket && this.isCoop() && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerTimelinePacket(name));
         return true;
     }
