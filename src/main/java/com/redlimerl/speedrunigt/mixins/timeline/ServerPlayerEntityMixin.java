@@ -13,10 +13,11 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -30,29 +31,30 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         super(world, blockPos, gameProfile);
     }
 
-    private ServerWorld beforeWorld = null;
+    @Unique
+    private DimensionType oldDimension = null;
+    @Unique
     private Vec3d lastPortalPos = null;
 
     @Inject(method = "changeDimension", at = @At("HEAD"))
     public void onChangeDimension(ServerWorld destination, CallbackInfoReturnable<Entity> cir) {
-        beforeWorld = this.getServerWorld();
+        oldDimension = this.getServerWorld().getDimension();
         lastPortalPos = this.getPos();
         InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = !InGameTimer.getInstance().isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY;
     }
 
     @Inject(method = "changeDimension", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;onPlayerChangeDimension(Lnet/minecraft/server/network/ServerPlayerEntity;)V", shift = At.Shift.AFTER))
     public void onChangedDimension(ServerWorld destination, CallbackInfoReturnable<Entity> cir) {
-        RegistryKey<World> oldRegistryKey = beforeWorld.getRegistryKey();
-        RegistryKey<World> newRegistryKey = world.getRegistryKey();
+        DimensionType currentDimension = destination.getDimension();
 
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() != TimerStatus.NONE) {
-            if (oldRegistryKey == World.OVERWORLD && newRegistryKey == World.NETHER) {
+            if (oldDimension.isBedWorking() && currentDimension.hasCeiling()) {
                 if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY)
                     InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.NETHER, this.getPos().add(0, 0, 0), lastPortalPos.add(0, 0, 0));
             }
 
-            if (oldRegistryKey == World.NETHER && newRegistryKey == World.OVERWORLD) {
+            if (oldDimension.hasCeiling() && currentDimension.isBedWorking()) {
                 if (this.isEnoughTravel()) {
                     int portalIndex = InGameTimerUtils.isBlindTraveled(lastPortalPos);
                     InGameTimer.getInstance().tryInsertNewTimeline("nether_travel");
@@ -68,6 +70,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         }
     }
 
+    @Unique
     private boolean isEnoughTravel() {
         boolean eye = false, pearl = false, rod = false;
         for (ItemStack itemStack : this.inventory.main) {
