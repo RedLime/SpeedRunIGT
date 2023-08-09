@@ -1,4 +1,5 @@
 package com.minecraftspeedrunning.srigt.common;
 
-public class Category {
+public interface Category {
+    // TODO: functions to build igt and rta
 }

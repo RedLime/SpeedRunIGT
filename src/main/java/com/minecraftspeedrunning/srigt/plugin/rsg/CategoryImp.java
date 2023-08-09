@@ -1,4 +1,6 @@
 package com.minecraftspeedrunning.srigt.plugin.rsg;
 
-public class CategoryImp {
+import com.minecraftspeedrunning.srigt.common.Category;
+
+public class CategoryImp implements Category {
 }
