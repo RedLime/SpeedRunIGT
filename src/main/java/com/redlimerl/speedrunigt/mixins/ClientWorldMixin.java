@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.mixins;
 
+import com.redlimerl.speedrunigt.instance.GameInstance;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import net.minecraft.block.Block;
@@ -30,6 +31,7 @@ public abstract class ClientWorldMixin extends World {
     @Inject(at = @At("HEAD"), method = "tick")
     public void onTick(CallbackInfo ci) {
         InGameTimer.getInstance().tick();
+        GameInstance.getInstance().flush();
     }
 
     @Inject(method = "updateListeners", at = @At("TAIL"))

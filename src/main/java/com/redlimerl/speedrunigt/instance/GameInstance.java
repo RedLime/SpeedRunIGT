@@ -1,16 +1,27 @@
 package com.redlimerl.speedrunigt.instance;
 
 import com.minecraftspeedrunning.srigt.common.events.Event;
+import com.redlimerl.speedrunigt.SpeedRunIGTConfig;
 import com.redlimerl.speedrunigt.events.*;
-import net.minecraft.client.MinecraftClient;
 
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class Instance {
+public class GameInstance {
     private static final String EVENT_LOG_FILE_NAME = "events.log";
+    private static GameInstance gameInstance;
+
+    public static GameInstance getInstance() {
+        return gameInstance;
+    }
+    public static void createInstance(Path instancePath) {
+        if (gameInstance == null) {
+            gameInstance = new GameInstance(instancePath);
+        }
+    }
+
     public static final ExecutorService saveManagerThread = Executors.newSingleThreadExecutor();
 
     private TimerMode timerMode;
@@ -20,7 +31,7 @@ public class Instance {
 
     private final BufferedEventRepository instanceEventRepository;
 
-    Instance(Path instancePath) {
+    private GameInstance(Path instancePath) {
         Path eventLogPath = instancePath.resolve(EVENT_LOG_FILE_NAME);
         EventRepository fileEventRepository = new FileEventRepository(eventLogPath);
         instanceEventRepository = new MemoryBufferedEventRepository(fileEventRepository);
@@ -30,14 +41,13 @@ public class Instance {
      * load world hosted on this machine
      * @param worldFolderPath - path of the folder the world is saved at
      */
-    void loadWorld(Path worldFolderPath) {
-        // TODO: replace this with a better check that I can find at not 4am
-        boolean isDedicated = MinecraftClient.getInstance().getServer().isDedicated();
+    public void loadWorld(Path worldFolderPath) {
+        boolean isDedicated = SpeedRunIGTConfig.getConfig().isDedicated;
         timerMode = isDedicated ? TimerMode.MULTIPLAYER_SERVER : TimerMode.SINGLE_PLAYER;
         world = new World(worldFolderPath);
     }
 
-    void openToLan() {
+    public void openToLan() {
         timerMode = TimerMode.MULTIPLAYER_SERVER;
     }
 
@@ -45,19 +55,25 @@ public class Instance {
      * connect to world hosted on another machine
      * @param events - list of events that have already taken place on leader machine
      */
-    void connect(List<Event> events) {
+    public void connect(List<Event> events) {
         timerMode = TimerMode.MULTIPLAYER_CLIENT;
         networkEventRepository = new MemoryEventRepository(events);
     }
 
-    void addNetworkEvents(List<Event> events) {
+    public void closeTimer() {
+        timerMode = null;
+        world = null;
+        networkEventRepository = null;
+    }
+
+    public void addNetworkEvents(List<Event> events) {
         if (timerMode.timerHierarchy != TimerHierarchy.FOLLOWER) {
             return;
         }
         networkEventRepository.addAll(events);
     }
 
-    void addEvent(Event event) {
+    public void addEvent(Event event) {
         if (timerMode.timerHierarchy != TimerHierarchy.LEADER) {
             return;
         }
@@ -65,13 +81,15 @@ public class Instance {
         world.eventRepository.add(event);
     }
 
-    void flush() {
+    public void flush() {
         if (timerMode.timerHierarchy != TimerHierarchy.LEADER) {
             return;
         }
         if (timerMode.gameMode == GameMode.MULTIPLAYER) {
             List<Event> events = world.eventRepository.getQueue();
-            // TODO: push events to followers
+            if (!events.isEmpty()) {
+                // TODO: push events to followers
+            }
         }
         world.eventRepository.flush();
     }

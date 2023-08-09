@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.redlimerl.speedrunigt.instance.Instance.saveManagerThread;
+import static com.redlimerl.speedrunigt.instance.GameInstance.saveManagerThread;
 
 public class FileEventRepository implements EventRepository {
     private final Map<String, Integer> eventVersions = new HashMap<>();
