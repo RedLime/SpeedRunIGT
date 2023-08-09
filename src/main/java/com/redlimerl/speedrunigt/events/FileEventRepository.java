@@ -78,13 +78,13 @@ public class FileEventRepository implements EventRepository {
     }
 
     @Override
-    public void addEvent(Event event) {
+    public void add(Event event) {
         String newEvents = this.serializeEvent(event) + "\n";
         appendEventsFile(newEvents);
     }
 
     @Override
-    public void addEvents(Collection<Event> eventQueue) {
+    public void addAll(Collection<Event> eventQueue) {
         String newEvents = eventQueue.stream()
                 .map(this::serializeEvent)
                 .collect(Collectors.joining("\n", "", "\n"));

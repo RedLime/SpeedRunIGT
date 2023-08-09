@@ -2,19 +2,19 @@ package com.redlimerl.speedrunigt.instance;
 
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
-import com.redlimerl.speedrunigt.events.BufferedEventRepository;
+import com.redlimerl.speedrunigt.events.MemoryBufferedEventRepository;
 import com.redlimerl.speedrunigt.events.EventRepository;
 import com.redlimerl.speedrunigt.events.FileEventRepository;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class WorldFolder {
+public class World {
     private static final String EVENT_LOG_FILE_NAME = "events.log";
 
-    public final BufferedEventRepository eventRepository;
+    public final MemoryBufferedEventRepository eventRepository;
 
-    WorldFolder(Path worldFolderPath) {
+    World(Path worldFolderPath) {
         Path worldTimerFolderPath = worldFolderPath.resolve(SpeedRunIGT.MOD_ID);
 
         if (Files.notExists(worldFolderPath) || !Files.isDirectory(worldFolderPath)) {
@@ -29,8 +29,8 @@ public class WorldFolder {
         }
 
         Path eventLogPath = worldTimerFolderPath.resolve(EVENT_LOG_FILE_NAME);
-        EventRepository worldEventRepository = new FileEventRepository(eventLogPath);
-        this.eventRepository = new BufferedEventRepository(worldEventRepository);
+        EventRepository fileEventRepository = new FileEventRepository(eventLogPath);
+        this.eventRepository = new MemoryBufferedEventRepository(fileEventRepository);
         // TODO: create world state repository here
     }
 

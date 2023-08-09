@@ -7,20 +7,17 @@ import java.util.*;
 public class MemoryEventRepository implements EventRepository {
     private final List<Event> events;
 
-    public MemoryEventRepository() {
-        events = new ArrayList<>();
-    }
     public MemoryEventRepository(List<Event> events) {
         this.events = events;
     }
 
     @Override
-    public void addEvent(Event event) {
+    public void add(Event event) {
         events.add(event);
     }
 
     @Override
-    public void addEvents(Collection<Event> events) {
+    public void addAll(Collection<Event> events) {
         this.events.addAll(events);
     }
 

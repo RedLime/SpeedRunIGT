@@ -2,41 +2,44 @@ package com.redlimerl.speedrunigt.events;
 
 import com.minecraftspeedrunning.srigt.common.events.Event;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class BufferedEventRepository implements EventRepository {
-    private final Queue<Event> eventQueue = new ArrayDeque<>();
+    protected final List<Event> queue = new ArrayList<>();
     private final EventRepository eventRepository;
-    private final MemoryEventRepository memoryEventRepository;
 
     public BufferedEventRepository(EventRepository eventRepository) {
         this.eventRepository = eventRepository;
-        this.memoryEventRepository = new MemoryEventRepository(eventRepository.getEvents());
     }
 
-    public void flushEvents() {
-        if (this.eventQueue.isEmpty()) {
+    public void flush() {
+        if (this.queue.isEmpty()) {
             return;
         }
 
-        this.eventRepository.addEvents(this.eventQueue);
-        this.eventQueue.clear();
+        eventRepository.addAll(queue);
+        queue.clear();
     }
 
-    @Override
-    public void addEvent(Event event) {
-        eventRepository.addEvent(event);
-        memoryEventRepository.addEvent(event);
-    }
-
-    @Override
-    public void addEvents(Collection<Event> events) {
-        eventRepository.addEvents(events);
-        memoryEventRepository.addEvents(events);
+    public List<Event> getQueue() {
+        return queue;
     }
 
     @Override
     public List<Event> getEvents() {
-        return memoryEventRepository.getEvents();
+        flush();
+        return eventRepository.getEvents();
+    }
+
+    @Override
+    public void add(Event event) {
+        queue.add(event);
+    }
+
+    @Override
+    public void addAll(Collection<Event> events) {
+        this.queue.addAll(events);
     }
 }

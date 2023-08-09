@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface EventRepository {
     List<Event> getEvents();
-    void addEvent(Event event);
-    void addEvents(Collection<Event> events);
+    void add(Event event);
+    void addAll(Collection<Event> events);
 }
