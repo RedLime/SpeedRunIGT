@@ -1,6 +1,6 @@
 package com.redlimerl.speedrunigt.instance;
 
-public enum TimerRelationship {
+public enum TimerHierarchy {
     LEADER,
     FOLLOWER;
 }

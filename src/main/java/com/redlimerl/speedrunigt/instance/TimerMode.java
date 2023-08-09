@@ -1,15 +1,15 @@
 package com.redlimerl.speedrunigt.instance;
 
 public enum TimerMode {
-    SINGLE_PLAYER(TimerRelationship.LEADER, GameMode.SINGLE_PLAYER),
-    MULTIPLAYER_SERVER(TimerRelationship.LEADER, GameMode.MULTIPLAYER),
-    MULTIPLAYER_CLIENT(TimerRelationship.FOLLOWER, GameMode.MULTIPLAYER);
+    SINGLE_PLAYER(TimerHierarchy.LEADER, GameMode.SINGLE_PLAYER),
+    MULTIPLAYER_SERVER(TimerHierarchy.LEADER, GameMode.MULTIPLAYER),
+    MULTIPLAYER_CLIENT(TimerHierarchy.FOLLOWER, GameMode.MULTIPLAYER);
 
-    public final TimerRelationship timerRelationship;
+    public final TimerHierarchy timerHierarchy;
     public final GameMode gameMode;
 
-    TimerMode(TimerRelationship timerRelationship, GameMode gameMode) {
-        this.timerRelationship = timerRelationship;
+    TimerMode(TimerHierarchy timerHierarchy, GameMode gameMode) {
+        this.timerHierarchy = timerHierarchy;
         this.gameMode = gameMode;
     }
 }

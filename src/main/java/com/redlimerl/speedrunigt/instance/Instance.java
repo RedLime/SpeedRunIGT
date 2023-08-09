@@ -51,14 +51,14 @@ public class Instance {
     }
 
     void addNetworkEvents(List<Event> events) {
-        if (timerMode.timerRelationship != TimerRelationship.FOLLOWER) {
+        if (timerMode.timerHierarchy != TimerHierarchy.FOLLOWER) {
             return;
         }
         networkEventRepository.addAll(events);
     }
 
     void addEvent(Event event) {
-        if (timerMode.timerRelationship != TimerRelationship.LEADER) {
+        if (timerMode.timerHierarchy != TimerHierarchy.LEADER) {
             return;
         }
         instanceEventRepository.add(event);
@@ -66,7 +66,7 @@ public class Instance {
     }
 
     void flush() {
-        if (timerMode.timerRelationship != TimerRelationship.LEADER) {
+        if (timerMode.timerHierarchy != TimerHierarchy.LEADER) {
             return;
         }
         if (timerMode.gameMode == GameMode.MULTIPLAYER) {
@@ -77,10 +77,10 @@ public class Instance {
     }
 
     List<Event> getEvents() {
-        if (timerMode.timerRelationship == TimerRelationship.FOLLOWER) {
+        if (timerMode.timerHierarchy == TimerHierarchy.FOLLOWER) {
             return networkEventRepository.getEvents();
         }
-        if (timerMode.timerRelationship == TimerRelationship.LEADER) {
+        if (timerMode.timerHierarchy == TimerHierarchy.LEADER) {
             return world.eventRepository.getEvents();
         }
         return null;
