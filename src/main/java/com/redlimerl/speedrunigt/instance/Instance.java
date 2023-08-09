@@ -37,7 +37,7 @@ public class Instance {
         world = new World(worldFolderPath);
     }
 
-    void openLan() {
+    void openToLan() {
         timerMode = TimerMode.MULTIPLAYER_SERVER;
     }
 
