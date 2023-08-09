@@ -1,4 +1,4 @@
-package com.redlimerl.speedrunigt.events;
+package com.minecraftspeedrunning.srigt.common.events;
 
 import com.redlimerl.speedrunigt.utils.MonadicStringBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -49,10 +49,10 @@ public class Event {
     public final String data;
 
     Event(
-            @NotNull Integer eventVersion,
-            @NotNull String eventId,
-            @NotNull Long gameTime,
-            @NotNull Long realTime
+        @NotNull Integer eventVersion,
+        @NotNull String eventId,
+        @NotNull Long gameTime,
+        @NotNull Long realTime
     ) {
         this.id = eventId;
         this.version = eventVersion;
@@ -62,11 +62,11 @@ public class Event {
     }
 
     Event(
-            @NotNull Integer eventVersion,
-            @NotNull String eventId,
-            @NotNull Long gameTime,
-            @NotNull Long realTime,
-            String data
+        @NotNull Integer eventVersion,
+        @NotNull String eventId,
+        @NotNull Long gameTime,
+        @NotNull Long realTime,
+        String data
     ) {
         this.id = eventId;
         this.version = eventVersion;
@@ -79,12 +79,12 @@ public class Event {
         MonadicStringBuilder stringBuilder = new MonadicStringBuilder();
 
         return stringBuilder
-                .appendIf(() -> writeVersion, " " + version)
-                .append(id)
-                .append(" " + realTime)
-                .append(" " + gameTime)
-                .appendIf(() -> data != null, " " + data)
-                .toString();
+            .appendIf(() -> writeVersion, " " + version)
+            .append(id)
+            .append(" " + realTime)
+            .append(" " + gameTime)
+            .appendIf(() -> data != null, " " + data)
+            .toString();
     }
 
     public @NotNull Long getRealTime() {

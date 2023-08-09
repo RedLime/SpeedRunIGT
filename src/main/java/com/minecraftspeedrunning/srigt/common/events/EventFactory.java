@@ -1,4 +1,4 @@
-package com.redlimerl.speedrunigt.events;
+package com.minecraftspeedrunning.srigt.common.events;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -6,11 +6,11 @@ public class EventFactory {
     String eventId;
     Integer eventVersion;
 
-    EventFactory(String source, String name) {
+    public EventFactory(String source, String name) {
         this(source, name, 0);
     }
 
-    EventFactory(String source, String name, Integer eventVersion) {
+    public EventFactory(String source, String name, Integer eventVersion) {
         // TODO: escape spaces in the source and name
         eventId = source + "." + name;
         this.eventVersion = eventVersion;
