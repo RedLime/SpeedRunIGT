@@ -1,6 +1,6 @@
 package com.redlimerl.speedrunigt.instance;
 
-public enum HostMode {
+public enum GameMode {
     SINGLE_PLAYER,
     MULTIPLAYER
 }
