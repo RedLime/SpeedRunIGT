@@ -3,6 +3,7 @@ package com.redlimerl.speedrunigt;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.api.SpeedRunIGTApi;
 import com.redlimerl.speedrunigt.impl.OptionButtonsImpl;
+import com.redlimerl.speedrunigt.instance.GameInstance;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.utils.FontUtils;
@@ -64,5 +65,8 @@ public class SpeedRunIGTClient implements ClientModInitializer {
         FontUtils.copyDefaultFonts();
 
         SpeedRunIGT.IS_CLIENT_SIDE = true;
+
+        SpeedRunIGTConfig.config = new SpeedRunIGTConfig(false);
+        GameInstance.createInstance(FabricLoader.getInstance().getGameDir());
     }
 }

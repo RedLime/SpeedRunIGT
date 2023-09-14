@@ -54,6 +54,7 @@ public class SpeedRunIGT implements ModInitializer {
     }
     public static Path getGlobalPath() { return new File(System.getProperty("user.home").replace("\\", "/"), SpeedRunIGT.MOD_ID).toPath(); }
     public static Path getRecordsPath() { return getGlobalPath().resolve("records"); }
+    public static Path getEventsPath() { return getGlobalPath().resolve("events"); }
 
     public static final Set<ModContainer> API_PROVIDERS = Sets.newHashSet();
 
@@ -61,6 +62,7 @@ public class SpeedRunIGT implements ModInitializer {
         getMainPath().toFile().mkdirs();
         getGlobalPath().toFile().mkdirs();
         getRecordsPath().toFile().mkdirs();
+        getEventsPath().toFile().mkdirs();
         FONT_PATH.toFile().mkdirs();
 
         //Delete all old timer data

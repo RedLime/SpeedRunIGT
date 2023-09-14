@@ -18,11 +18,10 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "com.redlimerl.speedrunigt.SpeedRunIGTClient",
-      "com.redlimerl.speedrunigt.SpeedRunIGTClientInitializer"
+      "com.redlimerl.speedrunigt.SpeedRunIGTClient"
     ],
     "server": [
-      "com.redlimerl.speedrunigt.SpeedRunIGTDedicatedServerInitializer"
+      "com.redlimerl.speedrunigt.SpeedRunIGTServer"
     ],
     "main": [
       "com.redlimerl.speedrunigt.SpeedRunIGT"
