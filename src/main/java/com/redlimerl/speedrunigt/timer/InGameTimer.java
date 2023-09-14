@@ -3,6 +3,7 @@ package com.redlimerl.speedrunigt.timer;
 import com.google.gson.Gson;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.crypt.Crypto;
+import com.redlimerl.speedrunigt.instance.GameInstance;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
@@ -144,6 +145,7 @@ public class InGameTimer implements Serializable {
         INSTANCE.setCategory(SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY), false);
         INSTANCE.setPause(true, TimerStatus.IDLE, "startup");
         INSTANCE.runType = runType;
+        GameInstance.getInstance().loadWorld(Objects.requireNonNull(InGameTimerUtils.getTimerLogDir(worldName, "")).toPath());
         InGameTimerUtils.STATS_UPDATE = null;
     }
 
@@ -293,6 +295,7 @@ public class InGameTimer implements Serializable {
         INSTANCE.setPause(true, TimerStatus.LEAVE, "leave the world");
 
         save(true);
+        GameInstance.getInstance().closeTimer();
         InGameTimerUtils.STATS_UPDATE = null;
 
         INSTANCE.setStatus(TimerStatus.NONE);
@@ -393,6 +396,7 @@ public class InGameTimer implements Serializable {
 
                     INSTANCE.worldName = name;
                     COMPLETED_INSTANCE.worldName = name;
+                    GameInstance.getInstance().loadWorld(Objects.requireNonNull(InGameTimerUtils.getTimerLogDir(name, "")).toPath());
 
                     INSTANCE.getCustomCondition().ifPresent(CategoryCondition::refreshConditionClasses);
                     InGameTimerUtils.STATS_UPDATE = null;
@@ -785,6 +789,7 @@ public class InGameTimer implements Serializable {
     }
 
     public void openedLanIntegratedServer() {
+        GameInstance.getInstance().openToLan();
         this.lanOpenedTime = getRealTimeAttack();
     }
 

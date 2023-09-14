@@ -6,7 +6,9 @@ import com.redlimerl.speedrunigt.events.MemoryBufferedEventRepository;
 import com.redlimerl.speedrunigt.events.EventRepository;
 import com.redlimerl.speedrunigt.events.FileEventRepository;
 
+import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 
 public class World {
@@ -21,11 +23,18 @@ public class World {
             SpeedRunIGT.error("World directory doesn't exist, couldn't make timer dirs");
         }
 
-        if (Files.notExists(worldFolderPath.resolve(SpeedRunIGT.MOD_ID))) {
-            // TODO: create timer folder and log
+        if (Files.notExists(worldTimerFolderPath)) {
+            try {
+                Files.createDirectory(worldTimerFolderPath);
+                SpeedRunIGT.debug("world's timer directory doesn't exist, made timer dirs");
+            } catch (IOException e) {
+                SpeedRunIGT.debug("couldn't make world's timer directory");
+            }
         }
         else if (!Files.isDirectory(worldTimerFolderPath)) {
-            // TODO: throw error
+            this.eventRepository = null;
+            SpeedRunIGT.error("Invalid world's timer directory, try remove this file: " + worldTimerFolderPath);
+            return;
         }
 
         Path eventLogPath = worldTimerFolderPath.resolve(EVENT_LOG_FILE_NAME);
