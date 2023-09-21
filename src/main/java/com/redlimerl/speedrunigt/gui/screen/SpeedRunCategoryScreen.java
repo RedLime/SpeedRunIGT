@@ -1,6 +1,5 @@
 package com.redlimerl.speedrunigt.gui.screen;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
@@ -59,10 +58,15 @@ public class SpeedRunCategoryScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);
         this.listWidget.render(context, mouseX, mouseY, delta);
         context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 16, 16777215);
         context.drawCenteredTextWithShadow(this.textRenderer, "(" + I18n.translate("speedrunigt.option.timer_category.warning") + ")", this.width / 2, this.height - 46, 8421504);
-        super.render(context, mouseX, mouseY, delta);
+    }
+
+    @Override
+    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
+        this.renderBackgroundTexture(context);
     }
 
     @Environment(EnvType.CLIENT)
@@ -112,7 +116,10 @@ public class SpeedRunCategoryScreen extends Screen {
             }
 
             private class CategoryCheckBoxWidget extends CheckboxWidget {
-                private final Identifier TEXTURE = new Identifier("textures/gui/checkbox.png");
+                private static final Identifier SELECTED_HIGHLIGHTED_TEXTURE = new Identifier("widget/checkbox_selected_highlighted");
+                private static final Identifier SELECTED_TEXTURE = new Identifier("widget/checkbox_selected");
+                private static final Identifier HIGHLIGHTED_TEXTURE = new Identifier("widget/checkbox_highlighted");
+                private static final Identifier TEXTURE = new Identifier("widget/checkbox");
                 private final RunCategory category;
 
                 public CategoryCheckBoxWidget(RunCategory category) {
@@ -137,14 +144,13 @@ public class SpeedRunCategoryScreen extends Screen {
                 @Override
                 public void render(DrawContext context, int mouseX, int mouseY, float delta) {
                     MinecraftClient minecraftClient = MinecraftClient.getInstance();
-                    RenderSystem.setShaderTexture(0, TEXTURE);
                     RenderSystem.enableDepthTest();
                     TextRenderer textRenderer = minecraftClient.textRenderer;
-                    RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
+                    context.setShaderColor(1.0f, 1.0f, 1.0f, this.alpha);
                     RenderSystem.enableBlend();
-                    RenderSystem.defaultBlendFunc();
-                    RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
-                    context.drawTexture(TEXTURE, this.getX(), this.getY(), this.isFocused() ? 20.0F : 0.0F, this.isChecked() ? 20.0F : 0.0F, 20, this.height, 64, 64);
+                    Identifier identifier = this.isChecked() ? (this.isFocused() ? SELECTED_HIGHLIGHTED_TEXTURE : SELECTED_TEXTURE) : (this.isFocused() ? HIGHLIGHTED_TEXTURE : TEXTURE);
+                    context.drawGuiTexture(identifier, this.getX(), this.getY(), 20, this.height);
+                    context.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
                     context.drawText(textRenderer, this.getMessage(), this.getX() + 24, this.getY() + (this.height - 8) / 2, 14737632 | MathHelper.ceil(this.alpha * 255.0F) << 24, true);
                 }
             }

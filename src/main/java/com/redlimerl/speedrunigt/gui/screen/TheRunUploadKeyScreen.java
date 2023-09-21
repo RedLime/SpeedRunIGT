@@ -69,15 +69,14 @@ public class TheRunUploadKeyScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        this.renderBackground(context);
+        super.render(context, mouseX, mouseY, delta);
+
         String beforeText = this.uploadKeyBox.getText();
         this.uploadKeyBox.setText(beforeText.replaceAll("\\w", "*"));
 
         context.drawCenteredTextWithShadow(textRenderer, title, width / 2, 12, 16777215);
 
         this.uploadKeyBox.render(context, mouseX, mouseY, delta);
-
-        super.render(context, mouseX, mouseY, delta);
 
         if (statusCode == 1)
             context.drawCenteredTextWithShadow(textRenderer, Text.translatable("speedrunigt.therun_gg.message.loading_upload_key_info"), width / 2, height / 2 + 50, 16777215);
@@ -89,11 +88,6 @@ public class TheRunUploadKeyScreen extends Screen {
             context.drawCenteredTextWithShadow(textRenderer, Text.translatable("speedrunigt.therun_gg.message.upload_key_is_invalid"), width / 2, height / 2 + 50, 16777215);
 
         this.uploadKeyBox.setText(beforeText);
-    }
-
-    @Override
-    public void tick() {
-        this.uploadKeyBox.tick();
     }
 
     @Override

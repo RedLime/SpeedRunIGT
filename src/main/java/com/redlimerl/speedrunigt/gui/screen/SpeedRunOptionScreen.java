@@ -1,6 +1,5 @@
 package com.redlimerl.speedrunigt.gui.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.SpeedRunIGTUpdateChecker;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
@@ -13,7 +12,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
-import net.minecraft.client.render.*;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
@@ -113,14 +111,18 @@ public class SpeedRunOptionScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        this.renderBackground(context);
-        this.buttonListWidget.render(context, mouseX, mouseY, delta);
         super.render(context, mouseX, mouseY, delta);
+        this.buttonListWidget.render(context, mouseX, mouseY, delta);
         context.drawCenteredTextWithShadow(textRenderer, this.title, this.width / 2, 10, 16777215);
         context.drawText(textRenderer, "v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215, true);
 
         ArrayList<Text> tooltip = getToolTip(mouseX, mouseY);
         if (!tooltip.isEmpty() && !this.isDragging()) context.drawTooltip(textRenderer, tooltip, 0, height);
+    }
+
+    @Override
+    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
+        this.renderBackgroundTexture(context);
     }
 
     public ArrayList<Text> getToolTip(int mouseX, int mouseY) {
@@ -181,22 +183,6 @@ public class SpeedRunOptionScreen extends Screen {
         @Override
         public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
             super.render(drawContext, mouseX, mouseY, delta);
-
-            //Render bg on empty space
-            if (this.client == null) return;
-            Tessellator tessellator = Tessellator.getInstance();
-            BufferBuilder bufferBuilder = tessellator.getBuffer();
-            RenderSystem.setShader(GameRenderer::getPositionTexColorProgram);
-            RenderSystem.setShaderTexture(0, OPTIONS_BACKGROUND_TEXTURE);
-            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-            float f = 32.0F;
-            int emptyWidth = this.width;
-            bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
-            bufferBuilder.vertex(this.width, this.height, 0.0D).texture(emptyWidth / f, (float)this.height / f).color(64, 64, 64, 255).next();
-            bufferBuilder.vertex(SpeedRunOptionScreen.this.width, this.height, 0.0D).texture((float)SpeedRunOptionScreen.this.width / f, (float)this.height / f + 0).color(64, 64, 64, 255).next();
-            bufferBuilder.vertex(SpeedRunOptionScreen.this.width, 0.0D, 0.0D).texture((float)SpeedRunOptionScreen.this.width / f, 0).color(64, 64, 64, 255).next();
-            bufferBuilder.vertex(this.width, 0.0D, 0.0D).texture(emptyWidth / f, 0).color(64, 64, 64, 255).next();
-            tessellator.draw();
         }
 
         class Entry extends ElementListWidget.Entry<Entry> {

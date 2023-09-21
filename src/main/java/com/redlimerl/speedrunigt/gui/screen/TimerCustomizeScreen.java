@@ -285,9 +285,8 @@ public class TimerCustomizeScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);
         saveButton.active = changed;
-
-        this.renderBackground(context);
 
         drawer.draw(context);
 
@@ -329,7 +328,6 @@ public class TimerCustomizeScreen extends Screen {
                 }
             }
         }
-        super.render(context, mouseX, mouseY, delta);
     }
 
     @Override

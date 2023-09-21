@@ -40,7 +40,8 @@ public class SpeedRunIGTInfoScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        this.renderBackground(context);
+        super.render(context, mouseX, mouseY, delta);
+
         context.getMatrices().push();
         context.getMatrices().scale(1.5F, 1.5F, 1.5F);
         context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 3, 15, 16777215);
@@ -56,8 +57,6 @@ public class SpeedRunIGTInfoScreen extends Screen {
                     Text.translatable("speedrunigt.message.update."+UPDATE_STATUS.name().toLowerCase(Locale.ROOT)),
                     this.width / 2, 116, 16777215);
         }
-
-        super.render(context, mouseX, mouseY, delta);
     }
 
     @Override

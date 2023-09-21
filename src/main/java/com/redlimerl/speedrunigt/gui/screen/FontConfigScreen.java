@@ -27,7 +27,7 @@ public class FontConfigScreen extends Screen {
         super(Text.literal("font_config"));
         this.parent = parent;
         this.fontIdentifier = SpeedRunIGT.FONT_MAPS.get(font);
-        this.newFontConfigure = FontConfigure.fromJson(fontIdentifier.getFontConfigure().toString() + "");
+        this.newFontConfigure = FontConfigure.fromJson(fontIdentifier.getFontConfigure().toString());
     }
 
     @Override
@@ -60,14 +60,11 @@ public class FontConfigScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        renderBackground(context);
-
+        super.render(context, mouseX, mouseY, delta);
         context.drawCenteredTextWithShadow(textRenderer, Text.literal("IGT: 01:23.456").setStyle(Style.EMPTY.withFont(fontIdentifier.getIdentifier())), width / 2, 30, 16777215);
 
         context.drawCenteredTextWithShadow(textRenderer, "§l" + I18n.translate("speedrunigt.font.size") + ": " + ((int) newFontConfigure.size), width / 2, height / 2 - 55, 16777215);
         context.drawCenteredTextWithShadow(textRenderer, "§l" + I18n.translate("speedrunigt.font.oversample") + ": " + newFontConfigure.oversample, width / 2, height / 2 - 5, 16777215);
         context.drawCenteredTextWithShadow(textRenderer, I18n.translate("speedrunigt.font.oversample.description"), width / 2, height / 2 + 27, 16777215);
-
-        super.render(context, mouseX, mouseY, delta);
     }
 }

@@ -36,7 +36,7 @@ public class GameRendererMixin {
     @Inject(method = "render", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/toast/ToastManager;draw(Lnet/minecraft/client/gui/DrawContext;)V", shift = At.Shift.AFTER),
             locals = LocalCapture.CAPTURE_FAILHARD)
-    private void drawTimer(float tickDelta, long startTime, boolean tick, CallbackInfo ci, int i, int j, Window window, Matrix4f matrix4f, MatrixStack matrixStack, DrawContext drawContext) {
+    private void drawTimer(float tickDelta, long startTime, boolean tick, CallbackInfo ci, boolean bl, int i, int j, Window window, Matrix4f matrix4f, MatrixStack matrixStack, DrawContext drawContext) {
         InGameTimer timer = InGameTimer.getInstance();
 
         if (InGameTimerClientUtils.canUnpauseTimer(true)) {
@@ -57,14 +57,14 @@ public class GameRendererMixin {
         SpeedRunIGT.DEBUG_DATA = timer.getStatus().name();
         if (!this.client.options.hudHidden && this.client.world != null && timer.getStatus() != TimerStatus.NONE
                 && (!this.client.isPaused() || this.client.currentScreen instanceof CreditsScreen || this.client.currentScreen instanceof GameMenuScreen || !SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS))
-                && !(!this.client.isPaused() && SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) && this.client.options.debugEnabled)
+                && !(!this.client.isPaused() && SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) && this.client.getDebugHud().shouldShowDebugHud())
                 && !(this.client.currentScreen instanceof TimerCustomizeScreen)) {
 
             boolean needUpdate = SpeedRunIGTClient.TIMER_DRAWER.isNeedUpdate();
             boolean enableSplit = SpeedRunOption.getOption(SpeedRunOptions.ENABLE_TIMER_SPLIT_POS);
             if (needUpdate || enableSplit) {
                 TimerDrawer.PositionType updatePositionType = TimerDrawer.PositionType.DEFAULT;
-                if (enableSplit && this.client.options.debugEnabled)
+                if (enableSplit && this.client.getDebugHud().shouldShowDebugHud())
                     updatePositionType = TimerDrawer.PositionType.WHILE_F3;
                 if (enableSplit && this.client.isPaused() && !(this.client.currentScreen instanceof DownloadingTerrainScreen) && (this.client.currentScreen instanceof GameMenuScreen && ((GameMenuScreenAccessor) this.client.currentScreen).isShowMenu()))
                     updatePositionType = TimerDrawer.PositionType.WHILE_PAUSED;

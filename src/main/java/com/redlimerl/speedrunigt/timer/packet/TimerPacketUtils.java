@@ -2,6 +2,8 @@ package com.redlimerl.speedrunigt.timer.packet;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -12,11 +14,11 @@ public class TimerPacketUtils {
 
     @Environment(EnvType.CLIENT)
     public static void sendClient2ServerPacket(MinecraftClient client, TimerPacket packet) {
-        if (client.getNetworkHandler() != null) client.getNetworkHandler().sendPacket(packet.createClient2ServerPacket(client));
+        ClientPlayNetworking.send(packet.getIdentifier(), packet.createClient2ServerPacket(client));
     }
 
     public static void sendServer2ClientPacket(ServerPlayerEntity player, TimerPacket packet) {
-        player.networkHandler.sendPacket(packet.createServer2ClientPacket(player.server));
+        ServerPlayNetworking.send(player, packet.getIdentifier(), packet.createServer2ClientPacket(player.server));
     }
 
     public static void sendServer2ClientPacket(Collection<ServerPlayerEntity> players, TimerPacket packet) {
@@ -29,7 +31,7 @@ public class TimerPacketUtils {
 
     public static void sendServer2ClientPacket(MinecraftServer server, TimerPacket packet, TimerPacketBuf buf) {
         for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-            player.networkHandler.sendPacket(packet.createServer2ClientPacket(server, buf));
+            ServerPlayNetworking.send(player, packet.getIdentifier(), buf.getBuffer());
         }
     }
 }

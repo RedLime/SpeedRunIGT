@@ -35,7 +35,6 @@ public class FailedCategoryInitScreen extends Screen {
     private static final int TEXT_RED = ColorHelper.Argb.getArgb(255, 255, 70, 70);
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        renderBackground(context);
         super.render(context, mouseX, mouseY, delta);
         context.drawCenteredTextWithShadow(this.textRenderer, Text.translatable("speedrunigt.message.failed_add_category", this.fileName), width / 2, height / 2 - 35, TEXT_RED);
         context.drawCenteredTextWithShadow(this.textRenderer, Text.translatable("speedrunigt.message.failed_add_category."+exception.getReason().name().toLowerCase(Locale.ROOT)), width / 2, height / 2 - 10, TEXT_WHITE);

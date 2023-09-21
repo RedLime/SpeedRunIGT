@@ -2,11 +2,14 @@ package com.redlimerl.speedrunigt.timer.packet;
 
 import com.google.common.collect.Maps;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.option.SpeedRunOption;
+import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 
@@ -18,6 +21,22 @@ public abstract class TimerPacket {
     private static final HashMap<String, Supplier<? extends TimerPacket>> registered = Maps.newHashMap();
     static void registryPacket(Identifier identifier, Supplier<? extends TimerPacket> packet) {
         registered.put(identifier.toString(), packet);
+
+        ClientPlayNetworking.registerGlobalReceiver(identifier, (client, handler, buf, responseSender) -> {
+            TimerPacket timerPacket = TimerPacket.createTimerPacketFromPacket(identifier);
+            TimerPacketBuf timerPacketBuf = TimerPacketBuf.of(buf);
+            if (timerPacket != null && SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) {
+                timerPacket.receiveServer2ClientPacket(timerPacketBuf, client);
+            }
+        });
+
+        ServerPlayNetworking.registerGlobalReceiver(identifier, (server, player, handler, buf, responseSender) -> {
+            TimerPacket timerPacket = TimerPacket.createTimerPacketFromPacket(identifier);
+            TimerPacketBuf timerPacketBuf = TimerPacketBuf.of(buf);
+            if (timerPacket != null) {
+                timerPacket.receiveClient2ServerPacket(timerPacketBuf, server);
+            }
+        });
     }
     public static Identifier identifier(String id) {
         return new Identifier(SpeedRunIGT.MOD_ID, id);
@@ -47,16 +66,16 @@ public abstract class TimerPacket {
     }
 
     @Environment(EnvType.CLIENT)
-    final CustomPayloadC2SPacket createClient2ServerPacket(MinecraftClient client) {
+    final PacketByteBuf createClient2ServerPacket(MinecraftClient client) {
         TimerPacketBuf buf = TimerPacketBuf.create();
-        return new CustomPayloadC2SPacket(identifier, convertClient2ServerPacket(buf, client).getBuffer());
+        return convertClient2ServerPacket(buf, client).getBuffer();
     }
 
-    final CustomPayloadS2CPacket createServer2ClientPacket(MinecraftServer server, TimerPacketBuf buf) {
-        return new CustomPayloadS2CPacket(identifier, convertServer2ClientPacket(buf.copy(), server).getBuffer());
+    final PacketByteBuf createServer2ClientPacket(MinecraftServer server, TimerPacketBuf buf) {
+        return convertServer2ClientPacket(buf.copy(), server).getBuffer();
     }
 
-    final CustomPayloadS2CPacket createServer2ClientPacket(MinecraftServer server) {
+    final PacketByteBuf createServer2ClientPacket(MinecraftServer server) {
         TimerPacketBuf buf = TimerPacketBuf.create();
         return createServer2ClientPacket(server, buf);
     }

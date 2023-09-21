@@ -10,9 +10,7 @@ import com.redlimerl.speedrunigt.timer.category.condition.AdvancementCategoryCon
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacketUtils;
 import com.redlimerl.speedrunigt.timer.packet.packets.TimerAchieveAdvancementPacket;
-import net.minecraft.advancement.Advancement;
-import net.minecraft.advancement.AdvancementManager;
-import net.minecraft.advancement.AdvancementProgress;
+import net.minecraft.advancement.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientAdvancementManager;
 import net.minecraft.network.packet.s2c.play.AdvancementUpdateS2CPacket;
@@ -45,54 +43,54 @@ public abstract class ClientAdvancementManagerMixin {
     public Map.Entry<Identifier, AdvancementProgress> advancement(Map.Entry<Identifier, AdvancementProgress> entry) {
         InGameTimer timer = InGameTimer.getInstance();
         
-        Advancement advancement = this.manager.get(entry.getKey());
+        PlacedAdvancement advancement = this.manager.get(entry.getKey());
         AdvancementProgress advancementProgress = entry.getValue();
         assert advancement != null;
-        advancementProgress.init(advancement.getCriteria(), advancement.getRequirements());
+        advancementProgress.init(advancement.getAdvancement().requirements());
 
         if (advancementProgress.isDone() && timer.getStatus() != TimerStatus.NONE) {
 
             // For Timelines
-            if (Objects.equals(advancement.getId().getPath(), "story/follow_ender_eye")) {
+            if (Objects.equals(advancement.getAdvancementEntry().id().getPath(), "story/follow_ender_eye")) {
                 timer.tryInsertNewTimeline("enter_stronghold");
-            } else if (Objects.equals(advancement.getId().getPath(), "nether/find_bastion")) {
+            } else if (Objects.equals(advancement.getAdvancementEntry().id().getPath(), "nether/find_bastion")) {
                 timer.tryInsertNewTimeline("enter_bastion");
-            } else if (Objects.equals(advancement.getId().getPath(), "nether/find_fortress")) {
+            } else if (Objects.equals(advancement.getAdvancementEntry().id().getPath(), "nether/find_fortress")) {
                 timer.tryInsertNewTimeline("enter_fortress");
             }
 
-            timer.tryInsertNewAdvancement(advancement.getId().toString(), null, advancement.getDisplay() != null);
-            if (timer.isCoop() && advancement.getDisplay() != null) {
-                TimerPacketUtils.sendClient2ServerPacket(client, new TimerAchieveAdvancementPacket(advancement));
+            timer.tryInsertNewAdvancement(advancement.getAdvancementEntry().id().toString(), null, advancement.getAdvancement().display().isPresent());
+            if (timer.isCoop() && advancement.getAdvancement().display().isPresent()) {
+                TimerPacketUtils.sendClient2ServerPacket(client, new TimerAchieveAdvancementPacket(advancement.getAdvancementEntry()));
             }
 
             // Custom Json category
             if (timer.getCategory().getConditionJson() != null) {
                 for (CategoryCondition.Condition<?> condition : timer.getCustomCondition().map(CategoryCondition::getConditionList).orElse(Lists.newArrayList())) {
                     if (condition instanceof AdvancementCategoryCondition) {
-                        timer.updateCondition((AdvancementCategoryCondition) condition, advancement);
+                        timer.updateCondition((AdvancementCategoryCondition) condition, advancement.getAdvancementEntry());
                     }
                 }
                 timer.checkConditions();
             }
 
             //How Did We Get Here
-            if (timer.getCategory() == RunCategories.HOW_DID_WE_GET_HERE && Objects.equals(advancement.getId().toString(), new Identifier("nether/all_effects").toString())) {
+            if (timer.getCategory() == RunCategories.HOW_DID_WE_GET_HERE && Objects.equals(advancement.getAdvancementEntry().id().toString(), new Identifier("nether/all_effects").toString())) {
                 InGameTimer.complete();
             }
 
             //Hero of Village
-            if (timer.getCategory() == RunCategories.HERO_OF_VILLAGE && Objects.equals(advancement.getId().toString(), new Identifier("adventure/hero_of_the_village").toString())) {
+            if (timer.getCategory() == RunCategories.HERO_OF_VILLAGE && Objects.equals(advancement.getAdvancementEntry().id().toString(), new Identifier("adventure/hero_of_the_village").toString())) {
                 InGameTimer.complete();
             }
 
             //Arbalistic
-            if (timer.getCategory() == RunCategories.ARBALISTIC && Objects.equals(advancement.getId().toString(), new Identifier("adventure/arbalistic").toString())) {
+            if (timer.getCategory() == RunCategories.ARBALISTIC && Objects.equals(advancement.getAdvancementEntry().id().toString(), new Identifier("adventure/arbalistic").toString())) {
                 InGameTimer.complete();
             }
 
             //Cover Me In Debris
-            if (timer.getCategory() == RunCategories.COVER_ME_IN_DEBRIS && Objects.equals(advancement.getId().toString(), new Identifier("nether/netherite_armor").toString())) {
+            if (timer.getCategory() == RunCategories.COVER_ME_IN_DEBRIS && Objects.equals(advancement.getAdvancementEntry().id().toString(), new Identifier("nether/netherite_armor").toString())) {
                 InGameTimer.complete();
             }
         }
@@ -126,12 +124,12 @@ public abstract class ClientAdvancementManagerMixin {
         for (Map.Entry<String, TimerAdvancementTracker.AdvancementTrack> track : InGameTimer.getInstance().getAdvancementsTracker().getAdvancements().entrySet()) {
             if (track.getValue().isAdvancement() && track.getValue().isComplete()) completedAdvancements.add(track.getKey());
         }
-        for (Advancement advancement : this.getManager().getAdvancements()) {
-            if (this.advancementProgresses.containsKey(advancement) && advancement.getDisplay() != null) {
-                AdvancementProgress advancementProgress = this.advancementProgresses.get(advancement);
+        for (PlacedAdvancement advancement : this.getManager().getAdvancements()) {
+            if (this.advancementProgresses.containsKey(advancement.getAdvancement()) && advancement.getAdvancement().display().isPresent()) {
+                AdvancementProgress advancementProgress = this.advancementProgresses.get(advancement.getAdvancement());
 
-                advancementProgress.init(advancement.getCriteria(), advancement.getRequirements());
-                String advancementID = advancement.getId().toString();
+                advancementProgress.init(advancement.getAdvancement().requirements());
+                String advancementID = advancement.getAdvancementEntry().id().toString();
                 if (advancementProgress.isDone() && completedAdvancements.contains(advancementID)) {
                     completedAdvancements.add(advancementID);
                     InGameTimer.getInstance().tryInsertNewAdvancement(advancementID, null, true);

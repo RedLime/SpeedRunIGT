@@ -13,8 +13,6 @@
     "access.ServerStatHandlerAccessor",
     "coop.PlayerManagerMixin",
     "coop.TimeCommandMixin",
-    "network.CustomPayloadC2SPacketAccessor",
-    "network.ServerPlayNetworkHandlerMixin",
     "timeline.ServerPlayerEntityMixin"
   ],
   "client": [
