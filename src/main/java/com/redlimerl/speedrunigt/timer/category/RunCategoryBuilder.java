@@ -27,17 +27,9 @@ public class RunCategoryBuilder {
     }
 
     public RunCategory build() {
-        return new RunCategory(
-            id,
-            categoryUrl,
-            translateKey,
+        return new RunCategory(this.id, this.categoryUrl, this.translateKey,
             null,
-            null,
-            autoStart,
-            canSegment,
-            customUrl,
-            hideCategory,
-            retimeFunction
+            null, this.autoStart, this.canSegment, this.customUrl, this.hideCategory, this.retimeFunction
         );
     }
 

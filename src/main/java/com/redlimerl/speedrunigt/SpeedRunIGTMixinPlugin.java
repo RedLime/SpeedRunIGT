@@ -25,10 +25,7 @@ public class SpeedRunIGTMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        if (targetClassName.startsWith("me.jellysquid.mods.sodium") && !isUsingMod("sodium")) {
-            return false;
-        }
-        return true;
+        return !targetClassName.startsWith("me.jellysquid.mods.sodium") || this.isUsingMod("sodium");
     }
 
     @Override

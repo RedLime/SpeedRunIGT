@@ -1,106 +1,136 @@
 package com.redlimerl.speedrunigt.instance;
 
-import com.minecraftspeedrunning.srigt.common.events.Event;
-import com.redlimerl.speedrunigt.SpeedRunIGTConfig;
-import com.redlimerl.speedrunigt.events.*;
+import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.events.Event;
+import com.redlimerl.speedrunigt.events.EventFactory;
+import com.redlimerl.speedrunigt.events.EventFactoryLoader;
+import com.redlimerl.speedrunigt.timer.InGameTimer;
+import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
 
 public class GameInstance {
-    private static final String EVENT_LOG_FILE_NAME = "events.log";
-    private static GameInstance gameInstance;
+    public static final ExecutorService SAVE_MANAGER_THREAD = Executors.newSingleThreadExecutor();
+    private static final Logger LOGGER = LogManager.getLogger("Game Instance");
+    private static GameInstance INSTANCE;
+    private final List<Event> bufferedEvents = new ArrayList<>();
+    private final List<Event> events = new ArrayList<>();
+    private final Path globalEventsPath;
+    private TimerWorld world;
+
+    private GameInstance() {
+        this.globalEventsPath = SpeedRunIGT.getGlobalPath().resolve("events.latest");
+    }
 
     public static GameInstance getInstance() {
-        return gameInstance;
+        return INSTANCE;
     }
-    public static void createInstance(Path instancePath) {
-        if (gameInstance == null) {
-            gameInstance = new GameInstance(instancePath);
+
+    public static void createInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new GameInstance();
         }
     }
 
-    public static final ExecutorService saveManagerThread = Executors.newSingleThreadExecutor();
-
-    private TimerMode timerMode;
-
-    private World world;
-    private EventRepository networkEventRepository;
-
-    private final BufferedEventRepository instanceEventRepository;
-
-    private GameInstance(Path instancePath) {
-        Path eventLogPath = instancePath.resolve(EVENT_LOG_FILE_NAME);
-        EventRepository fileEventRepository = new FileEventRepository(eventLogPath);
-        instanceEventRepository = new MemoryBufferedEventRepository(fileEventRepository);
+    public void preWorldLoad() {
+        this.bufferedEvents.clear();
+        this.events.clear();
     }
 
-    /**
-     * load world hosted on this machine
-     * @param worldFolderPath - path of the folder the world is saved at
-     */
-    public void loadWorld(Path worldFolderPath) {
-        boolean isDedicated = SpeedRunIGTConfig.getConfig().isDedicated;
-        timerMode = isDedicated ? TimerMode.MULTIPLAYER_SERVER : TimerMode.SINGLE_PLAYER;
-        world = new World(worldFolderPath);
+    public void tryLoadWorld(String worldName) {
+        File worldFile = InGameTimerUtils.getTimerLogDir(worldName, "");
+        if (worldFile != null) {
+            this.loadWorld(worldFile.toPath());
+            SpeedRunIGT.debug("Loaded events world.");
+        } else { SpeedRunIGT.error("Didn't load events world."); }
     }
 
-    public void openToLan() {
-        timerMode = TimerMode.MULTIPLAYER_SERVER;
+    public void ensureWorld() {
+        if (!this.hasWorldLoaded()) {
+            InGameTimer timer = InGameTimer.getInstance();
+            SpeedRunIGT.debug("Attempting event world load at " + timer.getWorldName());
+            this.tryLoadWorld(timer.getWorldName());
+        }
     }
 
-    /**
-     * connect to world hosted on another machine
-     * @param events - list of events that have already taken place on leader machine
-     */
-    public void connect(List<Event> events) {
-        timerMode = TimerMode.MULTIPLAYER_CLIENT;
-        networkEventRepository = new MemoryEventRepository(events);
+    private void loadWorld(Path worldTimerDir) {
+        this.clearGlobalPath();
+        this.world = new TimerWorld(worldTimerDir, this.globalEventsPath);
+        this.events.addAll(this.world.eventRepository.appendOldGlobal());
+        this.addBufferedEvents();
+    }
+
+    public boolean hasWorldLoaded() {
+        return this.world != null;
     }
 
     public void closeTimer() {
-        timerMode = null;
-        world = null;
-        networkEventRepository = null;
+        this.world = null;
     }
 
-    public void addNetworkEvents(List<Event> events) {
-        if (timerMode.timerHierarchy != TimerHierarchy.FOLLOWER) {
-            return;
+    private void addBufferedEvents() {
+        if (this.world != null && !this.bufferedEvents.isEmpty()) {
+            for (Event bufferedEvent : this.bufferedEvents) {
+                this.world.eventRepository.add(bufferedEvent);
+            }
+            SpeedRunIGT.debug("Loaded " + this.bufferedEvents.size() + " buffered event" + (this.bufferedEvents.size() != 1 ? "s" : "") + ".");
+            this.bufferedEvents.clear();
         }
-        networkEventRepository.addAll(events);
     }
 
     public void addEvent(Event event) {
-        if (timerMode.timerHierarchy != TimerHierarchy.LEADER) {
-            return;
+        if (this.hasTriggeredEvent(event)) { return; }
+        if (this.world != null) {
+            this.addBufferedEvents();
+            this.world.eventRepository.add(event);
+        } else {
+            this.bufferedEvents.add(event);
         }
-        instanceEventRepository.add(event);
-        world.eventRepository.add(event);
+        this.events.add(event);
     }
 
-    public void flush() {
-        if (timerMode.timerHierarchy != TimerHierarchy.LEADER) {
-            return;
-        }
-        if (timerMode.gameMode == GameMode.MULTIPLAYER) {
-            List<Event> events = world.eventRepository.getQueue();
-            if (!events.isEmpty()) {
-                // TODO: push events to followers
+    private void clearGlobalPath() {
+        SAVE_MANAGER_THREAD.submit(() -> {
+            if (Files.exists(this.globalEventsPath)) {
+                try {
+                    Files.write(this.globalEventsPath, "".getBytes(StandardCharsets.UTF_8));
+                    LOGGER.info("Successfully cleared global file.");
+                } catch (IOException e) {
+                    LOGGER.error("Error while clearing global file", e);
+                }
+            }
+        });
+    }
+
+    public void callEvents(String type) {
+        this.callEvents(type, null);
+    }
+
+    public void callEvents(String type, Function<EventFactory, Boolean> condition) {
+        for (EventFactory factory : EventFactoryLoader.getEventFactories(type)) {
+            if (condition == null || condition.apply(factory)) {
+                this.addEvent(factory.create());
             }
         }
-        world.eventRepository.flush();
     }
 
-    List<Event> getEvents() {
-        if (timerMode.timerHierarchy == TimerHierarchy.FOLLOWER) {
-            return networkEventRepository.getEvents();
+    public boolean hasTriggeredEvent(Event e) {
+        for (Event event : this.events) {
+            if (event.type.equalsIgnoreCase(e.type)) {
+                return true;
+            }
         }
-        if (timerMode.timerHierarchy == TimerHierarchy.LEADER) {
-            return world.eventRepository.getEvents();
-        }
-        return null;
+        return false;
     }
 }

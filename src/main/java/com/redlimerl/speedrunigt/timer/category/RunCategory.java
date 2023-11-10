@@ -97,36 +97,36 @@ public class RunCategory {
     }
 
     public String getID() {
-        return id;
+        return this.id;
     }
 
     public String getLeaderboardUrl() {
-        return (customUrl ? "" : "https://www.speedrun.com/") + categoryUrl;
+        return (this.customUrl ? "" : "https://www.speedrun.com/") + this.categoryUrl;
     }
 
     public boolean canSegment() {
-        return canSegment;
+        return this.canSegment;
     }
 
     public boolean isAutoStart() {
-        return autoStart;
+        return this.autoStart;
     }
 
     public boolean isNeedAutoRetime(InGameTimer timer) {
-        return retimeFunction.apply(timer);
+        return this.retimeFunction.apply(timer);
     }
 
-    public boolean isHideCategory() { return hideCategory; }
+    public boolean isHideCategory() { return this.hideCategory; }
 
     public TranslatableText getText() {
-        return new TranslatableText(translateKey);
+        return new TranslatableText(this.translateKey);
     }
 
     public @Nullable JsonArray getConditionJson() {
-        return conditionJson;
+        return this.conditionJson;
     }
 
     public @Nullable String getConditionFileName() {
-        return conditionFileName;
+        return this.conditionFileName;
     }
 }

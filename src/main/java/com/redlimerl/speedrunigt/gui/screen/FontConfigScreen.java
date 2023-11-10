@@ -28,46 +28,46 @@ public class FontConfigScreen extends Screen {
         super(new LiteralText("font_config"));
         this.parent = parent;
         this.fontIdentifier = SpeedRunIGT.FONT_MAPS.get(font);
-        this.newFontConfigure = FontConfigure.fromJson(fontIdentifier.getFontConfigure().toString() + "");
+        this.newFontConfigure = FontConfigure.fromJson(this.fontIdentifier.getFontConfigure().toString());
     }
 
     @Override
     protected void init() {
-        assert client != null;
+        assert this.client != null;
 
-        addButton(new ButtonWidget(width / 2 - 21, height / 2 - 45, 20, 20, new LiteralText("-"), button -> newFontConfigure.size = MathHelper.clamp(newFontConfigure.size - 1, 1, 50)));
-        addButton(new ButtonWidget(width / 2 + 1, height / 2 - 45, 20, 20, new LiteralText("+"), button -> newFontConfigure.size = MathHelper.clamp(newFontConfigure.size + 1, 1, 50)));
+        this.addButton(new ButtonWidget(this.width / 2 - 21, this.height / 2 - 45, 20, 20, new LiteralText("-"), button -> this.newFontConfigure.size = MathHelper.clamp(this.newFontConfigure.size - 1, 1, 50)));
+        this.addButton(new ButtonWidget(this.width / 2 + 1, this.height / 2 - 45, 20, 20, new LiteralText("+"), button -> this.newFontConfigure.size = MathHelper.clamp(this.newFontConfigure.size + 1, 1, 50)));
 
-        addButton(new ButtonWidget(width / 2 - 21, height / 2 + 5, 20, 20, new LiteralText("-"), button -> newFontConfigure.oversample = MathHelper.clamp(Math.round((newFontConfigure.oversample - (Screen.hasShiftDown() ? 1f : 0.1f)) * 10) / 10f, 0.1f, 20f)));
-        addButton(new ButtonWidget(width / 2 + 1, height / 2 + 5, 20, 20, new LiteralText("+"), button -> newFontConfigure.oversample = MathHelper.clamp(Math.round((newFontConfigure.oversample + (Screen.hasShiftDown() ? 1f : 0.1f)) * 10) / 10f, 0.1f, 20f)));
+        this.addButton(new ButtonWidget(this.width / 2 - 21, this.height / 2 + 5, 20, 20, new LiteralText("-"), button -> this.newFontConfigure.oversample = MathHelper.clamp(Math.round((this.newFontConfigure.oversample - (Screen.hasShiftDown() ? 1f : 0.1f)) * 10) / 10f, 0.1f, 20f)));
+        this.addButton(new ButtonWidget(this.width / 2 + 1, this.height / 2 + 5, 20, 20, new LiteralText("+"), button -> this.newFontConfigure.oversample = MathHelper.clamp(Math.round((this.newFontConfigure.oversample + (Screen.hasShiftDown() ? 1f : 0.1f)) * 10) / 10f, 0.1f, 20f)));
 
-        addButton(new ButtonWidget(width / 2 - 50, height - 62, 100, 20, new TranslatableText("speedrunigt.font.apply_and_save"), button -> {
-            File config = SpeedRunIGT.FONT_PATH.resolve(fontIdentifier.getFile().getName().substring(0, fontIdentifier.getFile().getName().length() - 4) + ".json").toFile();
+        this.addButton(new ButtonWidget(this.width / 2 - 50, this.height - 62, 100, 20, new TranslatableText("speedrunigt.font.apply_and_save"), button -> {
+            File config = SpeedRunIGT.FONT_PATH.resolve(this.fontIdentifier.getFile().getName().substring(0, this.fontIdentifier.getFile().getName().length() - 4) + ".json").toFile();
             try {
-                FileUtils.writeStringToFile(config, newFontConfigure.toString(), StandardCharsets.UTF_8);
-                client.reloadResources();
+                FileUtils.writeStringToFile(config, this.newFontConfigure.toString(), StandardCharsets.UTF_8);
+                this.client.reloadResources();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }));
 
-        addButton(new ButtonWidget(width / 2 - 50, height - 40, 100, 20, ScreenTexts.CANCEL, button -> this.onClose()));
+        this.addButton(new ButtonWidget(this.width / 2 - 50, this.height - 40, 100, 20, ScreenTexts.CANCEL, button -> this.onClose()));
     }
 
     @Override
     public void onClose() {
-        if (client != null) client.openScreen(parent);
+        if (this.client != null) this.client.openScreen(this.parent);
     }
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        renderBackground(matrices);
+        this.renderBackground(matrices);
 
-        drawCenteredText(matrices, textRenderer, new LiteralText("IGT: 01:23.456").setStyle(Style.EMPTY.withFont(fontIdentifier.getIdentifier())), width / 2, 30, 16777215);
+        this.drawCenteredText(matrices, this.textRenderer, new LiteralText("IGT: 01:23.456").setStyle(Style.EMPTY.withFont(this.fontIdentifier.getIdentifier())), this.width / 2, 30, 16777215);
 
-        drawCenteredString(matrices, textRenderer, "§l" + I18n.translate("speedrunigt.font.size") + ": " + ((int) newFontConfigure.size), width / 2, height / 2 - 55, 16777215);
-        drawCenteredString(matrices, textRenderer, "§l" + I18n.translate("speedrunigt.font.oversample") + ": " + newFontConfigure.oversample, width / 2, height / 2 - 5, 16777215);
-        drawCenteredString(matrices, textRenderer, I18n.translate("speedrunigt.font.oversample.description"), width / 2, height / 2 + 27, 16777215);
+        this.drawCenteredString(matrices, this.textRenderer, "§l" + I18n.translate("speedrunigt.font.size") + ": " + ((int) this.newFontConfigure.size), this.width / 2, this.height / 2 - 55, 16777215);
+        this.drawCenteredString(matrices, this.textRenderer, "§l" + I18n.translate("speedrunigt.font.oversample") + ": " + this.newFontConfigure.oversample, this.width / 2, this.height / 2 - 5, 16777215);
+        this.drawCenteredString(matrices, this.textRenderer, I18n.translate("speedrunigt.font.oversample.description"), this.width / 2, this.height / 2 + 27, 16777215);
 
         super.render(matrices, mouseX, mouseY, delta);
     }

@@ -31,18 +31,17 @@ public abstract class ClientWorldMixin extends World {
     @Inject(at = @At("HEAD"), method = "tick")
     public void onTick(CallbackInfo ci) {
         InGameTimer.getInstance().tick();
-        GameInstance.getInstance().flush();
     }
 
     @Inject(method = "updateListeners", at = @At("TAIL"))
     public void onBlockUpdate(BlockPos pos, BlockState oldState, BlockState newState, int flags, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getCategory() == RunCategories.MINE_A_CHUNK) {
-            ChunkPos chunkPos = getChunk(pos).getPos();
+            ChunkPos chunkPos = this.getChunk(pos).getPos();
             for (int x = chunkPos.getStartX(); x < chunkPos.getEndX() + 1; x++) {
-                for (int y = getBedrockMaxHeight(); y < getDimensionHeight(); y++) {
+                for (int y = this.getBedrockMaxHeight(); y < this.getDimensionHeight(); y++) {
                     for (int z = chunkPos.getStartZ(); z < chunkPos.getEndZ() + 1; z++) {
-                        BlockState blockState = getBlockState(new BlockPos(x, y, z));
+                        BlockState blockState = this.getBlockState(new BlockPos(x, y, z));
                         Block block = blockState.getBlock();
                         if (block != Blocks.BEDROCK && !blockState.isAir()) {
                             return;

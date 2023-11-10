@@ -1,6 +1,10 @@
 package com.redlimerl.speedrunigt.mixins.timeline;
 
 import com.mojang.authlib.GameProfile;
+import com.redlimerl.speedrunigt.events.Event;
+import com.redlimerl.speedrunigt.events.EventFactory;
+import com.redlimerl.speedrunigt.events.EventFactoryLoader;
+import com.redlimerl.speedrunigt.instance.GameInstance;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
@@ -17,6 +21,7 @@ import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -35,26 +40,26 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
     @Inject(method = "changeDimension", at = @At("HEAD"))
     public void onChangeDimension(ServerWorld destination, CallbackInfoReturnable<Entity> cir) {
-        beforeWorld = this.getServerWorld();
-        lastPortalPos = this.getPos();
+        this.beforeWorld = this.getServerWorld();
+        this.lastPortalPos = this.getPos();
         InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = !InGameTimer.getInstance().isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY;
     }
 
     @Inject(method = "changeDimension", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;onPlayerChangeDimension(Lnet/minecraft/server/network/ServerPlayerEntity;)V", shift = At.Shift.AFTER))
     public void onChangedDimension(ServerWorld destination, CallbackInfoReturnable<Entity> cir) {
-        RegistryKey<World> oldRegistryKey = beforeWorld.getRegistryKey();
-        RegistryKey<World> newRegistryKey = world.getRegistryKey();
+        RegistryKey<World> oldRegistryKey = this.beforeWorld.getRegistryKey();
+        RegistryKey<World> newRegistryKey = this.world.getRegistryKey();
 
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() != TimerStatus.NONE) {
             if (oldRegistryKey == World.OVERWORLD && newRegistryKey == World.NETHER) {
                 if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY)
-                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.NETHER, this.getPos().add(0, 0, 0), lastPortalPos.add(0, 0, 0));
+                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.NETHER, this.getPos().add(0, 0, 0), this.lastPortalPos.add(0, 0, 0));
             }
 
             if (oldRegistryKey == World.NETHER && newRegistryKey == World.OVERWORLD) {
                 if (this.isEnoughTravel()) {
-                    int portalIndex = InGameTimerUtils.isBlindTraveled(lastPortalPos);
+                    int portalIndex = InGameTimerUtils.isBlindTraveled(this.lastPortalPos);
                     InGameTimer.getInstance().tryInsertNewTimeline("nether_travel");
                     if (portalIndex == 0) {
                         InGameTimer.getInstance().tryInsertNewTimeline("nether_travel_home");
@@ -63,11 +68,12 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
                     }
                 }
                 if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY)
-                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.OVERWORLD, lastPortalPos.add(0, 0, 0), this.getPos().add(0, 0, 0));
+                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.OVERWORLD, this.lastPortalPos.add(0, 0, 0), this.getPos().add(0, 0, 0));
             }
         }
     }
 
+    @Unique
     private boolean isEnoughTravel() {
         boolean eye = false, pearl = false, rod = false;
         for (ItemStack itemStack : this.inventory.main) {

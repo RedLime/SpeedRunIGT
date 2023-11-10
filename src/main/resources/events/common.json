@@ -1,0 +1,14 @@
+[
+    {
+        "name": "view_seed",
+        "type": "view_seed"
+    },
+    {
+        "name": "enable_cheats",
+        "type": "enable_cheats"
+    },
+    {
+        "name": "open_to_lan",
+        "type": "open_to_lan"
+    }
+]

@@ -56,7 +56,7 @@ public class InGameTimerUtils {
         }
 
         File worldFolder = path.toFile();
-        File file = path.resolve(SpeedRunIGT.MOD_ID).resolve(pathName).toFile();
+        File file = pathName.isEmpty() ? path.resolve(SpeedRunIGT.MOD_ID).toFile() : path.resolve(SpeedRunIGT.MOD_ID).resolve(pathName).toFile();
 
         if (!worldFolder.exists() || !worldFolder.isDirectory()) {
             SpeedRunIGT.error("World directory doesn't exist, couldn't make timer dirs");
@@ -64,7 +64,7 @@ public class InGameTimerUtils {
         }
 
         if (!file.exists()) {
-            SpeedRunIGT.debug(file.mkdirs() ? "make timer dirs" : "failed to make timer dirs");
+            SpeedRunIGT.debug(file.mkdirs() ? "Made timer dirs" : "Failed to make timer dirs");
         } else if (!file.isDirectory()) {
             return null;
         }

@@ -1,0 +1,55 @@
+[
+    {
+        "name": "enter_nether",
+        "type": "advancement",
+        "data": {
+            "advancement": "story/enter_the_nether"
+        }
+    },
+    {
+        "name": "enter_bastion",
+        "type": "advancement",
+        "data": {
+            "advancement": "nether/find_bastion"
+        }
+    },
+    {
+        "name": "first_portal",
+        "type": "insert_timeline",
+        "data": {
+            "timeline": "nether_travel"
+        }
+    },
+    {
+        "name": "enter_fortress",
+        "type": "advancement",
+        "data": {
+            "advancement": "nether/find_fortress"
+        }
+    },
+    {
+        "name": "enter_stronghold",
+        "type": "advancement",
+        "data": {
+            "advancement": "story/follow_ender_eye"
+        }
+    },
+    {
+        "name": "enter_end",
+        "type": "advancement",
+        "data": {
+            "advancement": "story/enter_the_end"
+        }
+    },
+    {
+        "name": "kill_dragon",
+        "type": "insert_timeline",
+        "data": {
+            "entity": "kill_ender_dragon"
+        }
+    },
+    {
+        "name": "credits",
+        "type": "roll_credits"
+    }
+]

@@ -31,9 +31,9 @@ public class TimerAchieveCriteriaPacket extends TimerPacket {
     @Environment(EnvType.CLIENT)
     @Override
     protected TimerPacketBuf convertClient2ServerPacket(TimerPacketBuf buf, MinecraftClient client) {
-        if (serverAdvancement != null) buf.writeString(serverAdvancement);
-        if (serverCriteria != null) buf.writeString(serverCriteria);
-        if (serverIsAdvancement != null) buf.writeBoolean(serverIsAdvancement);
+        if (this.serverAdvancement != null) buf.writeString(this.serverAdvancement);
+        if (this.serverCriteria != null) buf.writeString(this.serverCriteria);
+        if (this.serverIsAdvancement != null) buf.writeBoolean(this.serverIsAdvancement);
         return buf;
     }
 
@@ -49,9 +49,9 @@ public class TimerAchieveCriteriaPacket extends TimerPacket {
 
     @Override
     protected TimerPacketBuf convertServer2ClientPacket(TimerPacketBuf buf, MinecraftServer server) {
-        if (serverAdvancement != null) buf.writeString(serverAdvancement);
-        if (serverCriteria != null) buf.writeString(serverCriteria);
-        if (serverIsAdvancement != null) buf.writeBoolean(serverIsAdvancement);
+        if (this.serverAdvancement != null) buf.writeString(this.serverAdvancement);
+        if (this.serverCriteria != null) buf.writeString(this.serverCriteria);
+        if (this.serverIsAdvancement != null) buf.writeBoolean(this.serverIsAdvancement);
         return buf;
     }
 

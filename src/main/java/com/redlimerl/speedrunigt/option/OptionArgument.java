@@ -12,11 +12,11 @@ public abstract class OptionArgument<T> {
     }
 
     public T getDefaultValue() {
-        return defaultValue;
+        return this.defaultValue;
     }
 
     public Identifier getKey() {
-        return key;
+        return this.key;
     }
 
     public abstract T valueFromString(String string);

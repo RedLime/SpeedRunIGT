@@ -67,6 +67,6 @@ public class SpeedRunIGTClient implements ClientModInitializer {
         SpeedRunIGT.IS_CLIENT_SIDE = true;
 
         SpeedRunIGTConfig.config = new SpeedRunIGTConfig(false);
-        GameInstance.createInstance(FabricLoader.getInstance().getGameDir());
+        GameInstance.createInstance();
     }
 }

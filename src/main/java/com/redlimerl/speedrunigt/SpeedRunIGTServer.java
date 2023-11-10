@@ -8,6 +8,6 @@ public class SpeedRunIGTServer implements DedicatedServerModInitializer {
     @Override
     public void onInitializeServer() {
         SpeedRunIGTConfig.config = new SpeedRunIGTConfig(true);
-        GameInstance.createInstance(FabricLoader.getInstance().getGameDir());
+        GameInstance.createInstance();
     }
 }

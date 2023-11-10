@@ -44,9 +44,9 @@ public class SpeedRunOptionScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        categorySubButtons.clear();
-        categorySelectButtons.clear();
-        tooltips.clear();
+        this.categorySubButtons.clear();
+        this.categorySelectButtons.clear();
+        this.tooltips.clear();
 
         List<OptionButtonFactory> optionButtonFactoryList = SpeedRunOption.getOptionButtonFactories();
 
@@ -55,62 +55,62 @@ public class SpeedRunOptionScreen extends Screen {
         for (OptionButtonFactory factory : optionButtonFactoryList) {
             OptionButtonFactory.Storage builder = factory.create(this).build();
             AbstractButtonWidget button = builder.getButtonWidget();
-            if (builder.getTooltip() != null) tooltips.put(button, builder.getTooltip());
+            if (builder.getTooltip() != null) this.tooltips.put(button, builder.getTooltip());
 
             String category = builder.getCategory();
-            ArrayList<AbstractButtonWidget> categoryList = categorySubButtons.getOrDefault(category, new ArrayList<>());
+            ArrayList<AbstractButtonWidget> categoryList = this.categorySubButtons.getOrDefault(category, new ArrayList<>());
             categoryList.add(button);
-            categorySubButtons.put(category, categoryList);
+            this.categorySubButtons.put(category, categoryList);
 
-            if (!categorySelectButtons.containsKey(category)) {
-                ButtonWidget buttonWidget = new ButtonWidget(width - 110, 30 + ((categoryCount++ % 6) * 22), 80, 20, new TranslatableText(category), (ButtonWidget buttonWidget1) -> selectCategory(category));
-                categorySelectButtons.put(category, buttonWidget);
-                addButton(buttonWidget);
+            if (!this.categorySelectButtons.containsKey(category)) {
+                ButtonWidget buttonWidget = new ButtonWidget(this.width - 110, 30 + ((categoryCount++ % 6) * 22), 80, 20, new TranslatableText(category), (ButtonWidget buttonWidget1) -> this.selectCategory(category));
+                this.categorySelectButtons.put(category, buttonWidget);
+                this.addButton(buttonWidget);
             }
         }
 
-        prevPageButton = addButton(new ButtonWidget(width - 110, 30 + (6 * 22), 38, 20, new LiteralText("<"), (ButtonWidget button) -> openPage(-1)));
+        this.prevPageButton = this.addButton(new ButtonWidget(this.width - 110, 30 + (6 * 22), 38, 20, new LiteralText("<"), (ButtonWidget button) -> this.openPage(-1)));
 
-        nextPageButton = addButton(new ButtonWidget(width - 68, 30 + (6 * 22), 38, 20, new LiteralText(">"), (ButtonWidget button) -> openPage(+1)));
+        this.nextPageButton = this.addButton(new ButtonWidget(this.width - 68, 30 + (6 * 22), 38, 20, new LiteralText(">"), (ButtonWidget button) -> this.openPage(+1)));
 
-        openPage(page);
+        this.openPage(this.page);
 
-        addButton(new ButtonWidget(width - 85, height - 35, 70, 20, ScreenTexts.CANCEL, (ButtonWidget button) -> onClose()));
+        this.addButton(new ButtonWidget(this.width - 85, this.height - 35, 70, 20, ScreenTexts.CANCEL, (ButtonWidget button) -> this.onClose()));
 
-        addButton(new ButtonWidget(15, height - 35, 70, 20, new TranslatableText("speedrunigt.menu.donate"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://ko-fi.com/redlimerl")));
+        this.addButton(new ButtonWidget(15, this.height - 35, 70, 20, new TranslatableText("speedrunigt.menu.donate"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://ko-fi.com/redlimerl")));
 
-        addButton(new ButtonWidget(88, height - 35, 140, 20, new TranslatableText("speedrunigt.menu.crowdin"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://crowdin.com/project/speedrunigt")));
+        this.addButton(new ButtonWidget(88, this.height - 35, 140, 20, new TranslatableText("speedrunigt.menu.crowdin"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://crowdin.com/project/speedrunigt")));
 
-        buttonListWidget = addChild(new ButtonScrollListWidget());
+        this.buttonListWidget = this.addChild(new ButtonScrollListWidget());
 
-        if (!currentSelectCategory.isEmpty()) selectCategory(currentSelectCategory);
-        else categorySelectButtons.keySet().stream().findFirst().ifPresent(this::selectCategory);
+        if (!this.currentSelectCategory.isEmpty()) this.selectCategory(this.currentSelectCategory);
+        else this.categorySelectButtons.keySet().stream().findFirst().ifPresent(this::selectCategory);
     }
 
     public void openPage(int num) {
-        int maxPage = Math.max((categorySelectButtons.keySet().size() - 1) / 6, 0);
+        int maxPage = Math.max((this.categorySelectButtons.keySet().size() - 1) / 6, 0);
         this.page = MathHelper.clamp(this.page + num, 0, maxPage);
 
         int count = 0;
-        for (AbstractButtonWidget value : categorySelectButtons.values()) {
+        for (AbstractButtonWidget value : this.categorySelectButtons.values()) {
             value.visible = this.page * 6 <= count && (this.page + 1) * 6 > count;
             count++;
         }
 
         if (maxPage == 0) {
-            prevPageButton.visible = false;
-            nextPageButton.visible = false;
+            this.prevPageButton.visible = false;
+            this.nextPageButton.visible = false;
         } else {
-            prevPageButton.visible = true;
-            nextPageButton.visible = true;
-            prevPageButton.active = !(this.page == 0);
-            nextPageButton.active = !(maxPage == this.page);
+            this.prevPageButton.visible = true;
+            this.nextPageButton.visible = true;
+            this.prevPageButton.active = !(this.page == 0);
+            this.nextPageButton.active = !(maxPage == this.page);
         }
     }
 
     @Override
     public void onClose() {
-        if (this.client != null) this.client.openScreen(parent);
+        if (this.client != null) this.client.openScreen(this.parent);
     }
 
     @Override
@@ -118,24 +118,24 @@ public class SpeedRunOptionScreen extends Screen {
         this.renderBackground(matrices);
         this.buttonListWidget.render(matrices, mouseX, mouseY, delta);
         super.render(matrices, mouseX, mouseY, delta);
-        drawCenteredText(matrices, textRenderer, this.title, this.width / 2, 10, 16777215);
-        drawStringWithShadow(matrices, textRenderer, "v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215);
+        this.drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 10, 16777215);
+        this.drawStringWithShadow(matrices, this.textRenderer, "v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215);
 
-        ArrayList<Text> tooltip = getToolTip(mouseX, mouseY);
-        if (!tooltip.isEmpty() && !this.isDragging()) this.renderTooltip(matrices, tooltip, 0, height);
+        ArrayList<Text> tooltip = this.getToolTip(mouseX, mouseY);
+        if (!tooltip.isEmpty() && !this.isDragging()) this.renderTooltip(matrices, tooltip, 0, this.height);
     }
 
     public ArrayList<Text> getToolTip(int mouseX, int mouseY) {
         ArrayList<Text> tooltipList = new ArrayList<>();
 
-        Optional<Element> e = buttonListWidget.hoveredElement(mouseX, mouseY);
+        Optional<Element> e = this.buttonListWidget.hoveredElement(mouseX, mouseY);
         if (e.isPresent()) {
             Element element = e.get();
             if (element instanceof ButtonScrollListWidget.Entry) {
                 ButtonScrollListWidget.Entry entry = (ButtonScrollListWidget.Entry) element;
                 AbstractButtonWidget buttonWidget = entry.getButtonWidget();
-                if (tooltips.containsKey(buttonWidget)) {
-                    String text = tooltips.get(buttonWidget).get();
+                if (this.tooltips.containsKey(buttonWidget)) {
+                    String text = this.tooltips.get(buttonWidget).get();
                     for (String s : text.split("\n")) {
                         tooltipList.add(new LiteralText(s));
                     }
@@ -152,13 +152,13 @@ public class SpeedRunOptionScreen extends Screen {
 
 
     public void selectCategory(String key) {
-        if (categorySelectButtons.containsKey(key) && categorySubButtons.containsKey(key)) {
-            if (categorySelectButtons.containsKey(currentSelectCategory)) categorySelectButtons.get(currentSelectCategory).active = true;
-            currentSelectCategory = key;
+        if (this.categorySelectButtons.containsKey(key) && this.categorySubButtons.containsKey(key)) {
+            if (this.categorySelectButtons.containsKey(this.currentSelectCategory)) this.categorySelectButtons.get(this.currentSelectCategory).active = true;
+            this.currentSelectCategory = key;
 
-            categorySelectButtons.get(key).active = false;
-            buttonListWidget.replaceButtons(categorySubButtons.get(key));
-            buttonListWidget.setScrollAmount(0);
+            this.categorySelectButtons.get(key).active = false;
+            this.buttonListWidget.replaceButtons(this.categorySubButtons.get(key));
+            this.buttonListWidget.setScrollAmount(0);
         }
     }
 
@@ -173,7 +173,7 @@ public class SpeedRunOptionScreen extends Screen {
             for (AbstractButtonWidget buttonWidget : buttonWidgets) {
                 list.add(new Entry(buttonWidget));
             }
-            replaceEntries(list);
+            this.replaceEntries(list);
         }
 
         @Override
@@ -209,22 +209,22 @@ public class SpeedRunOptionScreen extends Screen {
             public Entry(AbstractButtonWidget buttonWidget) {
                 this.buttonWidget = buttonWidget;
                 this.buttonWidget.x = (ButtonScrollListWidget.this.width - this.buttonWidget.getWidth()) / 2;
-                children.add(this.buttonWidget);
+                this.children.add(this.buttonWidget);
             }
 
             @Override
             public List<? extends Element> children() {
-                return children;
+                return this.children;
             }
 
             public AbstractButtonWidget getButtonWidget() {
-                return buttonWidget;
+                return this.buttonWidget;
             }
 
             @Override
             public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-                buttonWidget.y = y;
-                buttonWidget.render(matrices, mouseX, mouseY, tickDelta);
+                this.buttonWidget.y = y;
+                this.buttonWidget.render(matrices, mouseX, mouseY, tickDelta);
             }
         }
     }
