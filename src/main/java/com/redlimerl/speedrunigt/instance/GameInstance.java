@@ -127,7 +127,7 @@ public class GameInstance {
 
     public boolean hasTriggeredEvent(Event e) {
         for (Event event : this.events) {
-            if (event.type.equalsIgnoreCase(e.type)) {
+            if (event.id.equalsIgnoreCase(e.id)) {
                 return true;
             }
         }
