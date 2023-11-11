@@ -1,14 +1,13 @@
 package com.redlimerl.speedrunigt.mixins.timeline;
 
 import com.mojang.authlib.GameProfile;
-import com.redlimerl.speedrunigt.events.Event;
-import com.redlimerl.speedrunigt.events.EventFactory;
-import com.redlimerl.speedrunigt.events.EventFactoryLoader;
+import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.instance.GameInstance;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
+import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -35,8 +34,8 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         super(world, blockPos, gameProfile);
     }
 
-    private ServerWorld beforeWorld = null;
-    private Vec3d lastPortalPos = null;
+    @Unique private ServerWorld beforeWorld = null;
+    @Unique private Vec3d lastPortalPos = null;
 
     @Inject(method = "changeDimension", at = @At("HEAD"))
     public void onChangeDimension(ServerWorld destination, CallbackInfoReturnable<Entity> cir) {
@@ -58,17 +57,22 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
             }
 
             if (oldRegistryKey == World.NETHER && newRegistryKey == World.OVERWORLD) {
+                // doing this early, so we can use the portal pos list for the portal number
+                int portalIndex = InGameTimerUtils.isBlindTraveled(this.lastPortalPos);
+                boolean isNewPortal = InGameTimerUtils.isLoadableBlind(World.OVERWORLD, this.lastPortalPos.add(0, 0, 0), this.getPos().add(0, 0, 0));
                 if (this.isEnoughTravel()) {
-                    int portalIndex = InGameTimerUtils.isBlindTraveled(this.lastPortalPos);
-                    InGameTimer.getInstance().tryInsertNewTimeline("nether_travel");
+                    int portalNum = InGameTimerUtils.getPortalNumber(this.lastPortalPos);
+                    SpeedRunIGT.debug("Portal number: " + portalNum);
+                    GameInstance.getInstance().callEvents("nether_travel", factory -> factory.getDataValue("portal").equals(String.valueOf(portalNum)));
+                    timer.tryInsertNewTimeline("nether_travel");
                     if (portalIndex == 0) {
-                        InGameTimer.getInstance().tryInsertNewTimeline("nether_travel_home");
+                        timer.tryInsertNewTimeline("nether_travel_home");
                     } else {
-                        InGameTimer.getInstance().tryInsertNewTimeline("nether_travel_blind");
+                        timer.tryInsertNewTimeline("nether_travel_blind");
                     }
                 }
                 if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY)
-                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.OVERWORLD, this.lastPortalPos.add(0, 0, 0), this.getPos().add(0, 0, 0));
+                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = isNewPortal;
             }
         }
     }

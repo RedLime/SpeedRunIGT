@@ -14,17 +14,24 @@
         }
     },
     {
-        "name": "first_portal",
-        "type": "insert_timeline",
-        "data": {
-            "timeline": "nether_travel"
-        }
-    },
-    {
         "name": "enter_fortress",
         "type": "advancement",
         "data": {
             "advancement": "nether/find_fortress"
+        }
+    },
+    {
+        "name": "first_portal",
+        "type": "nether_travel",
+        "data": {
+            "portal": "0"
+        }
+    },
+    {
+        "name": "second_portal",
+        "type": "nether_travel",
+        "data": {
+            "portal": "1"
         }
     },
     {

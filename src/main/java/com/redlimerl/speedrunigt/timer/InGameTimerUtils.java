@@ -237,6 +237,20 @@ public class InGameTimerUtils {
         return -1;
     }
 
+    public static int getPortalNumber(Vec3d portalPos) {
+        int index = isBlindTraveled(portalPos);
+        return Math.max(hasHomeTraveled() ? index : index - 1, 0);
+    }
+
+    public static boolean hasHomeTraveled() {
+        for (TimerTimeline timeline : InGameTimer.getInstance().getTimelines()) {
+            if (timeline.getName().equalsIgnoreCase("nether_travel_home")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void setCategoryWarningScreen(@Nullable String conditionFileName, InvalidCategoryException exception) {
         if (SpeedRunIGT.IS_CLIENT_SIDE) {
             InGameTimerClientUtils.setCategoryWarningScreen(conditionFileName, exception);
