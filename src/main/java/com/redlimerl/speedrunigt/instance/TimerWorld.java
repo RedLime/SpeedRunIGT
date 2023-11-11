@@ -39,7 +39,7 @@ public class TimerWorld {
         JsonObject object = new JsonObject();
         JsonArray modsArray = new JsonArray();
         this.mods.forEach(modsArray::add);
-        object.addProperty("world_path", this.worldFolderPath.toString());
+        object.addProperty("world_path", this.worldFolderPath.getParent().toString().replace("\\", "/"));
         object.add("mods", modsArray);
         object.addProperty("version", this.version.getName());
         return object;
