@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -43,11 +43,6 @@ public class GameInstance {
         }
     }
 
-    public void preWorldLoad() {
-        this.bufferedEvents.clear();
-        this.events.clear();
-    }
-
     public void tryLoadWorld(String worldName) {
         File worldFile = InGameTimerUtils.getTimerLogDir(worldName, "");
         if (worldFile != null) {
@@ -65,24 +60,22 @@ public class GameInstance {
     }
 
     private void loadWorld(Path worldTimerDir) {
-        this.clearGlobalPath();
         this.world = new TimerWorld(worldTimerDir, this.globalEventsPath);
-        this.events.addAll(this.world.eventRepository.appendOldGlobal());
+        this.clearGlobalPath();
+        this.events.addAll(this.world.getEventRepository().appendOldGlobal());
         this.addBufferedEvents();
     }
 
-    public boolean hasWorldLoaded() {
-        return this.world != null;
-    }
-
     public void closeTimer() {
+        this.bufferedEvents.clear();
+        this.events.clear();
         this.world = null;
     }
 
     private void addBufferedEvents() {
         if (this.world != null && !this.bufferedEvents.isEmpty()) {
             for (Event bufferedEvent : this.bufferedEvents) {
-                this.world.eventRepository.add(bufferedEvent);
+                this.world.getEventRepository().add(bufferedEvent);
             }
             SpeedRunIGT.debug("Loaded " + this.bufferedEvents.size() + " buffered event" + (this.bufferedEvents.size() != 1 ? "s" : "") + ".");
             this.bufferedEvents.clear();
@@ -93,7 +86,7 @@ public class GameInstance {
         if (this.hasTriggeredEvent(event)) { return; }
         if (this.world != null) {
             this.addBufferedEvents();
-            this.world.eventRepository.add(event);
+            this.world.getEventRepository().add(event);
         } else {
             this.bufferedEvents.add(event);
         }
@@ -102,13 +95,11 @@ public class GameInstance {
 
     private void clearGlobalPath() {
         SAVE_MANAGER_THREAD.submit(() -> {
-            if (Files.exists(this.globalEventsPath)) {
-                try {
-                    Files.write(this.globalEventsPath, "".getBytes(StandardCharsets.UTF_8));
-                    LOGGER.info("Successfully cleared global file.");
-                } catch (IOException e) {
-                    LOGGER.error("Error while clearing global file", e);
-                }
+            try {
+                Files.write(this.globalEventsPath, (this.world.getWorldData() + "\n").getBytes(Charset.defaultCharset()));
+                LOGGER.info("Successfully cleared global file.");
+            } catch (IOException e) {
+                LOGGER.error("Error while clearing global file", e);
             }
         });
     }
@@ -132,5 +123,9 @@ public class GameInstance {
             }
         }
         return false;
+    }
+
+    public boolean hasWorldLoaded() {
+        return this.world != null;
     }
 }

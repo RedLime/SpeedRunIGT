@@ -5,7 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -60,7 +60,7 @@ public class EventRepository {
             try {
                 Files.write(
                         path,
-                        text.getBytes(StandardCharsets.UTF_8),
+                        text.getBytes(Charset.defaultCharset()),
                         StandardOpenOption.CREATE,
                         StandardOpenOption.APPEND
                 );
@@ -73,17 +73,22 @@ public class EventRepository {
 
     public List<Event> appendOldGlobal() {
         List<Event> events = this.getOldEvents();
-        StringBuilder newEvents = new StringBuilder();
-        for (Event event : events) {
-            newEvents.append(this.serializeEvent(event)).append("\n");
+        if (!events.isEmpty()) {
+            StringBuilder newEvents = new StringBuilder();
+            for (Event event : events) {
+                newEvents.append(this.serializeEvent(event)).append("\n");
+            }
+            this.appendEventsFile(this.globalEventsPath, newEvents.toString());
         }
-        this.appendEventsFile(this.globalEventsPath, newEvents.toString());
         return events;
     }
 
     public void add(Event event) {
-        String newEvents = this.serializeEvent(event) + "\n";
-        this.appendEventsFile(this.eventsPath, newEvents);
-        this.appendEventsFile(this.globalEventsPath, newEvents);
+        this.appendToFiles(this.serializeEvent(event) + "\n");
+    }
+
+    private void appendToFiles(String string) {
+        this.appendEventsFile(this.eventsPath, string);
+        this.appendEventsFile(this.globalEventsPath, string);
     }
 }

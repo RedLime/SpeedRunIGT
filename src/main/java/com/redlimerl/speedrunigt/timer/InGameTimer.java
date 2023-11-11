@@ -149,7 +149,6 @@ public class InGameTimer implements Serializable {
         INSTANCE.setPause(true, TimerStatus.IDLE, "startup");
         INSTANCE.runType = runType;
         InGameTimerUtils.STATS_UPDATE = null;
-        GameInstance.getInstance().preWorldLoad();
         GameInstance.getInstance().tryLoadWorld(worldName);
         if (runType.equals(RunType.SET_SEED)) {
             GameInstance.getInstance().callEvents("view_seed");
