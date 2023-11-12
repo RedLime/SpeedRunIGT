@@ -71,7 +71,9 @@ public class EventRepository {
                 Files.write(
                         this.globalEventsPath,
                         (this.world.getWorldData() + "\n").getBytes(Charset.defaultCharset()),
-                        StandardOpenOption.CREATE
+                        StandardOpenOption.CREATE,
+                        StandardOpenOption.WRITE,
+                        StandardOpenOption.TRUNCATE_EXISTING
                 );
                 LOGGER.info("Successfully appended to events file.");
             } catch (IOException e) {
