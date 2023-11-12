@@ -31,9 +31,7 @@ public class TimerWorld {
     }
 
     public String getWorldData() {
-        JsonObject dataObject = this.getWorldDataObject();
-        String data = GSON.toJson(dataObject);
-        return Base64.getEncoder().encodeToString(data.getBytes(Charset.defaultCharset()));
+        return GSON.toJson(this.getWorldDataObject());
     }
 
     private JsonObject getWorldDataObject() {
