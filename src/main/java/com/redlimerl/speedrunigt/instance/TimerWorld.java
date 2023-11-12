@@ -43,6 +43,7 @@ public class TimerWorld {
         object.addProperty("world_path", this.worldFolderPath.getParent().toString().replace("\\", "/"));
         object.add("mods", modsArray);
         object.addProperty("version", this.version.getName());
+        object.addProperty("category", InGameTimer.getInstance().getCategory().getID());
         return object;
     }
 
