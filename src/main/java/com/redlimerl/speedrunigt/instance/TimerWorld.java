@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mojang.bridge.game.GameVersion;
 import com.redlimerl.speedrunigt.events.EventRepository;
+import com.redlimerl.speedrunigt.timer.InGameTimer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
 
@@ -22,11 +23,11 @@ public class TimerWorld {
     private final GameVersion version;
     private final EventRepository eventRepository;
 
-    TimerWorld(Path worldFolderPath, Path globalLogPath) {
+    TimerWorld(Path worldFolderPath, Path globalEventsPath) {
         this.worldFolderPath = worldFolderPath;
         this.mods = FabricLoader.getInstance().getAllMods().stream().map(mod -> mod.getMetadata().getId()).collect(Collectors.toList());
         this.version = SharedConstants.getGameVersion();
-        this.eventRepository = new EventRepository(this.worldFolderPath.resolve(EVENT_LOG_FILE_NAME), globalLogPath);
+        this.eventRepository = new EventRepository(this, this.worldFolderPath.resolve(EVENT_LOG_FILE_NAME), globalEventsPath);
     }
 
     public String getWorldData() {

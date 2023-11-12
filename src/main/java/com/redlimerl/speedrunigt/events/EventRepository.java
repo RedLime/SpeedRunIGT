@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.events;
 
 import com.redlimerl.speedrunigt.instance.GameInstance;
+import com.redlimerl.speedrunigt.instance.TimerWorld;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,17 +17,19 @@ import java.util.stream.Stream;
 public class EventRepository {
     private static final Logger LOGGER = LogManager.getLogger("Event Repository");
     private final Map<String, Integer> eventVersions = new HashMap<>();
+    private final TimerWorld world;
     private final Path eventsPath;
     private final Path globalEventsPath;
 
-    public EventRepository(Path eventsPath, Path globalEventsPath) {
+    public EventRepository(TimerWorld world, Path eventsPath, Path globalEventsPath) {
+        this.world = world;
         this.eventsPath = eventsPath;
         this.globalEventsPath = globalEventsPath;
     }
 
-    private List<Event> getOldEvents() {
+    public List<Event> getOldEvents() {
         if (Files.notExists(this.eventsPath) || !Files.isRegularFile(this.eventsPath)) {
-            LOGGER.info("Can't load old events.");
+            LOGGER.info("Couldn't load old events.");
             return new ArrayList<>();
         }
         try (Stream<String> eventStrings = Files.lines(this.eventsPath)) {
@@ -56,40 +59,24 @@ public class EventRepository {
         return event.serialize(writeVersion);
     }
 
-    private void appendEventsFile(Path path, String text) {
+    public void add(Event event) {
         GameInstance.SAVE_MANAGER_THREAD.submit(() -> {
             try {
                 Files.write(
-                        path,
-                        text.getBytes(Charset.defaultCharset()),
+                        this.eventsPath,
+                        (this.serializeEvent(event) + "\n").getBytes(Charset.defaultCharset()),
                         StandardOpenOption.CREATE,
                         StandardOpenOption.APPEND
                 );
-                LOGGER.info("Successfully appended to events file. (" + path.getFileName() + ")");
+                Files.write(
+                        this.globalEventsPath,
+                        (this.world.getWorldData() + "\n").getBytes(Charset.defaultCharset()),
+                        StandardOpenOption.CREATE
+                );
+                LOGGER.info("Successfully appended to events file.");
             } catch (IOException e) {
-                LOGGER.error("Error while writing events file " + path.getFileName(), e);
+                LOGGER.error("Error while writing to events file", e);
             }
         });
-    }
-
-    public List<Event> appendOldGlobal() {
-        List<Event> events = this.getOldEvents();
-        if (!events.isEmpty()) {
-            StringBuilder newEvents = new StringBuilder();
-            for (Event event : events) {
-                newEvents.append(this.serializeEvent(event)).append("\n");
-            }
-            this.appendEventsFile(this.globalEventsPath, newEvents.toString());
-        }
-        return events;
-    }
-
-    public void add(Event event) {
-        this.appendToFiles(this.serializeEvent(event) + "\n");
-    }
-
-    private void appendToFiles(String string) {
-        this.appendEventsFile(this.eventsPath, string);
-        this.appendEventsFile(this.globalEventsPath, string);
     }
 }
