@@ -9,9 +9,7 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
 
-import java.nio.charset.Charset;
 import java.nio.file.Path;
-import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
