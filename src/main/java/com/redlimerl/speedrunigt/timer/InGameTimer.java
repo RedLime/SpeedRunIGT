@@ -382,8 +382,8 @@ public class InGameTimer implements Serializable {
 
         String isOld = "";
         while (true) {
-            File file = new File(worldDir, "timer.igt"+isOld);
-            File completeFile = new File(worldDir, "timer.c.igt"+isOld);
+            File file = new File(worldDir, "timer.igt" + isOld);
+            File completeFile = new File(worldDir, "timer.c.igt" + isOld);
             SpeedRunIGT.debug("Loading timer data target path: " + file.getPath());
             if (file.exists()) {
                 try {
@@ -418,7 +418,12 @@ public class InGameTimer implements Serializable {
                 InGameTimer.start(name, RunType.OLD_WORLD);
                 SpeedRunIGT.error("Couldn't find any file, created new timer.");
                 return true;
-            } else return false;
+            } else {
+                INSTANCE.worldName = name;
+                COMPLETED_INSTANCE.worldName = name;
+                GameInstance.getInstance().tryLoadWorld(name);
+                return false;
+            }
         }
     }
 

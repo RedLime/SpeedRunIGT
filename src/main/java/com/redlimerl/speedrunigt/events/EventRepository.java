@@ -26,6 +26,7 @@ public class EventRepository {
 
     private List<Event> getOldEvents() {
         if (Files.notExists(this.eventsPath) || !Files.isRegularFile(this.eventsPath)) {
+            LOGGER.info("Can't load old events.");
             return new ArrayList<>();
         }
         try (Stream<String> eventStrings = Files.lines(this.eventsPath)) {

@@ -24,12 +24,13 @@ public class GameInstance {
     public static final ExecutorService SAVE_MANAGER_THREAD = Executors.newSingleThreadExecutor();
     private static final Logger LOGGER = LogManager.getLogger("Game Instance");
     private static GameInstance INSTANCE;
-    private final List<Event> bufferedEvents = new ArrayList<>();
-    private final List<Event> events = new ArrayList<>();
+    private final List<Event> bufferedEvents;
+    private List<Event> events;
     private final Path globalEventsPath;
     private TimerWorld world;
 
     private GameInstance() {
+        this.bufferedEvents = new ArrayList<>();
         this.globalEventsPath = SpeedRunIGT.getGlobalPath().resolve("events.latest");
     }
 
@@ -47,14 +48,14 @@ public class GameInstance {
         File worldFile = InGameTimerUtils.getTimerLogDir(worldName, "");
         if (worldFile != null) {
             this.loadWorld(worldFile.toPath());
-            SpeedRunIGT.debug("Loaded events world.");
-        } else { SpeedRunIGT.error("Didn't load events world."); }
+            LOGGER.info("Loaded events world.");
+        } else { LOGGER.error("Didn't load events world."); }
     }
 
     public void ensureWorld() {
         if (!this.hasWorldLoaded()) {
             InGameTimer timer = InGameTimer.getInstance();
-            SpeedRunIGT.debug("Attempting event world load at " + timer.getWorldName());
+            LOGGER.info("Attempting event world load at " + timer.getWorldName());
             this.tryLoadWorld(timer.getWorldName());
         }
     }
@@ -62,35 +63,48 @@ public class GameInstance {
     private void loadWorld(Path worldTimerDir) {
         this.world = new TimerWorld(worldTimerDir, this.globalEventsPath);
         this.clearGlobalPath();
-        this.events.addAll(this.world.getEventRepository().appendOldGlobal());
+        this.events = this.world.getEventRepository().appendOldGlobal();
         this.addBufferedEvents();
     }
 
     public void closeTimer() {
         this.bufferedEvents.clear();
-        this.events.clear();
+        this.events = null;
         this.world = null;
     }
 
     private void addBufferedEvents() {
         if (this.world != null && !this.bufferedEvents.isEmpty()) {
-            for (Event bufferedEvent : this.bufferedEvents) {
-                this.world.getEventRepository().add(bufferedEvent);
+            List<Event> buffered = new ArrayList<>(this.bufferedEvents);
+            int removed = 0;
+            for (Event bufferedEvent : buffered) {
+                if (!this.hasTriggeredEvent(bufferedEvent)) {
+                    if (this.events != null) {
+                        this.events.add(bufferedEvent);
+                    } else {
+                        // Since the list of old events hasn't loaded yet, we can't know for sure if the event has been triggered or not, so we just add the buffered events later.
+                        LOGGER.error("Couldn't add buffered event to events array.");
+                        return;
+                    }
+                    this.world.getEventRepository().add(bufferedEvent);
+                    this.bufferedEvents.remove(bufferedEvent);
+                    removed++;
+                }
             }
-            SpeedRunIGT.debug("Loaded " + this.bufferedEvents.size() + " buffered event" + (this.bufferedEvents.size() != 1 ? "s" : "") + ".");
-            this.bufferedEvents.clear();
+            LOGGER.info("Loaded " + removed + " buffered event" + (removed != 1 ? "s" : "") + ".");
         }
     }
 
     public void addEvent(Event event) {
-        if (this.hasTriggeredEvent(event)) { return; }
-        if (this.world != null) {
-            this.addBufferedEvents();
-            this.world.getEventRepository().add(event);
+        if (this.world != null && this.events != null) {
+            if (!this.hasTriggeredEvent(event)) {
+                this.addBufferedEvents();
+                this.world.getEventRepository().add(event);
+                this.events.add(event);
+            }
         } else {
             this.bufferedEvents.add(event);
         }
-        this.events.add(event);
     }
 
     private void clearGlobalPath() {
@@ -116,7 +130,9 @@ public class GameInstance {
         }
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean hasTriggeredEvent(Event e) {
+        if (this.events == null) { return false; }
         for (Event event : this.events) {
             if (event.id.equalsIgnoreCase(e.id)) {
                 return true;

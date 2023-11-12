@@ -29,10 +29,10 @@ public class EventFactory {
 
     public Event create() {
         InGameTimer timer = InGameTimer.getInstance();
-        return this.create(timer.getRetimedInGameTime(), timer.getRealTimeAttack());
+        return this.create(timer.getRealTimeAttack(), timer.getRetimedInGameTime());
     }
 
-    private Event create(@NotNull Long gameTime, @NotNull Long realTime) {
-        return new Event(this.eventVersion, this.eventId, this.type, gameTime, realTime);
+    private Event create(@NotNull Long realTime, @NotNull Long gameTime) {
+        return new Event(this.eventVersion, this.eventId, this.type, realTime, gameTime);
     }
 }
