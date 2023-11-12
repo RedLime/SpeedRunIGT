@@ -28,7 +28,7 @@ public class GameInstance {
 
     private GameInstance() {
         this.bufferedEvents = new ArrayList<>();
-        this.globalEventsPath = SpeedRunIGT.getGlobalPath().resolve("events.latest");
+        this.globalEventsPath = SpeedRunIGT.getGlobalPath().resolve("latest_world.json");
     }
 
     public static GameInstance getInstance() {
