@@ -124,7 +124,6 @@ public class GameInstance {
         }
         for (Event event : this.events) {
             if (event.id.equalsIgnoreCase(e.id)) {
-                System.out.println(event.repeatable);
                 if (!event.repeatable) {
                     return true;
                 }

@@ -32,7 +32,6 @@ public class EventFactoryLoader {
     }
 
     public static boolean isEventRepeatable(String eventId, String type) {
-        System.out.println("eventId = " + eventId + ", type = " + type);
         return getEventFactories(type).stream().findAny().map(ef -> ef.repeatable).orElse(false);
     }
 
