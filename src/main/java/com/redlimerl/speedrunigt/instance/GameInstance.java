@@ -46,6 +46,10 @@ public class GameInstance {
         if (worldFile != null) {
             this.loadWorld(worldFile.toPath());
             LOGGER.info("Loaded events world.");
+            boolean isRejoin = this.events.stream().anyMatch(event -> event.type.equals("leave_world"));
+            if (isRejoin) {
+                this.callEvents("rejoin_world");
+            }
         } else {
             LOGGER.error("Didn't load events world.");
         }
