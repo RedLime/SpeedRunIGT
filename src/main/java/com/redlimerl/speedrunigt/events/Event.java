@@ -35,23 +35,14 @@ public class Event {
         try {
             String[] parts = eventString.trim().split(" ");
 
-            String eventId;
-            Integer version = 0;
-            String type;
-            int offset;
-            try {
-                eventId = parts[0];
-                type = parts[offset = 1];
-            } catch (Exception ignored) {
-                eventId = parts[offset = 0];
-                version = runningVersions.getOrDefault(eventId, 0);
-                type = "common";
-            }
-
-            Long realTime = Long.parseLong(parts[offset++]);
-            Long gameTime = Long.parseLong(parts[offset++]);
-            if (parts.length >= offset + 1) {
-                version = Integer.parseInt(parts[offset + 1]);
+            int wordPointer = 0;
+            String eventId = parts[wordPointer++];
+            String type = eventId.split("\\.")[1];
+            long realTime = Long.parseLong(parts[wordPointer++]);
+            long gameTime = Long.parseLong(parts[wordPointer++]);
+            int version = runningVersions.getOrDefault(eventId, 0);
+            if (wordPointer < parts.length) {
+                version = Integer.parseInt(parts[wordPointer]);
             }
 
             return new Event(version, eventId, type, realTime, gameTime);
