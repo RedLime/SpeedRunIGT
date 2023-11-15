@@ -46,7 +46,9 @@ public class GameInstance {
         if (worldFile != null) {
             this.loadWorld(worldFile.toPath());
             LOGGER.info("Loaded events world.");
-        } else { LOGGER.error("Didn't load events world."); }
+        } else {
+            LOGGER.error("Didn't load events world.");
+        }
     }
 
     public void ensureWorld() {
@@ -117,10 +119,18 @@ public class GameInstance {
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean hasTriggeredEvent(Event e) {
-        if (this.events == null) { return false; }
+        if (this.events == null) {
+            return false;
+        }
         for (Event event : this.events) {
             if (event.id.equalsIgnoreCase(e.id)) {
-                return true;
+                System.out.println(event.repeatable);
+                if (!event.repeatable) {
+                    return true;
+                }
+                if (event.gameTime.equals(e.gameTime) && event.realTime.equals(e.realTime)) {
+                    return true;
+                }
             }
         }
         return false;

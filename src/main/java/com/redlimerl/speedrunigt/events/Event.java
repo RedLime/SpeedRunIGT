@@ -14,6 +14,7 @@ public class Event {
     @NotNull public final String id;
     @NotNull public final Integer version;
     @NotNull public final String type;
+    @NotNull public final Boolean repeatable;
     @NotNull public final Long realTime;
     @NotNull public final Long gameTime;
 
@@ -21,12 +22,14 @@ public class Event {
             @NotNull Integer eventVersion,
             @NotNull String eventId,
             @NotNull String type,
+            @NotNull Boolean repeatable,
             @NotNull Long realTime,
             @NotNull Long gameTime
     ) {
         this.version = eventVersion;
         this.id = eventId;
         this.type = type;
+        this.repeatable = repeatable;
         this.realTime = realTime;
         this.gameTime = gameTime;
     }
@@ -45,7 +48,7 @@ public class Event {
                 version = Integer.parseInt(parts[wordPointer]);
             }
 
-            return new Event(version, eventId, type, realTime, gameTime);
+            return new Event(version, eventId, type, EventFactoryLoader.isEventRepeatable(eventId, type), realTime, gameTime);
         } catch (Exception e) {
             LOGGER.error("Error while parsing event", e);
             return null;
@@ -54,7 +57,9 @@ public class Event {
 
     public static Map<String, String> decodeDataString(@Nullable String data) {
         Map<String, String> dataMap = new HashMap<>();
-        if (data == null) { return dataMap; }
+        if (data == null) {
+            return dataMap;
+        }
         String[] parts = (data.endsWith(";") ? data.substring(0, data.length() - 1) : data).split(";");
         for (String part : parts) {
             String[] kv = part.split(":");
