@@ -32,7 +32,7 @@ public class EventFactoryLoader {
     }
 
     public static boolean isEventRepeatable(String eventId, String type) {
-        return getEventFactories(type).stream().findAny().map(ef -> ef.repeatable).orElse(false);
+        return getEventFactories(type).stream().filter(ef -> ef.eventId.equals(eventId)).findAny().map(ef -> ef.repeatable).orElse(false);
     }
 
     private static void loadEventFactories() {

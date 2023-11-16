@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 public class EventFactory {
-    final Integer eventVersion;
+    final int eventVersion;
     final String eventId;
     final String type;
     final boolean repeatable;

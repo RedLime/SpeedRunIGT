@@ -3,18 +3,15 @@ package com.redlimerl.speedrunigt.utils;
 import java.util.function.Supplier;
 
 public class MonadicStringBuilder {
-    final StringBuilder stringBuilder;
+    private final StringBuilder stringBuilder;
 
     public MonadicStringBuilder() {
-        this(new StringBuilder());
-    }
-
-    MonadicStringBuilder(StringBuilder stringBuilder) {
-        this.stringBuilder = stringBuilder;
+        this.stringBuilder = new StringBuilder();
     }
 
     public MonadicStringBuilder append(String text) {
-        return new MonadicStringBuilder(this.stringBuilder.append(text));
+        this.stringBuilder.append(text);
+        return this;
     }
 
     public MonadicStringBuilder appendIf(Supplier<Boolean> condition, String text) {

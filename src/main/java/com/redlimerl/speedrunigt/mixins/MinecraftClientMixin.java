@@ -79,6 +79,7 @@ public abstract class MinecraftClientMixin {
         InGameTimer.getInstance().setDefaultGameMode(levelInfo.getGameMode().getId());
         // wrong mapping OMEGALUL
         InGameTimer.getInstance().setCheatAvailable(levelInfo.isHardcore());
+        InGameTimer.getInstance().checkDifficulty(levelInfo.getDifficulty());
         InGameTimerUtils.IS_CHANGING_DIMENSION = true;
         this.disconnectCheck = false;
     }

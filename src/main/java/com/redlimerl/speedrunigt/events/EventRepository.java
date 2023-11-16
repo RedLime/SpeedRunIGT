@@ -75,9 +75,9 @@ public class EventRepository {
                         StandardOpenOption.WRITE,
                         StandardOpenOption.TRUNCATE_EXISTING
                 );
-                LOGGER.info("Successfully appended to events file.");
+                LOGGER.info("Successfully appended to events files.");
             } catch (IOException e) {
-                LOGGER.error("Error while writing to events file", e);
+                LOGGER.error("Error while writing to events files", e);
             }
         });
     }

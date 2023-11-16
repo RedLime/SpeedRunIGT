@@ -19,6 +19,7 @@ import com.redlimerl.speedrunigt.timer.running.RunPortalPos;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.Difficulty;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -738,6 +739,7 @@ public class InGameTimer implements Serializable {
                     }
                 }
             }
+            this.checkDifficulty(InGameTimerUtils.getCurrentDifficulty());
             this.setStatus(TimerStatus.RUNNING);
         }
     }
@@ -885,6 +887,12 @@ public class InGameTimer implements Serializable {
             GameInstance.getInstance().callEvents("enable_cheats");
         }
         this.defaultGameMode = defaultGameMode;
+    }
+
+    public void checkDifficulty(Difficulty difficulty) {
+        if (difficulty.equals(Difficulty.PEACEFUL)) {
+            GameInstance.getInstance().callEvents("enable_cheats");
+        }
     }
 
     public boolean isCheatAvailable() {

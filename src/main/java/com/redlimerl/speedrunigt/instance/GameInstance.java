@@ -80,7 +80,7 @@ public class GameInstance {
             List<Event> buffered = new ArrayList<>(this.bufferedEvents);
             int removed = 0;
             for (Event bufferedEvent : buffered) {
-                if (!this.hasTriggeredEvent(bufferedEvent)) {
+                if (this.canTriggerEvent(bufferedEvent)) {
                     if (this.events != null) {
                         this.events.add(bufferedEvent);
                     } else {
@@ -99,7 +99,7 @@ public class GameInstance {
 
     public void addEvent(Event event) {
         if (this.world != null && this.events != null) {
-            if (!this.hasTriggeredEvent(event)) {
+            if (this.canTriggerEvent(event)) {
                 this.addBufferedEvents();
                 this.world.getEventRepository().add(event);
                 this.events.add(event);
@@ -121,22 +121,21 @@ public class GameInstance {
         }
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public boolean hasTriggeredEvent(Event e) {
+    public boolean canTriggerEvent(Event e) {
         if (this.events == null) {
-            return false;
+            return true;
         }
         for (Event event : this.events) {
             if (event.id.equalsIgnoreCase(e.id)) {
                 if (!event.repeatable) {
-                    return true;
+                    return false;
                 }
                 if (event.gameTime.equals(e.gameTime) && event.realTime.equals(e.realTime)) {
-                    return true;
+                    return false;
                 }
             }
         }
-        return false;
+        return true;
     }
 
     public boolean hasWorldLoaded() {

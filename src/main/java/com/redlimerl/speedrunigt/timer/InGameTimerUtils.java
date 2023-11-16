@@ -26,6 +26,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -294,5 +295,11 @@ public class InGameTimerUtils {
         MinecraftServer server = getServer();
         if (server == null) return false;
         return server.getPlayerManager().areCheatsAllowed();
+    }
+
+    public static Difficulty getCurrentDifficulty() {
+        MinecraftServer server = getServer();
+        if (server == null) { return Difficulty.EASY; }
+        return server.getSaveProperties().getDifficulty();
     }
 }

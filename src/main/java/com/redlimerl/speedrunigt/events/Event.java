@@ -11,20 +11,20 @@ import java.util.Map;
 
 public class Event {
     private static final Logger LOGGER = LogManager.getLogger("Event");
-    @NotNull public final String id;
-    @NotNull public final Integer version;
-    @NotNull public final String type;
-    @NotNull public final Boolean repeatable;
-    @NotNull public final Long realTime;
-    @NotNull public final Long gameTime;
+    public final String id;
+    public final Integer version;
+    public final String type;
+    public final boolean repeatable;
+    public final Long realTime;
+    public final Long gameTime;
 
     public Event(
-            @NotNull Integer eventVersion,
-            @NotNull String eventId,
-            @NotNull String type,
-            @NotNull Boolean repeatable,
-            @NotNull Long realTime,
-            @NotNull Long gameTime
+            int eventVersion,
+            String eventId,
+            String type,
+            boolean repeatable,
+            long realTime,
+            long gameTime
     ) {
         this.version = eventVersion;
         this.id = eventId;
@@ -47,8 +47,9 @@ public class Event {
             if (wordPointer < parts.length) {
                 version = Integer.parseInt(parts[wordPointer]);
             }
+            boolean repeatable = EventFactoryLoader.isEventRepeatable(eventId, type);
 
-            return new Event(version, eventId, type, EventFactoryLoader.isEventRepeatable(eventId, type), realTime, gameTime);
+            return new Event(version, eventId, type, repeatable, realTime, gameTime);
         } catch (Exception e) {
             LOGGER.error("Error while parsing event", e);
             return null;
@@ -70,7 +71,6 @@ public class Event {
 
     public String serialize(boolean writeVersion) {
         MonadicStringBuilder stringBuilder = new MonadicStringBuilder();
-
         return stringBuilder
                 .append(this.id)
                 .append(" " + this.realTime)
