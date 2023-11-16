@@ -35,6 +35,10 @@ public class EventFactoryLoader {
         return getEventFactories(type).stream().filter(ef -> ef.eventId.equals(eventId)).findAny().map(ef -> ef.repeatable).orElse(false);
     }
 
+    public static boolean isEventRepeatable(Event event) {
+        return isEventRepeatable(event.id, event.type);
+    }
+
     private static void loadEventFactories() {
         try {
             String[] resourceNames = ResourcesHelper.getResourceChildren("events");

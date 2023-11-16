@@ -14,7 +14,6 @@ public class Event {
     public final String id;
     public final Integer version;
     public final String type;
-    public final boolean repeatable;
     public final Long realTime;
     public final Long gameTime;
 
@@ -22,14 +21,12 @@ public class Event {
             int eventVersion,
             String eventId,
             String type,
-            boolean repeatable,
             long realTime,
             long gameTime
     ) {
         this.version = eventVersion;
         this.id = eventId;
         this.type = type;
-        this.repeatable = repeatable;
         this.realTime = realTime;
         this.gameTime = gameTime;
     }
@@ -47,9 +44,8 @@ public class Event {
             if (wordPointer < parts.length) {
                 version = Integer.parseInt(parts[wordPointer]);
             }
-            boolean repeatable = EventFactoryLoader.isEventRepeatable(eventId, type);
 
-            return new Event(version, eventId, type, repeatable, realTime, gameTime);
+            return new Event(version, eventId, type, realTime, gameTime);
         } catch (Exception e) {
             LOGGER.error("Error while parsing event", e);
             return null;
