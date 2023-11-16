@@ -125,9 +125,10 @@ public class GameInstance {
         if (this.events == null) {
             return true;
         }
+        boolean repeatable = EventFactoryLoader.isEventRepeatable(e);
         for (Event event : this.events) {
             if (event.id.equalsIgnoreCase(e.id)) {
-                if (!event.repeatable) {
+                if (!repeatable) {
                     return false;
                 }
                 if (event.gameTime.equals(e.gameTime) && event.realTime.equals(e.realTime)) {

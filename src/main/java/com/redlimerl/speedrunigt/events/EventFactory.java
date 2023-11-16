@@ -31,6 +31,6 @@ public class EventFactory {
     }
 
     private Event create(@NotNull Long realTime, @NotNull Long gameTime) {
-        return new Event(this.eventVersion, this.eventId, this.type, this.repeatable, realTime, gameTime);
+        return new Event(this.eventVersion, this.eventId, this.type, realTime, gameTime);
     }
 }
