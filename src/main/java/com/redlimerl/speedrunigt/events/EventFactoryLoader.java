@@ -31,6 +31,10 @@ public class EventFactoryLoader {
         return factories == null ? TYPE_TO_FACTORIES.get(type) : factories;
     }
 
+    public static boolean isEventRepeatable(String eventId, String type) {
+        return getEventFactories(type).stream().findAny().map(ef -> ef.repeatable).orElse(false);
+    }
+
     private static void loadEventFactories() {
         try {
             String[] resourceNames = ResourcesHelper.getResourceChildren("events");
@@ -53,10 +57,13 @@ public class EventFactoryLoader {
                         }
                     }
                     String type = eventObject.get("type").getAsString();
+                    JsonElement repeatableEl = eventObject.get("repeatable");
+                    boolean repeatable = repeatableEl != null && repeatableEl.getAsBoolean();
                     EventFactory factory = new EventFactory(
                             source,
                             eventObject.get("name").getAsString(),
                             type,
+                            repeatable,
                             (data.length() == 0) ? null : data.toString()
                     );
                     if (!TYPE_TO_FACTORIES.containsKey(type)) {

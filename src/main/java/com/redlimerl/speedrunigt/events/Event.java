@@ -14,6 +14,7 @@ public class Event {
     @NotNull public final String id;
     @NotNull public final Integer version;
     @NotNull public final String type;
+    @NotNull public final Boolean repeatable;
     @NotNull public final Long realTime;
     @NotNull public final Long gameTime;
 
@@ -21,12 +22,14 @@ public class Event {
             @NotNull Integer eventVersion,
             @NotNull String eventId,
             @NotNull String type,
+            @NotNull Boolean repeatable,
             @NotNull Long realTime,
             @NotNull Long gameTime
     ) {
         this.version = eventVersion;
         this.id = eventId;
         this.type = type;
+        this.repeatable = repeatable;
         this.realTime = realTime;
         this.gameTime = gameTime;
     }
@@ -35,26 +38,17 @@ public class Event {
         try {
             String[] parts = eventString.trim().split(" ");
 
-            String eventId;
-            Integer version = 0;
-            String type;
-            int offset;
-            try {
-                eventId = parts[0];
-                type = parts[offset = 1];
-            } catch (Exception ignored) {
-                eventId = parts[offset = 0];
-                version = runningVersions.getOrDefault(eventId, 0);
-                type = "common";
+            int wordPointer = 0;
+            String eventId = parts[wordPointer++];
+            String type = eventId.split("\\.")[1];
+            long realTime = Long.parseLong(parts[wordPointer++]);
+            long gameTime = Long.parseLong(parts[wordPointer++]);
+            int version = runningVersions.getOrDefault(eventId, 0);
+            if (wordPointer < parts.length) {
+                version = Integer.parseInt(parts[wordPointer]);
             }
 
-            Long realTime = Long.parseLong(parts[offset++]);
-            Long gameTime = Long.parseLong(parts[offset++]);
-            if (parts.length >= offset + 1) {
-                version = Integer.parseInt(parts[offset + 1]);
-            }
-
-            return new Event(version, eventId, type, realTime, gameTime);
+            return new Event(version, eventId, type, EventFactoryLoader.isEventRepeatable(eventId, type), realTime, gameTime);
         } catch (Exception e) {
             LOGGER.error("Error while parsing event", e);
             return null;
@@ -63,7 +57,9 @@ public class Event {
 
     public static Map<String, String> decodeDataString(@Nullable String data) {
         Map<String, String> dataMap = new HashMap<>();
-        if (data == null) { return dataMap; }
+        if (data == null) {
+            return dataMap;
+        }
         String[] parts = (data.endsWith(";") ? data.substring(0, data.length() - 1) : data).split(";");
         for (String part : parts) {
             String[] kv = part.split(":");

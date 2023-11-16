@@ -11,14 +11,16 @@ public class EventFactory {
     String name;
     String eventId;
     String type;
+    boolean repeatable;
     @Nullable String dataString;
     final Map<String, String> data;
 
-    public EventFactory(String source, String name, String type, @Nullable String data) {
+    public EventFactory(String source, String name, String type, boolean repeatable, @Nullable String data) {
         this.eventVersion = 0;
         this.name = name;
         this.eventId = (source + "." + name).replace(" ", "_");
         this.type = type;
+        this.repeatable = repeatable;
         this.dataString = data;
         this.data = Event.decodeDataString(data);
     }
@@ -33,6 +35,6 @@ public class EventFactory {
     }
 
     private Event create(@NotNull Long realTime, @NotNull Long gameTime) {
-        return new Event(this.eventVersion, this.eventId, this.type, realTime, gameTime);
+        return new Event(this.eventVersion, this.eventId, this.type, repeatable, realTime, gameTime);
     }
 }

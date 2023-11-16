@@ -10,5 +10,15 @@
     {
         "name": "open_to_lan",
         "type": "open_to_lan"
+    },
+    {
+        "name": "leave_world",
+        "type": "leave_world",
+        "repeatable": true
+    },
+    {
+        "name": "rejoin_world",
+        "type": "rejoin_world",
+        "repeatable": true
     }
 ]
