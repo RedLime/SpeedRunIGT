@@ -7,21 +7,17 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 public class EventFactory {
-    Integer eventVersion;
-    String name;
-    String eventId;
-    String type;
-    boolean repeatable;
-    @Nullable String dataString;
+    final Integer eventVersion;
+    final String eventId;
+    final String type;
+    final boolean repeatable;
     final Map<String, String> data;
 
     public EventFactory(String source, String name, String type, boolean repeatable, @Nullable String data) {
         this.eventVersion = 0;
-        this.name = name;
         this.eventId = (source + "." + name).replace(" ", "_");
         this.type = type;
         this.repeatable = repeatable;
-        this.dataString = data;
         this.data = Event.decodeDataString(data);
     }
 
@@ -35,6 +31,6 @@ public class EventFactory {
     }
 
     private Event create(@NotNull Long realTime, @NotNull Long gameTime) {
-        return new Event(this.eventVersion, this.eventId, this.type, repeatable, realTime, gameTime);
+        return new Event(this.eventVersion, this.eventId, this.type, this.repeatable, realTime, gameTime);
     }
 }

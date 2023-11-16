@@ -3,7 +3,7 @@ package com.redlimerl.speedrunigt.utils;
 import java.util.function.Supplier;
 
 public class MonadicStringBuilder {
-    StringBuilder stringBuilder;
+    final StringBuilder stringBuilder;
 
     public MonadicStringBuilder() {
         this(new StringBuilder());
