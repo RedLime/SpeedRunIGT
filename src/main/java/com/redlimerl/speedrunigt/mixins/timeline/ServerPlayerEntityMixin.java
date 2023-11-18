@@ -1,6 +1,8 @@
 package com.redlimerl.speedrunigt.mixins.timeline;
 
 import com.mojang.authlib.GameProfile;
+import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.instance.GameInstance;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
@@ -31,41 +33,45 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         super(world, blockPos, gameProfile);
     }
 
-    @Unique
-    private DimensionType oldDimension = null;
-    @Unique
-    private Vec3d lastPortalPos = null;
+    @Unique private ServerWorld beforeWorld = null;
+    @Unique private Vec3d lastPortalPos = null;
 
     @Inject(method = "changeDimension", at = @At("HEAD"))
     public void onChangeDimension(ServerWorld destination, CallbackInfoReturnable<Entity> cir) {
-        oldDimension = this.getServerWorld().getDimension();
-        lastPortalPos = this.getPos();
+        this.beforeWorld = this.getServerWorld();
+        this.lastPortalPos = this.getPos();
         InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = !InGameTimer.getInstance().isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY;
     }
 
     @Inject(method = "changeDimension", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;onPlayerChangeDimension(Lnet/minecraft/server/network/ServerPlayerEntity;)V", shift = At.Shift.AFTER))
     public void onChangedDimension(ServerWorld destination, CallbackInfoReturnable<Entity> cir) {
-        DimensionType currentDimension = destination.getDimension();
+        RegistryKey<World> oldRegistryKey = this.beforeWorld.getRegistryKey();
+        RegistryKey<World> newRegistryKey = this.world.getRegistryKey();
 
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() != TimerStatus.NONE) {
             if (oldDimension.isBedWorking() && currentDimension.hasCeiling()) {
                 if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY)
-                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.NETHER, this.getPos().add(0, 0, 0), lastPortalPos.add(0, 0, 0));
+                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.NETHER, this.getPos().add(0, 0, 0), this.lastPortalPos.add(0, 0, 0));
             }
 
             if (oldDimension.hasCeiling() && currentDimension.isBedWorking()) {
+                // doing this early, so we can use the portal pos list for the portal number
+                int portalIndex = InGameTimerUtils.isBlindTraveled(this.lastPortalPos);
+                boolean isNewPortal = InGameTimerUtils.isLoadableBlind(World.OVERWORLD, this.lastPortalPos.add(0, 0, 0), this.getPos().add(0, 0, 0));
                 if (this.isEnoughTravel()) {
-                    int portalIndex = InGameTimerUtils.isBlindTraveled(lastPortalPos);
-                    InGameTimer.getInstance().tryInsertNewTimeline("nether_travel");
+                    int portalNum = InGameTimerUtils.getPortalNumber(this.lastPortalPos);
+                    SpeedRunIGT.debug("Portal number: " + portalNum);
+                    GameInstance.getInstance().callEvents("nether_travel", factory -> factory.getDataValue("portal").equals(String.valueOf(portalNum)));
+                    timer.tryInsertNewTimeline("nether_travel");
                     if (portalIndex == 0) {
-                        InGameTimer.getInstance().tryInsertNewTimeline("nether_travel_home");
+                        timer.tryInsertNewTimeline("nether_travel_home");
                     } else {
-                        InGameTimer.getInstance().tryInsertNewTimeline("nether_travel_blind");
+                        timer.tryInsertNewTimeline("nether_travel_blind");
                     }
                 }
                 if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY)
-                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.OVERWORLD, lastPortalPos.add(0, 0, 0), this.getPos().add(0, 0, 0));
+                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = isNewPortal;
             }
         }
     }

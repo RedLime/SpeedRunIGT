@@ -28,14 +28,14 @@ public class SpeedRunIGTInfoScreen extends Screen {
     @Override
     protected void init() {
         checkUpdate();
-        assert client != null;
-        update = addButton(new ButtonWidget(width / 2 - 155, height - 104, 150, 20, new TranslatableText("speedrunigt.menu.download_update"), (ButtonWidget button) -> Util.getOperatingSystem().open(UPDATE_URL)));
-        update.active = false;
-        addButton(new ButtonWidget(width / 2 + 5, height - 104, 150, 20, new TranslatableText("speedrunigt.menu.latest_change_log"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://github.com/RedLime/SpeedRunIGT/releases/latest")));
+        assert this.client != null;
+        this.update = this.addButton(new ButtonWidget(this.width / 2 - 155, this.height - 104, 150, 20, new TranslatableText("speedrunigt.menu.download_update"), (ButtonWidget button) -> Util.getOperatingSystem().open(UPDATE_URL)));
+        this.update.active = false;
+        this.addButton(new ButtonWidget(this.width / 2 + 5, this.height - 104, 150, 20, new TranslatableText("speedrunigt.menu.latest_change_log"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://github.com/RedLime/SpeedRunIGT/releases/latest")));
 
-        addButton(new ButtonWidget(width / 2 - 155, height - 80, 150, 20, new TranslatableText("speedrunigt.menu.open_github_repo"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://github.com/RedLime/SpeedRunIGT/")));
-        addButton(new ButtonWidget(width / 2 + 5, height - 80, 150, 20, new TranslatableText("speedrunigt.menu.open_support_page"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://ko-fi.com/redlimerl")));
-        addButton(new ButtonWidget(width / 2 - 100, height - 40, 200, 20, ScreenTexts.BACK, (ButtonWidget button) -> client.openScreen(parent)));
+        this.addButton(new ButtonWidget(this.width / 2 - 155, this.height - 80, 150, 20, new TranslatableText("speedrunigt.menu.open_github_repo"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://github.com/RedLime/SpeedRunIGT/")));
+        this.addButton(new ButtonWidget(this.width / 2 + 5, this.height - 80, 150, 20, new TranslatableText("speedrunigt.menu.open_support_page"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://ko-fi.com/redlimerl")));
+        this.addButton(new ButtonWidget(this.width / 2 - 100, this.height - 40, 200, 20, ScreenTexts.BACK, (ButtonWidget button) -> this.client.openScreen(this.parent)));
     }
 
     @Override
@@ -51,7 +51,7 @@ public class SpeedRunIGTInfoScreen extends Screen {
                 new LiteralText("Version : "+ SpeedRunIGT.MOD_VERSION.split("\\+")[0]), this.width / 2, 78, 16777215);
         if (UPDATE_STATUS != UpdateStatus.NONE) {
             if (UPDATE_STATUS == UpdateStatus.OUTDATED) {
-                update.active = true;
+                this.update.active = true;
                 this.drawCenteredText(matrices, this.textRenderer, new LiteralText("Updated Version : "+ UPDATE_VERSION).formatted(Formatting.YELLOW), this.width / 2, 88, 16777215);
             }
             this.drawCenteredText(matrices, this.textRenderer,
@@ -64,8 +64,8 @@ public class SpeedRunIGTInfoScreen extends Screen {
 
     @Override
     public void onClose() {
-        if (client != null) {
-            client.openScreen(parent);
+        if (this.client != null) {
+            this.client.openScreen(this.parent);
         }
     }
 }

@@ -3,47 +3,60 @@
   "package": "com.redlimerl.speedrunigt.mixins",
   "plugin": "com.redlimerl.speedrunigt.SpeedRunIGTMixinPlugin",
   "mixins": [
+    "access.ServerStatHandlerAccessor",
+
+    "coop.PlayerManagerMixin",
+    "coop.TimeCommandMixin",
+
+    "network.CustomPayloadC2SPacketAccessor",
+    "network.ServerPlayNetworkHandlerMixin",
+
+    "timeline.ServerPlayerEntityMixin",
+
     "EndPortalBlockMixin",
     "LivingEntityMixin",
     "PlayerAdvancementTrackerMixin",
+    "SeedCommandMixin",
     "ServerStatHandlerMixin",
-    "ServerWorldMixin",
-    "access.ServerStatHandlerAccessor",
-    "coop.PlayerManagerMixin",
-    "coop.TimeCommandMixin",
-    "network.CustomPayloadC2SPacketAccessor",
-    "network.ServerPlayNetworkHandlerMixin",
-    "timeline.ServerPlayerEntityMixin"
+    "ServerWorldMixin"
   ],
   "client": [
+    "access.DoubleOptionSliderWidgetAccessor",
+    "access.FontManagerAccessor",
+    "access.FontStorageAccessor",
+    "access.MinecraftClientAccessor",
+    "access.MinecraftClientAccessorForAttack",
+    "access.WorldRendererAccessor",
+
+    "keybinding.GameOptionsMixin",
+    "keybinding.KeyBindingAccessor",
+
+    "network.ClientPlayNetworkHandlerMixin",
+
+    "retime.OptionButtonWidgetMixin",
+    "retime.OptionScreenMixin",
+    "retime.OptionSliderWidgetMixin",
+    "retime.SodiumOptionImplMixin",
+
+    "screen.CreditsScreenMixin",
+    "screen.DownloadingTerrainScreenMixin",
+    "screen.GameMenuScreenMixin",
+    "screen.GeneratorOptionsMixin",
+    "screen.OptionsScreenMixin",
+
+    "server.IntegratedServerMixin",
+
+    "timeline.SoundSystemMixin",
+
+    "translate.TranslationStorageMixin",
+
     "ClientAdvancementManagerMixin",
     "ClientPlayerEntityMixin",
     "ClientWorldMixin",
     "InGameHudMixin",
     "KeyBindingMixin",
     "MinecraftClientMixin",
-    "MouseMixin",
-    "access.FontManagerAccessor",
-    "access.FontStorageAccessor",
-    "access.MinecraftClientAccessor",
-    "access.MinecraftClientAccessorForAttack",
-    "access.WorldRendererAccessor",
-    "keybinding.GameOptionsMixin",
-    "keybinding.KeyBindingAccessor",
-    "network.ClientPlayNetworkHandlerMixin",
-    "retime.OptionButtonWidgetMixin",
-    "retime.OptionScreenMixin",
-    "retime.OptionSliderWidgetMixin",
-    "retime.SodiumOptionImplMixin",
-    "retime.accessor.DoubleOptionSliderWidgetAccessor",
-    "screen.CreditsScreenMixin",
-    "screen.DownloadingTerrainScreenMixin",
-    "screen.GameMenuScreenMixin",
-    "screen.GeneratorOptionsMixin",
-    "screen.OptionsScreenMixin",
-    "server.IntegratedServerMixin",
-    "timeline.SoundSystemMixin",
-    "translate.TranslationStorageMixin"
+    "MouseMixin"
   ],
   "server": [
     "server.DedicatedServerMixin"

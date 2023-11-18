@@ -43,20 +43,20 @@ public class ObtainItemCategoryCondition extends CategoryCondition.Condition<Lis
         int amount = 0;
 
         for (ItemStack itemStack : itemStacks) {
-            if (itemStack != null && Objects.equals(Registry.ITEM.getId(itemStack.getItem()).toString(), itemID) && (itemDamage == null || itemStack.getDamage() == itemDamage)) {
-                if (!nbtTag.isEmpty()) {
+            if (itemStack != null && Objects.equals(Registry.ITEM.getId(itemStack.getItem()).toString(), this.itemID) && (this.itemDamage == null || itemStack.getDamage() == this.itemDamage)) {
+                if (!this.nbtTag.isEmpty()) {
                     if (itemStack.getTag() == null) continue;
                     CompoundTag itemTag = itemStack.getTag();
-                    if (!itemTag.equals(nbtTag)) continue;
+                    if (!itemTag.equals(this.nbtTag)) continue;
                 }
                 amount += itemStack.getCount();
             }
         }
 
-        return amount >= itemAmount;
+        return amount >= this.itemAmount;
     }
 
     public boolean isStrictMode() {
-        return strictMode;
+        return this.strictMode;
     }
 }

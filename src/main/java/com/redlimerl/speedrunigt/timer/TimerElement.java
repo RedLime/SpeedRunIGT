@@ -41,14 +41,14 @@ public class TimerElement {
         this.textWidth = client.textRenderer.getWidth(text);
 
         //가로 화면 밖으로 나갈 시 재조정
-        if (getScaledTextWidth() + this.position.getX() > scaledWindowWidth) {
-            this.scaledPosition.setX(this.scaledPosition.getX() - Math.round((getScaledTextWidth() - 1) / scale));
-            this.position.setX(this.position.getX() - getScaledTextWidth());
+        if (this.getScaledTextWidth() + this.position.getX() > scaledWindowWidth) {
+            this.scaledPosition.setX(this.scaledPosition.getX() - Math.round((this.getScaledTextWidth() - 1) / scale));
+            this.position.setX(this.position.getX() - this.getScaledTextWidth());
         }
         //세로 화면 밖으로 나갈 시 재조정
-        if (getScaledTextHeight() + this.position.getY() > scaledWindowHeight) {
-            this.scaledPosition.setY(this.scaledPosition.getY() - MathHelper.floor(getScaledTextHeight() / scale));
-            this.position.setY(this.position.getY() - getScaledTextWidth());
+        if (this.getScaledTextHeight() + this.position.getY() > scaledWindowHeight) {
+            this.scaledPosition.setY(this.scaledPosition.getY() - MathHelper.floor(this.getScaledTextHeight() / scale));
+            this.position.setY(this.position.getY() - this.getScaledTextWidth());
         }
     }
 
@@ -56,8 +56,8 @@ public class TimerElement {
     public void draw(MatrixStack matrixStack, boolean doTranslate) {
         RenderSystem.pushMatrix();
         if (doTranslate) RenderSystem.translatef(0, 0, 1);
-        RenderSystem.scalef(scale, scale, 1f);
-        drawOutLine(client.textRenderer, matrixStack, scaledPosition.getX(), scaledPosition.getY(), text, color, decoration);
+        RenderSystem.scalef(this.scale, this.scale, 1f);
+        drawOutLine(client.textRenderer, matrixStack, this.scaledPosition.getX(), this.scaledPosition.getY(), this.text, this.color, this.decoration);
         RenderSystem.popMatrix();
     }
 
@@ -78,14 +78,14 @@ public class TimerElement {
     }
 
     public Position getPosition() {
-        return position;
+        return this.position;
     }
 
     public int getScaledTextWidth() {
-        return Math.round(textWidth * scale);
+        return Math.round(this.textWidth * this.scale);
     }
 
     public int getScaledTextHeight() {
-        return Math.round(fontHeight * scale);
+        return Math.round(this.fontHeight * this.scale);
     }
 }

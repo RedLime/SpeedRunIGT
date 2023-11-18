@@ -30,7 +30,7 @@ public interface OptionButtonFactory {
         }
 
         public Storage build() {
-            return new Storage(category, buttonWidget, tooltip);
+            return new Storage(this.category, this.buttonWidget, this.tooltip);
         }
     }
 
@@ -45,15 +45,15 @@ public interface OptionButtonFactory {
         }
 
         public String getCategory() {
-            return category;
+            return this.category;
         }
 
         public AbstractButtonWidget getButtonWidget() {
-            return buttonWidget;
+            return this.buttonWidget;
         }
 
         public Supplier<String> getTooltip() {
-            return tooltip;
+            return this.tooltip;
         }
     }
 

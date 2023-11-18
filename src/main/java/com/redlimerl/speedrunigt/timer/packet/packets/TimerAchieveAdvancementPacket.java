@@ -27,8 +27,8 @@ public class TimerAchieveAdvancementPacket extends TimerPacket {
 
     @Override
     protected TimerPacketBuf convertClient2ServerPacket(TimerPacketBuf buf, MinecraftClient client) {
-        if (sendAdvancement != null) {
-            buf.writeIdentifier(sendAdvancement.getId());
+        if (this.sendAdvancement != null) {
+            buf.writeIdentifier(this.sendAdvancement.getId());
         }
         return buf;
     }
@@ -54,8 +54,8 @@ public class TimerAchieveAdvancementPacket extends TimerPacket {
 
     @Override
     protected TimerPacketBuf convertServer2ClientPacket(TimerPacketBuf buf, MinecraftServer server) {
-        if (sendAdvancement != null) {
-            buf.writeIdentifier(sendAdvancement.getId());
+        if (this.sendAdvancement != null) {
+            buf.writeIdentifier(this.sendAdvancement.getId());
         }
         return buf;
     }

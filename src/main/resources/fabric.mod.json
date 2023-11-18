@@ -20,6 +20,9 @@
     "client": [
       "com.redlimerl.speedrunigt.SpeedRunIGTClient"
     ],
+    "server": [
+      "com.redlimerl.speedrunigt.SpeedRunIGTServer"
+    ],
     "main": [
       "com.redlimerl.speedrunigt.SpeedRunIGT"
     ]

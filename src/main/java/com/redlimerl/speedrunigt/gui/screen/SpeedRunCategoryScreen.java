@@ -43,16 +43,16 @@ public class SpeedRunCategoryScreen extends Screen {
 
     @Override
     protected void init() {
-        assert client != null;
-        addButton(new ButtonWidget(width / 2 - 100, height - 35, 200, 20, ScreenTexts.CANCEL, button -> client.openScreen(parent)));
+        assert this.client != null;
+        this.addButton(new ButtonWidget(this.width / 2 - 100, this.height - 35, 200, 20, ScreenTexts.CANCEL, button -> this.client.openScreen(this.parent)));
 
-        this.listWidget = new CategorySelectionListWidget(client);
-        addChild(listWidget);
+        this.listWidget = new CategorySelectionListWidget(this.client);
+        this.addChild(this.listWidget);
     }
 
     @Override
     public void onClose() {
-        if (this.client != null) this.client.openScreen(parent);
+        if (this.client != null) this.client.openScreen(this.parent);
     }
 
     @Override
@@ -86,8 +86,8 @@ public class SpeedRunCategoryScreen extends Screen {
             public CategoryEntry(RunCategory category) {
                 this.checkBox = new CategoryCheckBoxWidget(category);
                 this.urlButton = new ButtonWidget(0, 0, 30, 20, new TranslatableText("speedrunigt.option.more"), button -> Util.getOperatingSystem().open(category.getLeaderboardUrl()));
-                children.add(urlButton);
-                children.add(checkBox);
+                this.children.add(this.urlButton);
+                this.children.add(this.checkBox);
             }
 
             public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
@@ -101,7 +101,7 @@ public class SpeedRunCategoryScreen extends Screen {
 
             @Override
             public List<? extends Element> children() {
-                return children;
+                return this.children;
             }
 
             private class CategoryCheckBoxWidget extends CheckboxWidget {
@@ -124,14 +124,14 @@ public class SpeedRunCategoryScreen extends Screen {
                 @Override
                 public boolean isChecked() {
                     return (InGameTimer.getInstance().getStatus() != TimerStatus.NONE ? InGameTimer.getInstance().getCategory()
-                            : SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY)) == category;
+                            : SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY)) == this.category;
                 }
 
                 @SuppressWarnings("deprecation")
                 @Override
                 public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
                     MinecraftClient minecraftClient = MinecraftClient.getInstance();
-                    minecraftClient.getTextureManager().bindTexture(TEXTURE);
+                    minecraftClient.getTextureManager().bindTexture(this.TEXTURE);
                     RenderSystem.enableDepthTest();
                     TextRenderer textRenderer = minecraftClient.textRenderer;
                     RenderSystem.color4f(1.0F, 1.0F, 1.0F, this.alpha);
