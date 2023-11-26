@@ -33,26 +33,27 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         super(world, blockPos, gameProfile);
     }
 
-    @Unique private ServerWorld beforeWorld = null;
-    @Unique private Vec3d lastPortalPos = null;
+    @Unique
+    private DimensionType oldDimension = null;
+    @Unique
+    private Vec3d lastPortalPos = null;
 
     @Inject(method = "changeDimension", at = @At("HEAD"))
     public void onChangeDimension(ServerWorld destination, CallbackInfoReturnable<Entity> cir) {
-        this.beforeWorld = this.getServerWorld();
+        oldDimension = this.getServerWorld().getDimension();
         this.lastPortalPos = this.getPos();
         InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = !InGameTimer.getInstance().isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY;
     }
 
     @Inject(method = "changeDimension", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;onPlayerChangeDimension(Lnet/minecraft/server/network/ServerPlayerEntity;)V", shift = At.Shift.AFTER))
     public void onChangedDimension(ServerWorld destination, CallbackInfoReturnable<Entity> cir) {
-        RegistryKey<World> oldRegistryKey = this.beforeWorld.getRegistryKey();
-        RegistryKey<World> newRegistryKey = this.world.getRegistryKey();
+        DimensionType currentDimension = destination.getDimension();
 
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() != TimerStatus.NONE) {
             if (oldDimension.isBedWorking() && currentDimension.hasCeiling()) {
                 if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY)
-                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.NETHER, this.getPos().add(0, 0, 0), this.lastPortalPos.add(0, 0, 0));
+                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.NETHER, this.getPos().add(0, 0, 0), lastPortalPos.add(0, 0, 0));
             }
 
             if (oldDimension.hasCeiling() && currentDimension.isBedWorking()) {
