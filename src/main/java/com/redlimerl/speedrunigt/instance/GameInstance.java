@@ -88,7 +88,7 @@ public class GameInstance {
                         LOGGER.error("Couldn't add buffered event to events array.");
                         return;
                     }
-                    this.world.getEventRepository().add(bufferedEvent);
+                    this.sendEventToRepository(bufferedEvent);
                     this.bufferedEvents.remove(bufferedEvent);
                     removed++;
                 }
@@ -101,8 +101,8 @@ public class GameInstance {
         if (this.world != null && this.events != null) {
             if (this.canTriggerEvent(event)) {
                 this.addBufferedEvents();
-                this.world.getEventRepository().add(event);
                 this.events.add(event);
+                this.sendEventToRepository(event);
             }
         } else {
             this.bufferedEvents.add(event);
@@ -141,5 +141,17 @@ public class GameInstance {
 
     public boolean hasWorldLoaded() {
         return this.world != null;
+    }
+
+    private boolean shouldUpdateGlobal(Event event) {
+        return this.events.size() > 1 || !event.type.equals("leave_world");
+    }
+
+    private void sendEventToRepository(Event event) {
+        if (this.shouldUpdateGlobal(event)) {
+            this.world.getEventRepository().add(event);
+        } else {
+            this.world.getEventRepository().addOnlyToLog(event);
+        }
     }
 }

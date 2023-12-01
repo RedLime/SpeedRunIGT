@@ -62,23 +62,42 @@ public class EventRepository {
     public void add(Event event) {
         GameInstance.SAVE_MANAGER_THREAD.submit(() -> {
             try {
-                Files.write(
-                        this.eventsPath,
-                        (this.serializeEvent(event) + "\n").getBytes(Charset.defaultCharset()),
-                        StandardOpenOption.CREATE,
-                        StandardOpenOption.APPEND
-                );
-                Files.write(
-                        this.globalEventsPath,
-                        (this.world.getWorldData() + "\n").getBytes(Charset.defaultCharset()),
-                        StandardOpenOption.CREATE,
-                        StandardOpenOption.WRITE,
-                        StandardOpenOption.TRUNCATE_EXISTING
-                );
+                writeEventToLog(event);
+                writeWorldDataToGlobalFile();
                 LOGGER.info("Successfully appended to events files.");
             } catch (IOException e) {
                 LOGGER.error("Error while writing to events files", e);
             }
         });
+    }
+
+    public void addOnlyToLog(Event event) {
+        GameInstance.SAVE_MANAGER_THREAD.submit(() -> {
+            try {
+                writeEventToLog(event);
+                LOGGER.info("Successfully appended to events file.");
+            } catch (IOException e) {
+                LOGGER.error("Error while writing to events files", e);
+            }
+        });
+    }
+
+    private void writeEventToLog(Event event) throws IOException {
+        Files.write(
+                this.eventsPath,
+                (this.serializeEvent(event) + "\n").getBytes(Charset.defaultCharset()),
+                StandardOpenOption.CREATE,
+                StandardOpenOption.APPEND
+        );
+    }
+
+    private void writeWorldDataToGlobalFile() throws IOException {
+        Files.write(
+                this.globalEventsPath,
+                (this.world.getWorldData() + "\n").getBytes(Charset.defaultCharset()),
+                StandardOpenOption.CREATE,
+                StandardOpenOption.WRITE,
+                StandardOpenOption.TRUNCATE_EXISTING
+        );
     }
 }
