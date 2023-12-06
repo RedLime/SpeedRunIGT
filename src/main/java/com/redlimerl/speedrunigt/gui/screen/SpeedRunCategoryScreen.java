@@ -26,6 +26,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
+import org.apache.commons.compress.utils.Lists;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,10 +72,12 @@ public class SpeedRunCategoryScreen extends Screen {
 
     @Environment(EnvType.CLIENT)
     class CategorySelectionListWidget extends ElementListWidget<CategorySelectionListWidget.CategoryEntry> {
+        private final List<CategoryEntry> entryList = Lists.newArrayList();
         public CategorySelectionListWidget(MinecraftClient client) {
-            super(client, SpeedRunCategoryScreen.this.width, SpeedRunCategoryScreen.this.height, 32, SpeedRunCategoryScreen.this.height - 55, 24);
+            super(client, SpeedRunCategoryScreen.this.width, SpeedRunCategoryScreen.this.height - 55, 32, 24);
 
-            this.replaceEntries(RunCategory.getCategories().values().stream().filter(runCategory -> !runCategory.isHideCategory()).map(CategoryEntry::new).collect(Collectors.toList()));
+            entryList.addAll(RunCategory.getCategories().values().stream().filter(runCategory -> !runCategory.isHideCategory()).map(CategoryEntry::new).toList());
+            this.replaceEntries(entryList);
         }
 
         @Override
@@ -86,11 +89,26 @@ public class SpeedRunCategoryScreen extends Screen {
         public class CategoryEntry extends ElementListWidget.Entry<CategoryEntry> {
 
             private final ArrayList<ClickableWidget> children = new ArrayList<>();
-            private final CategoryCheckBoxWidget checkBox;
+            private final CheckboxWidget checkBox;
             private final ButtonWidget urlButton;
 
             public CategoryEntry(RunCategory category) {
-                this.checkBox = new CategoryCheckBoxWidget(category);
+                this.checkBox = CheckboxWidget.builder(category.getText(), textRenderer)
+                        .checked((InGameTimer.getInstance().getStatus() != TimerStatus.NONE ? InGameTimer.getInstance().getCategory()
+                                : SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY)) == category)
+                        .callback((checkbox, checked) -> {
+                            entryList.forEach(entry -> {
+                                if (entry.checkBox.isChecked()) entry.checkBox.onPress();
+                            });
+                            if (checked) {
+                                checkbox.onPress();
+                                SpeedRunOption.setOption(SpeedRunOptions.TIMER_CATEGORY, category);
+                                InGameTimer.getInstance().setCategory(category, true);
+                                InGameTimer.getInstance().setUncompleted(true);
+                            }
+                        })
+                        .pos(0, 0)
+                        .build();
                 this.urlButton = ButtonWidgetHelper.create(0, 0, 30, 20, Text.translatable("speedrunigt.option.more"), button -> Util.getOperatingSystem().open(category.getLeaderboardUrl()));
                 children.add(urlButton);
                 children.add(checkBox);
@@ -115,45 +133,6 @@ public class SpeedRunCategoryScreen extends Screen {
                 return children;
             }
 
-            private class CategoryCheckBoxWidget extends CheckboxWidget {
-                private static final Identifier SELECTED_HIGHLIGHTED_TEXTURE = new Identifier("widget/checkbox_selected_highlighted");
-                private static final Identifier SELECTED_TEXTURE = new Identifier("widget/checkbox_selected");
-                private static final Identifier HIGHLIGHTED_TEXTURE = new Identifier("widget/checkbox_highlighted");
-                private static final Identifier TEXTURE = new Identifier("widget/checkbox");
-                private final RunCategory category;
-
-                public CategoryCheckBoxWidget(RunCategory category) {
-                    super(0, 0, 20, 20, category.getText(), false);
-                    this.category = category;
-                }
-
-                @Override
-                public void onPress() {
-                    super.onPress();
-                    SpeedRunOption.setOption(SpeedRunOptions.TIMER_CATEGORY, this.category);
-                    InGameTimer.getInstance().setCategory(this.category, true);
-                    InGameTimer.getInstance().setUncompleted(true);
-                }
-
-                @Override
-                public boolean isChecked() {
-                    return (InGameTimer.getInstance().getStatus() != TimerStatus.NONE ? InGameTimer.getInstance().getCategory()
-                            : SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY)) == category;
-                }
-
-                @Override
-                public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-                    MinecraftClient minecraftClient = MinecraftClient.getInstance();
-                    RenderSystem.enableDepthTest();
-                    TextRenderer textRenderer = minecraftClient.textRenderer;
-                    context.setShaderColor(1.0f, 1.0f, 1.0f, this.alpha);
-                    RenderSystem.enableBlend();
-                    Identifier identifier = this.isChecked() ? (this.isFocused() ? SELECTED_HIGHLIGHTED_TEXTURE : SELECTED_TEXTURE) : (this.isFocused() ? HIGHLIGHTED_TEXTURE : TEXTURE);
-                    context.drawGuiTexture(identifier, this.getX(), this.getY(), 20, this.height);
-                    context.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-                    context.drawText(textRenderer, this.getMessage(), this.getX() + 24, this.getY() + (this.height - 8) / 2, 14737632 | MathHelper.ceil(this.alpha * 255.0F) << 24, true);
-                }
-            }
         }
     }
 }

@@ -11,8 +11,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
 import net.minecraft.client.font.Font;
 import net.minecraft.client.font.FontStorage;
-import net.minecraft.client.gui.screen.LevelLoadingScreen;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.world.LevelLoadingScreen;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.resource.ReloadableResourceManagerImpl;
@@ -162,13 +162,13 @@ public abstract class MinecraftClientMixin {
 
     // Crash safety
     @Inject(method = "cleanUpAfterCrash", at = @At("HEAD"))
-    public void onCrash(CallbackInfo ci) {
+    private void onCrash(CallbackInfo ci) {
         if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) InGameTimer.leave();
     }
 
     // Crash safety
-    @Inject(method = "printCrashReport", at = @At("HEAD"))
-    private static void onCrash(CrashReport crashReport, CallbackInfo ci) {
+    @Inject(method = "printCrashReport(Lnet/minecraft/client/MinecraftClient;Ljava/io/File;Lnet/minecraft/util/crash/CrashReport;)V", at = @At("HEAD"))
+    private static void onCrash(MinecraftClient client, File runDirectory, CrashReport crashReport, CallbackInfo ci) {
         if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) InGameTimer.leave();
     }
 

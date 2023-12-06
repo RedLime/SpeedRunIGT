@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(IntegratedServerLoader.class)
 public class IntegratedServerLoaderMixin {
 
-    @Inject(at = @At("HEAD"), method = "start(Lnet/minecraft/world/level/storage/LevelStorage$Session;Lnet/minecraft/server/DataPackContents;Lnet/minecraft/registry/CombinedDynamicRegistries;Lnet/minecraft/world/SaveProperties;)V")
+    @Inject(at = @At("HEAD"), method = "startNewWorld")
     public void onCreate(LevelStorage.Session session, DataPackContents dataPackContents, CombinedDynamicRegistries<ServerDynamicRegistryType> dynamicRegistryManager, SaveProperties saveProperties, CallbackInfo ci) {
         RunCategory category = SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY);
         if (category.isAutoStart()) {
@@ -34,8 +34,8 @@ public class IntegratedServerLoaderMixin {
         InGameTimerUtils.CAN_DISCONNECT = false;
     }
 
-    @Inject(at = @At("HEAD"), method = "start(Lnet/minecraft/client/gui/screen/Screen;Ljava/lang/String;ZZ)V")
-    public void onWorldOpen(Screen parent, String levelName, boolean safeMode, boolean canShowBackupPrompt, CallbackInfo ci) {
+    @Inject(at = @At("HEAD"), method = "start(Ljava/lang/String;Ljava/lang/Runnable;)V")
+    public void onWorldOpen(String levelName, Runnable onCancel, CallbackInfo ci) {
         try {
             boolean loaded = InGameTimer.load(levelName);
             if (!loaded) InGameTimer.end();
