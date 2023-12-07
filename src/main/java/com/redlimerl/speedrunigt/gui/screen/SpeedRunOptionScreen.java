@@ -164,7 +164,7 @@ public class SpeedRunOptionScreen extends Screen {
     class ButtonScrollListWidget extends ElementListWidget<ButtonScrollListWidget.Entry> {
 
         public ButtonScrollListWidget() {
-            super(SpeedRunOptionScreen.this.client, SpeedRunOptionScreen.this.width - 140, SpeedRunOptionScreen.this.height, SpeedRunOptionScreen.this.height - 54, 24);
+            super(SpeedRunOptionScreen.this.client, SpeedRunOptionScreen.this.width - 140, SpeedRunOptionScreen.this.height - 82, 28, 24);
         }
 
         public void replaceButtons(Collection<ClickableWidget> buttonWidgets) {
