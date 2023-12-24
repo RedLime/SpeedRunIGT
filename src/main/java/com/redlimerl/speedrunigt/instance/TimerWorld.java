@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mojang.bridge.game.GameVersion;
+import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.events.EventRepository;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import net.fabricmc.loader.api.FabricLoader;
@@ -39,6 +40,7 @@ public class TimerWorld {
         object.addProperty("world_path", this.worldFolderPath.getParent().toString().replace("\\", "/"));
         object.add("mods", modsArray);
         object.addProperty("version", this.version.getName());
+        object.addProperty("mod_version", SpeedRunIGT.MOD_VERSION);
         object.addProperty("category", InGameTimer.getInstance().getCategory().getID());
         return object;
     }
