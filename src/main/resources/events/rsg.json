@@ -1,9 +1,37 @@
 [
     {
+        "name": "obtain_iron_ingot",
+        "type": "advancement",
+        "data": {
+            "advancement": "story/smelt_iron"
+        }
+    },
+    {
+        "name": "obtain_iron_pickaxe",
+        "type": "advancement",
+        "data": {
+            "advancement": "story/iron_tools"
+        }
+    },
+    {
+        "name": "obtain_lava_bucket",
+        "type": "advancement",
+        "data": {
+            "advancement": "story/lava_bucket"
+        }
+    },
+    {
         "name": "enter_nether",
         "type": "advancement",
         "data": {
             "advancement": "story/enter_the_nether"
+        }
+    },
+    {
+        "name": "distract_piglin",
+        "type": "advancement",
+        "data": {
+            "advancement": "nether/distract_piglin"
         }
     },
     {
@@ -14,10 +42,38 @@
         }
     },
     {
+        "name": "loot_bastion",
+        "type": "advancement",
+        "data": {
+            "advancement": "nether/loot_bastion"
+        }
+    },
+    {
+        "name": "obtain_obsidian",
+        "type": "advancement",
+        "data": {
+            "advancement": "story/form_obsidian"
+        }
+    },
+    {
+        "name": "obtain_crying_obsidian",
+        "type": "advancement",
+        "data": {
+            "advancement": "nether/obtain_crying_obsidian"
+        }
+    },
+    {
         "name": "enter_fortress",
         "type": "advancement",
         "data": {
             "advancement": "nether/find_fortress"
+        }
+    },
+    {
+        "name": "obtain_blaze_rod",
+        "type": "advancement",
+        "data": {
+            "advancement": "nether/obtain_blaze_rod"
         }
     },
     {
