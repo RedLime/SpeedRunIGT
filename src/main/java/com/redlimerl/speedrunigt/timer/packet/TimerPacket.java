@@ -17,11 +17,24 @@ import java.util.HashMap;
 import java.util.function.Supplier;
 
 public abstract class TimerPacket {
+    public enum Side {
+        SERVER,
+        CLIENT
+    }
 
     private static final HashMap<String, Supplier<? extends TimerPacket>> registered = Maps.newHashMap();
-    static void registryPacket(Identifier identifier, Supplier<? extends TimerPacket> packet) {
-        registered.put(identifier.toString(), packet);
+    static void registryPacket(Identifier identifier, Supplier<? extends TimerPacket> packet, Side side) {
+        switch (side) {
+            case SERVER -> {
+                registered.put(identifier.toString(), packet);
+                registryPacketServer(identifier);
+            } case CLIENT -> {
+                registryPacketClient(identifier);
+            }
+        }
+    }
 
+    static void registryPacketClient(Identifier identifier) {
         ClientPlayNetworking.registerGlobalReceiver(identifier, (client, handler, buf, responseSender) -> {
             TimerPacket timerPacket = TimerPacket.createTimerPacketFromPacket(identifier);
             TimerPacketBuf timerPacketBuf = TimerPacketBuf.of(buf);
@@ -29,7 +42,9 @@ public abstract class TimerPacket {
                 timerPacket.receiveServer2ClientPacket(timerPacketBuf, client);
             }
         });
+    }
 
+    static void registryPacketServer(Identifier identifier) {
         ServerPlayNetworking.registerGlobalReceiver(identifier, (server, player, handler, buf, responseSender) -> {
             TimerPacket timerPacket = TimerPacket.createTimerPacketFromPacket(identifier);
             TimerPacketBuf timerPacketBuf = TimerPacketBuf.of(buf);
@@ -38,6 +53,7 @@ public abstract class TimerPacket {
             }
         });
     }
+
     public static Identifier identifier(String id) {
         return new Identifier(SpeedRunIGT.MOD_ID, id);
     }

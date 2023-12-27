@@ -14,7 +14,10 @@ public class TimerPacketUtils {
 
     @Environment(EnvType.CLIENT)
     public static void sendClient2ServerPacket(MinecraftClient client, TimerPacket packet) {
-        ClientPlayNetworking.send(packet.getIdentifier(), packet.createClient2ServerPacket(client));
+        // avoid a crash caused by a client packet sending too early
+        if (MinecraftClient.getInstance().getNetworkHandler() != null) {
+            ClientPlayNetworking.send(packet.getIdentifier(), packet.createClient2ServerPacket(client));
+        }
     }
 
     public static void sendServer2ClientPacket(ServerPlayerEntity player, TimerPacket packet) {
