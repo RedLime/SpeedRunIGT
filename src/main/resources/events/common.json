@@ -4,6 +4,10 @@
         "type": "view_seed"
     },
     {
+        "name": "old_world",
+        "type": "old_world"
+    },
+    {
         "name": "enable_cheats",
         "type": "enable_cheats"
     },
