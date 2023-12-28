@@ -11,7 +11,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
 
 import java.nio.file.Path;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class TimerWorld {
@@ -47,5 +47,16 @@ public class TimerWorld {
 
     public EventRepository getEventRepository() {
         return this.eventRepository;
+    }
+
+    /**
+     * Gets the UUIDs of all players that have previously played this world
+     */
+    public Set<UUID> getPreviousPlayers() {
+        try {
+            return Arrays.stream(Objects.requireNonNull(worldFolderPath.resolveSibling("stats").toFile().list())).map(s -> UUID.fromString(s.split("\\.")[0])).collect(Collectors.toSet());
+        } catch (Exception e) {
+            return Collections.emptySet();
+        }
     }
 }
