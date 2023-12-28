@@ -6,6 +6,7 @@ import com.redlimerl.speedrunigt.events.EventFactory;
 import com.redlimerl.speedrunigt.events.EventFactoryLoader;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
+import net.minecraft.client.MinecraftClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,6 +14,8 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
@@ -41,22 +44,40 @@ public class GameInstance {
         }
     }
 
+    private static UUID getLocalPlayerID() {
+        return MinecraftClient.getInstance().getSession().getProfile().getId();
+    }
+
     public void tryLoadWorld(String worldName) {
+        if (!SpeedRunIGT.IS_CLIENT_SIDE) {
+            return;
+        }
         File worldFile = InGameTimerUtils.getTimerLogDir(worldName, "");
         if (worldFile != null) {
             this.loadWorld(worldFile.toPath());
             LOGGER.info("Loaded events world.");
-            boolean isRejoin = this.events.stream().anyMatch(event -> event.type.equals("leave_world"));
-            if (isRejoin) {
-                this.callEvents("rejoin_world");
-            }
+            checkJoinEvents();
         } else {
             LOGGER.error("Didn't load events world.");
         }
     }
 
+    private void checkJoinEvents() {
+        // Rejoin
+        if (this.events.stream().anyMatch(event -> event.type.equals("leave_world"))) {
+            this.callEvents("rejoin_world");
+        }
+
+        // Multiplayer check
+        if (this.events.stream().anyMatch(event -> event.type.equals("multiplayer"))) return;
+        Set<UUID> previousPlayers = this.world.getPreviousPlayers();
+        if (previousPlayers.size() > 1 || (previousPlayers.size() == 1 && previousPlayers.stream().noneMatch(uuid -> uuid.equals(getLocalPlayerID())))) {
+            this.callEvents("multiplayer");
+        }
+    }
+
     public void ensureWorld() {
-        if (!this.hasWorldLoaded()) {
+        if (SpeedRunIGT.IS_CLIENT_SIDE && !this.hasWorldLoaded()) {
             InGameTimer timer = InGameTimer.getInstance();
             LOGGER.info("Attempting event world load at " + timer.getWorldName());
             this.tryLoadWorld(timer.getWorldName());
@@ -114,6 +135,7 @@ public class GameInstance {
     }
 
     public void callEvents(String type, Function<EventFactory, Boolean> condition) {
+        if (!SpeedRunIGT.IS_CLIENT_SIDE) return;
         for (EventFactory factory : EventFactoryLoader.getEventFactories(type)) {
             if (condition == null || condition.apply(factory)) {
                 this.addEvent(factory.create());

@@ -150,6 +150,8 @@ public class InGameTimer implements Serializable {
         GameInstance.getInstance().tryLoadWorld(worldName);
         if (runType.equals(RunType.SET_SEED)) {
             GameInstance.getInstance().callEvents("view_seed");
+        } else if (runType.equals(RunType.OLD_WORLD)) {
+            GameInstance.getInstance().callEvents("old_world");
         }
     }
 
@@ -800,7 +802,7 @@ public class InGameTimer implements Serializable {
     }
 
     public void openedLanIntegratedServer() {
-        GameInstance.getInstance().callEvents("open_to_lan");
+        GameInstance.getInstance().callEvents("multiplayer");
         this.lanOpenedTime = this.getRealTimeAttack();
     }
 

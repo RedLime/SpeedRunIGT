@@ -4,12 +4,16 @@
         "type": "view_seed"
     },
     {
+        "name": "old_world",
+        "type": "old_world"
+    },
+    {
         "name": "enable_cheats",
         "type": "enable_cheats"
     },
     {
-        "name": "open_to_lan",
-        "type": "open_to_lan"
+        "name": "multiplayer",
+        "type": "multiplayer"
     },
     {
         "name": "leave_world",
