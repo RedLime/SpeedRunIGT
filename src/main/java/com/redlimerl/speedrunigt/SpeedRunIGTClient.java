@@ -6,6 +6,8 @@ import com.redlimerl.speedrunigt.impl.OptionButtonsImpl;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.therun.TheRunKeyHelper;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
+import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
+import com.redlimerl.speedrunigt.timer.packet.TimerPackets;
 import com.redlimerl.speedrunigt.utils.FontUtils;
 import com.redlimerl.speedrunigt.utils.KeyBindingRegistry;
 import net.fabricmc.api.ClientModInitializer;
@@ -67,5 +69,7 @@ public class SpeedRunIGTClient implements ClientModInitializer {
         TheRunKeyHelper.load();
 
         SpeedRunIGT.IS_CLIENT_SIDE = true;
+
+        TimerPackets.init(TimerPacket.Side.CLIENT);
     }
 }
