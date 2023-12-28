@@ -49,6 +49,9 @@ public class GameInstance {
     }
 
     public void tryLoadWorld(String worldName) {
+        if (!SpeedRunIGT.IS_CLIENT_SIDE) {
+            return;
+        }
         File worldFile = InGameTimerUtils.getTimerLogDir(worldName, "");
         if (worldFile != null) {
             this.loadWorld(worldFile.toPath());
@@ -74,7 +77,7 @@ public class GameInstance {
     }
 
     public void ensureWorld() {
-        if (!this.hasWorldLoaded()) {
+        if (SpeedRunIGT.IS_CLIENT_SIDE && !this.hasWorldLoaded()) {
             InGameTimer timer = InGameTimer.getInstance();
             LOGGER.info("Attempting event world load at " + timer.getWorldName());
             this.tryLoadWorld(timer.getWorldName());
@@ -132,6 +135,7 @@ public class GameInstance {
     }
 
     public void callEvents(String type, Function<EventFactory, Boolean> condition) {
+        if (!SpeedRunIGT.IS_CLIENT_SIDE) return;
         for (EventFactory factory : EventFactoryLoader.getEventFactories(type)) {
             if (condition == null || condition.apply(factory)) {
                 this.addEvent(factory.create());
