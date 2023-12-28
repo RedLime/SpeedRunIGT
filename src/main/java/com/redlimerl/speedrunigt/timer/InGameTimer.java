@@ -800,7 +800,7 @@ public class InGameTimer implements Serializable {
     }
 
     public void openedLanIntegratedServer() {
-        GameInstance.getInstance().callEvents("open_to_lan");
+        GameInstance.getInstance().callEvents("multiplayer");
         this.lanOpenedTime = this.getRealTimeAttack();
     }
 
