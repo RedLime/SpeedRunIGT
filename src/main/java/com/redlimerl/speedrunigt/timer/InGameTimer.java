@@ -237,12 +237,29 @@ public class InGameTimer implements Serializable {
     }
 
     public static void writeTimerLogs(InGameTimer timer) {
+        writeTimerLogs(timer, false);
+    }
+
+    public static void writeTimerLogs(InGameTimer timer, boolean anyPercentSplit) {
         if (!timer.writeFiles) return;
+        String worldName = INSTANCE.worldName;
+        File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "logs");
+        if (worldDir == null) return;
+
+        String logSuffix = anyPercentSplit ? "_any%_split.log" : timer.getLogSuffix();
+        File advancementFile = new File(worldDir, "igt_advancement" + logSuffix),
+                pauseFile = new File(worldDir, "igt_timer" + logSuffix),
+                tickFile = new File(worldDir, "igt_freeze" + logSuffix),
+                categoryFile = new File(worldDir, "igt_category" + logSuffix),
+                debugFile = new File(worldDir, "igt_debug.txt");
+        if (anyPercentSplit && pauseFile.exists()) {
+            return;
+        }
 
         StringBuilder resultLog = new StringBuilder();
-        boolean isRetimed = timer.getRetimedInGameTime() != timer.getInGameTime(false);
+        boolean isRetimed = timer.getRetimedInGameTime(anyPercentSplit) != timer.getInGameTime(false);
         resultLog.append("Result > IGT: ").append(timeToStringFormat(timer.getInGameTime(false)));
-        if (isRetimed) resultLog.append(", Auto-Retimed IGT: ").append(timeToStringFormat(timer.getRetimedInGameTime()));
+        if (isRetimed) resultLog.append(", Auto-Retimed IGT: ").append(timeToStringFormat(timer.getRetimedInGameTime(anyPercentSplit)));
         resultLog.append(", RTA: ").append(timeToStringFormat(timer.getRealTimeAttack()))
                 .append(", Counted Ticks: ").append(timer.activateTicks)
                 .append(", Total Ticks: ").append(timer.loggerTicks);
@@ -258,23 +275,16 @@ public class InGameTimer implements Serializable {
                 + "Timer Version : " + SpeedRunIGT.MOD_VERSION + "\r\n"
                 + "Run Date : " + simpleDateFormat.format(new Date());
 
-        String worldName = INSTANCE.worldName;
-        File worldDir = InGameTimerUtils.getTimerLogDir(worldName, "logs");
-        if (worldDir == null) return;
-
-        File advancementFile = new File(worldDir, "igt_advancement" + timer.getLogSuffix()),
-                pauseFile = new File(worldDir, "igt_timer" + timer.getLogSuffix()),
-                tickFile = new File(worldDir, "igt_freeze" + timer.getLogSuffix()),
-                categoryFile = new File(worldDir, "igt_category" + timer.getLogSuffix()),
-                debugFile = new File(worldDir, "igt_debug.txt");
         String advancementLog = SpeedRunIGT.GSON.toJson(timer.getAdvancementsTracker().getAdvancements()),
                 pauseLog = InGameTimerUtils.pauseLogListToString(timer.pauseLogList, !pauseFile.exists(), pauseFile.exists() ? 0 : timer.completeCount) + logInfo,
                 freezeLog = InGameTimerUtils.logListToString(timer.freezeLogList, tickFile.exists() ? 0 : timer.completeCount),
                 categoryRaw = timer.getCategory().getConditionJson() != null ? SpeedRunIGT.PRETTY_GSON.toJson(timer.getCategory().getConditionJson()) : "",
                 debugRaw = StringUtils.join(timer.debugLogList.iterator(), '\n');
-        timer.freezeLogList.clear();
-        timer.pauseLogList.clear();
-        timer.debugLogList.clear();
+        if (!anyPercentSplit) {
+            timer.freezeLogList.clear();
+            timer.pauseLogList.clear();
+            timer.debugLogList.clear();
+        }
         saveManagerThread.submit(() -> {
             try {
                 FileUtils.writeStringToFile(advancementFile, advancementLog, StandardCharsets.UTF_8);
@@ -288,7 +298,7 @@ public class InGameTimer implements Serializable {
             }
         });
 
-        if (SpeedRunOption.getOption(SpeedRunOptions.AUTO_SAVE_PLAYER_DATA) && InGameTimerUtils.getServer() != null) {
+        if (SpeedRunOption.getOption(SpeedRunOptions.AUTO_SAVE_PLAYER_DATA) && InGameTimerUtils.getServer() != null && !anyPercentSplit) {
             InGameTimerUtils.getServer().getPlayerManager().saveAllPlayerData();
         }
     }
@@ -577,8 +587,13 @@ public class InGameTimer implements Serializable {
     }
 
     public long getRetimedInGameTime() {
+        return getRetimedInGameTime(false);
+    }
+
+    public long getRetimedInGameTime(boolean override) {
         long base = this.getInGameTime(false);
-        if (this.getCategory().isNeedAutoRetime(this)) {
+        boolean needAutoRetime = override ? this.getCategory().isNeedAutoRetime(this, RunCategories.anyPercentRetime) : this.getCategory().isNeedAutoRetime(this);
+        if (needAutoRetime) {
             return base + this.retimedIGTTime;
         }
         return base;
@@ -683,19 +698,17 @@ public class InGameTimer implements Serializable {
                 long beforeRetime = this.retimedIGTTime;
                 TimerPauseLog.Retime retime = new TimerPauseLog.Retime(0, "");
                 if (this.getStatus() == TimerStatus.PAUSED) {
-                    if (this.getCategory() == RunCategories.ANY) {
-                        if (InGameTimerUtils.RETIME_IS_WAITING_LOAD && InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD) {
-                            retime = new TimerPauseLog.Retime(this.retimedIGTTime - beforeRetime, "prob. world load pause");
+                    if (InGameTimerUtils.RETIME_IS_WAITING_LOAD && InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD) {
+                        retime = new TimerPauseLog.Retime(this.retimedIGTTime - beforeRetime, "prob. world load pause");
+                    } else {
+                        if (!InGameTimerUtils.CHANGED_OPTIONS.isEmpty()) {
+                            int options = InGameTimerUtils.CHANGED_OPTIONS.size();
+                            this.retimedIGTTime += Math.max(nowTime - this.loggerPausedTime - 5000L, 0);
+                            retime = new TimerPauseLog.Retime(this.retimedIGTTime - beforeRetime, "changed option" + (options > 1 ? ("s (" + options + ")") : ""));
+                            InGameTimerUtils.CHANGED_OPTIONS.clear();
                         } else {
-                            if (!InGameTimerUtils.CHANGED_OPTIONS.isEmpty()) {
-                                int options = InGameTimerUtils.CHANGED_OPTIONS.size();
-                                this.retimedIGTTime += Math.max(nowTime - this.loggerPausedTime - 5000L, 0);
-                                retime = new TimerPauseLog.Retime(this.retimedIGTTime - beforeRetime, "changed option" + (options > 1 ? ("s (" + options + ")") : ""));
-                                InGameTimerUtils.CHANGED_OPTIONS.clear();
-                            } else {
-                                this.retimedIGTTime += nowTime - this.loggerPausedTime;
-                                retime = new TimerPauseLog.Retime(this.retimedIGTTime - beforeRetime, "");
-                            }
+                            this.retimedIGTTime += nowTime - this.loggerPausedTime;
+                            retime = new TimerPauseLog.Retime(this.retimedIGTTime - beforeRetime, "");
                         }
                     }
                 }

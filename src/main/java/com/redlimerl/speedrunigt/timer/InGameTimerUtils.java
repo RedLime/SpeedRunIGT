@@ -80,7 +80,7 @@ public class InGameTimerUtils {
         if (arrayList.size() == 0) return "";
         StringBuilder stringBuilder = new StringBuilder();
         if (completeCount > 0) {
-            stringBuilder.append("/* The timer/log is segmented. If you need previous logs, check the igt_freeze").append(InGameTimer.getLogSuffix(completeCount)).append(" file.").append(" */\n");
+            stringBuilder.append("/* The timer/log is segmented. If you need previous logs, check the igt_freeze").append(InGameTimer.getLogSuffix(completeCount - 1)).append(" file.").append(" */\n");
         }
         for (Object o : arrayList) {
             stringBuilder.append(o.toString()).append("\n");
@@ -98,7 +98,7 @@ public class InGameTimerUtils {
 
         StringBuilder stringBuilder = new StringBuilder();
         if (completeCount > 0) {
-            stringBuilder.append("/* The timer/log is segmented. If you need previous logs, check the igt_timer").append(InGameTimer.getLogSuffix(completeCount)).append(" file.").append(" */\n");
+            stringBuilder.append("/* The timer/log is segmented. If you need previous logs, check the igt_timer").append(InGameTimer.getLogSuffix(completeCount - 1)).append(" file.").append(" */\n");
         }
         if (makeHeader) {
             stringBuilder.append(makeLogText(5, "No"))
