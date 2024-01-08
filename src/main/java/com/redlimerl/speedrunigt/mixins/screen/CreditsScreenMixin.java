@@ -34,6 +34,9 @@ public class CreditsScreenMixin {
 
             if (timer.getCategory() == RunCategories.ANY) {
                 InGameTimer.complete();
+            } else {
+                // write logs for retime in case the runner was on the wrong category, using any% retime logic
+                InGameTimer.writeTimerLogs(InGameTimer.getInstance(), true);
             }
             RunCategories.checkAllBossesCompleted();
         }

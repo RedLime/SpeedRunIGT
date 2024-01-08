@@ -116,6 +116,10 @@ public class RunCategory {
         return this.retimeFunction.apply(timer);
     }
 
+    public boolean isNeedAutoRetime(InGameTimer timer, Function<InGameTimer, Boolean> retimeFunction) {
+        return retimeFunction.apply(timer);
+    }
+
     public boolean isHideCategory() { return this.hideCategory; }
 
     public TranslatableText getText() {

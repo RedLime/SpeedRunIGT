@@ -5,15 +5,16 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 
-public class RunCategories {
+import java.util.function.Function;
 
+public class RunCategories {
     public static RunCategory ERROR_CATEGORY = new RunCategory("unknown","mc");
 
+    public static Function<InGameTimer, Boolean> anyPercentRetime = timer ->
+            !SpeedRunOption.getOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE) && !timer.isCoop() && timer.getRunType() == RunType.RANDOM_SEED && !timer.isRTAMode() &&
+                    (SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_USE_AUTO_RETIME) || timer.getInGameTime(false) < 1000 * 60 * 13);
     public static RunCategory ANY = RunCategoryBuilder.create("ANY", "mc", "speedrunigt.option.timer_category.any")
-            .setRetimeFunction(timer ->
-                    !SpeedRunOption.getOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE) && !timer.isCoop() && timer.getRunType() == RunType.RANDOM_SEED && !timer.isRTAMode() &&
-                            (SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_USE_AUTO_RETIME) || timer.getInGameTime(false) < 1000 * 60 * 13)
-            ).build();
+            .setRetimeFunction(anyPercentRetime).build();
     public static RunCategory CUSTOM = new RunCategory("CUSTOM","mc#");
     public static RunCategory HIGH = new RunCategory("HIGH","mcce#High");
     public static RunCategory KILL_ALL_BOSSES = new RunCategory("KILL_ALL_BOSSES","mcce#Kill_Bosses");
