@@ -9,6 +9,7 @@ import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -23,6 +24,11 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin extends PlayerEntity {
@@ -79,15 +85,10 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
     @Unique
     private boolean isEnoughTravel() {
-        boolean eye = false, pearl = false, rod = false;
-        for (ItemStack itemStack : this.inventory.main) {
-            if (itemStack != null) {
-                if (itemStack.getItem() == Items.ENDER_EYE) eye = true;
-                if (itemStack.getItem() == Items.ENDER_PEARL) pearl = true;
-                if (itemStack.getItem() == Items.BLAZE_POWDER || itemStack.getItem() == Items.BLAZE_ROD) rod = true;
-            }
-        }
-
-        return eye || (pearl && rod);
+        Set<Item> currentItemTypes = Stream.concat(this.inventory.main.stream(), this.inventory.offHand.stream()) // Go over both main inventory and offHand item list
+                .filter(Objects::nonNull) // Remove nulls
+                .map(ItemStack::getItem) // Turn each item stack into its item
+                .collect(Collectors.toSet()); // Collect to a set of items that the player has
+        return currentItemTypes.contains(Items.ENDER_EYE) || (currentItemTypes.contains(Items.ENDER_PEARL) && (currentItemTypes.contains(Items.BLAZE_ROD) || currentItemTypes.contains(Items.BLAZE_POWDER)));
     }
 }
