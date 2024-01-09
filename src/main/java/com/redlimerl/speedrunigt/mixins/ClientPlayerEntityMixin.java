@@ -28,6 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Mixin(ClientPlayerEntity.class)
 public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
@@ -130,7 +131,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             }
         }
 
-        List<Item> items = this.inventory.main.stream().map(ItemStack::getItem).collect(Collectors.toList());
+        List<Item> items = Stream.concat(this.inventory.main.stream(), this.inventory.offHand.stream()).map(ItemStack::getItem).collect(Collectors.toList());
         List<Item> armors = this.inventory.armor.stream().map(ItemStack::getItem).collect(Collectors.toList());
 
         //All Workstations
