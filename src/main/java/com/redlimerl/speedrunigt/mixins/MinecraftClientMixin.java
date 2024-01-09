@@ -77,8 +77,7 @@ public abstract class MinecraftClientMixin {
         RunCategory category = SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY);
         if (category.isAutoStart()) InGameTimer.start(worldName, RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
         InGameTimer.getInstance().setDefaultGameMode(levelInfo.getGameMode().getId());
-        // wrong mapping OMEGALUL
-        InGameTimer.getInstance().setCheatAvailable(levelInfo.isHardcore());
+        InGameTimer.getInstance().setCheatAvailable(levelInfo.areCommandsAllowed());
         InGameTimer.getInstance().checkDifficulty(levelInfo.getDifficulty());
         InGameTimerUtils.IS_CHANGING_DIMENSION = true;
         this.disconnectCheck = false;
