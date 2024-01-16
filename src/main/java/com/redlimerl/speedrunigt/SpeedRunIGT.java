@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,8 +59,8 @@ public class SpeedRunIGT implements ModInitializer {
     public static Path getRecordsPath() { return getGlobalPath().resolve("records"); }
     public static Path getGlobalPath() {
         String home = System.getProperty("user.home").replace("\\", "/");
-        Path path = new File(home, SpeedRunIGT.MOD_ID).toPath();
-        Path linuxPath = new File(home, "." + SpeedRunIGT.MOD_ID).toPath();
+        Path path = Paths.get(home, SpeedRunIGT.MOD_ID);
+        Path linuxPath = Paths.get(home, ".config", SpeedRunIGT.MOD_ID);
         if (Util.getOperatingSystem() == Util.OperatingSystem.LINUX) {
             // used to use ~/speedrunigt instead of ~/.speedrunigt on linux
             // if only the old directory exists we need to copy it over to the new one
