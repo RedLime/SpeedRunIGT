@@ -12,7 +12,6 @@ import com.redlimerl.speedrunigt.timer.category.CustomCategoryManager;
 import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.packet.TimerPackets;
-import com.redlimerl.speedrunigt.utils.FilesHelper;
 import com.redlimerl.speedrunigt.utils.FontIdentifier;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
@@ -20,14 +19,12 @@ import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
@@ -55,22 +52,8 @@ public class SpeedRunIGT implements ModInitializer {
     public static Path getMainPath() {
         return FabricLoader.getInstance().getGameDir().resolve(MOD_ID);
     }
+    public static Path getGlobalPath() { return new File(System.getProperty("user.home").replace("\\", "/"), SpeedRunIGT.MOD_ID).toPath(); }
     public static Path getRecordsPath() { return getGlobalPath().resolve("records"); }
-    public static Path getGlobalPath() {
-        String home = System.getProperty("user.home").replace("\\", "/");
-        Path path = new File(home, SpeedRunIGT.MOD_ID).toPath();
-        Path linuxPath = new File(home, "." + SpeedRunIGT.MOD_ID).toPath();
-        if (Util.getOperatingSystem() == Util.OperatingSystem.LINUX) {
-            // used to use ~/speedrunigt instead of ~/.speedrunigt on linux
-            // if only the old directory exists we need to copy it over to the new one
-            if (Files.exists(path) && !Files.exists(linuxPath)) {
-                FilesHelper.recursiveCopy(path, linuxPath);
-            }
-            return linuxPath;
-        } else {
-            return path;
-        }
-    }
 
     public static final Set<ModContainer> API_PROVIDERS = Sets.newHashSet();
 
