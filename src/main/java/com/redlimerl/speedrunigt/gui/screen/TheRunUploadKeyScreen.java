@@ -50,7 +50,7 @@ public class TheRunUploadKeyScreen extends Screen {
                     this.keyCheckThread.start();
                 }));
 
-        addDrawableChild(new ButtonWidget(width / 2 + 2, height / 2 + 24, 98, 20, ScreenTexts.CANCEL, (button) -> close()));
+        addDrawableChild(new ButtonWidget(width / 2 + 2, height / 2 + 24, 98, 20, ScreenTexts.CANCEL, (button) -> onClose()));
 
         addDrawableChild(new ButtonWidget(width / 2 - 100, height / 2 + 2, 200, 20, new TranslatableText("speedrunigt.therun_gg.get_upload_key"), (button) -> Util.getOperatingSystem().open("https://therun.gg/upload-key")));
 
@@ -63,8 +63,8 @@ public class TheRunUploadKeyScreen extends Screen {
     }
 
     @Override
-    public void close() {
-        super.close();
+    public void onClose() {
+        super.onClose();
         if (this.keyCheckThread != null) this.keyCheckThread.interrupt();
         MinecraftClient.getInstance().setScreen(parent);
     }
