@@ -1,7 +1,8 @@
 //file:noinspection GroovyUnusedAssignment
 //file:noinspection GroovyAssignabilityCheck
 plugins {
-	id 'fabric-loom' version '1.2-SNAPSHOT'
+	id 'fabric-loom' version '1.5-SNAPSHOT'
+	id 'legacy-looming' version '1.5-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -17,10 +18,10 @@ repositories {
 		name = "legacy-fabric"
 		url = "https://maven.legacyfabric.net"
 	}
+	mavenLocal()
 }
 
 loom {
-	setIntermediaryUrl('https://maven.legacyfabric.net/net/fabricmc/intermediary/%1$s/intermediary-%1$s-v2.jar')
 }
 
 dependencies {
