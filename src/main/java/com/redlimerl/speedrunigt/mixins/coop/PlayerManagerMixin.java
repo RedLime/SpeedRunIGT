@@ -23,7 +23,7 @@ public abstract class PlayerManagerMixin {
 
     @Shadow @Final private MinecraftServer server;
 
-    @Inject(method = "method_12827", at = @At("TAIL"))
+    @Inject(method = "onPlayerConnect", at = @At("TAIL"))
     public void onPlayerConnectInject(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
         if (this.getCurrentPlayerCount() > (SpeedRunIGT.IS_CLIENT_SIDE ? 1 : 0) && !InGameTimer.getInstance().isCompleted()) {
             if (InGameTimer.getInstance().isStarted() || !SpeedRunIGT.IS_CLIENT_SIDE) {

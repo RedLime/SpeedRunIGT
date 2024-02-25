@@ -6,6 +6,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(ClickableWidget.class)
 public interface ButtonWidgetAccessor {
-    @Accessor("height")
+    @Accessor("field_2070")
     int getHeight();
 }

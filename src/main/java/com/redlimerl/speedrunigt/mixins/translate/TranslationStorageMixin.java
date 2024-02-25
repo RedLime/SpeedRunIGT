@@ -26,7 +26,7 @@ public abstract class TranslationStorageMixin {
     @Shadow
     Map<String, String> translations;
 
-    @Inject(method = "method_5945", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resource/language/TranslationStorage;method_5950()V", shift = At.Shift.BEFORE))
+    @Inject(method = "load(Lnet/minecraft/resource/ResourceManager;Ljava/util/List;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resource/language/TranslationStorage;method_0_4404()V", shift = At.Shift.BEFORE))
     private void onLoad(ResourceManager container, List<String> list, CallbackInfo ci) {
         for (String lang : list) {
             InputStream inputStream = TranslateHelper.setup(lang, SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_ENGLISH_TRANSLATIONS));

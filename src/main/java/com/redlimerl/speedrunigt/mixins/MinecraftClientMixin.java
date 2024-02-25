@@ -51,10 +51,10 @@ public abstract class MinecraftClientMixin {
 
     @Shadow private boolean paused;
 
-    @Shadow public class_0_681 textRenderer;
+    @Shadow public class_0_681 field_1772;
     private boolean disconnectCheck = false;
 
-    @Inject(at = @At("HEAD"), method = "startGame")
+    @Inject(at = @At("HEAD"), method = "startIntegratedServer")
     public void onCreate(String name, String displayName, LevelInfo levelInfo, CallbackInfo ci) {
         try {
             if (levelInfo != null) {
@@ -77,7 +77,7 @@ public abstract class MinecraftClientMixin {
         disconnectCheck = false;
     }
 
-    @Inject(method = "openScreen", at = @At("RETURN"))
+    @Inject(method = "setScreen", at = @At("RETURN"))
     public void onSetScreen(Screen screen, CallbackInfo ci) {
         if (screen instanceof ProgressScreen) {
             disconnectCheck = true;
@@ -89,7 +89,7 @@ public abstract class MinecraftClientMixin {
         }
     }
 
-    @Inject(at = @At("HEAD"), method = "connect(Lnet/minecraft/client/world/ClientWorld;Ljava/lang/String;)V")
+    @Inject(at = @At("HEAD"), method = "method_0_2253")
     public void onJoin(ClientWorld targetWorld, String loadingMessage, CallbackInfo ci) {
         if (targetWorld == null) return;
         InGameTimer timer = InGameTimer.getInstance();
@@ -126,7 +126,7 @@ public abstract class MinecraftClientMixin {
         }
     }
 
-    @Inject(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraft/class_3264;method_14490(Lnet/minecraft/client/util/Window;)V", shift = At.Shift.AFTER))
+    @Inject(method = "method_0_2281", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/toast/ToastManager;method_1996(Lnet/minecraft/class_0_686;)V", shift = At.Shift.AFTER))
     private void renderMixin(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
@@ -141,7 +141,7 @@ public abstract class MinecraftClientMixin {
     }
 
     private PositionType currentPositionType = PositionType.DEFAULT;
-    @Inject(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;renderStreamIndicator(F)V", shift = At.Shift.AFTER))
+    @Inject(method = "method_0_2281", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;method_3200(F)V", shift = At.Shift.AFTER))
     private void drawTimer(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
@@ -159,7 +159,7 @@ public abstract class MinecraftClientMixin {
             class_1015.method_4461();
             class_1015.method_4454();
             String text = "SpeedRunIGT v" + (SpeedRunIGT.MOD_VERSION.split("\\+")[0]);
-            this.textRenderer.method_0_2385(text, this.currentScreen != null ? (int) ((window.method_0_2461() - this.textRenderer.method_0_2381(text)) / 2f) : 4, (int) window.method_0_2462() - 12,
+            this.field_1772.method_0_2385(text, this.currentScreen != null ? (int) ((window.method_0_2461() - this.field_1772.method_0_2381(text)) / 2f) : 4, (int) window.method_0_2462() - 12,
                     ColorMixer.getArgb((int) (MathHelper.clamp((3000 - time) / 1000.0, 0, 1) * (this.currentScreen != null ? 90 : 130)), 255, 255, 255));
             class_1015.method_4439();
             class_1015.method_4350();
@@ -208,14 +208,14 @@ public abstract class MinecraftClientMixin {
      */
     private int previousX = 0;
     private int previousY = 0;
-    @Redirect(method="method_12141", at=@At(value="INVOKE", target = "Lorg/lwjgl/input/Mouse;getEventDWheel()I", remap = false))
+    @Redirect(method="method_0_9752", at=@At(value="INVOKE", target = "Lorg/lwjgl/input/Mouse;getEventDWheel()I", remap = false))
     public int getScrolled(){
         if (Mouse.getEventDWheel() != 0){
             unlock();
         }
         return Mouse.getEventDWheel();
     }
-    @Inject(method="method_12141", at=@At(value = "HEAD"))
+    @Inject(method="method_0_9752", at=@At(value = "HEAD"))
     public void getMoved(CallbackInfo ci){
         if (InGameTimer.getInstance().isPaused()) {
             if ((Mouse.getX() != previousX || Mouse.getY() != previousY) && previousX != 0 && previousY != 0){
@@ -240,7 +240,7 @@ public abstract class MinecraftClientMixin {
     }
 
     // Crash safety
-    @Inject(method = "cleanHeap", at = @At("HEAD"))
+    @Inject(method = "cleanUpAfterCrash", at = @At("HEAD"))
     public void onCrash(CallbackInfo ci) {
         if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) InGameTimer.leave();
     }
@@ -258,7 +258,7 @@ public abstract class MinecraftClientMixin {
     }
 
     // Disconnecting fix
-    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resource/ResourcePackLoader;method_7040()V", shift = At.Shift.BEFORE), method = "connect(Lnet/minecraft/client/world/ClientWorld;Ljava/lang/String;)V")
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resource/ServerResourcePackProvider;clear()V", shift = At.Shift.BEFORE), method = "method_0_2253")
     public void disconnect(CallbackInfo ci) {
         if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE && disconnectCheck) {
             InGameTimer.leave();

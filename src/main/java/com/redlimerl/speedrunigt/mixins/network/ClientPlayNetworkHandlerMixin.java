@@ -50,7 +50,7 @@ public class ClientPlayNetworkHandlerMixin {
             PracticeTimerManager.stopPractice();
     }
 
-    @Inject(method = "method_12609", at = @At("RETURN"))
+    @Inject(method = "onPlaySoundId", at = @At("RETURN"))
     public void onPlaySoundIdMixin(PlaySoundIdS2CPacket packet, CallbackInfo ci) {
         String packetId = packet.method_11460();
         if (packetId.equals("speedrunigt:start_practice")) {

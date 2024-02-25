@@ -20,13 +20,13 @@ public class OptionsScreenMixin extends Screen {
 
     private ClickableWidget timerButton;
 
-    @Inject(method = "init", at = @At("TAIL"))
+    @Inject(method = "method_2214", at = @At("TAIL"))
     private void onInit(CallbackInfo ci) {
         timerButton = new ClickableWidget(123456, this.field_2561 / 2 - 180, this.field_2559 / 6 - 12, 20, 20, "");
         field_2564.add(timerButton);
     }
 
-    @Inject(method = "buttonClicked", at = @At("TAIL"))
+    @Inject(method = "method_0_2778", at = @At("TAIL"))
     private void onButtonClicked(ClickableWidget button, CallbackInfo ci) {
         if (button == timerButton) {
             if (this.field_2563 != null) {
@@ -35,7 +35,7 @@ public class OptionsScreenMixin extends Screen {
         }
     }
 
-    @Inject(method = "render", at = @At("TAIL"))
+    @Inject(method = "method_2214", at = @At("TAIL"))
     private void renderEnderPearl(int mouseX, int mouseY, float delta, CallbackInfo ci) {
         if (this.field_2563 != null) {
             class_1015.method_4461();

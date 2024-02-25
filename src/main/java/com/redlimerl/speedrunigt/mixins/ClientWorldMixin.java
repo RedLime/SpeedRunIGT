@@ -28,7 +28,7 @@ public abstract class ClientWorldMixin extends World {
         super(handler, properties, dim, profiler, isClient);
     }
 
-    @Inject(at = @At("HEAD"), method = "tick")
+    @Inject(at = @At("HEAD"), method = "method_8511")
     public void onTick(CallbackInfo ci) {
         InGameTimer.getInstance().tick();
     }

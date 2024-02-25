@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(TimeCommand.class)
 public class TimeCommandMixin {
 
-    @Inject(method = "method_12478", at = @At("RETURN"))
+    @Inject(method = "method_13784", at = @At("RETURN"))
     private void onSet(MinecraftServer minecraftServer, int time, CallbackInfo ci) {
         if (time == 0 && InGameTimer.getInstance().getStatus() != TimerStatus.NONE && InGameTimer.getInstance().isCoop()) {
             TimerPacketUtils.sendServer2ClientPacket(minecraftServer, new TimerStartPacket(InGameTimer.getInstance(), 0));

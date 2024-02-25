@@ -24,7 +24,7 @@ public class PlayerAdvancementTrackerMixin {
 
     @Shadow @Final private MinecraftServer server;
 
-    @Inject(method = "method_14928", at = @At("RETURN"))
+    @Inject(method = "beginTrackingAllAdvancements", at = @At("RETURN"))
     private void onBegin(CallbackInfo ci) {
         int count = 0;
         for (Advancement advancement : this.server.getAdvancementLoader().method_12893()) {
@@ -33,7 +33,7 @@ public class PlayerAdvancementTrackerMixin {
         InGameTimer.getInstance().updateMoreData(7441, count);
     }
 
-    @ModifyArgs(method = "method_14929", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancement/criterion/Criterion$class_3353;<init>(Lnet/minecraft/advancement/criterion/CriterionInstance;Lnet/minecraft/advancement/SimpleAdvancement;Ljava/lang/String;)V"))
+    @ModifyArgs(method = "endTrackingCompleted", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancement/criterion/Criterion$ConditionsContainer;<init>(Lnet/minecraft/advancement/criterion/CriterionConditions;Lnet/minecraft/advancement/Advancement;Ljava/lang/String;)V"))
     private void getCriteria(Args args) {
         Advancement advancement = args.get(1);
         String criteriaKey = args.get(2);

@@ -165,7 +165,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
     private Long latestPortalEnter = null;
     private int portalTick = 0;
-    @Inject(at = @At("HEAD"), method = "tick")
+    @Inject(at = @At("HEAD"), method = "method_3070")
     public void updateNausea(CallbackInfo ci) {
         // Portal time update
         if (this.inNetherPortal) {

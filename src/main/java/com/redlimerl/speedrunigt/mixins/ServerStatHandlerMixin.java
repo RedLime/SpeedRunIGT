@@ -28,7 +28,7 @@ public abstract class ServerStatHandlerMixin extends StatHandler {
 
     private int updateTick = 0;
 
-    @Inject(method = "method_8300", at = @At("TAIL"))
+    @Inject(method = "setStat", at = @At("TAIL"))
     public void onUpdate(PlayerEntity playerEntity, Stat stat, int i, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
         // Custom Json category

@@ -34,7 +34,7 @@ public abstract class LivingEntityMixin extends Entity {
      * @reason Backported to 1.8
      */
 
-    @Inject(at = @At("HEAD"), method = "onKilled")
+    @Inject(at = @At("HEAD"), method = "onDeath")
     public void onDeath(DamageSource source, CallbackInfo ci) {
         @NotNull InGameTimer timer = InGameTimer.getInstance();
 

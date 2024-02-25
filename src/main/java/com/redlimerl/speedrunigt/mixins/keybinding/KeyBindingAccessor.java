@@ -8,7 +8,7 @@ import net.minecraft.client.option.KeyBinding;
 
 @Mixin(KeyBinding.class)
 public interface KeyBindingAccessor {
-    @Accessor("field_15867")
+    @Accessor("CATEGORY_ORDER_MAP")
     static Map<String, Integer> invokeGetCategoryMap() {
         throw new AssertionError();
     }

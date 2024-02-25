@@ -19,11 +19,11 @@ import java.util.Objects;
 @Mixin(KeyBinding.class)
 public abstract class KeyBindingMixin {
 
-    @Shadow @Final private static class_3525<KeyBinding> KEY_MAP;
+    @Shadow @Final private static class_3525<KeyBinding> field_1658;
 
-    @Inject(method = "setKeyPressed", at = @At("TAIL"))
+    @Inject(method = "method_1416", at = @At("TAIL"))
     private static void onPress(int keyCode, boolean pressed, CallbackInfo ci) {
-        KeyBinding keyBinding =KEY_MAP.method_15316(keyCode);
+        KeyBinding keyBinding =field_1658.method_15316(keyCode);
         if(keyBinding!=null && pressed){
             InGameTimer timer = InGameTimer.getInstance();
             if (InGameTimerClientUtils.isFocusedClick() &&

@@ -8,6 +8,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(SliderWidget.class)
 public interface OptionSliderWidgetAccessor {
 
-    @Accessor("option")
+    @Accessor("field_2162")
     GameOptions.class_316 getOption();
 }

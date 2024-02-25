@@ -9,10 +9,10 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(WorldRenderer.class)
 public interface WorldRendererAccessor {
 
-    @Accessor("field_1891")
+    @Accessor("regularEntityCount")
     int getRegularEntityCount();
 
-    @Invoker("method_12338")
+    @Invoker("getCompletedChunkCount")
     int invokeCompletedChunkCount();
 
     @Accessor("chunkBuilder")

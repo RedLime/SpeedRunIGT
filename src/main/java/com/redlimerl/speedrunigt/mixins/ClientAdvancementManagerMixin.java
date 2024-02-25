@@ -34,17 +34,17 @@ import java.util.Set;
 @Mixin(ClientAdvancementManager.class)
 public abstract class ClientAdvancementManagerMixin {
 
-    @Shadow @Final private AdvancementManager field_16128;
+    @Shadow @Final private AdvancementManager manager;
 
-    @Shadow @Final private MinecraftClient field_16127;
+    @Shadow @Final private MinecraftClient client;
 
-    @Shadow @Final private Map<Advancement, AdvancementProgress> field_16129;
+    @Shadow @Final private Map<Advancement, AdvancementProgress> advancementProgresses;
 
-    @ModifyVariable(method = "onProgressUpdate", at = @At(value = "INVOKE", target = "Ljava/util/Map$Entry;getValue()Ljava/lang/Object;"))
+    @ModifyVariable(method = "onAdvancements", at = @At(value = "INVOKE", target = "Ljava/util/Map$Entry;getValue()Ljava/lang/Object;"))
     public Map.Entry<Identifier, AdvancementProgress> advancement(Map.Entry<Identifier, AdvancementProgress> entry) {
         InGameTimer timer = InGameTimer.getInstance();
 
-        Advancement advancement = this.field_16128.get(entry.getKey());
+        Advancement advancement = this.manager.get(entry.getKey());
         AdvancementProgress advancementProgress = entry.getValue();
         assert advancement != null;
         advancementProgress.init(advancement.getCriteria(), advancement.getRequirements());
@@ -59,7 +59,7 @@ public abstract class ClientAdvancementManagerMixin {
             }
             timer.tryInsertNewAdvancement(advancement.getId().toString(), null, advancement.getDisplay() != null);
             if (timer.isCoop() && advancement.getDisplay() != null) {
-                TimerPacketUtils.sendClient2ServerPacket(field_16127, new TimerAchieveAdvancementPacket(advancement));
+                TimerPacketUtils.sendClient2ServerPacket(client, new TimerAchieveAdvancementPacket(advancement));
             }
 
             // Custom Json category
@@ -80,7 +80,7 @@ public abstract class ClientAdvancementManagerMixin {
         return entry;
     }
 
-    @Inject(at = @At("RETURN"), method = "onProgressUpdate")
+    @Inject(at = @At("RETURN"), method = "onAdvancements")
     public void onComplete(AdvancementUpdateS2CPacket arg, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
@@ -107,9 +107,9 @@ public abstract class ClientAdvancementManagerMixin {
         for (Map.Entry<String, TimerAdvancementTracker.AdvancementTrack> track : InGameTimer.getInstance().getAdvancementsTracker().getAdvancements().entrySet()) {
             if (track.getValue().isAdvancement() && track.getValue().isComplete()) completedAdvancements.add(track.getKey());
         }
-        for (Advancement advancement : this.field_16128.method_712()) {
-            if (this.field_16129.containsKey(advancement) && advancement.getDisplay() != null) {
-                AdvancementProgress advancementProgress = this.field_16129.get(advancement);
+        for (Advancement advancement : this.manager.method_712()) {
+            if (this.advancementProgresses.containsKey(advancement) && advancement.getDisplay() != null) {
+                AdvancementProgress advancementProgress = this.advancementProgresses.get(advancement);
 
                 advancementProgress.init(advancement.getCriteria(), advancement.getRequirements());
                 String advancementID = advancement.getId().toString();

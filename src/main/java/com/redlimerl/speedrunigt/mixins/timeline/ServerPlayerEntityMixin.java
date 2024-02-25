@@ -22,14 +22,14 @@ public abstract class ServerPlayerEntityMixin {
     private ServerWorld beforeWorld = null;
     private Vec3d lastPortalPos = null;
 
-    @Inject(method = "teleportToDimension", at = @At("HEAD"))
+    @Inject(method = "method_14598", at = @At("HEAD"))
     public void onChangeDimension(ServerPlayerEntity player, int dimension, CallbackInfo ci) {
         beforeWorld = player.method_14220();
         lastPortalPos = player.method_5812();
         InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = !InGameTimer.getInstance().isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY;
     }
 
-    @Inject(method = "teleportToDimension", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerManager;method_1986(Lnet/minecraft/entity/player/ServerPlayerEntity;Lnet/minecraft/server/world/ServerWorld;)V", shift = At.Shift.AFTER))
+    @Inject(method = "method_14598", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerManager;method_14612(Lnet/minecraft/server/network/ServerPlayerEntity;Lnet/minecraft/server/world/ServerWorld;)V", shift = At.Shift.AFTER))
     public void onChangedDimension(ServerPlayerEntity player, int dimension, CallbackInfo ci) {
         DimensionType oldDimension = beforeWorld.dimension.getType();
         DimensionType newDimension = player.world.dimension.getType();
