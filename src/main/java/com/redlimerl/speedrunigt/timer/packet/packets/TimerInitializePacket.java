@@ -66,7 +66,7 @@ public class TimerInitializePacket extends TimerPacket {
     @Environment(EnvType.CLIENT)
     @Override
     public void receiveServer2ClientPacket(TimerPacketBuf buf, MinecraftClient client) {
-        init(buf, client.isIntegratedServerRunning());
+        init(buf, client.isInSingleplayer());
     }
 
     private void init(TimerPacketBuf buf, boolean isIntegrated) {

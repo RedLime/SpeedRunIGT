@@ -1,8 +1,8 @@
 package com.redlimerl.speedrunigt.timer.packet;
 
 import io.netty.buffer.Unpooled;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.PacketByteBuf;
 
 /**
  * This is for make easier support multiple Minecraft versions
@@ -36,7 +36,7 @@ public class TimerPacketBuf {
 
     public void writeString(String string) {
         this.buf.writeInt(string.length());
-        this.buf.writeString(string);
+        this.buf.method_10788(string);
     }
 
     public String readString() {

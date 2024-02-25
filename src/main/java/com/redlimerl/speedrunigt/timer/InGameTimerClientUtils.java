@@ -44,14 +44,14 @@ public class InGameTimerClientUtils {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.world != null && client.player != null) {
             int chunks = client.options.viewDistance * 2 + 1;
-            return (float) ((ClientChunkProviderAccessor) client.world.getChunkProvider()).getChunkMap().size() / (chunks * chunks);
+            return (float) ((ClientChunkProviderAccessor) client.world.method_8398()).getChunkMap().size() / (chunks * chunks);
         }
         return 0;
     }
 
     public static boolean isHardcoreWorld() {
         MinecraftClient client = MinecraftClient.getInstance();
-        return client.player != null && client.player.world.getLevelProperties().isHardcore();
+        return client.player != null && client.player.world.method_8401().method_152();
     }
 
     public static Long getPlayerTime() {
@@ -59,7 +59,7 @@ public class InGameTimerClientUtils {
         PlayerEntity player = MinecraftClient.getInstance().player;
         if (server != null && player != null) {
             ServerStatHandler statHandler = server.getPlayerManager().createStatHandler(player);
-            return statHandler == null ? null : statHandler.method_1729(Stats.MINUTES_PLAYED) * 50L;
+            return statHandler == null ? null : statHandler.getStat(Stats.field_15417) * 50L;
         }
         return null;
     }
@@ -68,7 +68,7 @@ public class InGameTimerClientUtils {
     static void setCategoryWarningScreen(@Nullable String conditionFileName, InvalidCategoryException exception) {
         if (MinecraftClient.getInstance().currentScreen == null)
             FAILED_CATEGORY_INIT_SCREEN = new FailedCategoryInitScreen(conditionFileName, exception);
-        else MinecraftClient.getInstance().openScreen(new FailedCategoryInitScreen(conditionFileName, exception));
+        else MinecraftClient.getInstance().setScreen(new FailedCategoryInitScreen(conditionFileName, exception));
     }
 
     static MinecraftServer getClientServer() {
@@ -76,7 +76,7 @@ public class InGameTimerClientUtils {
     }
 
     public static boolean isFocusedClick() {
-        return MinecraftClient.getInstance().player != null && !MinecraftClient.getInstance().player.method_13061()
+        return MinecraftClient.getInstance().player != null && !MinecraftClient.getInstance().player.isUsingItem()
                 && ((MinecraftClientAccessorForAttack) MinecraftClient.getInstance()).getAttackCoolDown() <= 0;
     }
 }

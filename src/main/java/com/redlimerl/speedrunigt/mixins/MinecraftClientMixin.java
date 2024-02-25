@@ -1,6 +1,5 @@
 package com.redlimerl.speedrunigt.mixins;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.SpeedRunIGTClient;
 import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
@@ -16,11 +15,12 @@ import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import com.redlimerl.speedrunigt.utils.Vec2f;
 import com.redlimerl.speedrunigt.version.ColorMixer;
+import net.minecraft.class_0_681;
+import net.minecraft.class_0_686;
+import net.minecraft.class_1015;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.*;
-import net.minecraft.client.options.GameOptions;
-import net.minecraft.client.util.Window;
+import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.math.MathHelper;
@@ -51,7 +51,7 @@ public abstract class MinecraftClientMixin {
 
     @Shadow private boolean paused;
 
-    @Shadow public TextRenderer textRenderer;
+    @Shadow public class_0_681 textRenderer;
     private boolean disconnectCheck = false;
 
     @Inject(at = @At("HEAD"), method = "startGame")
@@ -61,7 +61,7 @@ public abstract class MinecraftClientMixin {
                 RunCategory category = SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY);
                 if (category.isAutoStart()) {
                     InGameTimer.start(name, RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
-                    InGameTimer.getInstance().setDefaultGameMode(levelInfo.method_3758().getGameModeId());
+                    InGameTimer.getInstance().setDefaultGameMode(levelInfo.getGameMode().getId());
                     InGameTimer.getInstance().setCheatAvailable(levelInfo.allowCommands());
                 }
             } else {
@@ -85,7 +85,7 @@ public abstract class MinecraftClientMixin {
         if (InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN != null) {
             Screen screen1 = InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN;
             InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN = null;
-            MinecraftClient.getInstance().openScreen(screen1);
+            MinecraftClient.getInstance().setScreen(screen1);
         }
     }
 
@@ -155,14 +155,14 @@ public abstract class MinecraftClientMixin {
 
         long time = System.currentTimeMillis() - InGameTimerUtils.LATEST_TIMER_TIME;
         if (time < 2950) {
-            Window window = new Window((MinecraftClient) ((Object) this));
-            GlStateManager.pushMatrix();
-            GlStateManager.enableBlend();
+            class_0_686 window = new class_0_686((MinecraftClient) ((Object) this));
+            class_1015.method_4461();
+            class_1015.method_4454();
             String text = "SpeedRunIGT v" + (SpeedRunIGT.MOD_VERSION.split("\\+")[0]);
-            this.textRenderer.draw(text, this.currentScreen != null ? (int) ((window.getScaledWidth() - this.textRenderer.getStringWidth(text)) / 2f) : 4, (int) window.getScaledHeight() - 12,
+            this.textRenderer.method_0_2385(text, this.currentScreen != null ? (int) ((window.method_0_2461() - this.textRenderer.method_0_2381(text)) / 2f) : 4, (int) window.method_0_2462() - 12,
                     ColorMixer.getArgb((int) (MathHelper.clamp((3000 - time) / 1000.0, 0, 1) * (this.currentScreen != null ? 90 : 130)), 255, 255, 255));
-            GlStateManager.disableBlend();
-            GlStateManager.popMatrix();
+            class_1015.method_4439();
+            class_1015.method_4350();
         }
 
         SpeedRunIGT.DEBUG_DATA = timer.getStatus().name();

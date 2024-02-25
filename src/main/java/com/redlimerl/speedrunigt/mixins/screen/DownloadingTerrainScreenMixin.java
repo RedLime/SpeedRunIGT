@@ -13,10 +13,10 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 public abstract class DownloadingTerrainScreenMixin extends Screen {
 
     @Override
-    public void init() {
-        super.init();
+    public void method_2224() {
+        super.method_2224();
         InGameTimer timer = InGameTimer.getInstance();
-        if (client != null && client.isInSingleplayer() && !timer.isCoop() && timer.getStatus() != TimerStatus.IDLE) {
+        if (field_2563 != null && field_2563.isIntegratedServerRunning() && !timer.isCoop() && timer.getStatus() != TimerStatus.IDLE) {
             timer.setPause(true, TimerStatus.IDLE, "dimension load?");
             InGameTimerUtils.IS_CHANGING_DIMENSION = false;
         }

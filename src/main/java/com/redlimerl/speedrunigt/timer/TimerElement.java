@@ -1,17 +1,17 @@
 package com.redlimerl.speedrunigt.timer;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
 import com.redlimerl.speedrunigt.timer.TimerDrawer.Position;
+import net.minecraft.class_0_681;
+import net.minecraft.class_0_686;
+import net.minecraft.class_1015;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.util.Window;
 import net.minecraft.util.math.MathHelper;
 
 public class TimerElement {
     private static final MinecraftClient client = MinecraftClient.getInstance();
 
-    private final TextRenderer textRenderer = client.textRenderer;
+    private final class_0_681 textRenderer = client.field_1772;
     private final Position position = new Position(0, 0);
     private final Position scaledPosition = new Position(0, 0);
     private float scale = 1;
@@ -20,7 +20,7 @@ public class TimerElement {
     private Integer color;
     private TimerDecoration decoration;
     private float fontHeight = 8;
-    private final Window window = new Window(client);
+    private final class_0_686 window = new class_0_686(client);
 
     public void init(float xPos, float yPos, float scale, String text, Integer color, TimerDecoration decoration, float fontHeight) {
         this.scale = scale;
@@ -28,8 +28,8 @@ public class TimerElement {
         this.color = color;
         this.decoration = decoration;
         this.fontHeight = fontHeight;
-        double scaledWindowWidth = window.getScaledWidth();
-        double scaledWindowHeight = window.getScaledHeight();
+        double scaledWindowWidth = window.method_0_2461();
+        double scaledWindowHeight = window.method_0_2462();
 
         int translateX = (int) (xPos * scaledWindowWidth);
         int translateY = (int) (yPos * scaledWindowHeight);
@@ -39,7 +39,7 @@ public class TimerElement {
         this.scaledPosition.setX(Math.round(translateX / this.scale));
         this.scaledPosition.setY(Math.round(translateY / this.scale));
 
-        this.textWidth = this.textRenderer.getStringWidth(text);
+        this.textWidth = this.textRenderer.method_0_2381(text);
 
         //가로 화면 밖으로 나갈 시 재조정
         if (getScaledTextWidth() + this.position.getX() > scaledWindowWidth) {
@@ -54,27 +54,27 @@ public class TimerElement {
     }
 
     public void draw(boolean doTranslate) {
-        GlStateManager.pushMatrix();
-        if (doTranslate) GlStateManager.translatef(0, 0, 1);
-        GlStateManager.scalef(scale, scale, 1.0F);
+        class_1015.method_4461();
+        if (doTranslate) class_1015.method_4348(0, 0, 1);
+        class_1015.method_4384(scale, scale, 1.0F);
         drawOutLine(this.textRenderer, scaledPosition.getX(), scaledPosition.getY(), text, color, decoration);
-        GlStateManager.popMatrix();
+        class_1015.method_4350();
     }
 
-    private static void drawOutLine(TextRenderer textRenderer, int x, int y, String text, Integer color, TimerDecoration decoration) {
+    private static void drawOutLine(class_0_681 textRenderer, int x, int y, String text, Integer color, TimerDecoration decoration) {
         if (decoration == TimerDecoration.OUTLINE) {
-            textRenderer.draw(text, x + 1, y + 1, 0);
-            textRenderer.draw(text, x + 1, y, 0);
-            textRenderer.draw(text, x + 1, y - 1, 0);
-            textRenderer.draw(text, x, y - 1, 0);
-            textRenderer.draw(text, x, y + 1, 0);
-            textRenderer.draw(text, x - 1, y + 1, 0);
-            textRenderer.draw(text, x - 1, y, 0);
-            textRenderer.draw(text, x - 1, y - 1, 0);
+            textRenderer.method_0_2385(text, x + 1, y + 1, 0);
+            textRenderer.method_0_2385(text, x + 1, y, 0);
+            textRenderer.method_0_2385(text, x + 1, y - 1, 0);
+            textRenderer.method_0_2385(text, x, y - 1, 0);
+            textRenderer.method_0_2385(text, x, y + 1, 0);
+            textRenderer.method_0_2385(text, x - 1, y + 1, 0);
+            textRenderer.method_0_2385(text, x - 1, y, 0);
+            textRenderer.method_0_2385(text, x - 1, y - 1, 0);
         } else if (decoration == TimerDecoration.SHADOW) {
-            textRenderer.draw(text, x + 1, y + 1, -12566464);
+            textRenderer.method_0_2385(text, x + 1, y + 1, -12566464);
         }
-        textRenderer.draw(text, x, y, color);
+        textRenderer.method_0_2385(text, x, y, color);
     }
 
     public Position getPosition() {

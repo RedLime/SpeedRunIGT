@@ -6,11 +6,11 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.category.condition.StatCategoryCondition;
+import net.minecraft.class_0_1685;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.stat.ServerStatHandler;
 import net.minecraft.stat.Stat;
 import net.minecraft.stat.StatHandler;
-import net.minecraft.util.JsonIntSerializable;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -51,20 +51,20 @@ public abstract class ServerStatHandlerMixin extends StatHandler {
     private JsonObject getStatJson() {
         JsonObject jsonObject = new JsonObject();
 
-        for (Map.Entry<Stat, JsonIntSerializable> entry : this.field_9047.entrySet()) {
-            if (entry.getValue().getJsonElementProvider() != null) {
+        for (Map.Entry<Stat, class_0_1685> entry : this.field_15431.entrySet()) {
+            if (entry.getValue().method_0_6345() != null) {
                 JsonObject jsonObject2 = new JsonObject();
-                jsonObject2.addProperty("value", entry.getValue().getValue());
+                jsonObject2.addProperty("value", entry.getValue().method_0_6342());
 
                 try {
-                    jsonObject2.add("progress", entry.getValue().getJsonElementProvider().write());
+                    jsonObject2.add("progress", entry.getValue().method_0_6345().method_0_6355());
                 } catch (Throwable var6) {
-                    LOGGER.warn("Couldn't save statistic {}: error serializing progress", entry.getKey().getText(), var6);
+                    LOGGER.warn("Couldn't save statistic {}: error serializing progress", entry.getKey().method_0_6336(), var6);
                 }
 
-                jsonObject.add(entry.getKey().name, jsonObject2);
+                jsonObject.add(entry.getKey().field_0_6932, jsonObject2);
             } else {
-                jsonObject.addProperty(entry.getKey().name, entry.getValue().getValue());
+                jsonObject.addProperty(entry.getKey().field_0_6932, entry.getValue().method_0_6342());
             }
         }
         return jsonObject;
