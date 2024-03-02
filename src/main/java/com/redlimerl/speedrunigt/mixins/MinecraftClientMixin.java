@@ -3,6 +3,7 @@ package com.redlimerl.speedrunigt.mixins;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.SpeedRunIGTClient;
 import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
+import com.redlimerl.speedrunigt.instance.GameInstance;
 import com.redlimerl.speedrunigt.mixins.access.FontManagerAccessor;
 import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
@@ -106,9 +107,9 @@ public abstract class MinecraftClientMixin {
     private int saveTickCount = 0;
     @Inject(method = "tick", at = @At("RETURN"))
     private void onTickMixin(CallbackInfo ci) {
-        if (++saveTickCount >= 20) {
+        if (++this.saveTickCount >= 20) {
             SpeedRunOption.checkSave();
-            saveTickCount = 0;
+            this.saveTickCount = 0;
         }
     }
 
@@ -188,7 +189,7 @@ public abstract class MinecraftClientMixin {
 
     @Inject(method = "openPauseMenu", at = @At("HEAD"))
     public void onOpenPauseMenu(boolean pause, CallbackInfo ci) {
-        previousNoUI = pause;
+        this.previousNoUI = pause;
     }
 
 
@@ -263,6 +264,7 @@ public abstract class MinecraftClientMixin {
     @Inject(at = @At("HEAD"), method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V")
     public void disconnect(CallbackInfo ci) {
         if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE && InGameTimerUtils.CAN_DISCONNECT) {
+            GameInstance.getInstance().callEvents("leave_world");
             InGameTimer.leave();
         }
     }
