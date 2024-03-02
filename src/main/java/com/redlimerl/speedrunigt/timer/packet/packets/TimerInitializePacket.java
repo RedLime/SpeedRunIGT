@@ -37,8 +37,8 @@ public class TimerInitializePacket extends TimerPacket {
     @Environment(EnvType.CLIENT)
     @Override
     protected TimerPacketBuf convertClient2ServerPacket(TimerPacketBuf buf, MinecraftClient client) {
-        buf.writeInt(runType.getCode());
-        buf.writeString(category.getID());
+        buf.writeInt(this.runType.getCode());
+        buf.writeString(this.category.getID());
         return buf;
     }
 
@@ -46,7 +46,7 @@ public class TimerInitializePacket extends TimerPacket {
     public void receiveClient2ServerPacket(TimerPacketBuf buf, MinecraftServer server) {
         if (!SpeedRunIGT.IS_CLIENT_SIDE) {
             TimerPacketBuf copiedBuf = buf.copy();
-            init(copiedBuf, true);
+            this.init(copiedBuf, true);
             copiedBuf.release();
         }
         this.sendPacketToPlayers(buf, server);
@@ -54,11 +54,11 @@ public class TimerInitializePacket extends TimerPacket {
 
     @Override
     protected TimerPacketBuf convertServer2ClientPacket(TimerPacketBuf buf, MinecraftServer server) {
-        buf.writeInt(runType.getCode());
-        buf.writeString(category.getID());
+        buf.writeInt(this.runType.getCode());
+        buf.writeString(this.category.getID());
 
         TimerPacketBuf copiedBuf = buf.copy();
-        init(copiedBuf, true);
+        this.init(copiedBuf, true);
         copiedBuf.release();
         return buf;
     }
@@ -66,7 +66,7 @@ public class TimerInitializePacket extends TimerPacket {
     @Environment(EnvType.CLIENT)
     @Override
     public void receiveServer2ClientPacket(TimerPacketBuf buf, MinecraftClient client) {
-        init(buf, client.isIntegratedServerRunning());
+        this.init(buf, client.isIntegratedServerRunning());
     }
 
     private void init(TimerPacketBuf buf, boolean isIntegrated) {

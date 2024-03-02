@@ -1,4 +1,4 @@
-package com.redlimerl.speedrunigt.mixins.retime.accessor;
+package com.redlimerl.speedrunigt.mixins.access;
 
 import net.minecraft.client.gui.widget.DoubleOptionSliderWidget;
 import net.minecraft.client.option.DoubleOption;

@@ -1,6 +1,5 @@
 package com.redlimerl.speedrunigt.timer.running;
 
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
@@ -25,15 +24,15 @@ public class RunPortalPos implements Serializable {
     }
 
     public double getX() {
-        return x;
+        return this.x;
     }
 
     public double getY() {
-        return y;
+        return this.y;
     }
 
     public double getZ() {
-        return z;
+        return this.z;
     }
 
     public double squaredDistanceTo(Vec3d vec) {
@@ -48,5 +47,9 @@ public class RunPortalPos implements Serializable {
         double e = pos.getY() - this.y;
         double f = pos.getZ() - this.z;
         return d * d + e * e + f * f;
+    }
+
+    public boolean isAt(Vec3d vec3d) {
+        return this.getX() == vec3d.getX() || this.getY() == vec3d.getY() || this.getZ() == vec3d.getZ();
     }
 }

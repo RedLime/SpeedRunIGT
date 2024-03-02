@@ -1,6 +1,6 @@
 package com.redlimerl.speedrunigt.mixins.retime;
 
-import com.redlimerl.speedrunigt.mixins.retime.accessor.DoubleOptionSliderWidgetAccessor;
+import com.redlimerl.speedrunigt.mixins.access.DoubleOptionSliderWidgetAccessor;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import net.minecraft.client.gui.widget.DoubleOptionSliderWidget;
 import net.minecraft.client.gui.widget.SliderWidget;

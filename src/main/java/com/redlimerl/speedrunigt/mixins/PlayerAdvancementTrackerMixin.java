@@ -50,7 +50,7 @@ public abstract class PlayerAdvancementTrackerMixin {
 
         if (timer.getStatus() != TimerStatus.NONE) {
             timer.tryInsertNewAdvancement(advancement.getId().toString(), criteriaKey, advancement.getDisplay() != null);
-            if (timer.isCoop()) TimerPacketUtils.sendServer2ClientPacket(owner.server, new TimerAchieveCriteriaPacket(advancement.getId().toString(), criteriaKey, advancement.getDisplay() != null));
+            if (timer.isCoop()) TimerPacketUtils.sendServer2ClientPacket(this.owner.server, new TimerAchieveCriteriaPacket(advancement.getId().toString(), criteriaKey, advancement.getDisplay() != null));
         }
     }
 }

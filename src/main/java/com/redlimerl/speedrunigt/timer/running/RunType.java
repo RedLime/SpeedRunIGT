@@ -12,11 +12,11 @@ public enum RunType {
     }
 
     public String getContext() {
-        return context;
+        return this.context;
     }
 
     public int getCode() {
-        return code;
+        return this.code;
     }
 
     public static RunType fromBoolean(boolean isSetSeed) {
