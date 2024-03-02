@@ -29,7 +29,7 @@ public class FailedCategoryInitScreen extends Screen {
 
     @Override
     protected void init() {
-        addDrawableChild(new ButtonWidget(width / 2 - 100, height / 2 + 15, 200, 20, ScreenTexts.DONE, button -> close()));
+        addDrawableChild(new ButtonWidget(width / 2 - 100, height / 2 + 15, 200, 20, ScreenTexts.DONE, button -> onClose()));
     }
 
     private static final int TEXT_WHITE = ColorHelper.Argb.getArgb(255, 255, 255, 255);

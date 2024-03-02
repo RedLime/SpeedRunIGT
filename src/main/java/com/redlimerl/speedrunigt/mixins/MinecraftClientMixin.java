@@ -23,6 +23,7 @@ import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.resource.ReloadableResourceManager;
 import net.minecraft.resource.ReloadableResourceManagerImpl;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.SinglePreparationResourceReloader;
@@ -59,7 +60,7 @@ public abstract class MinecraftClientMixin {
 
     @Shadow @Nullable public ClientWorld world;
 
-    @Shadow @Final private ReloadableResourceManagerImpl resourceManager;
+    @Shadow @Final private ReloadableResourceManager resourceManager;
 
     @Shadow private boolean paused;
 
@@ -68,7 +69,7 @@ public abstract class MinecraftClientMixin {
     private boolean disconnectCheck = false;
 
     @Inject(at = @At("HEAD"), method = "createWorld")
-    public void onCreate(String worldName, LevelInfo levelInfo, DynamicRegistryManager dynamicRegistryManager, GeneratorOptions generatorOptions, CallbackInfo ci) {
+    public void onCreate(String worldName, LevelInfo levelInfo, DynamicRegistryManager.Impl registryTracker, GeneratorOptions generatorOptions, CallbackInfo ci) {
         RunCategory category = SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY);
         if (category.isAutoStart()) {
             InGameTimer.start(worldName, RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));

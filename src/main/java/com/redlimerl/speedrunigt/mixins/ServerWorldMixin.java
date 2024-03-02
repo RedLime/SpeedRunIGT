@@ -3,14 +3,12 @@ package com.redlimerl.speedrunigt.mixins;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
-import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.running.RunPortalPos;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.profiler.Profiler;
-import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.MutableWorldProperties;
 import net.minecraft.world.World;
@@ -23,8 +21,8 @@ import java.util.function.Supplier;
 @Mixin(ServerWorld.class)
 public abstract class ServerWorldMixin extends World {
 
-    protected ServerWorldMixin(MutableWorldProperties properties, RegistryKey<World> registryRef, RegistryEntry<DimensionType> registryEntry, Supplier<Profiler> profiler, boolean isClient, boolean debugWorld, long seed) {
-        super(properties, registryRef, registryEntry, profiler, isClient, debugWorld, seed);
+    protected ServerWorldMixin(MutableWorldProperties properties, RegistryKey<World> registryRef, DimensionType dimensionType, Supplier<Profiler> profiler, boolean isClient, boolean debugWorld, long seed) {
+        super(properties, registryRef, dimensionType, profiler, isClient, debugWorld, seed);
     }
 
     @Override

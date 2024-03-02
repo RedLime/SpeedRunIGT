@@ -14,10 +14,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(GameOptions.class)
 public class GameOptionsMixin {
 
-    @Mutable @Shadow @Final public KeyBinding[] allKeys;
+    @Mutable @Shadow @Final public KeyBinding[] keysAll;
 
     @Inject(at = @At("HEAD"), method = "load()V")
     public void loadHook(CallbackInfo info) {
-        allKeys = KeyBindingRegistry.process(allKeys);
+        keysAll = KeyBindingRegistry.process(keysAll);
     }
 }

@@ -63,7 +63,7 @@ public class SpeedRunIGTInfoScreen extends Screen {
     }
 
     @Override
-    public void close() {
+    public void onClose() {
         if (client != null) {
             client.setScreen(parent);
         }
