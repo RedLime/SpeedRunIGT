@@ -1,11 +1,11 @@
 package com.redlimerl.speedrunigt.gui;
 
-import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
 
-public class ConsumerButtonWidget extends ButtonWidget {
+public class ConsumerButtonWidget extends ClickableWidget {
 
     public interface ButtonWorker {
-        void accept(ButtonWidget buttonWidget);
+        void accept(ClickableWidget buttonWidget);
     }
     private final ButtonWorker onClick;
 

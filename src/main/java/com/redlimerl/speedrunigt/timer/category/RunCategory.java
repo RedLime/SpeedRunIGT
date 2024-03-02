@@ -4,13 +4,13 @@ import com.google.gson.JsonArray;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.therun.TheRunCategory;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
-import net.minecraft.text.TranslatableText;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
+import net.minecraft.text.TranslatableTextContent;
 
 public class RunCategory {
 
@@ -100,8 +100,8 @@ public class RunCategory {
 
     public boolean isHideCategory() { return hideCategory; }
 
-    public TranslatableText getText() {
-        return new TranslatableText(translateKey);
+    public TranslatableTextContent getText() {
+        return new TranslatableTextContent(translateKey);
     }
 
     public @Nullable JsonArray getConditionJson() {

@@ -13,16 +13,16 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 public abstract class DownloadingTerrainScreenMixin extends Screen {
 
     @Override
-    public void init() {
-        super.init();
+    public void method_2224() {
+        super.method_2224();
         InGameTimer timer = InGameTimer.getInstance();
-        if (client != null && client.isInSingleplayer() && !timer.isCoop() && timer.getStatus() != TimerStatus.IDLE) {
+        if (field_2563 != null && field_2563.isIntegratedServerRunning() && !timer.isCoop() && timer.getStatus() != TimerStatus.IDLE) {
             timer.setPause(true, TimerStatus.IDLE, "dimension load?");
             InGameTimerUtils.IS_CHANGING_DIMENSION = false;
         }
     }
 
-    @ModifyArg(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/DownloadingTerrainScreen;drawCenteredString(Lnet/minecraft/client/font/TextRenderer;Ljava/lang/String;III)V"), index = 1)
+    @ModifyArg(method = "method_2214", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/DownloadingTerrainScreen;method_1789(Lnet/minecraft/class_0_681;Ljava/lang/String;III)V"), index = 1)
     public String onRender(String string) {
         if (InGameTimer.getInstance().isPaused() && InGameTimer.getInstance().isStarted() && !InGameTimer.getInstance().isCoop()) {
             return string + " (#" + InGameTimer.getInstance().getPauseCount() + ")";

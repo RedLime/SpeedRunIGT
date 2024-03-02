@@ -43,8 +43,8 @@ public class ObtainItemCategoryCondition extends CategoryCondition.Condition<Lis
         int amount = 0;
 
         for (ItemStack itemStack : itemStacks) {
-            if (itemStack != null && Objects.equals(Item.getFromId(itemID), itemStack.getItem()) && (itemDamage == null || itemStack.getDamage() == itemDamage)) {
-                if (!nbtTag.isEmpty()) {
+            if (itemStack != null && Objects.equals(Item.method_0_8260(itemID), itemStack.getItem()) && (itemDamage == null || itemStack.method_0_8355() == itemDamage)) {
+                if (!nbtTag.method_0_5049()) {
                     if (itemStack.getNbt() == null) continue;
                     NbtCompound itemTag = itemStack.getNbt();
                     if (!itemTag.equals(nbtTag)) continue;

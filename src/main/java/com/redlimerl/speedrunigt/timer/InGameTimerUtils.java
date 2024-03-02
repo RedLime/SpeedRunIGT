@@ -16,8 +16,8 @@ import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import com.redlimerl.speedrunigt.timer.running.RunPortalPos;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.ServerStatHandler;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.dimension.DimensionType;
@@ -188,9 +188,9 @@ public class InGameTimerUtils {
         JsonObject jsonObject = new JsonObject();
         MinecraftServer server = getServer();
         if (timer.isServerIntegrated && server != null && server.getPlayerManager() != null) {
-            ArrayList<ServerPlayerEntity> serverPlayerEntities = Lists.newArrayList(server.getPlayerManager().getPlayers());
+            ArrayList<ServerPlayerEntity> serverPlayerEntities = Lists.newArrayList(server.getPlayerManager().getPlayerList());
             for (ServerPlayerEntity serverPlayerEntity : serverPlayerEntities) {
-                jsonObject.add(serverPlayerEntity.getUuid().toString(), SpeedRunIGT.GSON.fromJson(ServerStatHandler.method_8272(((ServerStatHandlerAccessor) serverPlayerEntity.getStatHandler()).getStatMap()), JsonObject.class));
+                jsonObject.add(serverPlayerEntity.method_5667().toString(), SpeedRunIGT.GSON.fromJson(ServerStatHandler.method_14911(((ServerStatHandlerAccessor) serverPlayerEntity.getStatHandler()).getStatMap()), JsonObject.class));
             }
         }
         STATS_UPDATE = jsonObject;
@@ -244,8 +244,8 @@ public class InGameTimerUtils {
 
     public static int getCurrentWorldDefaultGameMode() {
         MinecraftServer server = getServer();
-        if (server == null) return GameMode.SURVIVAL.getGameModeId();
-        return server.method_3026().getGameModeId();
+        if (server == null) return GameMode.SURVIVAL.getId();
+        return server.getDefaultGameMode().getId();
     }
 
     public static boolean isCurrentWorldCheatAvailable() {

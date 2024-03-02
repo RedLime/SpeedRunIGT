@@ -7,16 +7,16 @@ import com.redlimerl.speedrunigt.utils.OperatingUtils;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.TranslatableTextContent;
 import org.lwjgl.input.Keyboard;
 
 public class TheRunUploadKeyScreen extends Screen {
 
     private final Screen parent;
     private TextFieldWidget uploadKeyBox;
-    private ButtonWidget saveButton;
+    private ClickableWidget saveButton;
     private Thread keyCheckThread = null;
     private int statusCode = 0;
 
@@ -26,14 +26,14 @@ public class TheRunUploadKeyScreen extends Screen {
     }
 
     @Override
-    public void init() {
-        super.init();
-        assert client != null;
+    public void method_2224() {
+        super.method_2224();
+        assert field_2563 != null;
         Keyboard.enableRepeatEvents(true);
 
-        this.saveButton = new ConsumerButtonWidget(width / 2 - 100, height / 2 + 24, 98, 20, new TranslatableText("selectWorld.edit.save").asFormattedString(),
+        this.saveButton = new ConsumerButtonWidget(field_2561 / 2 - 100, field_2559 / 2 + 24, 98, 20, new TranslatableTextContent("selectWorld.edit.save").method_10865(),
                 (button) -> {
-                    this.saveButton.active = false;
+                    this.saveButton.field_2078 = false;
                     String key = uploadKeyBox.getText();
                     this.keyCheckThread = new Thread(() -> {
                         if (TheRunRequestHelper.checkValidUploadKey(key)) {
@@ -44,74 +44,74 @@ public class TheRunUploadKeyScreen extends Screen {
                             statusCode = 3;
                         }
                         this.keyCheckThread = null;
-                        this.saveButton.active = true;
+                        this.saveButton.field_2078 = true;
                     });
                     statusCode = 1;
                     this.keyCheckThread.start();
                 });
-        method_13411(this.saveButton);
+        method_2219(this.saveButton);
 
-        method_13411(new ConsumerButtonWidget(width / 2 + 2, height / 2 + 24, 98, 20, ScreenTexts.CANCEL, (button) -> onClose()));
+        method_2219(new ConsumerButtonWidget(field_2561 / 2 + 2, field_2559 / 2 + 24, 98, 20, ScreenTexts.CANCEL, (button) -> onClose()));
 
-        method_13411(new ConsumerButtonWidget(width / 2 - 100, height / 2 + 2, 200, 20, new TranslatableText("speedrunigt.therun_gg.get_upload_key").asFormattedString(), (button) -> OperatingUtils.setUrl("https://therun.gg/upload-key")));
+        method_2219(new ConsumerButtonWidget(field_2561 / 2 - 100, field_2559 / 2 + 2, 200, 20, new TranslatableTextContent("speedrunigt.therun_gg.get_upload_key").method_10865(), (button) -> OperatingUtils.setUrl("https://therun.gg/upload-key")));
 
 
-        this.uploadKeyBox = new TextFieldWidget(0, this.textRenderer, this.width / 2 - 110, height / 2 - 32, 220, 20);
+        this.uploadKeyBox = new TextFieldWidget(0, this.field_2554, this.field_2561 / 2 - 110, field_2559 / 2 - 32, 220, 20);
         this.uploadKeyBox.setMaxLength(36);
         this.uploadKeyBox.setText(TheRunKeyHelper.UPLOAD_KEY);
-        this.uploadKeyBox.setFocused(true);
+        this.uploadKeyBox.setTextFieldFocused(true);
     }
 
     @Override
-    protected void buttonClicked(ButtonWidget button) {
+    protected void method_0_2778(ClickableWidget button) {
         if (button instanceof ConsumerButtonWidget) {
             ((ConsumerButtonWidget) button).onClick();
         }
-        super.buttonClicked(button);
+        super.method_0_2778(button);
     }
 
     public void onClose() {
-        if (client != null) Keyboard.enableRepeatEvents(false);
+        if (field_2563 != null) Keyboard.enableRepeatEvents(false);
         if (this.keyCheckThread != null) this.keyCheckThread.interrupt();
-        MinecraftClient.getInstance().openScreen(parent);
+        MinecraftClient.getInstance().setScreen(parent);
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float delta) {
-        this.renderBackground();
+    public void method_2214(int mouseX, int mouseY, float delta) {
+        this.method_2240();
         String beforeText = this.uploadKeyBox.getText();
         this.uploadKeyBox.setText(beforeText.replaceAll("\\w", "*"));
 
-        this.drawCenteredString(this.textRenderer, new TranslatableText("speedrunigt.option.therun_gg.edit_upload_key").asFormattedString(), width / 2, 12, 16777215);
+        this.method_1789(this.field_2554, new TranslatableTextContent("speedrunigt.option.therun_gg.edit_upload_key").method_10865(), field_2561 / 2, 12, 16777215);
 
-        this.uploadKeyBox.render();
+        this.uploadKeyBox.method_1857();
 
-        super.render(mouseX, mouseY, delta);
+        super.method_2214(mouseX, mouseY, delta);
 
         if (statusCode == 1)
-            this.drawCenteredString(this.textRenderer, new TranslatableText("speedrunigt.therun_gg.message.loading_upload_key_info").asFormattedString(), width / 2, height / 2 + 50, 16777215);
+            this.method_1789(this.field_2554, new TranslatableTextContent("speedrunigt.therun_gg.message.loading_upload_key_info").method_10865(), field_2561 / 2, field_2559 / 2 + 50, 16777215);
 
         if (statusCode == 2)
-            this.drawCenteredString(this.textRenderer, new TranslatableText("speedrunigt.therun_gg.message.upload_key_is_valid").asFormattedString(), width / 2, height / 2 + 50, 16777215);
+            this.method_1789(this.field_2554, new TranslatableTextContent("speedrunigt.therun_gg.message.upload_key_is_valid").method_10865(), field_2561 / 2, field_2559 / 2 + 50, 16777215);
 
         if (statusCode == 3)
-            this.drawCenteredString(this.textRenderer, new TranslatableText("speedrunigt.therun_gg.message.upload_key_is_invalid").asFormattedString(), width / 2, height / 2 + 50, 16777215);
+            this.method_1789(this.field_2554, new TranslatableTextContent("speedrunigt.therun_gg.message.upload_key_is_invalid").method_10865(), field_2561 / 2, field_2559 / 2 + 50, 16777215);
 
         this.uploadKeyBox.setText(beforeText);
     }
 
     @Override
-    public void tick() {
+    public void method_2225() {
         this.uploadKeyBox.tick();
     }
 
     @Override
-    protected void keyPressed(char chr, int keyCode) {
-        this.uploadKeyBox.keyPressed(chr, keyCode);
+    protected void method_0_2773(char chr, int keyCode) {
+        this.uploadKeyBox.method_0_2506(chr, keyCode);
     }
 
     @Override
-    public void removed() {
-        if (client != null) Keyboard.enableRepeatEvents(false);
+    public void method_2234() {
+        if (field_2563 != null) Keyboard.enableRepeatEvents(false);
     }
 }

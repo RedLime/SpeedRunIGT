@@ -34,43 +34,43 @@ public abstract class LivingEntityMixin extends Entity {
      * @reason Backported to 1.8
      */
 
-    @Inject(at = @At("HEAD"), method = "onKilled")
+    @Inject(at = @At("HEAD"), method = "onDeath")
     public void onDeath(DamageSource source, CallbackInfo ci) {
         @NotNull InGameTimer timer = InGameTimer.getInstance();
 
         if (this.removed || this.dead || timer.getStatus() == TimerStatus.NONE) return;
 
         // For Timelines
-        if (Objects.equals(EntityType.getEntityName(this), "WitherBoss") && this.attackingPlayer != null) timer.tryInsertNewTimeline("kill_wither");
-        if (Objects.equals(EntityType.getEntityName(this), "ElderGuardian") && this.attackingPlayer != null) timer.tryInsertNewTimeline("kill_elder_guardian");
-        if (Objects.equals(EntityType.getEntityName(this), "EnderDragon")) timer.tryInsertNewTimeline("kill_ender_dragon");
+        if (Objects.equals(EntityType.method_0_7053(this), "WitherBoss") && this.attackingPlayer != null) timer.tryInsertNewTimeline("kill_wither");
+        if (Objects.equals(EntityType.method_0_7053(this), "ElderGuardian") && this.attackingPlayer != null) timer.tryInsertNewTimeline("kill_elder_guardian");
+        if (Objects.equals(EntityType.method_0_7053(this), "EnderDragon")) timer.tryInsertNewTimeline("kill_ender_dragon");
 
         //Kill All Bosses
         if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {
-            if (Objects.equals(EntityType.getEntityName(this), "EnderDragon")) {
+            if (Objects.equals(EntityType.method_0_7053(this), "EnderDragon")) {
                 timer.updateMoreData(0, 1);
             }
-            if (Objects.equals(EntityType.getEntityName(this), "WitherBoss")) {//Wither
+            if (Objects.equals(EntityType.method_0_7053(this), "WitherBoss")) {//Wither
                 timer.updateMoreData(1, 1);
                 RunCategories.checkAllBossesCompleted();
             }
-            if (Objects.equals(EntityType.getEntityName(this), "ElderGuardian")) { //Elder Guardian
+            if (Objects.equals(EntityType.method_0_7053(this), "ElderGuardian")) { //Elder Guardian
                 timer.updateMoreData(2, 1);
                 RunCategories.checkAllBossesCompleted();
             }
         }
 
         //Kill Wither
-        if (timer.getCategory() == RunCategories.KILL_WITHER && Objects.equals(EntityType.getEntityName(this), "WitherBoss")) {
+        if (timer.getCategory() == RunCategories.KILL_WITHER && Objects.equals(EntityType.method_0_7053(this), "WitherBoss")) {
             InGameTimer.complete();
         }
 
         //Kill Elder Guardian
-        if (timer.getCategory() == RunCategories.KILL_ELDER_GUARDIAN && Objects.equals(EntityType.getEntityName(this), "ElderGuardian")) {
+        if (timer.getCategory() == RunCategories.KILL_ELDER_GUARDIAN && Objects.equals(EntityType.method_0_7053(this), "ElderGuardian")) {
             InGameTimer.complete();
         }
 
-        if (Objects.equals(EntityType.getEntityName(this), "EnderDragon") && !this.world.isClient) {
+        if (Objects.equals(EntityType.method_0_7053(this), "EnderDragon") && !this.world.isClient) {
             InGameTimerUtils.IS_KILLED_ENDER_DRAGON = true;
         }
     }
