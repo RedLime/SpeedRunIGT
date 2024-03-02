@@ -43,22 +43,22 @@ public abstract class TimerPacket {
     }
 
     public Identifier getIdentifier() {
-        return identifier;
+        return this.identifier;
     }
 
     @Environment(EnvType.CLIENT)
     final CustomPayloadC2SPacket createClient2ServerPacket(MinecraftClient client) {
         TimerPacketBuf buf = TimerPacketBuf.create();
-        return new CustomPayloadC2SPacket(identifier, convertClient2ServerPacket(buf, client).getBuffer());
+        return new CustomPayloadC2SPacket(this.identifier, this.convertClient2ServerPacket(buf, client).getBuffer());
     }
 
     final CustomPayloadS2CPacket createServer2ClientPacket(MinecraftServer server, TimerPacketBuf buf) {
-        return new CustomPayloadS2CPacket(identifier, convertServer2ClientPacket(buf.copy(), server).getBuffer());
+        return new CustomPayloadS2CPacket(this.identifier, this.convertServer2ClientPacket(buf.copy(), server).getBuffer());
     }
 
     final CustomPayloadS2CPacket createServer2ClientPacket(MinecraftServer server) {
         TimerPacketBuf buf = TimerPacketBuf.create();
-        return createServer2ClientPacket(server, buf);
+        return this.createServer2ClientPacket(server, buf);
     }
 
     protected void sendPacketToPlayers(TimerPacketBuf buf, MinecraftServer server) {

@@ -23,11 +23,11 @@ public class TimerAdvancementTracker implements Serializable {
         }
 
         public long getRTA() {
-            return rta;
+            return this.rta;
         }
 
         public long getIGT() {
-            return igt;
+            return this.igt;
         }
     }
     public static class AdvancementTrack extends Track {
@@ -42,39 +42,39 @@ public class TimerAdvancementTracker implements Serializable {
         }
 
         public void addCriteria(String string, long igt, long rta) {
-            if (criteria.containsKey(string)) return;
-            criteria.put(string, new Track(igt, rta));
+            if (this.criteria.containsKey(string)) return;
+            this.criteria.put(string, new Track(igt, rta));
         }
 
         public boolean isCompletedCriteria(String string) {
-            return criteria.containsKey(string);
+            return this.criteria.containsKey(string);
         }
 
         public void setComplete(boolean b) {
             this.complete = b;
         }
 
-        public boolean isComplete() { return complete; }
+        public boolean isComplete() { return this.complete; }
 
         public void setAdvancement(boolean is_advancement) {
             this.is_advancement = is_advancement;
         }
 
         public boolean isAdvancement() {
-            return is_advancement;
+            return this.is_advancement;
         }
     }
 
     private final ConcurrentSkipListMap<String, AdvancementTrack> advancements = new ConcurrentSkipListMap<>();
 
     public AdvancementTrack getOrCreateTrack(String string) {
-        if (advancements.containsKey(string)) return advancements.get(string);
+        if (this.advancements.containsKey(string)) return this.advancements.get(string);
         AdvancementTrack track = new AdvancementTrack();
-        advancements.put(string, track);
+        this.advancements.put(string, track);
         return track;
     }
 
     public synchronized Map<String, AdvancementTrack> getAdvancements() {
-        return Maps.newHashMap(advancements);
+        return Maps.newHashMap(this.advancements);
     }
 }

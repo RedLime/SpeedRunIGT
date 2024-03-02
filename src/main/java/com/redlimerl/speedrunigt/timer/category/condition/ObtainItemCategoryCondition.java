@@ -53,10 +53,10 @@ public class ObtainItemCategoryCondition extends CategoryCondition.Condition<Lis
             }
         }
 
-        return amount >= itemAmount;
+        return amount >= this.itemAmount;
     }
 
     public boolean isStrictMode() {
-        return strictMode;
+        return this.strictMode;
     }
 }

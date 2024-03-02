@@ -10,7 +10,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundIdS2CPacket;
-import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -34,7 +33,7 @@ public class ClientPlayNetworkHandlerMixin {
             SpeedRunIGT.debug(String.format("Server->Client Packet: %s bytes, ID : %s", buf.getBuffer().capacity(), packet.getChannel()));
             try {
                 if (timerPacket != null && SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) {
-                    timerPacket.receiveServer2ClientPacket(buf, client);
+                    timerPacket.receiveServer2ClientPacket(buf, this.client);
                     buf.release();
                 }
             } catch (Exception e) {

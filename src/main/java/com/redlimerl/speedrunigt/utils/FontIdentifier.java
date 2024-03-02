@@ -16,14 +16,14 @@ public class FontIdentifier {
     }
 
     public Identifier getIdentifier() {
-        return identifier;
+        return this.identifier;
     }
 
     public FontConfigure getFontConfigure() {
-        return fontConfigure;
+        return this.fontConfigure;
     }
 
     public File getFile() {
-        return file;
+        return this.file;
     }
 }
