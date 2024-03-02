@@ -7,7 +7,6 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.timer.running.RunType;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.registry.CombinedDynamicRegistries;
 import net.minecraft.registry.ServerDynamicRegistryType;
 import net.minecraft.server.DataPackContents;
@@ -29,6 +28,7 @@ public class IntegratedServerLoaderMixin {
             InGameTimer.start(session.getDirectoryName(), RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
             InGameTimer.getInstance().setDefaultGameMode(saveProperties.getLevelInfo().getGameMode().getId());
             InGameTimer.getInstance().setCheatAvailable(saveProperties.getLevelInfo().areCommandsAllowed());
+            InGameTimer.getInstance().checkDifficulty(saveProperties.getDifficulty());
         }
         InGameTimerUtils.IS_CHANGING_DIMENSION = true;
         InGameTimerUtils.CAN_DISCONNECT = false;

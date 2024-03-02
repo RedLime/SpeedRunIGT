@@ -30,8 +30,8 @@ public class TimerChangeCategoryPacket extends TimerPacket {
     @Environment(EnvType.CLIENT)
     @Override
     protected TimerPacketBuf convertClient2ServerPacket(TimerPacketBuf buf, MinecraftClient client) {
-        if (sendCategory != null) {
-            buf.writeString(sendCategory);
+        if (this.sendCategory != null) {
+            buf.writeString(this.sendCategory);
         }
         return buf;
     }
@@ -50,8 +50,8 @@ public class TimerChangeCategoryPacket extends TimerPacket {
 
     @Override
     protected TimerPacketBuf convertServer2ClientPacket(TimerPacketBuf buf, MinecraftServer server) {
-        if (sendCategory != null) {
-            buf.writeString(sendCategory);
+        if (this.sendCategory != null) {
+            buf.writeString(this.sendCategory);
         }
         return buf;
     }

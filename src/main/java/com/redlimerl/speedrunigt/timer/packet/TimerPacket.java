@@ -78,7 +78,7 @@ public abstract class TimerPacket {
     }
 
     public Identifier getIdentifier() {
-        return identifier;
+        return this.identifier;
     }
 
     @Environment(EnvType.CLIENT)
@@ -93,7 +93,7 @@ public abstract class TimerPacket {
 
     final PacketByteBuf createServer2ClientPacket(MinecraftServer server) {
         TimerPacketBuf buf = TimerPacketBuf.create();
-        return createServer2ClientPacket(server, buf);
+        return this.createServer2ClientPacket(server, buf);
     }
 
     protected void sendPacketToPlayers(TimerPacketBuf buf, MinecraftServer server) {
