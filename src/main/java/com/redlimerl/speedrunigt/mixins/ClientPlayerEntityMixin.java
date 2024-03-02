@@ -28,6 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Mixin(ClientPlayerEntity.class)
 public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
@@ -130,7 +131,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             }
         }
 
-        List<Item> items = this.inventory.main.stream().map(ItemStack::getItem).collect(Collectors.toList());
+        List<Item> items = Stream.concat(this.inventory.main.stream(), this.inventory.offHand.stream()).map(ItemStack::getItem).collect(Collectors.toList());
         List<Item> armors = this.inventory.armor.stream().map(ItemStack::getItem).collect(Collectors.toList());
 
         //All Workstations
@@ -184,7 +185,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             if (armors.contains(Items.IRON_HELMET) &&
                     armors.contains(Items.IRON_CHESTPLATE) &&
                     armors.contains(Items.IRON_BOOTS) &&
-                    armors.contains(Items.IRON_LEGGINGS) && experienceLevel >= 15) {
+                    armors.contains(Items.IRON_LEGGINGS) && this.experienceLevel >= 15) {
                 InGameTimer.complete();
             }
         }
@@ -197,18 +198,18 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     public void updateNausea(CallbackInfo ci) {
         // Portal time update
         if (this.inNetherPortal) {
-            if (++portalTick >= 81 && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
-                portalTick = 0;
-                if (InGameTimer.getInstance().getStatus() != TimerStatus.IDLE && client.isInSingleplayer()) {
-                    latestPortalEnter = System.currentTimeMillis();
+            if (++this.portalTick >= 81 && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
+                this.portalTick = 0;
+                if (InGameTimer.getInstance().getStatus() != TimerStatus.IDLE && this.client.isInSingleplayer()) {
+                    this.latestPortalEnter = System.currentTimeMillis();
                 }
             }
         } else {
-            if (latestPortalEnter != null) {
-                InGameTimer.getInstance().tryExcludeIGT(System.currentTimeMillis() - latestPortalEnter, "nether portal lag");
-                latestPortalEnter = null;
+            if (this.latestPortalEnter != null) {
+                InGameTimer.getInstance().tryExcludeIGT(System.currentTimeMillis() - this.latestPortalEnter, "nether portal lag");
+                this.latestPortalEnter = null;
             }
-            portalTick = 0;
+            this.portalTick = 0;
         }
     }
 

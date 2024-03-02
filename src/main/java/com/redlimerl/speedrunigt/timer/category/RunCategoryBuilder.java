@@ -1,6 +1,5 @@
 package com.redlimerl.speedrunigt.timer.category;
 
-import com.redlimerl.speedrunigt.therun.TheRunCategory;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 
 import java.util.function.Function;
@@ -16,13 +15,10 @@ public class RunCategoryBuilder {
     private boolean customUrl = false;
     private boolean hideCategory = false;
     private Function<InGameTimer, Boolean> retimeFunction = (value) -> false;
-    private TheRunCategory theRunCategory = null;
 
     public static RunCategoryBuilder create(String id, String categoryUrl, String translateKey) {
         return new RunCategoryBuilder(id, categoryUrl, translateKey);
     }
-
-
 
     RunCategoryBuilder(String id, String categoryUrl, String translateKey) {
         this.id = id;
@@ -31,18 +27,10 @@ public class RunCategoryBuilder {
     }
 
     public RunCategory build() {
-        return new RunCategory(
-                id,
-                categoryUrl,
-                translateKey,
-                null,
-                null,
-                autoStart,
-                canSegment,
-                customUrl,
-                hideCategory,
-                retimeFunction,
-                theRunCategory);
+        return new RunCategory(this.id, this.categoryUrl, this.translateKey,
+            null,
+            null, this.autoStart, this.canSegment, this.customUrl, this.hideCategory, this.retimeFunction
+        );
     }
 
 
@@ -69,11 +57,6 @@ public class RunCategoryBuilder {
 
     public RunCategoryBuilder setRetimeFunction(Function<InGameTimer, Boolean> retimeFunction) {
         this.retimeFunction = retimeFunction;
-        return this;
-    }
-
-    public RunCategoryBuilder setTheRunCategory(TheRunCategory theRunCategory) {
-        this.theRunCategory = theRunCategory;
         return this;
     }
 }

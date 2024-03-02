@@ -29,12 +29,12 @@ public class OptionsScreenMixin extends Screen {
 
     @Inject(method = "init", at = @At("TAIL"))
     private void onInit(CallbackInfo ci) {
-        timerButton = new ButtonWidget(this.width / 2 - 180, this.height / 6 - 12, 20, 20, new LiteralText(""), (buttonWidget) -> {
+        this.timerButton = new ButtonWidget(this.width / 2 - 180, this.height / 6 - 12, 20, 20, new LiteralText(""), (buttonWidget) -> {
             if (this.client != null) {
                 this.client.openScreen(new SpeedRunOptionScreen(this));
             }
         });
-        this.addButton(timerButton);
+        this.addButton(this.timerButton);
     }
 
     @SuppressWarnings("deprecation")
@@ -43,9 +43,9 @@ public class OptionsScreenMixin extends Screen {
         if (this.client != null) {
             RenderSystem.pushMatrix();
             RenderSystem.translatef(-.5f, -.5f, 0);
-            this.client.getTextureManager().bindTexture(timerButton.isHovered() ? ENDER_EYE :
+            this.client.getTextureManager().bindTexture(this.timerButton.isHovered() ? ENDER_EYE :
                     SpeedRunIGTUpdateChecker.UPDATE_STATUS == SpeedRunIGTUpdateChecker.UpdateStatus.OUTDATED ? BLAZE_POWDER : ENDER_PEARL);
-            drawTexture(matrices, timerButton.x + 2, timerButton.y + 2, 0.0F, 0.0F, 16, 16, 16, 16);
+            drawTexture(matrices, this.timerButton.x + 2, this.timerButton.y + 2, 0.0F, 0.0F, 16, 16, 16, 16);
             RenderSystem.popMatrix();
         }
     }
