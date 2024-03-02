@@ -2,7 +2,6 @@ package com.redlimerl.speedrunigt.api;
 
 import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
 
@@ -31,7 +30,7 @@ public interface OptionButtonFactory {
         }
 
         public Storage build() {
-            return new Storage(category, buttonWidget, tooltip);
+            return new Storage(this.category, this.buttonWidget, this.tooltip);
         }
     }
 
@@ -46,15 +45,15 @@ public interface OptionButtonFactory {
         }
 
         public String getCategory() {
-            return category;
+            return this.category;
         }
 
         public ClickableWidget getButtonWidget() {
-            return buttonWidget;
+            return this.buttonWidget;
         }
 
         public Supplier<String> getTooltip() {
-            return tooltip;
+            return this.tooltip;
         }
     }
 
