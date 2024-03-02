@@ -29,7 +29,7 @@ public class OptionsScreenMixin extends Screen {
 
     @Inject(method = "init", at = @At("TAIL"))
     private void onInit(CallbackInfo ci) {
-        timerButton = new ButtonWidget(this.width / 2 - 180, this.height / 6 - 12, 20, 20, new LiteralText(""), (buttonWidget) -> {
+        this.timerButton = new ButtonWidget(this.width / 2 - 180, this.height / 6 - 12, 20, 20, new LiteralText(""), (buttonWidget) -> {
             if (this.client != null) {
                 this.client.openScreen(new SpeedRunOptionScreen(this));
             }

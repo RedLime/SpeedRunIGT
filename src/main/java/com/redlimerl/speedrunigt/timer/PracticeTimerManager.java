@@ -21,7 +21,9 @@ public class PracticeTimerManager {
     }
 
     public static void stopPractice() {
-        if (InGameTimer.getInstance().getCategory() == PRACTICE_CATEGORY)
+        if (InGameTimer.getInstance().getCategory() == PRACTICE_CATEGORY) {
             InGameTimer.complete();
+        }
+        InGameTimer.getInstance().setWriteFiles(true);
     }
 }

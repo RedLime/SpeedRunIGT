@@ -1,6 +1,5 @@
 package com.redlimerl.speedrunigt.mixins.retime;
 
-import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import net.minecraft.client.gui.screen.option.OptionsScreen;
 import net.minecraft.client.gui.widget.CyclingButtonWidget;
@@ -15,8 +14,6 @@ public class OptionScreenMixin {
 
     @Inject(method = "method_32632", remap = false, at = @At("TAIL"))
     public void onChangeDifficulty(CyclingButtonWidget<?> button, Difficulty difficulty, CallbackInfo ci) {
-        SpeedRunIGT.debug("detected");
         InGameTimerUtils.CHANGED_OPTIONS.add(button);
     }
-
 }

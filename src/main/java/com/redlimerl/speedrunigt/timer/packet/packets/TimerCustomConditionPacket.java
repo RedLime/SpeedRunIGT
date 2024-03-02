@@ -31,7 +31,7 @@ public class TimerCustomConditionPacket extends TimerPacket {
     @Environment(EnvType.CLIENT)
     @Override
     protected TimerPacketBuf convertClient2ServerPacket(TimerPacketBuf buf, MinecraftClient client) {
-        if (this.sendCondition != null) buf.writeString(sendCondition.getName());
+        if (this.sendCondition != null) buf.writeString(this.sendCondition.getName());
         return buf;
     }
 
@@ -39,7 +39,7 @@ public class TimerCustomConditionPacket extends TimerPacket {
     public void receiveClient2ServerPacket(TimerPacketBuf buf, MinecraftServer server) {
         if (!SpeedRunIGT.IS_CLIENT_SIDE) {
             TimerPacketBuf copiedBuf = buf.copy();
-            timerCondition(copiedBuf);
+            this.timerCondition(copiedBuf);
             copiedBuf.release();
         }
         this.sendPacketToPlayers(buf, server);
@@ -47,14 +47,14 @@ public class TimerCustomConditionPacket extends TimerPacket {
 
     @Override
     protected TimerPacketBuf convertServer2ClientPacket(TimerPacketBuf buf, MinecraftServer server) {
-        if (this.sendCondition != null) buf.writeString(sendCondition.getName());
+        if (this.sendCondition != null) buf.writeString(this.sendCondition.getName());
         return buf;
     }
 
     @Environment(EnvType.CLIENT)
     @Override
     public void receiveServer2ClientPacket(TimerPacketBuf buf, MinecraftClient client) {
-        timerCondition(buf);
+        this.timerCondition(buf);
     }
 
     public void timerCondition(TimerPacketBuf buf) {

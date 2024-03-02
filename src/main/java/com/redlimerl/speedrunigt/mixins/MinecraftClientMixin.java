@@ -3,6 +3,7 @@ package com.redlimerl.speedrunigt.mixins;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.SpeedRunIGTClient;
 import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
+import com.redlimerl.speedrunigt.instance.GameInstance;
 import com.redlimerl.speedrunigt.mixins.access.FontManagerAccessor;
 import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
@@ -75,9 +76,9 @@ public abstract class MinecraftClientMixin {
             InGameTimer.start(worldName, RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
             InGameTimer.getInstance().setDefaultGameMode(levelInfo.getGameMode().getId());
             InGameTimer.getInstance().setCheatAvailable(levelInfo.areCommandsAllowed());
+            InGameTimer.getInstance().checkDifficulty(levelInfo.getDifficulty());
         }
-        InGameTimerUtils.IS_CHANGING_DIMENSION = true;
-        disconnectCheck = false;
+        this.disconnectCheck = false;
     }
 
     @Inject(at = @At("HEAD"), method = "startIntegratedServer(Ljava/lang/String;)V")
@@ -91,13 +92,13 @@ public abstract class MinecraftClientMixin {
             e.printStackTrace();
         }
         InGameTimerUtils.IS_CHANGING_DIMENSION = true;
-        disconnectCheck = false;
+        this.disconnectCheck = false;
     }
 
     @Inject(method = "openScreen", at = @At("RETURN"))
     public void onopenScreen(Screen screen, CallbackInfo ci) {
         if (screen instanceof LevelLoadingScreen) {
-            disconnectCheck = true;
+            this.disconnectCheck = true;
         }
         if (InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN != null) {
             Screen screen1 = InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN;
@@ -138,9 +139,9 @@ public abstract class MinecraftClientMixin {
     private int saveTickCount = 0;
     @Inject(method = "tick", at = @At("RETURN"))
     private void onTickMixin(CallbackInfo ci) {
-        if (++saveTickCount >= 20) {
+        if (++this.saveTickCount >= 20) {
             SpeedRunOption.checkSave();
-            saveTickCount = 0;
+            this.saveTickCount = 0;
         }
     }
 
@@ -196,15 +197,15 @@ public abstract class MinecraftClientMixin {
                 if (enableSplit && this.isPaused() && !(this.currentScreen instanceof DownloadingTerrainScreen) && (this.currentScreen instanceof GameMenuScreen && !this.previousNoUI))
                     updatePositionType = PositionType.WHILE_PAUSED;
 
-                if (currentPositionType != updatePositionType || needUpdate) {
-                    currentPositionType = updatePositionType;
-                    Vec2f igtPos = currentPositionType == PositionType.DEFAULT
+                if (this.currentPositionType != updatePositionType || needUpdate) {
+                    this.currentPositionType = updatePositionType;
+                    Vec2f igtPos = this.currentPositionType == PositionType.DEFAULT
                             ? new Vec2f(SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_POSITION_X), SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_POSITION_Y))
-                            : SpeedRunOption.getOption(currentPositionType == PositionType.WHILE_F3 ? SpeedRunOptions.TIMER_IGT_POSITION_FOR_F3 : SpeedRunOptions.TIMER_IGT_POSITION_FOR_PAUSE);
+                            : SpeedRunOption.getOption(this.currentPositionType == PositionType.WHILE_F3 ? SpeedRunOptions.TIMER_IGT_POSITION_FOR_F3 : SpeedRunOptions.TIMER_IGT_POSITION_FOR_PAUSE);
 
-                    Vec2f rtaPos = currentPositionType == PositionType.DEFAULT
+                    Vec2f rtaPos = this.currentPositionType == PositionType.DEFAULT
                             ? new Vec2f(SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_POSITION_X), SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_POSITION_Y))
-                            : SpeedRunOption.getOption(currentPositionType == PositionType.WHILE_F3 ? SpeedRunOptions.TIMER_RTA_POSITION_FOR_F3 : SpeedRunOptions.TIMER_RTA_POSITION_FOR_PAUSE);
+                            : SpeedRunOption.getOption(this.currentPositionType == PositionType.WHILE_F3 ? SpeedRunOptions.TIMER_RTA_POSITION_FOR_F3 : SpeedRunOptions.TIMER_RTA_POSITION_FOR_PAUSE);
 
                     SpeedRunIGTClient.TIMER_DRAWER.setRTA_XPos(rtaPos.x);
                     SpeedRunIGTClient.TIMER_DRAWER.setRTA_YPos(rtaPos.y);
@@ -218,7 +219,7 @@ public abstract class MinecraftClientMixin {
 
     @Inject(method = "openPauseMenu", at = @At("HEAD"))
     public void onOpenPauseMenu(boolean pause, CallbackInfo ci) {
-        previousNoUI = pause;
+        this.previousNoUI = pause;
     }
 
 
@@ -292,7 +293,8 @@ public abstract class MinecraftClientMixin {
     // Disconnecting fix
     @Inject(at = @At("HEAD"), method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V")
     public void disconnect(CallbackInfo ci) {
-        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE && disconnectCheck) {
+        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE && this.disconnectCheck) {
+            GameInstance.getInstance().callEvents("leave_world");
             InGameTimer.leave();
         }
     }

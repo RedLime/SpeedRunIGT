@@ -27,7 +27,7 @@ public class TimerCompletePacket extends TimerPacket {
     @Environment(EnvType.CLIENT)
     @Override
     protected TimerPacketBuf convertClient2ServerPacket(TimerPacketBuf buf, MinecraftClient client) {
-        if (sendRTA != null) buf.writeLong(sendRTA);
+        if (this.sendRTA != null) buf.writeLong(this.sendRTA);
         return buf;
     }
 
@@ -43,7 +43,7 @@ public class TimerCompletePacket extends TimerPacket {
 
     @Override
     protected TimerPacketBuf convertServer2ClientPacket(TimerPacketBuf buf, MinecraftServer server) {
-        if (sendRTA != null) buf.writeLong(sendRTA);
+        if (this.sendRTA != null) buf.writeLong(this.sendRTA);
         return buf;
     }
 
