@@ -6,15 +6,15 @@ import com.redlimerl.speedrunigt.SpeedRunIGTUpdateChecker;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.client.render.*;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
@@ -112,15 +112,15 @@ public class SpeedRunOptionScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        this.renderBackground(matrices);
-        this.buttonListWidget.render(matrices, mouseX, mouseY, delta);
-        super.render(matrices, mouseX, mouseY, delta);
-        drawCenteredTextWithShadow(matrices, textRenderer, this.title, this.width / 2, 10, 16777215);
-        drawTextWithShadow(matrices, textRenderer, "v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215);
+    public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
+        this.renderBackground(drawContext);
+        this.buttonListWidget.render(drawContext, mouseX, mouseY, delta);
+        super.render(drawContext, mouseX, mouseY, delta);
+        drawContext.drawCenteredTextWithShadow(textRenderer, this.title, this.width / 2, 10, 16777215);
+        drawContext.drawTextWithShadow(textRenderer, "v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215);
 
         ArrayList<Text> tooltip = getToolTip(mouseX, mouseY);
-        if (!tooltip.isEmpty() && !this.isDragging()) this.renderTooltip(matrices, tooltip, 0, height);
+        if (!tooltip.isEmpty() && !this.isDragging()) drawContext.drawTooltip(textRenderer, tooltip, 0, height);
     }
 
     public ArrayList<Text> getToolTip(int mouseX, int mouseY) {
@@ -179,8 +179,8 @@ public class SpeedRunOptionScreen extends Screen {
         }
 
         @Override
-        public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-            super.render(matrices, mouseX, mouseY, delta);
+        public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
+            super.render(drawContext, mouseX, mouseY, delta);
 
             //Render bg on empty space
             if (this.client == null) return;
@@ -224,9 +224,9 @@ public class SpeedRunOptionScreen extends Screen {
             }
 
             @Override
-            public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+            public void render(DrawContext drawContext, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
                 buttonWidget.setY(y);
-                buttonWidget.render(matrices, mouseX, mouseY, tickDelta);
+                buttonWidget.render(drawContext, mouseX, mouseY, tickDelta);
             }
         }
     }

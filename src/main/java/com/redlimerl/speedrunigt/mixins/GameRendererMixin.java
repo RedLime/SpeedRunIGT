@@ -8,29 +8,37 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.*;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.DownloadingTerrainScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
+import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
     @Shadow @Final
     MinecraftClient client;
     private TimerDrawer.PositionType currentPositionType = TimerDrawer.PositionType.DEFAULT;
+
+    @SuppressWarnings("InvalidInjectorMethodSignature")
     @Inject(method = "render", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/client/toast/ToastManager;draw(Lnet/minecraft/client/util/math/MatrixStack;)V", shift = At.Shift.AFTER))
-    private void drawTimer(CallbackInfo ci) {
+            target = "Lnet/minecraft/client/toast/ToastManager;draw(Lnet/minecraft/client/gui/DrawContext;)V", shift = At.Shift.AFTER),
+            locals = LocalCapture.CAPTURE_FAILHARD)
+    private void drawTimer(float tickDelta, long startTime, boolean tick, CallbackInfo ci,
+                           int i, int j, Window window, Matrix4f matrix4f, MatrixStack matrixStack, DrawContext drawContext) {
         InGameTimer timer = InGameTimer.getInstance();
 
         if (InGameTimerClientUtils.canUnpauseTimer(true)) {
@@ -44,8 +52,8 @@ public class GameRendererMixin {
         long time = System.currentTimeMillis() - InGameTimerUtils.LATEST_TIMER_TIME;
         if (time < 2950) {
             String text = "SpeedRunIGT v" + (SpeedRunIGT.MOD_VERSION.split("\\+")[0]);
-            this.client.textRenderer.draw(new MatrixStack(), text, this.client.currentScreen != null ? ((this.client.getWindow().getScaledWidth() - this.client.textRenderer.getWidth(text)) / 2f) : 4, this.client.getWindow().getScaledHeight() - 12,
-                    ColorHelper.Argb.getArgb((int) (MathHelper.clamp((3000 - time) / 1000.0, 0, 1) * (this.client.currentScreen != null ? 90 : 130)), 255, 255, 255));
+            drawContext.drawText(this.client.textRenderer, text, this.client.currentScreen != null ? (int) ((this.client.getWindow().getScaledWidth() - this.client.textRenderer.getWidth(text)) / 2f) : 4, this.client.getWindow().getScaledHeight() - 12,
+                    ColorHelper.Argb.getArgb((int) (MathHelper.clamp((3000 - time) / 1000.0, 0, 1) * (this.client.currentScreen != null ? 90 : 130)), 255, 255, 255), false);
         }
 
         SpeedRunIGT.DEBUG_DATA = timer.getStatus().name();
@@ -79,7 +87,7 @@ public class GameRendererMixin {
                     SpeedRunIGTClient.TIMER_DRAWER.setIGT_YPos(igtPos.y);
                 }
             }
-            SpeedRunIGTClient.TIMER_DRAWER.draw();
+            SpeedRunIGTClient.TIMER_DRAWER.draw(drawContext);
         }
     }
 

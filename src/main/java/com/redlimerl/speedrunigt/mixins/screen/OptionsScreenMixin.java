@@ -1,13 +1,12 @@
 package com.redlimerl.speedrunigt.mixins.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.redlimerl.speedrunigt.SpeedRunIGTUpdateChecker;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunOptionScreen;
 import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.OptionsScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
@@ -38,14 +37,14 @@ public class OptionsScreenMixin extends Screen {
     }
 
     @Inject(method = "render", at = @At("TAIL"))
-    private void renderEnderPearl(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    private void renderEnderPearl(DrawContext drawContext, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         if (this.client != null) {
-            matrices.push();
-            matrices.translate(-.5f, -.5f, 0);
-            RenderSystem.setShaderTexture(0, timerButton.isHovered() ? ENDER_EYE :
-                    SpeedRunIGTUpdateChecker.UPDATE_STATUS == SpeedRunIGTUpdateChecker.UpdateStatus.OUTDATED ? BLAZE_POWDER : ENDER_PEARL);
-            drawTexture(matrices, timerButton.getX() + 2, timerButton.getY() + 2, 0.0F, 0.0F, 16, 16, 16, 16);
-            matrices.pop();
+            drawContext.getMatrices().push();
+            drawContext.getMatrices().translate(-.5f, -.5f, 0);
+            drawContext.drawTexture(timerButton.isHovered() ? ENDER_EYE :
+                    SpeedRunIGTUpdateChecker.UPDATE_STATUS == SpeedRunIGTUpdateChecker.UpdateStatus.OUTDATED ? BLAZE_POWDER : ENDER_PEARL,
+                    timerButton.getX() + 2, timerButton.getY() + 2, 0.0F, 0.0F, 16, 16, 16, 16);
+            drawContext.getMatrices().pop();
         }
     }
 }

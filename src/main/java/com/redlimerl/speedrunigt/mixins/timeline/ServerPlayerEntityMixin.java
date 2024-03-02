@@ -33,35 +33,34 @@ import java.util.stream.Stream;
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
+    @Shadow public abstract ServerWorld getServerWorld();
+
     public ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
         super(world, pos, yaw, gameProfile);
     }
 
-    @Shadow public abstract ServerWorld getWorld();
-
-    private ServerWorld beforeWorld = null;
+    private RegistryKey<World> beforeWorld = null;
     private Vec3d lastPortalPos = null;
 
     @Inject(method = "moveToWorld", at = @At("HEAD"))
     public void onChangeDimension(ServerWorld destination, CallbackInfoReturnable<Entity> cir) {
-        beforeWorld = this.getWorld();
+        beforeWorld = this.getServerWorld().getRegistryKey();
         lastPortalPos = this.getPos();
         InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = !InGameTimer.getInstance().isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY;
     }
 
     @Inject(method = "moveToWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;onPlayerChangeDimension(Lnet/minecraft/server/network/ServerPlayerEntity;)V", shift = At.Shift.AFTER))
     public void onChangedDimension(ServerWorld destination, CallbackInfoReturnable<Entity> cir) {
-        RegistryKey<World> oldRegistryKey = beforeWorld.getRegistryKey();
-        RegistryKey<World> newRegistryKey = world.getRegistryKey();
+        RegistryKey<World> newRegistryKey = this.getWorld().getRegistryKey();
 
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() != TimerStatus.NONE) {
-            if (oldRegistryKey == World.OVERWORLD && newRegistryKey == World.NETHER) {
+            if (beforeWorld == World.OVERWORLD && newRegistryKey == World.NETHER) {
                 if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY)
                     InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.NETHER, this.getPos().add(0, 0, 0), lastPortalPos.add(0, 0, 0));
             }
 
-            if (oldRegistryKey == World.NETHER && newRegistryKey == World.OVERWORLD) {
+            if (beforeWorld == World.NETHER && newRegistryKey == World.OVERWORLD) {
                 // doing this early, so we can use the portal pos list for the portal number
                 int portalIndex = InGameTimerUtils.isBlindTraveled(this.lastPortalPos);
                 boolean isNewPortal = InGameTimerUtils.isLoadableBlind(World.OVERWORLD, this.lastPortalPos.add(0, 0, 0), this.getPos().add(0, 0, 0));

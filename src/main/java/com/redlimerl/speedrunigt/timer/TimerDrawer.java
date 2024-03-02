@@ -12,8 +12,7 @@ import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -300,7 +299,7 @@ public class TimerDrawer {
         return Text.literal((this.simply ? "" : "RTA: ") + getTimeFormat(InGameTimer.getInstance().getRealTimeAttack()));
     }
 
-    public void draw() {
+    public void draw(DrawContext drawContext) {
         if (!toggle) return;
 
         MutableText igtText = getIGTText();
@@ -331,11 +330,9 @@ public class TimerDrawer {
         rtaTimerElement.init(rtaXPos, rtaYPos, rtaScale, rtaText, rtaColor, rtaDecoration, fontHeight);
         igtTimerElement.init(igtXPos, igtYPos, igtScale, igtText, igtColor, igtDecoration, fontHeight);
 
-        MatrixStack matrixStack = new MatrixStack();
-
         //배경 렌더
-        matrixStack.push();
-        if (translateZ) matrixStack.translate(0, 0, 998);
+        drawContext.getMatrices().push();
+        if (translateZ) drawContext.getMatrices().translate(0, 0, 998);
         if (bgOpacity > 0.01f) {
             Position rtaMin = new Position(rtaTimerElement.getPosition().getX() - rtaPadding, rtaTimerElement.getPosition().getY() - rtaPadding);
             Position rtaMax = new Position(rtaMin.getX() + rtaTimerElement.getScaledTextWidth() + ((rtaPadding - 1) + rtaPadding), rtaMin.getY() + rtaTimerElement.getScaledTextHeight() + ((rtaPadding - 1) + rtaPadding));
@@ -344,18 +341,18 @@ public class TimerDrawer {
             int opacity = ColorHelper.Argb.getArgb((int) (bgOpacity * 255), 0, 0, 0);
             if (rtaMin.getX() < igtMax.getX() && rtaMin.getY() < igtMax.getY() &&
                     igtMin.getX() < rtaMax.getX() && igtMin.getY() < rtaMax.getY()) {
-                DrawableHelper.fill(matrixStack, Math.min(rtaMin.getX(), igtMin.getX()), Math.min(rtaMin.getY(), igtMin.getY()),
+                drawContext.fill(Math.min(rtaMin.getX(), igtMin.getX()), Math.min(rtaMin.getY(), igtMin.getY()),
                         Math.max(rtaMax.getX(), igtMax.getX()), Math.max(rtaMax.getY(), igtMax.getY()), opacity);
             } else {
-                if (rtaScale != 0) DrawableHelper.fill(matrixStack, rtaMin.getX(), rtaMin.getY(), rtaMax.getX(), rtaMax.getY(), opacity);
-                if (igtScale != 0) DrawableHelper.fill(matrixStack, igtMin.getX(), igtMin.getY(), igtMax.getX(), igtMax.getY(), opacity);
+                if (rtaScale != 0) drawContext.fill(rtaMin.getX(), rtaMin.getY(), rtaMax.getX(), rtaMax.getY(), opacity);
+                if (igtScale != 0) drawContext.fill(igtMin.getX(), igtMin.getY(), igtMax.getX(), igtMax.getY(), opacity);
             }
         }
 
         //렌더
-        if (igtScale != 0) igtTimerElement.draw(matrixStack, translateZ);
-        if (rtaScale != 0) rtaTimerElement.draw(matrixStack, translateZ);
-        matrixStack.pop();
+        if (igtScale != 0) igtTimerElement.draw(drawContext, translateZ);
+        if (rtaScale != 0) rtaTimerElement.draw(drawContext, translateZ);
+        drawContext.getMatrices().pop();
 
     }
 
