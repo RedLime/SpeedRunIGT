@@ -28,6 +28,7 @@ public class IntegratedServerLoaderMixin {
             InGameTimer.start(session.getDirectoryName(), RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
             InGameTimer.getInstance().setDefaultGameMode(saveProperties.getLevelInfo().getGameMode().getId());
             InGameTimer.getInstance().setCheatAvailable(saveProperties.getLevelInfo().areCommandsAllowed());
+            InGameTimer.getInstance().checkDifficulty(saveProperties.getDifficulty());
         }
         InGameTimerUtils.IS_CHANGING_DIMENSION = true;
         InGameTimerUtils.CAN_DISCONNECT = false;
