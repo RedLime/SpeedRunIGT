@@ -14,14 +14,14 @@ public class TimerTimeline implements Serializable {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public long getIGT() {
-        return igt;
+        return this.igt;
     }
 
     public long getRTA() {
-        return rta;
+        return this.rta;
     }
 }

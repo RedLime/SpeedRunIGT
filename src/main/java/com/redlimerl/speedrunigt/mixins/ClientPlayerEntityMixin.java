@@ -183,7 +183,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             if (armors.contains(Items.IRON_HELMET) &&
                     armors.contains(Items.IRON_CHESTPLATE) &&
                     armors.contains(Items.IRON_BOOTS) &&
-                    armors.contains(Items.IRON_LEGGINGS) && experienceLevel >= 15) {
+                    armors.contains(Items.IRON_LEGGINGS) && this.experienceLevel >= 15) {
                 InGameTimer.complete();
             }
         }
@@ -196,18 +196,18 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     public void updateNausea(CallbackInfo ci) {
         // Portal time update
         if (this.inNetherPortal) {
-            if (++portalTick >= 81 && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
-                portalTick = 0;
-                if (InGameTimer.getInstance().getStatus() != TimerStatus.IDLE && client.isInSingleplayer()) {
-                    latestPortalEnter = System.currentTimeMillis();
+            if (++this.portalTick >= 81 && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
+                this.portalTick = 0;
+                if (InGameTimer.getInstance().getStatus() != TimerStatus.IDLE && this.client.isInSingleplayer()) {
+                    this.latestPortalEnter = System.currentTimeMillis();
                 }
             }
         } else {
-            if (latestPortalEnter != null) {
-                InGameTimer.getInstance().tryExcludeIGT(System.currentTimeMillis() - latestPortalEnter, "nether portal lag");
-                latestPortalEnter = null;
+            if (this.latestPortalEnter != null) {
+                InGameTimer.getInstance().tryExcludeIGT(System.currentTimeMillis() - this.latestPortalEnter, "nether portal lag");
+                this.latestPortalEnter = null;
             }
-            portalTick = 0;
+            this.portalTick = 0;
         }
     }
 
