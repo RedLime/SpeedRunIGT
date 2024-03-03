@@ -44,12 +44,12 @@ public class TimerStartPacket extends TimerPacket {
     @Environment(EnvType.CLIENT)
     @Override
     protected TimerPacketBuf convertClient2ServerPacket(TimerPacketBuf buf, MinecraftClient client) {
-        if (sendTimer != null) {
-            buf.writeString(sendTimer.getUuid().toString());
-            buf.writeString(sendTimer.getCategory().getID());
-            buf.writeLong(sendRTA);
-            buf.writeInt(sendTimer.getRunType().getCode());
-            buf.writeString(customData);
+        if (this.sendTimer != null) {
+            buf.writeString(this.sendTimer.getUuid().toString());
+            buf.writeString(this.sendTimer.getCategory().getID());
+            buf.writeLong(this.sendRTA);
+            buf.writeInt(this.sendTimer.getRunType().getCode());
+            buf.writeString(this.customData);
         }
         return buf;
     }
@@ -58,7 +58,7 @@ public class TimerStartPacket extends TimerPacket {
     public void receiveClient2ServerPacket(TimerPacketBuf buf, MinecraftServer server) {
         if (!SpeedRunIGT.IS_CLIENT_SIDE) {
             TimerPacketBuf copiedBuf = buf.copy();
-            timerInit(copiedBuf, true);
+            this.timerInit(copiedBuf, true);
             copiedBuf.release();
         }
         this.sendPacketToPlayers(buf, server);
@@ -66,15 +66,15 @@ public class TimerStartPacket extends TimerPacket {
 
     @Override
     protected TimerPacketBuf convertServer2ClientPacket(TimerPacketBuf buf, MinecraftServer server) {
-        if (sendTimer != null) {
-            buf.writeString(sendTimer.getUuid().toString());
-            buf.writeString(sendTimer.getCategory().getID());
-            buf.writeLong(sendRTA);
-            buf.writeInt(sendTimer.getRunType().getCode());
-            buf.writeString(customData);
+        if (this.sendTimer != null) {
+            buf.writeString(this.sendTimer.getUuid().toString());
+            buf.writeString(this.sendTimer.getCategory().getID());
+            buf.writeLong(this.sendRTA);
+            buf.writeInt(this.sendTimer.getRunType().getCode());
+            buf.writeString(this.customData);
 
             TimerPacketBuf copiedBuf = buf.copy();
-            timerInit(copiedBuf, true);
+            this.timerInit(copiedBuf, true);
             copiedBuf.release();
         }
         return buf;
@@ -83,7 +83,7 @@ public class TimerStartPacket extends TimerPacket {
     @Environment(EnvType.CLIENT)
     @Override
     public void receiveServer2ClientPacket(TimerPacketBuf buf, MinecraftClient client) {
-        timerInit(buf, client.isIntegratedServerRunning());
+        this.timerInit(buf, client.isIntegratedServerRunning());
     }
 
     public void timerInit(TimerPacketBuf buf, boolean isIntegrated) {

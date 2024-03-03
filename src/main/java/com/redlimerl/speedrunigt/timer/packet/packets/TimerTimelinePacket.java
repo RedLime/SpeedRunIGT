@@ -26,7 +26,7 @@ public class TimerTimelinePacket extends TimerPacket {
     @Environment(EnvType.CLIENT)
     @Override
     protected TimerPacketBuf convertClient2ServerPacket(TimerPacketBuf buf, MinecraftClient client) {
-        if (sendTimeline != null) buf.writeString(sendTimeline);
+        if (this.sendTimeline != null) buf.writeString(this.sendTimeline);
         return buf;
     }
 
@@ -42,7 +42,7 @@ public class TimerTimelinePacket extends TimerPacket {
 
     @Override
     protected TimerPacketBuf convertServer2ClientPacket(TimerPacketBuf buf, MinecraftServer server) {
-        if (sendTimeline != null) buf.writeString(sendTimeline);
+        if (this.sendTimeline != null) buf.writeString(this.sendTimeline);
         return buf;
     }
 
