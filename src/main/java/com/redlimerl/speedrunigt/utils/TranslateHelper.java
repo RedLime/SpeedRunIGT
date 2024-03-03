@@ -2,8 +2,6 @@ package com.redlimerl.speedrunigt.utils;
 
 import com.google.common.collect.Lists;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.Resource;
-import net.minecraft.util.Language;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +17,7 @@ import java.util.zip.ZipInputStream;
 public class TranslateHelper {
 
     public static String[] getLangFileNames() throws IOException, URISyntaxException {
-        final String path = "lang";
+        final String path = "assets/speedrunigt/lang";
         final File jarFile = new File(TranslateHelper.class.getProtectionDomain().getCodeSource().getLocation().toURI());
 
         ArrayList<String> list = Lists.newArrayList();

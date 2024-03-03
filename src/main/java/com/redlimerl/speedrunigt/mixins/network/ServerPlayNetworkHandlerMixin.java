@@ -25,7 +25,7 @@ public class ServerPlayNetworkHandlerMixin {
             TimerPacketBuf buf = TimerPacketBuf.of(packet.getPayload());
             SpeedRunIGT.debug(String.format("Client->Server Packet: %s bytes, ID : %s", buf.getBuffer().capacity(), packet.getChannel()));
             try {
-                if (timerPacket != null) timerPacket.receiveClient2ServerPacket(buf, server);
+                if (timerPacket != null) timerPacket.receiveClient2ServerPacket(buf, this.server);
             } catch (Exception e) {
                 e.printStackTrace();
                 SpeedRunIGT.error("Failed to read packet in server side, probably SpeedRunIGT version different between players");
