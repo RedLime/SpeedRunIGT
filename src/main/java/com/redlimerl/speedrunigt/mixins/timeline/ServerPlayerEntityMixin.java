@@ -1,12 +1,15 @@
 package com.redlimerl.speedrunigt.mixins.timeline;
 
 import com.mojang.authlib.GameProfile;
+import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.instance.GameInstance;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -16,9 +19,15 @@ import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin extends PlayerEntity {
@@ -52,12 +61,14 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
             if (oldDimension == DimensionType.THE_NETHER && newDimension == DimensionType.OVERWORLD) {
                 if (this.isEnoughTravel()) {
-                    int portalIndex = InGameTimerUtils.isBlindTraveled(lastPortalPos);
-                    InGameTimer.getInstance().tryInsertNewTimeline("nether_travel");
-                    if (portalIndex == 0) {
-                        InGameTimer.getInstance().tryInsertNewTimeline("nether_travel_home");
+                    int portalNum = InGameTimerUtils.getPortalNumber(this.lastPortalPos);
+                    SpeedRunIGT.debug("Portal number: " + portalNum);
+                    GameInstance.getInstance().callEvents("nether_travel", factory -> factory.getDataValue("portal").equals(String.valueOf(portalNum)));
+                    timer.tryInsertNewTimeline("nether_travel");
+                    if (portalNum == 0) {
+                        timer.tryInsertNewTimeline("nether_travel_home");
                     } else {
-                        InGameTimer.getInstance().tryInsertNewTimeline("nether_travel_blind");
+                        timer.tryInsertNewTimeline("nether_travel_blind");
                     }
                 }
                 if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY) InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(DimensionType.OVERWORLD, lastPortalPos.add(0, 0, 0), this.getPos().add(0, 0, 0));
@@ -65,16 +76,12 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         }
     }
 
+    @Unique
     private boolean isEnoughTravel() {
-        boolean eye = false, pearl = false, rod = false;
-        for (ItemStack itemStack : this.inventory.main) {
-            if (itemStack != null) {
-                if (itemStack.getItem() == Items.ENDER_EYE) eye = true;
-                if (itemStack.getItem() == Items.ENDER_PEARL) pearl = true;
-                if (itemStack.getItem() == Items.BLAZE_POWDER || itemStack.getItem() == Items.BLAZE_ROD) rod = true;
-            }
-        }
-
-        return eye || (pearl && rod);
+        Set<Item> currentItemTypes = Stream.concat(this.inventory.main.stream(), this.inventory.offHand.stream()) // Go over both main inventory and offHand item list
+                .filter(Objects::nonNull) // Remove nulls
+                .map(ItemStack::getItem) // Turn each item stack into its item
+                .collect(Collectors.toSet()); // Collect to a set of items that the player has
+        return currentItemTypes.contains(Items.ENDER_EYE) || (currentItemTypes.contains(Items.ENDER_PEARL) && (currentItemTypes.contains(Items.BLAZE_ROD) || currentItemTypes.contains(Items.BLAZE_POWDER)));
     }
 }

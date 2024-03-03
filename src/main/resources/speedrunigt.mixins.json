@@ -3,17 +3,22 @@
   "package": "com.redlimerl.speedrunigt.mixins",
   "plugin": "com.redlimerl.speedrunigt.SpeedRunIGTMixinPlugin",
   "mixins": [
+    "access.ServerStatHandlerAccessor",
+
+    "coop.PlayerManagerMixin",
+    "coop.TimeCommandMixin",
+
+    "network.CustomPayloadC2SPacketAccessor",
+    "network.ServerPlayNetworkHandlerMixin",
+
+    "timeline.ServerPlayerEntityMixin",
+
     "EndPortalBlockMixin",
     "LivingEntityMixin",
     "PlayerAdvancementTrackerMixin",
+    "SeedCommandMixin",
     "ServerStatHandlerMixin",
-    "ServerWorldMixin",
-    "access.ServerStatHandlerAccessor",
-    "coop.PlayerManagerMixin",
-    "coop.TimeCommandMixin",
-    "network.CustomPayloadC2SPacketAccessor",
-    "network.ServerPlayNetworkHandlerMixin",
-    "timeline.ServerPlayerEntityMixin"
+    "ServerWorldMixin"
   ],
   "client": [
     "ClientAdvancementManagerMixin",
@@ -32,9 +37,12 @@
     "access.MinecraftClientAccessorForAttack",
     "access.TextRendererAccessor",
     "access.WorldRendererAccessor",
+
     "keybinding.GameOptionsMixin",
     "keybinding.KeyBindingAccessor",
+
     "network.ClientPlayNetworkHandlerMixin",
+
     "retime.OptionButtonWidgetMixin",
     "retime.SodiumOptionImplMixin",
     "retime.OptionSliderWidgetMixin",
@@ -46,8 +54,18 @@
     "screen.OptionsScreenMixin",
     "screen.CreateWorldScreenMixin",
     "server.IntegratedServerMixin",
+
     "timeline.SoundSystemMixin",
-    "translate.TranslationStorageMixin"
+
+    "translate.TranslationStorageMixin",
+
+    "ClientAdvancementManagerMixin",
+    "ClientPlayerEntityMixin",
+    "ClientWorldMixin",
+    "InGameHudMixin",
+    "KeyBindingMixin",
+    "MinecraftClientMixin",
+    "MouseMixin"
   ],
   "server": [
     "server.DedicatedServerMixin"

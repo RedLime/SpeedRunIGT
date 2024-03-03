@@ -108,7 +108,7 @@ public class TimerDrawer {
     }
 
     public float getIGT_XPos() {
-        return igtXPos;
+        return this.igtXPos;
     }
 
     public void setIGT_XPos(float igtXPos) {
@@ -116,7 +116,7 @@ public class TimerDrawer {
     }
 
     public float getIGT_YPos() {
-        return igtYPos;
+        return this.igtYPos;
     }
 
     public void setIGT_YPos(float igtYPos) {
@@ -124,7 +124,7 @@ public class TimerDrawer {
     }
 
     public float getRTA_XPos() {
-        return rtaXPos;
+        return this.rtaXPos;
     }
 
     public void setRTA_XPos(float rtaXPos) {
@@ -132,7 +132,7 @@ public class TimerDrawer {
     }
 
     public float getRTA_YPos() {
-        return rtaYPos;
+        return this.rtaYPos;
     }
 
     public void setRTA_YPos(float rtaYPos) {
@@ -140,27 +140,27 @@ public class TimerDrawer {
     }
 
     public float getIGTScale() {
-        return igtScale;
+        return this.igtScale;
     }
 
     public float getRTAScale() {
-        return rtaScale;
+        return this.rtaScale;
     }
 
     public boolean isSimplyTimer() {
-        return simply;
+        return this.simply;
     }
 
     public boolean isToggle() {
-        return toggle;
+        return this.toggle;
     }
 
     public Integer getIGTColor() {
-        return igtColor;
+        return this.igtColor;
     }
 
     public Integer getRTAColor() {
-        return rtaColor;
+        return this.rtaColor;
     }
 
     public void setIGTScale(float igtScale) {
@@ -188,7 +188,7 @@ public class TimerDrawer {
     }
 
     public TimerDecoration getIGTDecoration() {
-        return igtDecoration;
+        return this.igtDecoration;
     }
 
     public void setIGTDecoration(TimerDecoration igtDecoration) {
@@ -196,7 +196,7 @@ public class TimerDrawer {
     }
 
     public TimerDecoration getRTADecoration() {
-        return rtaDecoration;
+        return this.rtaDecoration;
     }
 
     public void setRTADecoration(TimerDecoration rtaDecoration) {
@@ -204,15 +204,15 @@ public class TimerDrawer {
     }
 
     public boolean isLocked() {
-        return isLocked;
+        return this.isLocked;
     }
 
     public void setLocked(boolean locked) {
-        isLocked = locked;
+        this.isLocked = locked;
     }
 
     public TimerDecimals getTimerDecimals() {
-        return timerDecimals;
+        return this.timerDecimals;
     }
 
     public void setTimerDecimals(TimerDecimals timerDecimals) {
@@ -220,7 +220,7 @@ public class TimerDrawer {
     }
 
     public Identifier getTimerFont() {
-        return timerFont;
+        return this.timerFont;
     }
 
     public void setTimerFont(Identifier timerFont) {
@@ -228,7 +228,7 @@ public class TimerDrawer {
     }
 
     public int getIGTPadding() {
-        return igtPadding;
+        return this.igtPadding;
     }
 
     public void setIGTPadding(int igtPadding) {
@@ -236,7 +236,7 @@ public class TimerDrawer {
     }
 
     public int getRTAPadding() {
-        return rtaPadding;
+        return this.rtaPadding;
     }
 
     public void setRTAPadding(int rtaPadding) {
@@ -244,7 +244,7 @@ public class TimerDrawer {
     }
 
     public float getBGOpacity() {
-        return bgOpacity;
+        return this.bgOpacity;
     }
 
     public void setBGOpacity(float bgOpacity) {
@@ -262,21 +262,21 @@ public class TimerDrawer {
     }
 
     private String getTimeFormat(long time) {
-        if ((InGameTimer.getInstance().isCompleted() || InGameTimer.getInstance().isPaused()) && translateZ) {
+        if ((InGameTimer.getInstance().isCompleted() || InGameTimer.getInstance().isPaused()) && this.translateZ) {
             return InGameTimerUtils.timeToStringFormat(time);
         }
-        String millsString = String.format("%03d", time % 1000).substring(0, timerDecimals.getNumber());
+        String millsString = String.format("%03d", time % 1000).substring(0, this.timerDecimals.getNumber());
         int seconds = ((int) (time / 1000)) % 60;
         int minutes = ((int) (time / 1000)) / 60;
         if (minutes > 59) {
             int hours = minutes / 60;
             minutes = minutes % 60;
-            if (timerDecimals == TimerDecimals.NONE) {
+            if (this.timerDecimals == TimerDecimals.NONE) {
                 return String.format("%d:%02d:%02d", hours, minutes, seconds);
             }
             return String.format("%d:%02d:%02d.%s", hours, minutes, seconds, millsString);
         } else {
-            if (timerDecimals == TimerDecimals.NONE) {
+            if (this.timerDecimals == TimerDecimals.NONE) {
                 return String.format("%02d:%02d", minutes, seconds);
             }
             return String.format("%02d:%02d.%s", minutes, seconds, millsString);
@@ -303,7 +303,7 @@ public class TimerDrawer {
     }
 
     public void draw() {
-        if (!toggle) return;
+        if (!this.toggle) return;
 
         String igtText = getIGTText();
         String rtaText = getRTAText();
@@ -368,7 +368,7 @@ public class TimerDrawer {
         }
 
         public int getX() {
-            return x;
+            return this.x;
         }
 
         public void setX(int x) {
@@ -376,7 +376,7 @@ public class TimerDrawer {
         }
 
         public int getY() {
-            return y;
+            return this.y;
         }
 
         public void setY(int y) {
