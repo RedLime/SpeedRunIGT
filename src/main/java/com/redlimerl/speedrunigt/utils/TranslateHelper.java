@@ -2,8 +2,6 @@ package com.redlimerl.speedrunigt.utils;
 
 import com.google.common.collect.Lists;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.Resource;
-import net.minecraft.util.Language;
 
 import java.io.File;
 import java.io.IOException;
