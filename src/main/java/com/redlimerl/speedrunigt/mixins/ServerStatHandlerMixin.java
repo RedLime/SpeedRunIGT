@@ -40,7 +40,7 @@ public abstract class ServerStatHandlerMixin extends StatHandler {
         InGameTimer timer = InGameTimer.getInstance();
         // Custom Json category
         if (timer.getCategory().getConditionJson() != null) {
-            JsonObject jsonObject = getStatJson();
+            JsonObject jsonObject = this.getStatJson();
             for (CategoryCondition.Condition<?> condition : timer.getCustomCondition().map(CategoryCondition::getConditionList).orElse(Lists.newArrayList())) {
                 if (condition instanceof StatCategoryCondition) {
                     timer.updateCondition((StatCategoryCondition) condition, jsonObject);
