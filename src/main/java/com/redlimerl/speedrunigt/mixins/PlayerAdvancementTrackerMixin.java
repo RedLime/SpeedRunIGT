@@ -8,7 +8,6 @@ import com.redlimerl.speedrunigt.timer.packet.packets.TimerAchieveCriteriaPacket
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.ServerAdvancementLoader;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
