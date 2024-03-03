@@ -20,6 +20,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stat.ServerStatHandler;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.OverworldDimension;
 import net.minecraft.world.dimension.TheNetherDimension;
@@ -52,7 +53,7 @@ public class InGameTimerUtils {
         }
 
         File worldFolder = path.toFile();
-        File file = path.resolve(SpeedRunIGT.MOD_ID).resolve(pathName).toFile();
+        File file = pathName.isEmpty() ? path.resolve(SpeedRunIGT.MOD_ID).toFile() : path.resolve(SpeedRunIGT.MOD_ID).resolve(pathName).toFile();
 
         if (!worldFolder.exists() || !worldFolder.isDirectory()) {
             SpeedRunIGT.error("World directory doesn't exist, couldn't make timer dirs");
@@ -60,7 +61,7 @@ public class InGameTimerUtils {
         }
 
         if (!file.exists()) {
-            SpeedRunIGT.debug(file.mkdirs() ? "make timer dirs" : "failed to make timer dirs");
+            SpeedRunIGT.debug(file.mkdirs() ? "Made timer dirs" : "Failed to make timer dirs");
         } else if (!file.isDirectory()) {
             return null;
         }
@@ -75,7 +76,7 @@ public class InGameTimerUtils {
         if (arrayList.size() == 0) return "";
         StringBuilder stringBuilder = new StringBuilder();
         if (completeCount > 0) {
-            stringBuilder.append("/* The timer/log is segmented. If you need previous logs, check the igt_freeze").append(InGameTimer.getLogSuffix(completeCount)).append(" file.").append(" */\n");
+            stringBuilder.append("/* The timer/log is segmented. If you need previous logs, check the igt_freeze").append(InGameTimer.getLogSuffix(completeCount - 1)).append(" file.").append(" */\n");
         }
         for (Object o : arrayList) {
             stringBuilder.append(o.toString()).append("\n");
@@ -93,7 +94,7 @@ public class InGameTimerUtils {
 
         StringBuilder stringBuilder = new StringBuilder();
         if (completeCount > 0) {
-            stringBuilder.append("/* The timer/log is segmented. If you need previous logs, check the igt_timer").append(InGameTimer.getLogSuffix(completeCount)).append(" file.").append(" */\n");
+            stringBuilder.append("/* The timer/log is segmented. If you need previous logs, check the igt_timer").append(InGameTimer.getLogSuffix(completeCount - 1)).append(" file.").append(" */\n");
         }
         if (makeHeader) {
             stringBuilder.append(makeLogText(5, "No"))
@@ -233,6 +234,20 @@ public class InGameTimerUtils {
         return -1;
     }
 
+    public static int getPortalNumber(Vec3d portalPos) {
+        int index = isBlindTraveled(portalPos);
+        return Math.max(hasHomeTraveled() ? index : index - 1, 0);
+    }
+
+    public static boolean hasHomeTraveled() {
+        for (TimerTimeline timeline : InGameTimer.getInstance().getTimelines()) {
+            if (timeline.getName().equalsIgnoreCase("nether_travel_home")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void setCategoryWarningScreen(@Nullable String conditionFileName, InvalidCategoryException exception) {
         if (SpeedRunIGT.IS_CLIENT_SIDE) {
             InGameTimerClientUtils.setCategoryWarningScreen(conditionFileName, exception);
@@ -254,5 +269,11 @@ public class InGameTimerUtils {
         MinecraftServer server = getServer();
         if (server == null) return false;
         return ((PlayerManagerAccessor) server.getPlayerManager()).isCheatsAllowedInject();
+    }
+
+    public static Difficulty getCurrentDifficulty() {
+        MinecraftServer server = getServer();
+        if (server == null) { return Difficulty.EASY; }
+        return server.getWorld().getGlobalDifficulty();
     }
 }

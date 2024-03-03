@@ -42,7 +42,7 @@ public class SpeedRunOptions {
             this.number = number;
         }
         public int getNumber() {
-            return number;
+            return this.number;
         }
     }
     public static final OptionArgument<TimerDecimals> DISPLAY_DECIMALS = new OptionArgument<TimerDecimals>(new Identifier(SpeedRunIGT.MOD_ID, "timer_display_decimals"), TimerDecimals.THREE) {

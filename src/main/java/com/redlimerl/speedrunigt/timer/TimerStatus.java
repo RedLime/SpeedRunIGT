@@ -45,6 +45,6 @@ public enum TimerStatus {
         this.pause = pause;
     }
     public int getPause() {
-        return pause;
+        return this.pause;
     }
 }
