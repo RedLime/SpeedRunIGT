@@ -19,12 +19,12 @@ public abstract class MouseMixin {
 
     @Inject(at = @At("HEAD"), method = "method_18241")
     public void onMove(CallbackInfo ci) {
-        unlock();
+        this.unlock();
     }
 
     @Inject(at = @At("HEAD"), method = "method_18246")
     public void onMouseScroll(CallbackInfo ci) {
-        unlock();
+        this.unlock();
     }
 
     private void unlock() {

@@ -2,6 +2,7 @@ package com.redlimerl.speedrunigt.mixins;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.redlimerl.speedrunigt.instance.GameInstance;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerAdvancementTracker;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
@@ -21,6 +22,7 @@ import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -49,6 +51,8 @@ public abstract class ClientAdvancementManagerMixin {
         advancementProgress.method_14836(advancement.getCriteria(), advancement.getRequirements());
 
         if (advancementProgress.method_14833() && timer.getStatus() != TimerStatus.NONE) {
+            // Events system
+            GameInstance.getInstance().callEvents("advancement", factory -> advancement.getIdentifier().getPath().equalsIgnoreCase(factory.getDataValue("advancement")));
 
             // For Timelines
             if (Objects.equals(advancement.getIdentifier().getPath(), "story/follow_ender_eye")) {
@@ -85,22 +89,23 @@ public abstract class ClientAdvancementManagerMixin {
 
         int maxCount = timer.getMoreData(7441) == 0 ? 80 : timer.getMoreData(7441);
 
-        //All Advancements
+        // All Advancements
         if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategories.ALL_ADVANCEMENTS) {
-            if (getCompleteAdvancementsCount() >= maxCount) InGameTimer.complete();
+            if (this.getCompleteAdvancementsCount() >= maxCount) InGameTimer.complete();
         }
 
-        //Half%
+        // Half%
         if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategories.HALF) {
-            if (getCompleteAdvancementsCount() >= MathHelper.ceil(maxCount / 2.0f)) InGameTimer.complete();
+            if (this.getCompleteAdvancementsCount() >= MathHelper.ceil(maxCount / 2.0f)) InGameTimer.complete();
         }
 
-        //(PogLoot) Quater
+        // PogLoot Quater
         if (timer.getStatus() != TimerStatus.NONE && timer.getCategory() == RunCategories.POGLOOT_QUATER) {
-            if (getCompleteAdvancementsCount() >= MathHelper.ceil(maxCount / 4.0f)) InGameTimer.complete();
+            if (this.getCompleteAdvancementsCount() >= MathHelper.ceil(maxCount / 4.0f)) InGameTimer.complete();
         }
     }
 
+    @Unique
     private int getCompleteAdvancementsCount() {
         Set<String> completedAdvancements = Sets.newHashSet();
         for (Map.Entry<String, TimerAdvancementTracker.AdvancementTrack> track : InGameTimer.getInstance().getAdvancementsTracker().getAdvancements().entrySet()) {
