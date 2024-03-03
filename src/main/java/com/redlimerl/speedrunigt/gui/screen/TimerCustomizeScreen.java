@@ -19,7 +19,10 @@ import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.math.MathHelper;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 public class TimerCustomizeScreen extends Screen {
 

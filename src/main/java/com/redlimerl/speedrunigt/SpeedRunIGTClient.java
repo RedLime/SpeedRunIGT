@@ -3,14 +3,15 @@ package com.redlimerl.speedrunigt;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.api.SpeedRunIGTApi;
 import com.redlimerl.speedrunigt.impl.OptionButtonsImpl;
+import com.redlimerl.speedrunigt.instance.GameInstance;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
-import com.redlimerl.speedrunigt.therun.TheRunKeyHelper;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.utils.KeyBindingRegistry;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.minecraft.client.option.KeyBinding;
+
 import java.util.Collection;
 
 public class SpeedRunIGTClient implements ClientModInitializer {
@@ -55,8 +56,8 @@ public class SpeedRunIGTClient implements ClientModInitializer {
                 "speedrunigt.title.options"
         ));
 
-        TheRunKeyHelper.load();
-
         SpeedRunIGT.IS_CLIENT_SIDE = true;
+
+        GameInstance.createInstance();
     }
 }

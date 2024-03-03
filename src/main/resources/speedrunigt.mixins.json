@@ -6,6 +6,7 @@
     "EndPortalBlockMixin",
     "LivingEntityMixin",
     "PlayerAdvancementTrackerMixin",
+    "SeedCommandMixin",
     "ServerStatHandlerMixin",
     "ServerWorldMixin",
     "access.PlayerManagerAccessor",

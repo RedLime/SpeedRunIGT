@@ -176,11 +176,11 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                 }
             }
         } else {
-            if (latestPortalEnter != null) {
-                InGameTimer.getInstance().tryExcludeIGT(System.currentTimeMillis() - latestPortalEnter, "nether portal lag");
-                latestPortalEnter = null;
+            if (this.latestPortalEnter != null) {
+                InGameTimer.getInstance().tryExcludeIGT(System.currentTimeMillis() - this.latestPortalEnter, "nether portal lag");
+                this.latestPortalEnter = null;
             }
-            portalTick = 0;
+            this.portalTick = 0;
         }
     }
 

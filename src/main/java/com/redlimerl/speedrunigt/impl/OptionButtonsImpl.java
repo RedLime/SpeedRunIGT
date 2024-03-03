@@ -7,14 +7,13 @@ import com.redlimerl.speedrunigt.gui.ConsumerButtonWidget;
 import com.redlimerl.speedrunigt.gui.CustomSliderWidget;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunCategoryScreen;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunIGTInfoScreen;
-import com.redlimerl.speedrunigt.gui.screen.TheRunUploadKeyScreen;
 import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
-import com.redlimerl.speedrunigt.utils.OperatingUtils;
-import com.redlimerl.speedrunigt.version.ScreenTexts;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
+import com.redlimerl.speedrunigt.utils.OperatingUtils;
 import com.redlimerl.speedrunigt.utils.TranslateHelper;
+import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.class_1009;
 import net.minecraft.client.MinecraftClient;
@@ -419,34 +418,6 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                 )
                 .setToolTip(() -> I18n.translate("speedrunigt.option.auto_save_player_data.description"))
                 .setCategory("speedrunigt.option.category.records")
-        );
-
-        factories.add(screen -> new OptionButtonFactory.Builder()
-                .setButtonWidget(
-                        new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableTextContent("speedrunigt.option.therun_gg.open_therun_gg").method_10865(),
-                                (button) -> OperatingUtils.setUrl("https://therun.gg/"))
-                )
-                .setCategory("therun.gg")
-        );
-
-        factories.add(screen -> new OptionButtonFactory.Builder()
-                .setButtonWidget(
-                        new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableTextContent("speedrunigt.option.therun_gg.edit_upload_key").method_10865(),
-                                (button) -> MinecraftClient.getInstance().setScreen(new TheRunUploadKeyScreen(screen)))
-                )
-                .setCategory("therun.gg")
-        );
-
-        factories.add(screen -> new OptionButtonFactory.Builder()
-                .setButtonWidget(
-                        new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableTextContent("speedrunigt.option.therun_gg.toggle_live").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.ENABLE_THERUN_GG_LIVE) ? ScreenTexts.ON : ScreenTexts.OFF).method_10865(),
-                                (button) -> {
-                                    SpeedRunOption.setOption(SpeedRunOptions.ENABLE_THERUN_GG_LIVE, !SpeedRunOption.getOption(SpeedRunOptions.ENABLE_THERUN_GG_LIVE));
-                                    button.field_2074 = (new TranslatableTextContent("speedrunigt.option.therun_gg.toggle_live").append(" : ").append(SpeedRunOption.getOption(SpeedRunOptions.ENABLE_THERUN_GG_LIVE) ? ScreenTexts.ON : ScreenTexts.OFF).method_10865());
-                                })
-                )
-                .setToolTip(() -> I18n.translate("speedrunigt.option.therun_gg.toggle_live.description"))
-                .setCategory("therun.gg")
         );
 
         factories.add(screen -> new OptionButtonFactory.Builder()

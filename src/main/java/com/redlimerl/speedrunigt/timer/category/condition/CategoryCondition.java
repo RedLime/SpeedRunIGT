@@ -24,7 +24,7 @@ public class CategoryCondition implements Serializable {
         private final ArrayList<Condition<?>> conditions = new ArrayList<>();
 
         public List<Condition<?>> getConditions() {
-            return conditions;
+            return this.conditions;
         }
     }
 
@@ -42,15 +42,15 @@ public class CategoryCondition implements Serializable {
         }
 
         public final boolean isCompleted() {
-            return isCompleted;
+            return this.isCompleted;
         }
 
         public final void setCompleted(boolean completed) {
-            isCompleted = completed;
+            this.isCompleted = completed;
         }
 
         public final String getName() {
-            return name;
+            return this.name;
         }
 
         public boolean checkConditionComplete(T obj) {
@@ -112,7 +112,7 @@ public class CategoryCondition implements Serializable {
 
 
     public boolean isDone() {
-        for (Conditions conditionList : availableConditions) {
+        for (Conditions conditionList : this.availableConditions) {
             int done = 0;
             for (Condition<?> condition : conditionList.conditions) {
                 if (condition.isCompleted) done++;
@@ -124,16 +124,16 @@ public class CategoryCondition implements Serializable {
 
     public List<? extends Condition<?>> getConditionList() {
         ArrayList<Condition<?>> list = Lists.newArrayList();
-        for (Conditions availableCondition : availableConditions) list.addAll(availableCondition.conditions);
+        for (Conditions availableCondition : this.availableConditions) list.addAll(availableCondition.conditions);
         return list;
     }
 
     public List<Conditions> getConditions() {
-        return availableConditions;
+        return this.availableConditions;
     }
 
     public void refreshConditionClasses() {
-        for (Conditions conditions : availableConditions) {
+        for (Conditions conditions : this.availableConditions) {
             ArrayList<Condition<?>> newConditionList = Lists.newArrayList();
             for (Condition<?> condition : conditions.conditions) {
                 try {
