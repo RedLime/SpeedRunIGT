@@ -17,6 +17,6 @@ public class GameOptionsMixin {
 
     @Inject(at = @At("HEAD"), method = "load()V")
     public void loadHook(CallbackInfo info) {
-        keysAll = KeyBindingRegistry.process(keysAll);
+        this.keysAll = KeyBindingRegistry.process(this.keysAll);
     }
 }

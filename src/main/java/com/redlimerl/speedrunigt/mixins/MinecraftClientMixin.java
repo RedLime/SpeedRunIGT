@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.SpeedRunIGTClient;
 import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
+import com.redlimerl.speedrunigt.instance.GameInstance;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
@@ -18,11 +19,11 @@ import com.redlimerl.speedrunigt.utils.MixinValues;
 import com.redlimerl.speedrunigt.utils.Vec2f;
 import com.redlimerl.speedrunigt.version.ColorMixer;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.CreditsScreen;
+import net.minecraft.client.gui.screen.DownloadingTerrainScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.screen.*;
 import net.minecraft.client.options.GameOptions;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.world.ClientWorld;
@@ -76,7 +77,7 @@ public abstract class MinecraftClientMixin {
             e.printStackTrace();
         }
         InGameTimerUtils.IS_CHANGING_DIMENSION = true;
-        disconnectCheck = false;
+        this.disconnectCheck = false;
     }
 
     @Inject(method = "openScreen", at = @At("RETURN"))
@@ -119,9 +120,9 @@ public abstract class MinecraftClientMixin {
     private int saveTickCount = 0;
     @Inject(method = "tick", at = @At("RETURN"))
     private void onTickMixin(CallbackInfo ci) {
-        if (++saveTickCount >= 20) {
+        if (++this.saveTickCount >= 20) {
             SpeedRunOption.checkSave();
-            saveTickCount = 0;
+            this.saveTickCount = 0;
         }
     }
 
@@ -180,15 +181,15 @@ public abstract class MinecraftClientMixin {
                 if (enableSplit && this.isPaused() && !(this.currentScreen instanceof DownloadingTerrainScreen))
                     updatePositionType = PositionType.WHILE_PAUSED;
 
-                if (currentPositionType != updatePositionType || needUpdate) {
-                    currentPositionType = updatePositionType;
-                    Vec2f igtPos = currentPositionType == PositionType.DEFAULT
+                if (this.currentPositionType != updatePositionType || needUpdate) {
+                    this.currentPositionType = updatePositionType;
+                    Vec2f igtPos = this.currentPositionType == PositionType.DEFAULT
                             ? new Vec2f(SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_POSITION_X), SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_POSITION_Y))
-                            : SpeedRunOption.getOption(currentPositionType == PositionType.WHILE_F3 ? SpeedRunOptions.TIMER_IGT_POSITION_FOR_F3 : SpeedRunOptions.TIMER_IGT_POSITION_FOR_PAUSE);
+                            : SpeedRunOption.getOption(this.currentPositionType == PositionType.WHILE_F3 ? SpeedRunOptions.TIMER_IGT_POSITION_FOR_F3 : SpeedRunOptions.TIMER_IGT_POSITION_FOR_PAUSE);
 
-                    Vec2f rtaPos = currentPositionType == PositionType.DEFAULT
+                    Vec2f rtaPos = this.currentPositionType == PositionType.DEFAULT
                             ? new Vec2f(SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_POSITION_X), SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_POSITION_Y))
-                            : SpeedRunOption.getOption(currentPositionType == PositionType.WHILE_F3 ? SpeedRunOptions.TIMER_RTA_POSITION_FOR_F3 : SpeedRunOptions.TIMER_RTA_POSITION_FOR_PAUSE);
+                            : SpeedRunOption.getOption(this.currentPositionType == PositionType.WHILE_F3 ? SpeedRunOptions.TIMER_RTA_POSITION_FOR_F3 : SpeedRunOptions.TIMER_RTA_POSITION_FOR_PAUSE);
 
                     SpeedRunIGTClient.TIMER_DRAWER.setRTA_XPos(rtaPos.x);
                     SpeedRunIGTClient.TIMER_DRAWER.setRTA_YPos(rtaPos.y);
@@ -243,7 +244,8 @@ public abstract class MinecraftClientMixin {
     // Disconnecting fix
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resource/ResourcePackLoader;method_7040()V", shift = At.Shift.BEFORE), method = "connect(Lnet/minecraft/client/world/ClientWorld;Ljava/lang/String;)V")
     public void disconnect(CallbackInfo ci) {
-        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE && disconnectCheck) {
+        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE && this.disconnectCheck) {
+            GameInstance.getInstance().callEvents("leave_world");
             InGameTimer.leave();
         }
         MixinValues.IS_CHANGED_WORLD = false;
