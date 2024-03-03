@@ -40,7 +40,7 @@ public class OptionsScreenMixin extends Screen {
         if (this.client != null) {
             RenderSystem.pushMatrix();
             RenderSystem.translatef(-.5f, -.5f, 0);
-            this.client.getTextureManager().bindTexture(timerButton.isHovered() ? ENDER_EYE :
+            this.client.getTextureManager().bindTexture(this.timerButton.isHovered() ? ENDER_EYE :
                     SpeedRunIGTUpdateChecker.UPDATE_STATUS == SpeedRunIGTUpdateChecker.UpdateStatus.OUTDATED ? BLAZE_POWDER : ENDER_PEARL);
             drawTexture(timerButton.x + 2, timerButton.y + 2, 0.0F, 0.0F, 16, 16, 16, 16);
             RenderSystem.popMatrix();

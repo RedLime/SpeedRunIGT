@@ -50,7 +50,7 @@ public class SpeedRunCategoryScreen extends Screen {
 
     @Override
     public void onClose() {
-        if (this.client != null) this.client.openScreen(parent);
+        if (this.client != null) this.client.openScreen(this.parent);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class SpeedRunCategoryScreen extends Screen {
 
             @Override
             public List<? extends Element> children() {
-                return children;
+                return this.children;
             }
 
             private class CategoryCheckBoxWidget extends CheckboxWidget {
@@ -122,13 +122,13 @@ public class SpeedRunCategoryScreen extends Screen {
                 @Override
                 public boolean isChecked() {
                     return (InGameTimer.getInstance().getStatus() != TimerStatus.NONE ? InGameTimer.getInstance().getCategory()
-                            : SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY)) == category;
+                            : SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY)) == this.category;
                 }
 
                 @Override
                 public void render(int mouseX, int mouseY, float delta) {
                     MinecraftClient minecraftClient = MinecraftClient.getInstance();
-                    minecraftClient.getTextureManager().bindTexture(TEXTURE);
+                    minecraftClient.getTextureManager().bindTexture(this.TEXTURE);
                     RenderSystem.enableDepthTest();
                     TextRenderer textRenderer = minecraftClient.textRenderer;
                     RenderSystem.color4f(1.0F, 1.0F, 1.0F, this.alpha);

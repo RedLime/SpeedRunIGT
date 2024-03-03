@@ -28,7 +28,7 @@ public class FailedCategoryInitScreen extends Screen {
 
     @Override
     protected void init() {
-        addButton(new ButtonWidget(width / 2 - 100, height / 2 + 15, 200, 20, ScreenTexts.DONE, button -> onClose()));
+        this.addButton(new ButtonWidget(this.width / 2 - 100, this.height / 2 + 15, 200, 20, ScreenTexts.DONE, button -> this.onClose()));
     }
 
     private static final int TEXT_WHITE = ColorMixer.getArgb(255, 255, 255, 255);

@@ -18,7 +18,7 @@ import java.util.zip.ZipInputStream;
 public class TranslateHelper {
 
     public static String[] getLangFileNames() throws IOException, URISyntaxException {
-        final String path = "lang";
+        final String path = "assets/speedrunigt/lang";
         final File jarFile = new File(TranslateHelper.class.getProtectionDomain().getCodeSource().getLocation().toURI());
 
         ArrayList<String> list = Lists.newArrayList();

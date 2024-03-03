@@ -29,7 +29,7 @@ public class FontConfigScreen extends Screen {
         super(new LiteralText("font_config"));
         this.parent = parent;
         this.fontIdentifier = SpeedRunIGT.FONT_MAPS.get(font);
-        this.newFontConfigure = FontConfigure.fromJson(fontIdentifier.getFontConfigure().toString() + "");
+        this.newFontConfigure = FontConfigure.fromJson(this.fontIdentifier.getFontConfigure().toString());
     }
 
     @Override
@@ -52,7 +52,7 @@ public class FontConfigScreen extends Screen {
             }
         }));
 
-        addButton(new ButtonWidget(width / 2 - 50, height - 40, 100, 20, ScreenTexts.CANCEL, button -> this.onClose()));
+        this.addButton(new ButtonWidget(this.width / 2 - 50, this.height - 40, 100, 20, ScreenTexts.CANCEL, button -> this.onClose()));
     }
 
     @Override
