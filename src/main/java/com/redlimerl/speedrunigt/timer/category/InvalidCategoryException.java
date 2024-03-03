@@ -5,11 +5,11 @@ public class InvalidCategoryException extends Exception {
     private final String details;
 
     public Reason getReason() {
-        return reason;
+        return this.reason;
     }
 
     public String getDetails() {
-        return details;
+        return this.details;
     }
 
     @SuppressWarnings("unused")

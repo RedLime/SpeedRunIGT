@@ -30,7 +30,7 @@ public class ClientPlayNetworkHandlerMixin {
             SpeedRunIGT.debug(String.format("Server->Client Packet: %s bytes, ID : %s", packet.method_7734().length, packet.getChannel()));
             try {
                 if (timerPacket != null && SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) {
-                    timerPacket.receiveServer2ClientPacket(buf, client);
+                    timerPacket.receiveServer2ClientPacket(buf, this.client);
                     buf.release();
                 }
                 else throw new IllegalArgumentException();

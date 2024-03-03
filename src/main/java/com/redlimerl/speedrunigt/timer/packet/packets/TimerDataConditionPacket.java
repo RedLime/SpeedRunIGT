@@ -28,8 +28,8 @@ public class TimerDataConditionPacket extends TimerPacket {
     @Environment(EnvType.CLIENT)
     @Override
     protected TimerPacketBuf convertClient2ServerPacket(TimerPacketBuf buf, MinecraftClient client) {
-        if (sendKey != null) buf.writeInt(sendKey);
-        if (sendValue != null) buf.writeInt(sendValue);
+        if (this.sendKey != null) buf.writeInt(this.sendKey);
+        if (this.sendValue != null) buf.writeInt(this.sendValue);
         return buf;
     }
 
@@ -45,8 +45,8 @@ public class TimerDataConditionPacket extends TimerPacket {
 
     @Override
     protected TimerPacketBuf convertServer2ClientPacket(TimerPacketBuf buf, MinecraftServer server) {
-        if (sendKey != null) buf.writeInt(sendKey);
-        if (sendValue != null) buf.writeInt(sendValue);
+        if (this.sendKey != null) buf.writeInt(this.sendKey);
+        if (this.sendValue != null) buf.writeInt(this.sendValue);
         return buf;
     }
 

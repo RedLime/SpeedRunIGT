@@ -5,6 +5,7 @@
   "mixins": [
     "EndPortalBlockMixin",
     "LivingEntityMixin",
+    "SeedCommandMixin",
     "ServerStatHandlerMixin",
     "ServerWorldMixin",
     "access.LevelStorageAccessor",
