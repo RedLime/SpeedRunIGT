@@ -30,7 +30,7 @@ public class OptionsScreenMixin extends Screen {
     private void onButtonClicked(ButtonWidget button, CallbackInfo ci) {
         if (button == timerButton) {
             if (this.client != null) {
-                this.client.openScreen(new SpeedRunOptionScreen(this));
+                this.client.setScreen(new SpeedRunOptionScreen(this));
             }
         }
     }
@@ -39,7 +39,7 @@ public class OptionsScreenMixin extends Screen {
     private void renderEnderPearl(int mouseX, int mouseY, float delta, CallbackInfo ci) {
         if (this.client != null) {
             GlStateManager.pushMatrix();
-            GlStateManager.translatef(-.5f, -.5f, 0);
+            GlStateManager.translate(-.5f, -.5f, 0);
             this.client.getTextureManager().bindTexture(timerButton.isHovered() ? ENDER_EYE :
                     SpeedRunIGTUpdateChecker.UPDATE_STATUS == SpeedRunIGTUpdateChecker.UpdateStatus.OUTDATED ? BLAZE_POWDER : ENDER_PEARL);
             drawTexture(timerButton.x + 2, timerButton.y + 2, 0.0F, 0.0F, 16, 16, 16, 16);
