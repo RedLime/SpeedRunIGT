@@ -42,11 +42,11 @@ public abstract class ClientWorldMixin extends World {
     }
 
     @Override
-    public boolean method_8506(BlockPos pos, BlockState state, int flags) {
-        boolean result = super.method_8506(pos, state, flags);
+    public boolean setBlockState(BlockPos pos, BlockState state, int flags) {
+        boolean result = super.setBlockState(pos, state, flags);
 
         // TODO: doesn't support nether or overworld caves
-        if (this.dimension.isNether()) {
+        if (this.dimension.hasNoSkylight()) {
             return result;
         }
 

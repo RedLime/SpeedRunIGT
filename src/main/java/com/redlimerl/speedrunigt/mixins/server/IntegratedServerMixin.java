@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(IntegratedServer.class)
 public class IntegratedServerMixin {
 
-    @Inject(method = "method_3000", at = @At("RETURN"))
+    @Inject(method = "getPort", at = @At("RETURN"))
     public void onOpenLan(LevelInfo.GameMode gamemode, boolean bl, CallbackInfoReturnable<String> cir) {
         if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) InGameTimer.getInstance().openedLanIntegratedServer();
     }
