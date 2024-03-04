@@ -28,7 +28,7 @@ public abstract class ServerStatHandlerMixin extends StatHandler {
 
     private int updateTick = 0;
 
-    @Inject(method = "method_8300", at = @At("TAIL"))
+    @Inject(method = "setStatLevel", at = @At("TAIL"))
     public void onUpdate(PlayerEntity playerEntity, Stat stat, int i, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
         // Custom Json category
@@ -51,7 +51,7 @@ public abstract class ServerStatHandlerMixin extends StatHandler {
     private JsonObject getStatJson() {
         JsonObject jsonObject = new JsonObject();
 
-        for (Map.Entry<Stat, JsonIntSerializable> entry : this.field_9047.entrySet()) {
+        for (Map.Entry<Stat, JsonIntSerializable> entry : this.stats.entrySet()) {
             if (entry.getValue().getJsonElementProvider() != null) {
                 JsonObject jsonObject2 = new JsonObject();
                 jsonObject2.addProperty("value", entry.getValue().getValue());

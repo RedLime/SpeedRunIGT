@@ -10,8 +10,7 @@ import com.redlimerl.speedrunigt.utils.KeyBindingRegistry;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
-import net.minecraft.client.options.KeyBinding;
-
+import net.minecraft.client.option.KeyBinding;
 import java.util.Collection;
 
 public class SpeedRunIGTClient implements ClientModInitializer {

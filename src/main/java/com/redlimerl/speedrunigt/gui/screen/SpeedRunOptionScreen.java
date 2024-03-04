@@ -66,9 +66,9 @@ public class SpeedRunOptionScreen extends Screen {
             }
         }
 
-        prevPageButton = method_13411(new ConsumerButtonWidget(width - 110, 30 + (6 * 22), 38, 20, "<", (button) -> openPage(-1)));
+        prevPageButton = addButton(new ConsumerButtonWidget(width - 110, 30 + (6 * 22), 38, 20, "<", (button) -> openPage(-1)));
 
-        nextPageButton = method_13411(new ConsumerButtonWidget(width - 68, 30 + (6 * 22), 38, 20, ">", (button) -> openPage(+1)));
+        nextPageButton = addButton(new ConsumerButtonWidget(width - 68, 30 + (6 * 22), 38, 20, ">", (button) -> openPage(+1)));
 
         openPage(page);
 
@@ -76,7 +76,7 @@ public class SpeedRunOptionScreen extends Screen {
 
         buttons.add(new ConsumerButtonWidget(15, height - 35, 70, 20, new TranslatableText("speedrunigt.menu.donate").asFormattedString(), (button) -> OperatingUtils.setUrl("https://ko-fi.com/redlimerl")));
 
-        method_13411(new ConsumerButtonWidget(88, height - 35, 140, 20, new TranslatableText("speedrunigt.menu.crowdin").asFormattedString(), (button) -> OperatingUtils.setUrl("https://crowdin.com/project/speedrunigt")));
+        addButton(new ConsumerButtonWidget(88, height - 35, 140, 20, new TranslatableText("speedrunigt.menu.crowdin").asFormattedString(), (button) -> OperatingUtils.setUrl("https://crowdin.com/project/speedrunigt")));
 
         buttonListWidget = new ButtonScrollListWidget();
 
@@ -106,7 +106,7 @@ public class SpeedRunOptionScreen extends Screen {
     }
 
     public void onClose() {
-        if (this.client != null) this.client.openScreen(parent);
+        if (this.client != null) this.client.setScreen(parent);
     }
 
     @Override
@@ -218,7 +218,7 @@ public class SpeedRunOptionScreen extends Screen {
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder bufferBuilder = tessellator.getBuffer();
             this.client.getTextureManager().bindTexture(OPTIONS_BACKGROUND_TEXTURE);
-            GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             float f = 32.0F;
             int emptyWidth = this.width;
             bufferBuilder.begin(7, VertexFormats.POSITION_TEXTURE_COLOR);
@@ -229,7 +229,7 @@ public class SpeedRunOptionScreen extends Screen {
             tessellator.draw();
         }
 
-        class ButtonScrollListEntry implements EntryListWidget.Entry {
+        class ButtonScrollListEntry implements Entry {
             private final ButtonWidget buttonWidget;
 
             public ButtonScrollListEntry(ButtonWidget buttonWidget) {
