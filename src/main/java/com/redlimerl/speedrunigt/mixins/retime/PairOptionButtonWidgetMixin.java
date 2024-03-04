@@ -16,7 +16,7 @@ public class PairOptionButtonWidgetMixin {
 
     @Shadow @Final private ButtonWidget field_7731;
 
-    @Inject(method = "method_6699", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/options/GameOptions;getStringOption(Lnet/minecraft/client/options/GameOption;)Ljava/lang/String;", shift = At.Shift.AFTER))
+    @Inject(method = "method_6699", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/GameOptions;setOption(Lnet/minecraft/client/option/GameOption;I)V", shift = At.Shift.AFTER))
     public void onClickOption(int j, int k, int l, int m, int n, int par6, CallbackInfoReturnable<Boolean> cir) {
         InGameTimerUtils.CHANGED_OPTIONS.add(((OptionButtonWidget)this.field_7731).method_1088());
     }
