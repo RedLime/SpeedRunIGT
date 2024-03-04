@@ -26,8 +26,8 @@ public class ClientPlayNetworkHandlerMixin {
     public void onCustom(CustomPayloadS2CPacket packet, CallbackInfo ci) {
         if (packet.getChannel().startsWith("srigt")) {
             TimerPacket timerPacket = TimerPacket.createTimerPacketFromPacket(packet.getChannel());
-            TimerPacketBuf buf = TimerPacketBuf.of(Unpooled.wrappedBuffer(packet.method_7734()));
-            SpeedRunIGT.debug(String.format("Server->Client Packet: %s bytes, ID : %s", packet.method_7734().length, packet.getChannel()));
+            TimerPacketBuf buf = TimerPacketBuf.of(Unpooled.wrappedBuffer(packet.getPayload()));
+            SpeedRunIGT.debug(String.format("Server->Client Packet: %s bytes, ID : %s", packet.getPayload().length, packet.getChannel()));
             try {
                 if (timerPacket != null && SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) {
                     timerPacket.receiveServer2ClientPacket(buf, this.client);

@@ -10,8 +10,8 @@ import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.class_1803;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.class_1803;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.EntryListWidget;
@@ -42,7 +42,7 @@ public class SpeedRunCategoryScreen extends Screen {
     }
 
     public void onClose() {
-        if (this.field_22534 != null) this.field_22534.openScreen(parent);
+        if (this.field_22534 != null) this.field_22534.setScreen(parent);
     }
 
     @Override

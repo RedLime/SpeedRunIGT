@@ -20,9 +20,8 @@ package com.redlimerl.speedrunigt.utils;
 
 import com.google.common.collect.Lists;
 import com.redlimerl.speedrunigt.SpeedRunIGTClient;
-import net.minecraft.client.options.KeyBinding;
-
 import java.util.List;
+import net.minecraft.client.option.KeyBinding;
 
 public final class KeyBindingRegistry {
     private static final List<KeyBinding> moddedKeyBindings = Lists.newArrayList();
