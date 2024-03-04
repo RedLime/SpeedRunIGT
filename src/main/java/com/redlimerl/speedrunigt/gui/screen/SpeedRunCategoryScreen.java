@@ -34,13 +34,13 @@ public class SpeedRunCategoryScreen extends Screen {
 
     @Override
     public void init() {
-        method_13411(new ConsumerButtonWidget(width / 2 - 100, height - 35, 200, 20, ScreenTexts.CANCEL, (button) -> method_18608()));
+        addButton(new ConsumerButtonWidget(width / 2 - 100, height - 35, 200, 20, ScreenTexts.CANCEL, (button) -> method_18608()));
         this.listWidget = new CategorySelectionListWidget(this.client);
     }
 
     @Override
     public void method_18608() {
-        if (this.client != null) this.client.openScreen(parent);
+        if (this.client != null) this.client.setScreen(parent);
     }
 
     public boolean mouseScrolled(double d) {
@@ -84,7 +84,7 @@ public class SpeedRunCategoryScreen extends Screen {
         }
 
         @Environment(EnvType.CLIENT)
-        public class CategoryEntry extends EntryListWidget.Entry<CategoryEntry> {
+        public class CategoryEntry extends Entry<CategoryEntry> {
 
             private final ConsumerButtonWidget checkBox;
             private final RunCategory category;

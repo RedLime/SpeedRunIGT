@@ -49,7 +49,7 @@ public abstract class ClientWorldMixin extends World {
         boolean result = super.setBlockState(blockPos, blockState, flags);
 
         // TODO: doesn't support nether or overworld caves
-        if (this.method_16393().isNether()) {
+        if (this.method_16393().hasNoSkylight()) {
             return result;
         }
 
@@ -75,7 +75,7 @@ public abstract class ClientWorldMixin extends World {
                 for (int z = 0; z < 16 * 3; ++z) {
                     // convert the 0 to 47 x and z counters in to -1 to 1 chunk offsets
                     Chunk chunk = this.method_16347(chunkX + (x >> 4) - 1, chunkZ + (z >> 4) - 1);
-                    int height = chunk.method_16992(class_3804.class_3805.field_19015, x & 15, z & 15) + 1;
+                    int height = chunk.method_16992(class_3804.class_3805.WORLD_SURFACE, x & 15, z & 15) + 1;
                     if (height <= getBedrockMaxHeight()) {
                         if (x == 0 || z == 0) {
                             // special case for first row and column, no previous work to check
@@ -131,7 +131,7 @@ public abstract class ClientWorldMixin extends World {
         for (int x = 0; x < 16 * 3; ++x) {
             for (int z = 0; z < 16 * 3; ++z) {
                 Chunk chunk = this.method_16347(chunkX + (x >> 4) - 1, chunkZ + (z >> 4) - 1);
-                int height = chunk.method_16992(class_3804.class_3805.field_19015, x & 15, z & 15) + 1;
+                int height = chunk.method_16992(class_3804.class_3805.WORLD_SURFACE, x & 15, z & 15) + 1;
                 System.out.printf("%02d ", height);
             }
             System.out.println();

@@ -63,21 +63,21 @@ public class SpeedRunOptionScreen extends Screen {
             if (!categorySelectButtons.containsKey(category)) {
                 ButtonWidget buttonWidget = new ConsumerButtonWidget(width - 110, 30 + ((categoryCount++ % 6) * 22), 80, 20, new TranslatableText(category).asFormattedString(), (buttonWidget1) -> selectCategory(category));
                 categorySelectButtons.put(category, buttonWidget);
-                method_13411(buttonWidget);
+                addButton(buttonWidget);
             }
         }
 
-        prevPageButton = method_13411(new ConsumerButtonWidget(width - 110, 30 + (6 * 22), 38, 20, "<", (button) -> openPage(-1)));
+        prevPageButton = addButton(new ConsumerButtonWidget(width - 110, 30 + (6 * 22), 38, 20, "<", (button) -> openPage(-1)));
 
-        nextPageButton = method_13411(new ConsumerButtonWidget(width - 68, 30 + (6 * 22), 38, 20, ">", (button) -> openPage(+1)));
+        nextPageButton = addButton(new ConsumerButtonWidget(width - 68, 30 + (6 * 22), 38, 20, ">", (button) -> openPage(+1)));
 
         openPage(page);
 
-        method_13411(new ConsumerButtonWidget(width - 85, height - 35, 70, 20, ScreenTexts.CANCEL, (button) -> method_18608()));
+        addButton(new ConsumerButtonWidget(width - 85, height - 35, 70, 20, ScreenTexts.CANCEL, (button) -> method_18608()));
 
-        method_13411(new ConsumerButtonWidget(15, height - 35, 70, 20, new TranslatableText("speedrunigt.menu.donate").asFormattedString(), (button) -> Util.getOperatingSystem().method_20236("https://ko-fi.com/redlimerl")));
+        addButton(new ConsumerButtonWidget(15, height - 35, 70, 20, new TranslatableText("speedrunigt.menu.donate").asFormattedString(), (button) -> Util.getOperatingSystem().method_20236("https://ko-fi.com/redlimerl")));
 
-        method_13411(new ConsumerButtonWidget(88, height - 35, 140, 20, new TranslatableText("speedrunigt.menu.crowdin").asFormattedString(), (button) -> Util.getOperatingSystem().method_20236("https://crowdin.com/project/speedrunigt")));
+        addButton(new ConsumerButtonWidget(88, height - 35, 140, 20, new TranslatableText("speedrunigt.menu.crowdin").asFormattedString(), (button) -> Util.getOperatingSystem().method_20236("https://crowdin.com/project/speedrunigt")));
 
         buttonListWidget = new ButtonScrollListWidget();
 
@@ -108,7 +108,7 @@ public class SpeedRunOptionScreen extends Screen {
 
     @Override
     public void method_18608() {
-        if (this.client != null) this.client.openScreen(parent);
+        if (this.client != null) this.client.setScreen(parent);
     }
 
     @Override
@@ -206,7 +206,7 @@ public class SpeedRunOptionScreen extends Screen {
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder bufferBuilder = tessellator.getBuffer();
             this.client.getTextureManager().bindTexture(OPTIONS_BACKGROUND_TEXTURE);
-            GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             float f = 32.0F;
             int emptyWidth = this.width;
             bufferBuilder.begin(7, VertexFormats.POSITION_TEXTURE_COLOR);
@@ -217,7 +217,7 @@ public class SpeedRunOptionScreen extends Screen {
             tessellator.draw();
         }
 
-        class ButtonScrollListEntry extends EntryListWidget.Entry<ButtonScrollListEntry> {
+        class ButtonScrollListEntry extends Entry<ButtonScrollListEntry> {
             private final ButtonWidget buttonWidget;
 
             public ButtonScrollListEntry(ButtonWidget buttonWidget) {

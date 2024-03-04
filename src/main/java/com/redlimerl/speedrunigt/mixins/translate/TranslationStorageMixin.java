@@ -18,14 +18,14 @@ import java.util.List;
 @Mixin(TranslationStorage.class)
 public abstract class TranslationStorageMixin {
 
-    @Shadow protected abstract void method_5946(InputStream stream);
+    @Shadow protected abstract void load(InputStream stream);
 
     @Inject(method = "method_19557", at = @At("RETURN"))
     private void onLoad(ResourceManager container, List<String> list, CallbackInfo ci) {
         for (String lang : list) {
             InputStream inputStream = TranslateHelper.setup(lang, SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_ENGLISH_TRANSLATIONS));
             if (inputStream == null) continue;
-            this.method_5946(inputStream);
+            this.load(inputStream);
             try {
                 inputStream.close();
             } catch (IOException e) {

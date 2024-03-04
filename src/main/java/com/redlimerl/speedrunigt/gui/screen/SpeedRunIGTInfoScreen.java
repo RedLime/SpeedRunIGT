@@ -2,6 +2,7 @@ package com.redlimerl.speedrunigt.gui.screen;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.SpeedRunIGTUpdateChecker.UpdateStatus;
 import com.redlimerl.speedrunigt.gui.ConsumerButtonWidget;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.minecraft.client.gui.screen.Screen;
@@ -32,19 +33,19 @@ public class SpeedRunIGTInfoScreen extends Screen {
 
         update = new ConsumerButtonWidget(width / 2 - 155, height - 104, 150, 20, new TranslatableText("speedrunigt.menu.download_update").asFormattedString(), (button) -> Util.getOperatingSystem().method_20236(UPDATE_URL));
         update.active = false;
-        method_13411(update);
-        method_13411(new ConsumerButtonWidget(width / 2 + 5, height - 104, 150, 20, new TranslatableText("speedrunigt.menu.latest_change_log").asFormattedString(), (button) -> Util.getOperatingSystem().method_20236("https://github.com/RedLime/SpeedRunIGT/releases/latest")));
+        addButton(update);
+        addButton(new ConsumerButtonWidget(width / 2 + 5, height - 104, 150, 20, new TranslatableText("speedrunigt.menu.latest_change_log").asFormattedString(), (button) -> Util.getOperatingSystem().method_20236("https://github.com/RedLime/SpeedRunIGT/releases/latest")));
 
-        method_13411(new ConsumerButtonWidget(width / 2 - 155, height - 80, 150, 20, new TranslatableText("speedrunigt.menu.open_github_repo").asFormattedString(), (button) -> Util.getOperatingSystem().method_20236("https://github.com/RedLime/SpeedRunIGT/")));
-        method_13411(new ConsumerButtonWidget(width / 2 + 5, height - 80, 150, 20, new TranslatableText("speedrunigt.menu.open_support_page").asFormattedString(), (button) -> Util.getOperatingSystem().method_20236("https://ko-fi.com/redlimerl")));
-        method_13411(new ConsumerButtonWidget(width / 2 - 100, height - 40, 200, 20, ScreenTexts.BACK, (button) -> onClose()));
+        addButton(new ConsumerButtonWidget(width / 2 - 155, height - 80, 150, 20, new TranslatableText("speedrunigt.menu.open_github_repo").asFormattedString(), (button) -> Util.getOperatingSystem().method_20236("https://github.com/RedLime/SpeedRunIGT/")));
+        addButton(new ConsumerButtonWidget(width / 2 + 5, height - 80, 150, 20, new TranslatableText("speedrunigt.menu.open_support_page").asFormattedString(), (button) -> Util.getOperatingSystem().method_20236("https://ko-fi.com/redlimerl")));
+        addButton(new ConsumerButtonWidget(width / 2 - 100, height - 40, 200, 20, ScreenTexts.BACK, (button) -> onClose()));
     }
 
     @Override
     public void render(int mouseX, int mouseY, float delta) {
         this.renderBackground();
         GlStateManager.pushMatrix();
-        GlStateManager.scalef(1.5f, 1.5f, 1.5f);
+        GlStateManager.scale(1.5f, 1.5f, 1.5f);
         this.drawCenteredString(this.textRenderer, new TranslatableText("speedrunigt.title").asFormattedString(), this.width / 3, 15, 16777215);
         GlStateManager.popMatrix();
         this.drawCenteredString(this.textRenderer, new LiteralText("Made by RedLime").asFormattedString(), this.width / 2, 50, 16777215);
@@ -66,7 +67,7 @@ public class SpeedRunIGTInfoScreen extends Screen {
 
     public void onClose() {
         if (this.client != null) {
-            this.client.openScreen(parent);
+            this.client.setScreen(parent);
         }
     }
 }

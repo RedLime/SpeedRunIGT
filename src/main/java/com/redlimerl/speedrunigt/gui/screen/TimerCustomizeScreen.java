@@ -82,7 +82,7 @@ public class TimerCustomizeScreen extends Screen {
     }
 
     public <T extends ButtonWidget> T addButton(T button) {
-        method_13411(button);
+        addButton(button);
         return button;
     }
 
@@ -101,31 +101,31 @@ public class TimerCustomizeScreen extends Screen {
         initBackgroundButtons();
 
         this.normalButton = new ConsumerButtonWidget(width / 2 - 179, height / 2 - 48, 58, 20, new TranslatableText("options.title").append("...").asFormattedString(), (button) -> openTab(0));
-        method_13411(this.normalButton);
+        addButton(this.normalButton);
         this.tabButtons.add(this.normalButton);
 
         this.igtButton = new ConsumerButtonWidget(width / 2 - 119, height / 2 - 48, 58, 20, new LiteralText("IGT...").asFormattedString(), (button) -> openTab(1));
-        method_13411(this.igtButton);
+        addButton(this.igtButton);
         this.tabButtons.add(this.igtButton);
 
         this.rtaButton = new ConsumerButtonWidget(width / 2 - 59, height / 2 - 48, 58, 20, new LiteralText("RTA...").asFormattedString(), (button) -> openTab(2));
-        method_13411(this.rtaButton);
+        addButton(this.rtaButton);
         this.tabButtons.add(this.rtaButton);
 
         this.posButton = addButton(new ConsumerButtonWidget(width / 2 + 1, height / 2 - 48, 58, 20, "Pos...", (ButtonWidget button) -> openTab(5)));
-        method_13411(this.posButton);
+        addButton(this.posButton);
         this.tabButtons.add(this.posButton);
 
         ButtonWidget fontButton = new ConsumerButtonWidget(width / 2 + 61, height / 2 - 48, 58, 20, new TranslatableText("speedrunigt.title.font").asFormattedString(), button -> {});
         fontButton.active = false;
-        method_13411(fontButton);
+        addButton(fontButton);
         this.tabButtons.add(fontButton);
 
         this.backgroundButton = new ConsumerButtonWidget(width / 2 + 121, height / 2 - 48, 58, 20, new TranslatableText("speedrunigt.title.background").asFormattedString(), (button) -> openTab(4));
-        method_13411(this.backgroundButton);
+        addButton(this.backgroundButton);
         this.tabButtons.add(this.backgroundButton);
 
-        method_13411(new ConsumerButtonWidget(width / 2 - 89, height / 2 + 62, 58, 20, new TranslatableText("speedrunigt.option.hide").asFormattedString(), (button) -> {
+        addButton(new ConsumerButtonWidget(width / 2 - 89, height / 2 + 62, 58, 20, new TranslatableText("speedrunigt.option.hide").asFormattedString(), (button) -> {
             hide = !hide;
             for (ButtonWidget normalOption : normalOptions) {
                 normalOption.visible = !hide && currentTab == 0;
@@ -201,9 +201,9 @@ public class TimerCustomizeScreen extends Screen {
 
             changed = false;
         });
-        method_13411(this.saveButton);
+        addButton(this.saveButton);
 
-        method_13411(new ConsumerButtonWidget(width / 2 + 31, height / 2 + 62, 58, 20, ScreenTexts.CANCEL, (button) -> onClose()));
+        addButton(new ConsumerButtonWidget(width / 2 + 31, height / 2 + 62, 58, 20, ScreenTexts.CANCEL, (button) -> onClose()));
 
         openTab(0);
     }
@@ -277,7 +277,7 @@ public class TimerCustomizeScreen extends Screen {
 
     public void onClose() {
         assert this.client != null;
-        this.client.openScreen(parent);
+        this.client.setScreen(parent);
     }
 
     private void refreshPosition() {
