@@ -109,7 +109,7 @@ public class SpeedRunOptionScreen extends Screen {
     }
 
     public void onClose() {
-        if (this.client != null) this.client.openScreen(parent);
+        if (this.client != null) this.client.setScreen(parent);
     }
 
     @Override
@@ -225,7 +225,7 @@ public class SpeedRunOptionScreen extends Screen {
             Tessellator var2 = Tessellator.getInstance();
             BufferBuilder var3 = var2.getBuffer();
             this.client.getTextureManager().bindTexture(OPTIONS_BACKGROUND_TEXTURE);
-            GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             float var4 = 32.0F;
             var3.method_21806();
             var3.method_21807(4210752);

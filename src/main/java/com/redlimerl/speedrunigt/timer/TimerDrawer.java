@@ -302,8 +302,8 @@ public class TimerDrawer {
         GlStateManager.ortho(0.0, window.getWidth(), window.getHeight(), 0.0, 1000.0, 3000.0);
         GlStateManager.matrixMode(5888);
         GlStateManager.loadIdentity();
-        GlStateManager.translatef(0.0F, 0.0F, -2000.0F);
-        if (translateZ) GlStateManager.translatef(0, 0, 998);
+        GlStateManager.translate(0.0F, 0.0F, -2000.0F);
+        if (translateZ) GlStateManager.translate(0, 0, 998);
         if (bgOpacity > 0.01f) {
             Position rtaMin = new Position(rtaTimerElement.getPosition().getX() - rtaPadding, rtaTimerElement.getPosition().getY() - rtaPadding);
             Position rtaMax = new Position(rtaMin.getX() + rtaTimerElement.getScaledTextWidth() + ((rtaPadding - 1) + rtaPadding), rtaMin.getY() + rtaTimerElement.getScaledTextHeight() + ((rtaPadding - 1) + rtaPadding));
