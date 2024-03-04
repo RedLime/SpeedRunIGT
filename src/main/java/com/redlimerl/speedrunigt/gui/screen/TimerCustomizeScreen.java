@@ -294,7 +294,7 @@ public class TimerCustomizeScreen extends Screen {
 
     public void onClose() {
         assert this.field_22534 != null;
-        this.field_22534.openScreen(parent);
+        this.field_22534.setScreen(parent);
     }
 
     private void refreshPosition() {
