@@ -28,7 +28,7 @@
     "ServerStatHandlerMixin",
     "access.ButtonWidgetAccessor",
     "access.ClientChunkProviderAccessor",
-    "access.MinecraftClientAccessorForAttack",
+    "access.MinecraftClientAccessor",
     "access.ScreenAccessor",
     "access.WorldRendererAccessor",
     "keybinding.GameOptionsMixin",

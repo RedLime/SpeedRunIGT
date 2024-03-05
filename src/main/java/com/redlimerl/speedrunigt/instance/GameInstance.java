@@ -7,8 +7,7 @@ import com.redlimerl.speedrunigt.events.EventFactoryLoader;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import net.minecraft.client.MinecraftClient;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 
 import java.io.File;
 import java.nio.file.Path;
@@ -19,10 +18,11 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
+import java.util.logging.Logger;
 
 public class GameInstance {
     public static final ExecutorService SAVE_MANAGER_THREAD = Executors.newSingleThreadExecutor();
-    private static final Logger LOGGER = LogManager.getLogger("Game Instance");
+    private static final Logger LOGGER = Logger.getLogger("Game Instance");
     private static GameInstance INSTANCE;
     private final List<Event> bufferedEvents;
     private List<Event> events;
@@ -45,7 +45,7 @@ public class GameInstance {
     }
 
     private static UUID getLocalPlayerID() {
-        return MinecraftClient.getInstance().getSession().getProfile().getId();
+        return MinecraftClient.getInstance().field_3805.getUuid();
     }
 
     public void tryLoadWorld(String worldName) {
@@ -58,7 +58,7 @@ public class GameInstance {
             LOGGER.info("Loaded events world.");
             checkJoinEvents();
         } else {
-            LOGGER.error("Didn't load events world.");
+            LOGGER.severe("Didn't load events world.");
         }
     }
 
@@ -106,7 +106,7 @@ public class GameInstance {
                         this.events.add(bufferedEvent);
                     } else {
                         // Since the list of old events hasn't loaded yet, we can't know for sure if the event has been triggered or not, so we just add the buffered events later.
-                        LOGGER.error("Couldn't add buffered event to events array.");
+                        LOGGER.severe("Couldn't add buffered event to events array.");
                         return;
                     }
                     this.sendEventToRepository(bufferedEvent);

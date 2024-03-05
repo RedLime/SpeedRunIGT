@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.gui.screen.FailedCategoryInitScreen;
 import com.redlimerl.speedrunigt.mixins.access.PlayerManagerAccessor;
@@ -21,10 +22,10 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.stat.ServerStatHandler;
+import net.minecraft.stat.Stat;
+import net.minecraft.stat.StatHandler;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.OverworldDimension;
@@ -191,14 +192,17 @@ public class InGameTimerUtils {
         return timer.isServerIntegrated && STATS_UPDATE != null ? STATS_UPDATE : new JsonObject();
     }
 
-    @SuppressWarnings("unchecked")
     public static void updateStatsJson(InGameTimer timer) {
         JsonObject jsonObject = new JsonObject();
+        JsonObject jsonObject2 = new JsonObject();
+        jsonObject.add(MinecraftClient.getInstance().field_3805.getUuid().toString(), jsonObject2);
         MinecraftServer server = getServer();
         if (timer.isServerIntegrated && server != null && server.getPlayerManager() != null) {
-            ArrayList<ServerPlayerEntity> serverPlayerEntities = Lists.newArrayList(server.getPlayerManager().players);
-            for (ServerPlayerEntity serverPlayerEntity : serverPlayerEntities) {
-                jsonObject.add(serverPlayerEntity.getUuid().toString(), SpeedRunIGT.GSON.fromJson(ServerStatHandler.method_8272(((ServerStatHandlerAccessor) serverPlayerEntity.getStatHandler()).getStatMap()), JsonObject.class));
+            StatHandler stats = MinecraftClient.getInstance().field_3763;
+            for (Object object : stats.method_1734().entrySet()) {
+                @SuppressWarnings("unchecked")
+                Map.Entry<Stat, Integer> statEntry = (Map.Entry<Stat, Integer>) object;
+                jsonObject2.add(statEntry.getKey().getStringId(), new JsonPrimitive(statEntry.getValue()));
             }
         }
         STATS_UPDATE = jsonObject;
@@ -257,7 +261,7 @@ public class InGameTimerUtils {
         MinecraftServer server = MinecraftClient.getInstance().getServer();
         PlayerEntity player = MinecraftClient.getInstance().field_3805;
         if (server != null && player != null) {
-            ServerStatHandler statHandler = server.getPlayerManager().createStatHandler(player);
+            StatHandler statHandler = MinecraftClient.getInstance().field_3763;
             return statHandler == null ? null : statHandler.getStatLevel(Stats.MINUTES_PLAYED) * 50L;
         }
         return null;
@@ -287,9 +291,11 @@ public class InGameTimerUtils {
         return ((PlayerManagerAccessor) server.getPlayerManager()).isCheatsAllowedInject();
     }
 
-    public static Difficulty getCurrentDifficulty() {
+    public static int getCurrentDifficulty() {
         MinecraftServer server = getServer();
-        if (server == null) { return Difficulty.EASY; }
-        return server.getWorld().field_7173;
+        if (server == null) {
+            return 0;
+        }
+        return server.getWorld().difficulty;
     }
 }

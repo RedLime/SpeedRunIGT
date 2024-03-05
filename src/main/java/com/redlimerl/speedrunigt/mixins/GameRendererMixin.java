@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.mixins;
 
+import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerClientUtils;
 import com.redlimerl.speedrunigt.utils.MixinValues;
@@ -35,7 +36,7 @@ public class GameRendererMixin {
         if (InGameTimerClientUtils.canUnpauseTimer(false)) {
             timer.setPause(false, "moved mouse");
         }
-        if (Display.isActive() && !MinecraftClient.getInstance().isPaused() && Mouse.isGrabbed()) {
+        if (Display.isActive() && !((MinecraftClientAccessor) client).isPaused() && Mouse.isGrabbed()) {
             timer.updateFirstInput();
         }
     }

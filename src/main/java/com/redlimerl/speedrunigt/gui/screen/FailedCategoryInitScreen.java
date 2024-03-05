@@ -8,7 +8,7 @@ import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.client.resource.language.I18n;
 
 import java.util.Locale;
 
@@ -47,8 +47,8 @@ public class FailedCategoryInitScreen extends Screen {
     public void render(int mouseX, int mouseY, float delta) {
         renderBackground();
         super.render(mouseX, mouseY, delta);
-        drawCenteredString(this.textRenderer, new TranslatableText("speedrunigt.message.failed_add_category", this.fileName).asFormattedString(), width / 2, height / 2 - 35, TEXT_RED);
-        drawCenteredString(this.textRenderer, new TranslatableText("speedrunigt.message.failed_add_category."+exception.getReason().name().toLowerCase(Locale.ROOT)).asFormattedString(), width / 2, height / 2 - 10, TEXT_WHITE);
+        drawCenteredString(this.textRenderer, I18n.translate("speedrunigt.message.failed_add_category", this.fileName), width / 2, height / 2 - 35, TEXT_RED);
+        drawCenteredString(this.textRenderer, I18n.translate("speedrunigt.message.failed_add_category."+exception.getReason().name().toLowerCase(Locale.ROOT)), width / 2, height / 2 - 10, TEXT_WHITE);
         drawCenteredString(this.textRenderer, exception.getDetails(), width / 2, height / 2 + 2, TEXT_WHITE);
     }
 }

@@ -7,8 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.redlimerl.speedrunigt.utils.ResourcesHelper;
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,9 +16,11 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class EventFactoryLoader {
-    private static final Logger LOGGER = LogManager.getLogger("Event Factory Loader");
+    private static final Logger LOGGER = Logger.getLogger("Event Factory Loader");
     private static final JsonParser PARSER = new JsonParser();
     private static final Map<String, List<EventFactory>> TYPE_TO_FACTORIES = new HashMap<>();
 
@@ -81,7 +82,7 @@ public class EventFactoryLoader {
                 stream.close();
             }
         } catch (IOException | URISyntaxException e) {
-            LOGGER.error("Error while loading events", e);
+            LOGGER.log(Level.SEVERE, "Error while loading events", e);
         }
     }
 }

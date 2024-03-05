@@ -3,7 +3,7 @@ package com.redlimerl.speedrunigt.timer.category;
 import com.google.gson.JsonArray;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.client.resource.language.I18n;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
@@ -122,8 +122,8 @@ public class RunCategory {
 
     public boolean isHideCategory() { return this.hideCategory; }
 
-    public TranslatableText getText() {
-        return new TranslatableText(this.translateKey);
+    public String getText() {
+        return I18n.translate(this.translateKey);
     }
 
     public @Nullable JsonArray getConditionJson() {

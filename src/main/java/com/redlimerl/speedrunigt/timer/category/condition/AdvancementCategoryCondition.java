@@ -22,6 +22,6 @@ public class AdvancementCategoryCondition extends CategoryCondition.Condition<Ac
 
     @Override
     public boolean checkConditionComplete(Achievement obj) {
-        return Objects.equals(obj.name, advancement);
+        return Objects.equals(obj.getStringId(), advancement);
     }
 }

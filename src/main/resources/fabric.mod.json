@@ -34,7 +34,8 @@
 
   "depends": {
     "fabricloader": ">=0.14.20",
-    "minecraft": "{{MC_VERSION}}"
+    "minecraft": "{{MC_VERSION}}",
+    "stats-per-world": "*"
   },
 
   "breaks": {

@@ -2,7 +2,7 @@ package com.redlimerl.speedrunigt.timer;
 
 import com.redlimerl.speedrunigt.gui.screen.FailedCategoryInitScreen;
 import com.redlimerl.speedrunigt.mixins.access.ClientChunkProviderAccessor;
-import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessorForAttack;
+import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
 import com.redlimerl.speedrunigt.mixins.access.WorldRendererAccessor;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
 import net.fabricmc.api.EnvType;
@@ -10,7 +10,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.stat.ServerStatHandler;
+import net.minecraft.stat.StatHandler;
 import net.minecraft.stat.Stats;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Mouse;
@@ -25,7 +25,7 @@ public class InGameTimerClientUtils {
 
         if (timer.getStatus() != TimerStatus.IDLE) return false;
 
-        if (!client.isPaused() && client.worldRenderer != null && Mouse.isInsideWindow() && Display.isActive() && Mouse.isGrabbed()
+        if (!((MinecraftClientAccessor) client).isPaused() && client.worldRenderer != null && Mouse.isInsideWindow() && Display.isActive() && Mouse.isGrabbed()
                 && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
             if (checkRender) {
                 WorldRendererAccessor worldRenderer = (WorldRendererAccessor) client.worldRenderer;
@@ -43,7 +43,9 @@ public class InGameTimerClientUtils {
     public static float getGeneratedChunkRatio() {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.world != null && client.field_6279 != null) {
-            int chunks = client.options.viewDistance * 2 + 1;
+            // TODO: fix
+            //  256 >> this.client.options.renderDistance maybe?
+            int chunks = client.options.renderDistance * 2 + 1;
             return (float) ((ClientChunkProviderAccessor) client.world.getChunkProvider()).getChunkMap().getUsedEntriesCount() / (chunks * chunks);
         }
         return 0;
@@ -58,7 +60,7 @@ public class InGameTimerClientUtils {
         MinecraftServer server = MinecraftClient.getInstance().getServer();
         PlayerEntity player = MinecraftClient.getInstance().field_3805;
         if (server != null && player != null) {
-            ServerStatHandler statHandler = server.getPlayerManager().createStatHandler(player);
+            StatHandler statHandler = MinecraftClient.getInstance().field_3763;
             return statHandler == null ? null : statHandler.getStatLevel(Stats.MINUTES_PLAYED) * 50L;
         }
         return null;
@@ -76,6 +78,6 @@ public class InGameTimerClientUtils {
     }
 
     public static boolean isFocusedClick() {
-        return ((MinecraftClientAccessorForAttack) MinecraftClient.getInstance()).getAttackCoolDown() <= 0;
+        return ((MinecraftClientAccessor) MinecraftClient.getInstance()).getAttackCoolDown() <= 0;
     }
 }

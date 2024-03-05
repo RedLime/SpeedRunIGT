@@ -2,42 +2,42 @@ package com.redlimerl.speedrunigt.mixins;
 
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.category.condition.StatCategoryCondition;
 import net.minecraft.advancement.AchievementsAndCriterions;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.stat.ServerStatHandler;
 import net.minecraft.stat.Stat;
 import net.minecraft.stat.StatHandler;
-import net.minecraft.util.JsonIntSerializable;
-import org.apache.logging.log4j.Logger;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Map;
+import java.util.logging.Logger;
 
-@Mixin(ServerStatHandler.class)
-public abstract class ServerStatHandlerMixin extends StatHandler {
+@Mixin(StatHandler.class)
+public abstract class ServerStatHandlerMixin {
+    @Unique
+    Logger LOGGER = Logger.getLogger("Stats Handler");
 
-    @Shadow @Final private static Logger LOGGER;
+    @Shadow public abstract Map<Stat, Integer> method_1734();
 
     private int updateTick = 0;
 
-    @Inject(method = "method_8270", at = @At("RETURN"))
+    @Inject(method = "<init>", at = @At("RETURN"))
     public void onInit(CallbackInfo ci) {
         SpeedRunIGT.debug("Detected Achievements: "+ AchievementsAndCriterions.ACHIEVEMENTS.size());
         InGameTimer.getInstance().updateMoreData(7441, AchievementsAndCriterions.ACHIEVEMENTS.size());
     }
 
-    @Inject(method = "setStatLevel", at = @At("TAIL"))
-    public void onUpdate(PlayerEntity playerEntity, Stat stat, int i, CallbackInfo ci) {
+    @Inject(method = "method_1733", at = @At("TAIL"))
+    public void onUpdate(Map<?, ?> stat, Stat i, int par3, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
         // Custom Json category
         if (timer.getCategory().getConditionJson() != null) {
@@ -56,25 +56,15 @@ public abstract class ServerStatHandlerMixin extends StatHandler {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @Unique
     private JsonObject getStatJson() {
+        Map<Stat, Integer> map = this.method_1734();
         JsonObject jsonObject = new JsonObject();
 
-        for (Object obj : this.stats.entrySet()) {
-            Map.Entry<Stat, JsonIntSerializable> entry = (Map.Entry<Stat, JsonIntSerializable>) obj;
-            if (entry.getValue().getJsonElementProvider() != null) {
+        for (Map.Entry<Stat, Integer> entry : map.entrySet()) {
+            if (entry.getValue() != null) {
                 JsonObject jsonObject2 = new JsonObject();
-                jsonObject2.addProperty("value", entry.getValue().getValue());
-
-                try {
-                    jsonObject2.add("progress", entry.getValue().getJsonElementProvider().write());
-                } catch (Throwable var6) {
-                    LOGGER.warn("Couldn't save statistic {}: error serializing progress", entry.getKey().getText(), var6);
-                }
-
-                jsonObject.add(entry.getKey().name, jsonObject2);
-            } else {
-                jsonObject.addProperty(entry.getKey().name, entry.getValue().getValue());
+                jsonObject2.add(Integer.toString(entry.getKey().id), new JsonPrimitive(map.get(entry.getKey())));
             }
         }
         return jsonObject;

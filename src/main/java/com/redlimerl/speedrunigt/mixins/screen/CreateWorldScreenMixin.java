@@ -18,7 +18,7 @@ public class CreateWorldScreenMixin {
 
     @Shadow private TextFieldWidget seedField;
 
-    @Inject(method = "buttonClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;startIntegratedServer(Ljava/lang/String;Ljava/lang/String;Lnet/minecraft/world/level/LevelInfo;)V", shift = At.Shift.BEFORE))
+    @Inject(method = "buttonClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;method_2935(Ljava/lang/String;Ljava/lang/String;Lnet/minecraft/world/level/LevelInfo;)V", shift = At.Shift.BEFORE))
     public void onGenerate(CallbackInfo ci) {
         InGameTimerUtils.IS_SET_SEED = !StringUtils.isEmpty(this.seedField.getText()) || isAtumSetSeed();
     }

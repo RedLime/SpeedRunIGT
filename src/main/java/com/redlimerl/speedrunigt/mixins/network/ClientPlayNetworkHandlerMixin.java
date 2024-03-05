@@ -5,33 +5,34 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.PracticeTimerManager;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
-import com.redlimerl.speedrunigt.timer.packet.TimerPacketBuf;
-import io.netty.buffer.Unpooled;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
-import net.minecraft.network.packet.s2c.play.PlaySoundIdS2CPacket;
+import net.minecraft.client.class_469;
+import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
+import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ClientPlayNetworkHandler.class)
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+
+@Mixin(class_469.class)
 public class ClientPlayNetworkHandlerMixin {
 
     @Shadow private MinecraftClient client;
 
     @Inject(method = "onCustomPayload", at = @At("HEAD"), cancellable = true)
-    public void onCustom(CustomPayloadS2CPacket packet, CallbackInfo ci) {
-        if (packet.getChannel().startsWith("srigt")) {
-            TimerPacket timerPacket = TimerPacket.createTimerPacketFromPacket(packet.getChannel());
-            TimerPacketBuf buf = TimerPacketBuf.of(Unpooled.wrappedBuffer(packet.getPayload()));
-            SpeedRunIGT.debug(String.format("Server->Client Packet: %s bytes, ID : %s", packet.getPayload().length, packet.getChannel()));
+    public void onCustom(CustomPayloadC2SPacket packet, CallbackInfo ci) {
+        if (packet.channel.startsWith("srigt")) {
+            TimerPacket timerPacket = TimerPacket.createTimerPacketFromPacket(packet.channel);
+            DataInputStream buf = new DataInputStream(new ByteArrayInputStream(packet.field_2455));
+            SpeedRunIGT.debug(String.format("Server->Client Packet: %s bytes, ID : %s", packet.field_2455.length, packet.channel));
             try {
                 if (timerPacket != null && SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) {
                     timerPacket.receiveServer2ClientPacket(buf, this.client);
-                    buf.release();
+                    buf.close();
                 }
                 else throw new IllegalArgumentException();
             } catch (IllegalArgumentException e) {
@@ -45,14 +46,14 @@ public class ClientPlayNetworkHandlerMixin {
         }
     }
 
-    @Inject(method = "onPlayerPositionLook", at = @At("RETURN"))
+    @Inject(method = "onPlayerMove", at = @At("RETURN"))
     public void onPlayerPositionLookMixin(CallbackInfo ci) {
         if (SpeedRunOption.getOption(SpeedRunOptions.TELEPORT_TO_END_PRACTICE))
             PracticeTimerManager.stopPractice();
     }
 
     @Inject(method = "onPlaySound", at = @At("RETURN"))
-    public void onPlaySoundIdMixin(PlaySoundIdS2CPacket packet, CallbackInfo ci) {
+    public void onPlaySoundIdMixin(PlaySoundS2CPacket packet, CallbackInfo ci) {
         String packetId = packet.getSound();
         if (packetId.equals("speedrunigt:start_practice")) {
             PracticeTimerManager.startPractice(0);

@@ -1,16 +1,17 @@
 package com.redlimerl.speedrunigt.events;
 
 import com.redlimerl.speedrunigt.utils.MonadicStringBuilder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Event {
-    private static final Logger LOGGER = LogManager.getLogger("Event");
+    private static final Logger LOGGER = Logger.getLogger("Event");
     public final String id;
     public final Integer version;
     public final String type;
@@ -47,7 +48,7 @@ public class Event {
 
             return new Event(version, eventId, type, realTime, gameTime);
         } catch (Exception e) {
-            LOGGER.error("Error while parsing event", e);
+            LOGGER.log(Level.SEVERE, "Error while parsing event", e);
             return null;
         }
     }

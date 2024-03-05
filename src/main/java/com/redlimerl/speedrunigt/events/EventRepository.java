@@ -2,8 +2,7 @@ package com.redlimerl.speedrunigt.events;
 
 import com.redlimerl.speedrunigt.instance.GameInstance;
 import com.redlimerl.speedrunigt.instance.TimerWorld;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -11,11 +10,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class EventRepository {
-    private static final Logger LOGGER = LogManager.getLogger("Event Repository");
+    private static final Logger LOGGER = Logger.getLogger("Event Repository");
     private final Map<String, Integer> eventVersions = new HashMap<>();
     private final TimerWorld world;
     private final Path eventsPath;
@@ -46,7 +47,7 @@ public class EventRepository {
                     .sorted(Comparator.comparing(Event::getRealTime))
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            LOGGER.error("Error while loading old events", e);
+            LOGGER.log(Level.SEVERE, "Error while loading old events", e);
             return new ArrayList<>();
         }
     }
@@ -66,7 +67,7 @@ public class EventRepository {
                 writeWorldDataToGlobalFile();
                 LOGGER.info("Successfully appended to events files.");
             } catch (IOException e) {
-                LOGGER.error("Error while writing to events files", e);
+                LOGGER.log(Level.SEVERE, "Error while writing to events files", e);
             }
         });
     }
@@ -77,7 +78,7 @@ public class EventRepository {
                 writeEventToLog(event);
                 LOGGER.info("Successfully appended to events file.");
             } catch (IOException e) {
-                LOGGER.error("Error while writing to events files", e);
+                LOGGER.log(Level.SEVERE, "Error while writing to events files", e);
             }
         });
     }

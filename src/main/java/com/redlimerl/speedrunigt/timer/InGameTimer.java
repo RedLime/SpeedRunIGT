@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.timer;
 
 import com.google.gson.Gson;
+import com.redlimerl.speedrunigt.MathHelperExt;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.crypt.Crypto;
 import com.redlimerl.speedrunigt.instance.GameInstance;
@@ -18,8 +19,6 @@ import com.redlimerl.speedrunigt.timer.packet.packets.*;
 import com.redlimerl.speedrunigt.timer.running.RunPortalPos;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.Difficulty;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -628,7 +627,7 @@ public class InGameTimer implements Serializable {
 
         //Rebase time (When a joined world or changed dimension)
         if (this.leastStartTime != 0 && this.leastTickTime != 0 && this.leastStartTime != currentTime) {
-            double value = MathHelper.clamp((this.leastStartTime - this.leastTickTime) * 1.0 / tickDelays, 0, 1) * 50.0;
+            double value = MathHelperExt.clamp((this.leastStartTime - this.leastTickTime) * 1.0 / tickDelays, 0, 1) * 50.0;
             this.rebaseIGTime += (long) value;
             this.leastStartTime = 0;
         }
@@ -904,8 +903,8 @@ public class InGameTimer implements Serializable {
         this.defaultGameMode = defaultGameMode;
     }
 
-    public void checkDifficulty(Difficulty difficulty) {
-        if (difficulty.equals(Difficulty.PEACEFUL)) {
+    public void checkDifficulty(int difficulty) {
+        if (difficulty < 0) {
             GameInstance.getInstance().callEvents("enable_cheats");
         }
     }

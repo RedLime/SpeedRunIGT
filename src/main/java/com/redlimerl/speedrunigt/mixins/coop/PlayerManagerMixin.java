@@ -6,7 +6,7 @@ import com.redlimerl.speedrunigt.timer.packet.TimerPacketUtils;
 import com.redlimerl.speedrunigt.timer.packet.packets.TimerInitializePacket;
 import com.redlimerl.speedrunigt.timer.packet.packets.TimerStartPacket;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.ClientConnection;
+import net.minecraft.network.Connection;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
 import org.spongepowered.asm.mixin.Final;
@@ -24,7 +24,7 @@ public abstract class PlayerManagerMixin {
     @Shadow @Final private MinecraftServer server;
 
     @Inject(method = "onPlayerConnect", at = @At("TAIL"))
-    public void onPlayerConnectInject(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
+    public void onPlayerConnectInject(Connection player, ServerPlayerEntity par2, CallbackInfo ci) {
         if (this.getCurrentPlayerCount() > (SpeedRunIGT.IS_CLIENT_SIDE ? 1 : 0) && !InGameTimer.getInstance().isCompleted()) {
             if (InGameTimer.getInstance().isStarted() || !SpeedRunIGT.IS_CLIENT_SIDE) {
                 long rta = InGameTimer.getInstance().getRealTimeAttack();

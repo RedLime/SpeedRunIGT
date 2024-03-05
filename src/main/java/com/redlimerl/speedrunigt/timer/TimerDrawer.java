@@ -294,7 +294,7 @@ public class TimerDrawer {
         igtTimerElement.init(igtXPos, igtYPos, igtScale, igtText, igtColor, igtDecoration, 9);
 
         //배경 렌더
-        Window window = new Window(this.client, this.client.width, this.client.height);
+        Window window = new Window(this.client.options, this.client.width, this.client.height);
         GL11.glPushMatrix();
         GL11.glClear(256);
         GL11.glMatrixMode(5889);

@@ -4,16 +4,18 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.SpeedRunIGTUpdateChecker;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.gui.ConsumerButtonWidget;
+import com.redlimerl.speedrunigt.gui.EntryWidget;
+import com.redlimerl.speedrunigt.mixins.access.ButtonWidgetAccessor;
 import com.redlimerl.speedrunigt.mixins.access.ScreenAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.utils.OperatingUtils;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
-import net.minecraft.client.class_1803;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.EntryListWidget;
+import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.Tessellator;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.opengl.GL11;
 
@@ -34,7 +36,6 @@ public class SpeedRunOptionScreen extends Screen {
     private ButtonWidget nextPageButton = null;
 
     public SpeedRunOptionScreen(Screen parent) {
-        super();
         this.parent = parent;
     }
 
@@ -60,7 +61,7 @@ public class SpeedRunOptionScreen extends Screen {
             categorySubButtons.put(category, categoryList);
 
             if (!categorySelectButtons.containsKey(category)) {
-                ButtonWidget buttonWidget = new ConsumerButtonWidget(width - 110, 30 + ((categoryCount++ % 6) * 22), 80, 20, new TranslatableText(category).asFormattedString(), (buttonWidget1) -> selectCategory(category));
+                ButtonWidget buttonWidget = new ConsumerButtonWidget(width - 110, 30 + ((categoryCount++ % 6) * 22), 80, 20, I18n.translate(category), (buttonWidget1) -> selectCategory(category));
                 categorySelectButtons.put(category, buttonWidget);
                 buttons.add(buttonWidget);
             }
@@ -76,9 +77,9 @@ public class SpeedRunOptionScreen extends Screen {
 
         buttons.add(new ConsumerButtonWidget(width - 85, height - 35, 70, 20, ScreenTexts.CANCEL, (button) -> onClose()));
 
-        buttons.add(new ConsumerButtonWidget(15, height - 35, 70, 20, new TranslatableText("speedrunigt.menu.donate").asFormattedString(), (button) -> OperatingUtils.setUrl("https://ko-fi.com/redlimerl")));
+        buttons.add(new ConsumerButtonWidget(15, height - 35, 70, 20, I18n.translate("speedrunigt.menu.donate"), (button) -> OperatingUtils.setUrl("https://ko-fi.com/redlimerl")));
 
-        buttons.add(new ConsumerButtonWidget(88, height - 35, 140, 20, new TranslatableText("speedrunigt.menu.crowdin").asFormattedString(), (button) -> OperatingUtils.setUrl("https://crowdin.com/project/speedrunigt")));
+        buttons.add(new ConsumerButtonWidget(88, height - 35, 140, 20, I18n.translate("speedrunigt.menu.crowdin"), (button) -> OperatingUtils.setUrl("https://crowdin.com/project/speedrunigt")));
 
         buttonListWidget = new ButtonScrollListWidget();
 
@@ -125,6 +126,13 @@ public class SpeedRunOptionScreen extends Screen {
         buttons.addAll(widgets);
         super.mouseClicked(mouseX, mouseY, button);
         buttons.removeAll(widgets);
+        this.buttonListWidget.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    protected void mouseReleased(int mouseX, int mouseY, int button) {
+        super.mouseReleased(mouseX, mouseY, button);
+        this.buttonListWidget.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
@@ -132,11 +140,77 @@ public class SpeedRunOptionScreen extends Screen {
         this.renderBackground();
         this.buttonListWidget.render(mouseX, mouseY, delta);
         super.render(mouseX, mouseY, delta);
-        drawCenteredString(this.textRenderer, new TranslatableText("speedrunigt.title.options").asFormattedString(), this.width / 2, 10, 16777215);
+        drawCenteredString(this.textRenderer, I18n.translate("speedrunigt.title.options"), this.width / 2, 10, 16777215);
         drawWithShadow(this.textRenderer, "v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215);
 
         ArrayList<String> tooltip = getToolTip(mouseX, mouseY);
-        if (!tooltip.isEmpty() && ((ScreenAccessor) this).getPrevClickedButton() == null) this.renderTooltip(tooltip, 0, height);
+        if (!tooltip.isEmpty() && ((ScreenAccessor) this).getPrevClickedButton() == null) this.drawTooltip(tooltip, 0, height);
+    }
+
+    protected void drawTooltip(String string, int i, int j) {
+        this.drawTooltip(Collections.singletonList(string), i, j);
+    }
+
+    protected void drawTooltip(List<String> list, int i, int j) {
+        if (!list.isEmpty()) {
+            GL11.glDisable(32826);
+            DiffuseLighting.disable();
+            GL11.glDisable(2896);
+            GL11.glDisable(2929);
+            int var4 = 0;
+
+            for(String var6 : list) {
+                int var7 = this.textRenderer.getStringWidth(var6);
+                if (var7 > var4) {
+                    var4 = var7;
+                }
+            }
+
+            int var14 = i + 12;
+            int var15 = j - 12;
+            int var8 = 8;
+            if (list.size() > 1) {
+                var8 += 2 + (list.size() - 1) * 10;
+            }
+
+            if (var14 + var4 > this.width) {
+                var14 -= 28 + var4;
+            }
+
+            if (var15 + var8 + 6 > this.height) {
+                var15 = this.height - var8 - 6;
+            }
+
+            this.zOffset = 300.0F;
+            int var9 = -267386864;
+            this.fillGradient(var14 - 3, var15 - 4, var14 + var4 + 3, var15 - 3, var9, var9);
+            this.fillGradient(var14 - 3, var15 + var8 + 3, var14 + var4 + 3, var15 + var8 + 4, var9, var9);
+            this.fillGradient(var14 - 3, var15 - 3, var14 + var4 + 3, var15 + var8 + 3, var9, var9);
+            this.fillGradient(var14 - 4, var15 - 3, var14 - 3, var15 + var8 + 3, var9, var9);
+            this.fillGradient(var14 + var4 + 3, var15 - 3, var14 + var4 + 4, var15 + var8 + 3, var9, var9);
+            int var10 = 1347420415;
+            int var11 = (var10 & 16711422) >> 1 | var10 & 0xFF000000;
+            this.fillGradient(var14 - 3, var15 - 3 + 1, var14 - 3 + 1, var15 + var8 + 3 - 1, var10, var11);
+            this.fillGradient(var14 + var4 + 2, var15 - 3 + 1, var14 + var4 + 3, var15 + var8 + 3 - 1, var10, var11);
+            this.fillGradient(var14 - 3, var15 - 3, var14 + var4 + 3, var15 - 3 + 1, var10, var10);
+            this.fillGradient(var14 - 3, var15 + var8 + 2, var14 + var4 + 3, var15 + var8 + 3, var11, var11);
+
+            for(int var12 = 0; var12 < list.size(); ++var12) {
+                String var13 = (String)list.get(var12);
+                this.textRenderer.method_956(var13, var14, var15, -1);
+                if (var12 == 0) {
+                    var15 += 2;
+                }
+
+                var15 += 10;
+            }
+
+            this.zOffset = 0.0F;
+            GL11.glEnable(2896);
+            GL11.glEnable(2929);
+            DiffuseLighting.enableNormally();
+            GL11.glEnable(32826);
+        }
     }
 
     public ArrayList<String> getToolTip(int mouseX, int mouseY) {
@@ -145,7 +219,7 @@ public class SpeedRunOptionScreen extends Screen {
 
         int e = buttonListWidget.getEntryAt(mouseX, mouseY);
         if (e > -1) {
-            ButtonWidget element = buttonListWidget.method_6697(e).getButtonWidget();
+            ButtonWidget element = buttonListWidget.getEntry(e).getButtonWidget();
             if (tooltips.containsKey(element)) {
                 String text = tooltips.get(element).get();
                 tooltipList.addAll(Arrays.asList(text.split("\n")));
@@ -155,7 +229,7 @@ public class SpeedRunOptionScreen extends Screen {
 
 
         if (SpeedRunIGTUpdateChecker.UPDATE_STATUS == SpeedRunIGTUpdateChecker.UpdateStatus.OUTDATED) {
-            tooltipList.add(new TranslatableText("speedrunigt.message.update_found").asFormattedString());
+            tooltipList.add(I18n.translate("speedrunigt.message.update_found"));
         }
         return tooltipList;
     }
@@ -197,7 +271,7 @@ public class SpeedRunOptionScreen extends Screen {
         private final ArrayList<ButtonScrollListEntry> entries = new ArrayList<>();
 
         @Override
-        public ButtonScrollListEntry method_6697(int i) {
+        public ButtonScrollListEntry getEntry(int i) {
             return entries.get(i);
         }
 
@@ -228,12 +302,12 @@ public class SpeedRunOptionScreen extends Screen {
             var2.end();
         }
 
-        class ButtonScrollListEntry implements class_1803 {
+        class ButtonScrollListEntry implements EntryWidget {
             private final ButtonWidget buttonWidget;
 
             public ButtonScrollListEntry(ButtonWidget buttonWidget) {
                 this.buttonWidget = buttonWidget;
-                this.buttonWidget.x = (ButtonScrollListWidget.this.width - this.buttonWidget.getWidth()) / 2;
+                this.buttonWidget.x = (ButtonScrollListWidget.this.width - ((ButtonWidgetAccessor)this.buttonWidget).getWidth()) / 2;
             }
 
             public ButtonWidget getButtonWidget() {
@@ -241,18 +315,18 @@ public class SpeedRunOptionScreen extends Screen {
             }
 
             @Override
-            public void method_6700(int index, int x, int y, int rowWidth, int rowHeight, Tessellator tessellator, int mouseX, int mouseY, boolean hovered) {
+            public void draw(int index, int x, int y, int rowWidth, int rowHeight, Tessellator tessellator, int mouseX, int mouseY, boolean hovered) {
                 buttonWidget.y = y;
                 buttonWidget.render(SpeedRunOptionScreen.this.client, mouseX, mouseY);
             }
 
             @Override
-            public boolean method_6699(int i, int j, int k, int l, int m, int n) {
+            public boolean mouseClicked(int i, int j, int k, int l, int m, int n) {
                 return false;
             }
 
             @Override
-            public void method_6701(int i, int j, int k, int l, int m, int n) {
+            public void mouseReleased(int i, int j, int k, int l, int m, int n) {
 
             }
         }

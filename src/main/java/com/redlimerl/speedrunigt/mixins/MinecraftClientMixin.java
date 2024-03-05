@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.mixins;
 
+import com.redlimerl.speedrunigt.MathHelperExt;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.SpeedRunIGTClient;
 import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
@@ -43,9 +44,6 @@ public abstract class MinecraftClientMixin {
 
     @Shadow public GameOptions options;
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    @Shadow public abstract boolean isPaused();
-
     @Shadow @Nullable public Screen currentScreen;
 
     @Shadow @Nullable public ClientWorld world;
@@ -58,7 +56,7 @@ public abstract class MinecraftClientMixin {
     @Shadow public boolean skipGameRender;
     private boolean disconnectCheck = false;
 
-    @Inject(at = @At("HEAD"), method = "startIntegratedServer")
+    @Inject(at = @At("HEAD"), method = "method_2935")
     public void onCreate(String name, String displayName, LevelInfo levelInfo, CallbackInfo ci) {
         try {
             if (levelInfo != null) {
@@ -156,16 +154,16 @@ public abstract class MinecraftClientMixin {
 
         long time = System.currentTimeMillis() - InGameTimerUtils.LATEST_TIMER_TIME;
         if (time < 2950) {
-            Window window = new Window((MinecraftClient) ((Object) this), this.width, this.height);
+            Window window = new Window(this.options, this.width, this.height);
             String text = "SpeedRunIGT v" + (SpeedRunIGT.MOD_VERSION.split("\\+")[0]);
             this.textRenderer.draw(text, this.currentScreen != null ? (int) ((window.getScaledWidth() - this.textRenderer.getStringWidth(text)) / 2f) : 4, (int) window.getScaledHeight() - 12,
-                    ColorMixer.getArgb((int) (MathHelper.clamp((3000 - time) / 1000.0, 0, 1) * (this.currentScreen != null ? 90 : 130)), 255, 255, 255));
+                    ColorMixer.getArgb((int) (MathHelperExt.clamp((3000 - time) / 1000.0, 0, 1) * (this.currentScreen != null ? 90 : 130)), 255, 255, 255));
         }
 
         SpeedRunIGT.DEBUG_DATA = timer.getStatus().name();
         if (!this.options.hudHidden && this.world != null && timer.getStatus() != TimerStatus.NONE
-                && (!this.isPaused() || this.currentScreen instanceof CreditsScreen || this.currentScreen instanceof GameMenuScreen || !SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS))
-                && !(!this.isPaused() && SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) && this.options.debugEnabled)
+                && (!this.paused || this.currentScreen instanceof CreditsScreen || this.currentScreen instanceof GameMenuScreen || !SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS))
+                && !(!this.paused && SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) && this.options.debugEnabled)
                 && !(this.currentScreen instanceof TimerCustomizeScreen)
                 && MixinValues.IS_RENDERED_BEFORE
                 && !this.skipGameRender) {
@@ -175,7 +173,7 @@ public abstract class MinecraftClientMixin {
                 PositionType updatePositionType = PositionType.DEFAULT;
                 if (enableSplit && this.options.debugEnabled)
                     updatePositionType = PositionType.WHILE_F3;
-                if (enableSplit && this.isPaused() && !(this.currentScreen instanceof DownloadingTerrainScreen))
+                if (enableSplit && this.paused && !(this.currentScreen instanceof DownloadingTerrainScreen))
                     updatePositionType = PositionType.WHILE_PAUSED;
 
                 if (this.currentPositionType != updatePositionType || needUpdate) {
@@ -217,7 +215,7 @@ public abstract class MinecraftClientMixin {
         if (InGameTimerClientUtils.canUnpauseTimer(false)) {
             timer.setPause(false, "moved mouse wheel");
         }
-        if (Display.isActive() && !MinecraftClient.getInstance().isPaused() && Mouse.isGrabbed()) {
+        if (Display.isActive() && !this.paused && Mouse.isGrabbed()) {
             timer.updateFirstInput();
         }
     }
@@ -235,13 +233,13 @@ public abstract class MinecraftClientMixin {
     }
 
     // Record save
-    @Inject(method = "stop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sound/SoundManager;close()V", shift = At.Shift.BEFORE))
+    @Inject(method = "stop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/GlAllocationUtils;method_848()V", shift = At.Shift.BEFORE))
     public void onStop(CallbackInfo ci) {
         InGameTimer.getInstance().writeRecordFile(false);
     }
 
     // Disconnecting fix
-    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resource/ResourcePackLoader;clear()V", shift = At.Shift.BEFORE), method = "connect(Lnet/minecraft/client/world/ClientWorld;Ljava/lang/String;)V")
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;setCurrentServerEntry(Lnet/minecraft/client/network/ServerInfo;)V", shift = At.Shift.BEFORE), method = "connect(Lnet/minecraft/client/world/ClientWorld;Ljava/lang/String;)V")
     public void disconnect(CallbackInfo ci) {
         if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE && this.disconnectCheck) {
             GameInstance.getInstance().callEvents("leave_world");

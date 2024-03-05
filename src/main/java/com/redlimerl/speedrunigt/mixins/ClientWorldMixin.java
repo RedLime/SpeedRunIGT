@@ -5,6 +5,7 @@ import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.util.logging.LogManager;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.SaveHandler;
 import net.minecraft.world.World;
@@ -31,9 +32,10 @@ public abstract class ClientWorldMixin extends World {
     @Final
     private MinecraftClient client;
 
-    public ClientWorldMixin(SaveHandler saveHandler, String string, Dimension dimension, LevelInfo levelInfo, Profiler profiler) {
-        super(saveHandler, string, dimension, levelInfo, profiler);
+    public ClientWorldMixin(SaveHandler saveHandler, String string, Dimension dimension, LevelInfo levelInfo, Profiler profiler, LogManager logManager) {
+        super(saveHandler, string, dimension, levelInfo, profiler, logManager);
     }
+
 
     @Inject(at = @At("HEAD"), method = "tick")
     public void onTick(CallbackInfo ci) {
@@ -41,8 +43,8 @@ public abstract class ClientWorldMixin extends World {
     }
 
     @Override
-    public boolean setBlock(int bx, int by, int bz, Block block, int l, int m) {
-        boolean result = super.setBlock(bx, by, bz, block, l, m);
+    public boolean method_4721(int bx, int by, int bz, int block, int l, int m) {
+        boolean result = super.method_4721(bx, by, bz, block, l, m);
 
         // TODO: doesn't support nether or overworld caves
         if (this.dimension.hasNoSkylight) {
@@ -94,12 +96,6 @@ public abstract class ClientWorldMixin extends World {
             }
         }
         return result;
-    }
-
-    // handles negative numbers correctly, like python
-    @Unique
-    private static int mod(int divisor, int dividend) {
-        return ((divisor % dividend) + dividend) % dividend;
     }
 
     @Unique

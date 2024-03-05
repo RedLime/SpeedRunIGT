@@ -1,47 +1,47 @@
 package com.redlimerl.speedrunigt.timer.packet;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.PacketByteBuf;
+
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 
 /**
  * This is for make easier support multiple Minecraft versions
  */
 public class TimerPacketBuf {
-    private final PacketByteBuf buf;
+    private final DataOutputStream buf;
 
-    public static TimerPacketBuf of(ByteBuf buf) {
-        return new TimerPacketBuf(new PacketByteBuf(buf));
+    public static TimerPacketBuf of(ByteArrayOutputStream buf) {
+        return new TimerPacketBuf(new DataOutputStream(buf));
     }
 
-    public static TimerPacketBuf of(PacketByteBuf buf) {
+    public static TimerPacketBuf of(DataOutputStream buf) {
         return new TimerPacketBuf(buf);
     }
 
     public static TimerPacketBuf create() {
-        return TimerPacketBuf.of(new PacketByteBuf(Unpooled.buffer()));
+        return TimerPacketBuf.of(new DataOutputStream(new ByteArrayOutputStream()));
     }
 
-    private TimerPacketBuf(PacketByteBuf buf) {
+    private TimerPacketBuf(DataOutputStream buf) {
         this.buf = buf;
     }
 
-    public PacketByteBuf getBuffer() {
-        return new PacketByteBuf(this.buf);
+    public DataOutputStream getBuffer() {
+        return new DataOutputStream(this.buf);
     }
 
     public TimerPacketBuf copy() {
         return new TimerPacketBuf(
-                new PacketByteBuf(
-                        this.buf.copy()
+                new DataOutputStream(
+                        this.buf
                 )
         );
     }
 
     public void writeString(String string) {
         this.buf.writeInt(string.length());
-        this.buf.method_7423(string);
+        this.buf.writeUTF(string);
     }
 
     public String readString() {
@@ -82,6 +82,6 @@ public class TimerPacketBuf {
     }
 
     public void release() {
-        this.buf.release();
+        this.buf.close();
     }
 }

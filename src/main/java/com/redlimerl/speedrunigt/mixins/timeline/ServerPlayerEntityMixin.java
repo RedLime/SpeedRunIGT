@@ -9,7 +9,6 @@ import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
@@ -38,7 +37,7 @@ public abstract class ServerPlayerEntityMixin {
         InGameTimer timer = InGameTimer.getInstance();
 
         beforeWorld = player.getServerWorld();
-        lastPortalPos = Vec3d.of(player.x, player.y, player.z);
+        lastPortalPos = Vec3d.method_604(player.x, player.y, player.z);
         InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = !InGameTimer.getInstance().isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY;
 
         //All Portals
@@ -56,7 +55,7 @@ public abstract class ServerPlayerEntityMixin {
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() != TimerStatus.NONE) {
             if (oldDimension instanceof OverworldDimension && newDimension instanceof TheNetherDimension) {
-                if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY) InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(newDimension, Vec3d.of(player.x, player.y, player.z), lastPortalPos.add(0, 0, 0));
+                if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY) InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(newDimension, Vec3d.method_604(player.x, player.y, player.z), lastPortalPos.method_613(0, 0, 0));
             }
 
             if (oldDimension instanceof TheNetherDimension && newDimension instanceof OverworldDimension) {
@@ -70,7 +69,7 @@ public abstract class ServerPlayerEntityMixin {
                         timer.tryInsertNewTimeline("nether_travel_blind");
                     }
                 }
-                if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY) InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(newDimension, lastPortalPos.add(0, 0, 0), Vec3d.of(player.x, player.y, player.z));
+                if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY) InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(newDimension, lastPortalPos.method_613(0, 0, 0), Vec3d.method_604(player.x, player.y, player.z));
             }
         }
     }
@@ -81,6 +80,6 @@ public abstract class ServerPlayerEntityMixin {
                 .filter(Objects::nonNull) // Remove nulls
                 .map(ItemStack::getItem) // Turn each item stack into its item
                 .collect(Collectors.toSet()); // Collect to a set of items that the player has
-        return currentItemTypes.contains(Items.EYE_OF_ENDER) || (currentItemTypes.contains(Items.ENDER_PEARL) && (currentItemTypes.contains(Items.BLAZE_ROD) || currentItemTypes.contains(Items.BLAZE_POWDER)));
+        return currentItemTypes.contains(Item.EYE_OF_ENDER) || (currentItemTypes.contains(Item.ENDER_PEARL) && (currentItemTypes.contains(Item.BLAZE_ROD) || currentItemTypes.contains(Item.BLAZE_POWDER)));
     }
 }

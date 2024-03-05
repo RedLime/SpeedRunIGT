@@ -18,8 +18,6 @@ import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.minecraft.server.MinecraftServer;
 import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +25,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class SpeedRunIGT implements ModInitializer {
@@ -119,10 +118,10 @@ public class SpeedRunIGT implements ModInitializer {
         TimerPackets.init();
     }
 
-    private static final Logger LOGGER = LogManager.getLogger("SpeedRunIGT");
+    private static final Logger LOGGER = Logger.getLogger("SpeedRunIGT");
     public static void debug(Object obj) {
-        if (IS_DEBUG_MODE) LOGGER.info(obj);
+        if (IS_DEBUG_MODE) LOGGER.info(obj.toString());
     }
-    public static void error(Object obj) { LOGGER.error(obj); }
+    public static void error(Object obj) { LOGGER.severe(obj.toString()); }
 }
 //Void was here :)

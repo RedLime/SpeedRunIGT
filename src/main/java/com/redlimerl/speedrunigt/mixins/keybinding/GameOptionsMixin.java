@@ -20,13 +20,13 @@ public class GameOptionsMixin {
         // Key Bindings initialize
         SpeedRunIGTClient.timerResetKeyBinding = KeyBindingRegistry.registerKeyBinding(new KeyBinding(
                 "speedrunigt.controls.start_timer",
-                22,
-                "speedrunigt.title.options"
+                22
+                /*n"speedrunigt.title.options" */
         ));
         SpeedRunIGTClient.timerStopKeyBinding = KeyBindingRegistry.registerKeyBinding(new KeyBinding(
                 "speedrunigt.controls.stop_timer",
-                23,
-                "speedrunigt.title.options"
+                23
+                /* "speedrunigt.title.options" */
         ));
         allKeys = KeyBindingRegistry.process(allKeys);
     }

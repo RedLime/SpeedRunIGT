@@ -6,19 +6,24 @@ import com.redlimerl.speedrunigt.timer.InGameTimerClientUtils;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.util.collection.IntObjectStorage;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Objects;
+import java.util.Arrays;
+import java.util.List;
 
 @Mixin(KeyBinding.class)
 public abstract class KeyBindingMixin {
 
-    @Shadow @Final private static IntObjectStorage KEY_MAP;
+    @Shadow public static IntObjectStorage KEY_MAP;
+
+    // key.categories.gameplay & key.categories.gameplay
+    @Unique
+    private static final List<String> gameplayKeys = Arrays.asList("key.inventory", "key.use", "key.drop", "key.attack", "key.pickItem", "key.sprint");
 
     @Inject(method = "setKeyPressed", at = @At("TAIL"))
     private static void onPress(int keyCode, boolean pressed, CallbackInfo ci) {
@@ -26,8 +31,7 @@ public abstract class KeyBindingMixin {
         if(keyBinding!=null && pressed){
             InGameTimer timer = InGameTimer.getInstance();
             if (InGameTimerClientUtils.isFocusedClick() &&
-                    (Objects.equals(keyBinding.getCategory(), "key.categories.inventory")
-                    || (Objects.equals(keyBinding.getCategory(), "key.categories.gameplay")))) {
+                    gameplayKeys.contains(keyBinding.translationKey)) {
                 if (InGameTimerClientUtils.canUnpauseTimer(false)) {
                     timer.setPause(false, "pressed key");
                 }

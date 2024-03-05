@@ -8,4 +8,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface ButtonWidgetAccessor {
     @Accessor("height")
     int getHeight();
+
+    @Accessor("width")
+    int getWidth();
 }

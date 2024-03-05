@@ -1,13 +1,11 @@
 package com.redlimerl.speedrunigt.timer.packet;
 
 import com.google.common.collect.Maps;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.server.MinecraftServer;
 
+import java.io.*;
 import java.util.HashMap;
 import java.util.function.Supplier;
 
@@ -45,32 +43,22 @@ public abstract class TimerPacket {
         return this.identifier;
     }
 
-    @Environment(EnvType.CLIENT)
     final CustomPayloadC2SPacket createClient2ServerPacket(MinecraftClient client) {
-        TimerPacketBuf buf = TimerPacketBuf.create();
-        return new CustomPayloadC2SPacket(this.identifier, this.convertClient2ServerPacket(buf, client).getBuffer());
+        ByteArrayOutputStream buf = new ByteArrayOutputStream();
+        this.convertClient2ServerPacket(new DataOutputStream(buf), client);
+        return new CustomPayloadC2SPacket(this.identifier, buf.toByteArray());
     }
 
-    final CustomPayloadS2CPacket createServer2ClientPacket(MinecraftServer server, TimerPacketBuf buf) {
-        return new CustomPayloadS2CPacket(this.identifier, this.convertServer2ClientPacket(buf.copy(), server).getBuffer());
+    protected void sendPacketToPlayers(byte[] bytes, MinecraftServer server) {
+        TimerPacketUtils.sendServer2ClientPacket(server, this, bytes);
     }
 
-    final CustomPayloadS2CPacket createServer2ClientPacket(MinecraftServer server) {
-        TimerPacketBuf buf = TimerPacketBuf.create();
-        return this.createServer2ClientPacket(server, buf);
-    }
+    protected abstract DataOutputStream convertClient2ServerPacket(DataOutputStream buf, MinecraftClient client);
 
-    protected void sendPacketToPlayers(TimerPacketBuf buf, MinecraftServer server) {
-        TimerPacketUtils.sendServer2ClientPacket(server, this, buf);
-    }
+    // will likely be sending back to players, so need to read input while keeping the raw packet data to send back
+    public abstract void receiveClient2ServerPacket(CustomPayloadC2SPacket buf, MinecraftServer server, byte[] bytes);
 
-    @Environment(EnvType.CLIENT)
-    protected abstract TimerPacketBuf convertClient2ServerPacket(TimerPacketBuf buf, MinecraftClient client);
+    protected abstract ByteArrayOutputStream convertServer2ClientPacket(DataOutputStream buf, MinecraftServer server);
 
-    public abstract void receiveClient2ServerPacket(TimerPacketBuf buf, MinecraftServer server);
-
-    protected abstract TimerPacketBuf convertServer2ClientPacket(TimerPacketBuf buf, MinecraftServer server);
-
-    @Environment(EnvType.CLIENT)
-    public abstract void receiveServer2ClientPacket(TimerPacketBuf buf, MinecraftClient client);
+    public abstract void receiveServer2ClientPacket(DataInputStream buf, MinecraftClient client) throws IOException;
 }

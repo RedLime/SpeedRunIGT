@@ -1,9 +1,7 @@
 package com.redlimerl.speedrunigt.mixins.timeline;
 
 import com.redlimerl.speedrunigt.timer.InGameTimer;
-import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.SoundSystem;
-import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -12,9 +10,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(SoundSystem.class)
 public class SoundSystemMixin {
 
-    @Inject(method = "play(Lnet/minecraft/client/sound/SoundInstance;)V", at = @At("RETURN"))
-    public void onSoundPlay(SoundInstance soundInstance, CallbackInfo ci) {
-        if (soundInstance.getIdentifier().equals(new Identifier("mob.villager.idle")) && InGameTimer.getInstance().isPlaying()) {
+    @Inject(method = "playSound(Ljava/lang/String;FFFFF)V", at = @At("RETURN"))
+    public void onSoundPlay(String x, float y, float z, float volume, float pitch, float par6, CallbackInfo ci) {
+        if (x.equals("mob.villager.idle") && InGameTimer.getInstance().isPlaying()) {
             InGameTimer.getInstance().tryInsertNewTimeline("found_villager");
         }
     }

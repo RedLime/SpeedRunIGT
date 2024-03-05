@@ -12,11 +12,11 @@ public class TimerPacketUtils {
 
     @Environment(EnvType.CLIENT)
     public static void sendClient2ServerPacket(MinecraftClient client, TimerPacket packet) {
-        if (client.getNetworkHandler() != null) client.getNetworkHandler().sendPacket(packet.createClient2ServerPacket(client));
+        if (client.field_3805.field_1667 != null) client.field_3805.field_1667.sendPacket(packet.createClient2ServerPacket(client));
     }
 
     public static void sendServer2ClientPacket(ServerPlayerEntity player, TimerPacket packet) {
-        player.networkHandler.sendPacket(packet.createServer2ClientPacket(player.server));
+        player.field_2823.sendPacket(packet.createServer2ClientPacket(player.server));
     }
 
     public static void sendServer2ClientPacket(Collection<ServerPlayerEntity> players, TimerPacket packet) {
@@ -27,9 +27,9 @@ public class TimerPacketUtils {
         sendServer2ClientPacket(server.getPlayerManager().players, packet);
     }
 
-    public static void sendServer2ClientPacket(MinecraftServer server, TimerPacket packet, TimerPacketBuf buf) {
+    public static void sendServer2ClientPacket(MinecraftServer server, TimerPacket packet, byte[] bytes) {
         for (Object obj : server.getPlayerManager().players) {
-            ((ServerPlayerEntity) obj).networkHandler.sendPacket(packet.createServer2ClientPacket(server, buf));
+            ((ServerPlayerEntity) obj).field_2823.sendPacket(packet.createClient2ServerPacket(server));
         }
     }
 }
