@@ -13,7 +13,7 @@ public class TimerPacketUtils {
 
     @Environment(EnvType.CLIENT)
     public static void sendClient2ServerPacket(MinecraftClient client, TimerPacket packet) {
-        if (client.field_3805.field_1667 != null) {
+        if (client.field_3805 != null && client.field_3805.field_1667 != null) {
             try {
                 client.field_3805.field_1667.sendPacket(packet.createClient2ServerPacket(client));
             } catch (IOException e) {
@@ -40,7 +40,7 @@ public class TimerPacketUtils {
 
     public static void sendServer2ClientPacket(MinecraftServer server, TimerPacket packet, byte[] bytes) throws IOException {
         for (Object obj : server.getPlayerManager().players) {
-            ((ServerPlayerEntity) obj).field_2823.sendPacket(packet.createServer2ClientPacket(server));
+            ((ServerPlayerEntity) obj).field_2823.sendPacket(packet.createServer2ClientPacket(server, bytes));
         }
     }
 }

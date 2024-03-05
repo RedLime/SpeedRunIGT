@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
-import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
+import com.redlimerl.speedrunigt.timer.InGameTimerClientUtils;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.category.condition.StatCategoryCondition;
 import net.minecraft.advancement.AchievementsAndCriterions;
@@ -47,7 +47,7 @@ public abstract class ServerStatHandlerMixin {
         }
 
         if (this.updateTick++ > 20) {
-            InGameTimerUtils.updateStatsJson(timer);
+            InGameTimerClientUtils.STATS_UPDATE = null;
             this.updateTick = 0;
         }
     }

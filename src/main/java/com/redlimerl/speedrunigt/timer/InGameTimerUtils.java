@@ -1,15 +1,12 @@
 package com.redlimerl.speedrunigt.timer;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.gui.screen.FailedCategoryInitScreen;
 import com.redlimerl.speedrunigt.mixins.access.PlayerManagerAccessor;
-import com.redlimerl.speedrunigt.mixins.access.ServerStatHandlerAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
@@ -18,13 +15,7 @@ import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import com.redlimerl.speedrunigt.timer.running.RunPortalPos;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.stat.Stat;
-import net.minecraft.stat.StatHandler;
-import net.minecraft.stat.Stats;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.dimension.Dimension;
@@ -43,7 +34,6 @@ public class InGameTimerUtils {
     public static boolean IS_KILLED_ENDER_DRAGON = false;
     public static boolean IS_CAN_WAIT_WORLD_LOAD = false;
     public static final HashSet<Object> CHANGED_OPTIONS = Sets.newHashSet();
-    public static JsonObject STATS_UPDATE = null;
     public static boolean RETIME_IS_WAITING_LOAD = false;
     public static boolean IS_SET_SEED = false;
     public static long LATEST_TIMER_TIME = 0;
@@ -172,7 +162,9 @@ public class InGameTimerUtils {
         }
         jsonObject.add("timelines", timelineArr);
         jsonObject.add("advancements", SpeedRunIGT.GSON.toJsonTree(sortMapByValue(timer.getAdvancementsTracker().getAdvancements())));
-        jsonObject.add("stats", getStatsJson(timer));
+        if (SpeedRunIGT.IS_CLIENT_SIDE) {
+            jsonObject.add("stats", InGameTimerClientUtils.getStatsJson(timer));
+        }
 
         return jsonObject;
     }
@@ -186,26 +178,6 @@ public class InGameTimerUtils {
             result.put(entry.getKey(), entry.getValue());
         }
         return result;
-    }
-
-    public static JsonObject getStatsJson(InGameTimer timer) {
-        return timer.isServerIntegrated && STATS_UPDATE != null ? STATS_UPDATE : new JsonObject();
-    }
-
-    public static void updateStatsJson(InGameTimer timer) {
-        JsonObject jsonObject = new JsonObject();
-        JsonObject jsonObject2 = new JsonObject();
-        jsonObject.add(MinecraftClient.getInstance().field_3805.getUuid().toString(), jsonObject2);
-        MinecraftServer server = getServer();
-        if (timer.isServerIntegrated && server != null && server.getPlayerManager() != null) {
-            StatHandler stats = MinecraftClient.getInstance().field_3763;
-            for (Object object : stats.method_1734().entrySet()) {
-                @SuppressWarnings("unchecked")
-                Map.Entry<Stat, Integer> statEntry = (Map.Entry<Stat, Integer>) object;
-                jsonObject2.add(statEntry.getKey().getStringId(), new JsonPrimitive(statEntry.getValue()));
-            }
-        }
-        STATS_UPDATE = jsonObject;
     }
 
     public static boolean isHardcoreWorld() {
@@ -255,16 +227,6 @@ public class InGameTimerUtils {
             }
         }
         return false;
-    }
-
-    public static Long getPlayerTime() {
-        MinecraftServer server = MinecraftClient.getInstance().getServer();
-        PlayerEntity player = MinecraftClient.getInstance().field_3805;
-        if (server != null && player != null) {
-            StatHandler statHandler = MinecraftClient.getInstance().field_3763;
-            return statHandler == null ? null : statHandler.getStatLevel(Stats.MINUTES_PLAYED) * 50L;
-        }
-        return null;
     }
 
     public static @Nullable FailedCategoryInitScreen FAILED_CATEGORY_INIT_SCREEN = null;

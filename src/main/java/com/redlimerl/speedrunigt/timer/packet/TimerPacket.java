@@ -52,6 +52,13 @@ public abstract class TimerPacket {
         return new CustomPayloadC2SPacket(this.identifier, buf.toByteArray());
     }
 
+    final CustomPayloadC2SPacket createServer2ClientPacket(MinecraftServer server, byte[] bytes) throws IOException {
+        ByteArrayOutputStream buf = new ByteArrayOutputStream();
+        buf.write(bytes);
+        this.convertServer2ClientPacket(new DataOutputStream(buf), server);
+        return new CustomPayloadC2SPacket(this.identifier, buf.toByteArray());
+    }
+
     final CustomPayloadC2SPacket createServer2ClientPacket(MinecraftServer server) throws IOException {
         ByteArrayOutputStream buf = new ByteArrayOutputStream();
         this.convertServer2ClientPacket(new DataOutputStream(buf), server);

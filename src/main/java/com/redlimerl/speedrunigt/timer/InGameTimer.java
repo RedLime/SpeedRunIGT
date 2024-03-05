@@ -145,7 +145,9 @@ public class InGameTimer implements Serializable {
         INSTANCE.setCategory(SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY), false);
         INSTANCE.setPause(true, TimerStatus.IDLE, "startup");
         INSTANCE.runType = runType;
-        InGameTimerUtils.STATS_UPDATE = null;
+        if (SpeedRunIGT.IS_CLIENT_SIDE) {
+            InGameTimerClientUtils.STATS_UPDATE = null;
+        }
         GameInstance.getInstance().tryLoadWorld(worldName);
         if (runType.equals(RunType.SET_SEED)) {
             GameInstance.getInstance().callEvents("view_seed");
@@ -171,7 +173,9 @@ public class InGameTimer implements Serializable {
         INSTANCE.defaultGameMode = defaultGameMode;
         INSTANCE.setPause(true, TimerStatus.IDLE, "reset");
         INSTANCE.setPause(false, "reset");
-        InGameTimerUtils.STATS_UPDATE = null;
+        if (SpeedRunIGT.IS_CLIENT_SIDE) {
+            InGameTimerClientUtils.STATS_UPDATE = null;
+        }
         if (isCoop && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerStartPacket(INSTANCE, INSTANCE.getRealTimeAttack()));
     }
 
@@ -311,7 +315,9 @@ public class InGameTimer implements Serializable {
 
         save(true);
         GameInstance.getInstance().closeTimer();
-        InGameTimerUtils.STATS_UPDATE = null;
+        if (SpeedRunIGT.IS_CLIENT_SIDE) {
+            InGameTimerClientUtils.STATS_UPDATE = null;
+        }
 
         INSTANCE.setStatus(TimerStatus.NONE);
     }
@@ -414,7 +420,9 @@ public class InGameTimer implements Serializable {
                     GameInstance.getInstance().tryLoadWorld(name);
 
                     INSTANCE.getCustomCondition().ifPresent(CategoryCondition::refreshConditionClasses);
-                    InGameTimerUtils.STATS_UPDATE = null;
+                    if (SpeedRunIGT.IS_CLIENT_SIDE) {
+                        InGameTimerClientUtils.STATS_UPDATE = null;
+                    }
 
                     SpeedRunIGT.debug("End timer data loading...");
                     return true;
