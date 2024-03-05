@@ -2,7 +2,7 @@ package com.redlimerl.speedrunigt.timer;
 
 import com.redlimerl.speedrunigt.gui.screen.FailedCategoryInitScreen;
 import com.redlimerl.speedrunigt.mixins.access.ClientChunkProviderAccessor;
-import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
+import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessorForAttack;
 import com.redlimerl.speedrunigt.mixins.access.WorldRendererAccessor;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
 import net.fabricmc.api.EnvType;
@@ -24,7 +24,7 @@ public class InGameTimerClientUtils {
 
         if (timer.getStatus() != TimerStatus.IDLE) return false;
 
-        if (!((MinecraftClientAccessor) client).isPaused() && client.worldRenderer != null && Mouse.isInsideWindow() && Display.isActive() && Mouse.isGrabbed()
+        if (!((MinecraftClientAccessorForAttack) client).isPaused() && client.worldRenderer != null && Mouse.isInsideWindow() && Display.isActive() && Mouse.isGrabbed()
                 && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
             if (checkRender) {
                 WorldRendererAccessor worldRenderer = (WorldRendererAccessor) client.worldRenderer;
@@ -70,6 +70,6 @@ public class InGameTimerClientUtils {
     }
 
     public static boolean isFocusedClick() {
-        return ((MinecraftClientAccessor) MinecraftClient.getInstance()).getAttackCoolDown() <= 0;
+        return ((MinecraftClientAccessorForAttack) MinecraftClient.getInstance()).getAttackCoolDown() <= 0;
     }
 }

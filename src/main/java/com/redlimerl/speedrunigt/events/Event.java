@@ -1,7 +1,6 @@
 package com.redlimerl.speedrunigt.events;
 
 import com.redlimerl.speedrunigt.utils.MonadicStringBuilder;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

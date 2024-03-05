@@ -19,13 +19,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Map;
-import java.util.logging.Logger;
 
 @Mixin(StatHandler.class)
 public abstract class ServerStatHandlerMixin {
-    @Unique
-    Logger LOGGER = Logger.getLogger("Stats Handler");
-
     @Shadow public abstract Map<Stat, Integer> method_1734();
 
     private int updateTick = 0;

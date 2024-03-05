@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 public class StringNbtReader {
     private static final Logger LOGGER = Logger.getLogger("String NBT Reader");
 
-    public static NbtElement method_7377(String string) {
+    public static NbtElement fromJsonString(String string) {
         string = string.trim();
         int var1 = getTopElementCount(string);
         if (var1 != 1) {

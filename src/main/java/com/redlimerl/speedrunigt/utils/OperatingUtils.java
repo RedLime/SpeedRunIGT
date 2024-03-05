@@ -22,7 +22,7 @@ public class OperatingUtils {
 
     public static void setFile(File file) {
         String string = file.getAbsolutePath();
-        if (Util.method_6318() == OperatingSystem.LINUX) {
+        if (Util.method_6318() == OperatingSystem.MACOS) {
             try {
                 Runtime.getRuntime().exec(new String[]{"/usr/bin/open", string});
                 return;

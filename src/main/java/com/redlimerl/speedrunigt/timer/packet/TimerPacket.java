@@ -1,6 +1,8 @@
 package com.redlimerl.speedrunigt.timer.packet;
 
 import com.google.common.collect.Maps;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.server.MinecraftServer;
@@ -43,13 +45,13 @@ public abstract class TimerPacket {
         return this.identifier;
     }
 
+    @Environment(EnvType.CLIENT)
     final CustomPayloadC2SPacket createClient2ServerPacket(MinecraftClient client) throws IOException {
         ByteArrayOutputStream buf = new ByteArrayOutputStream();
         this.convertClient2ServerPacket(new DataOutputStream(buf), client);
         return new CustomPayloadC2SPacket(this.identifier, buf.toByteArray());
     }
 
-    // ignore the type
     final CustomPayloadC2SPacket createServer2ClientPacket(MinecraftServer server) throws IOException {
         ByteArrayOutputStream buf = new ByteArrayOutputStream();
         this.convertServer2ClientPacket(new DataOutputStream(buf), server);
@@ -61,9 +63,9 @@ public abstract class TimerPacket {
         TimerPacketUtils.sendServer2ClientPacket(server, this, bytes);
     }
 
+    @Environment(EnvType.CLIENT)
     protected abstract void convertClient2ServerPacket(DataOutputStream buf, MinecraftClient client) throws IOException;
 
-    // will likely be sending back to players, so need to take the packet instead of just its data
     public abstract void receiveClient2ServerPacket(CustomPayloadC2SPacket packet, MinecraftServer server) throws IOException;
 
     protected abstract void convertServer2ClientPacket(DataOutputStream buf, MinecraftServer server) throws IOException;

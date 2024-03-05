@@ -8,7 +8,6 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import net.minecraft.client.MinecraftClient;
 
-
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;

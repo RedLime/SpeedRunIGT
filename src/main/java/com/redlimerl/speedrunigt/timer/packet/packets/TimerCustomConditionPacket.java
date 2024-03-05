@@ -5,6 +5,8 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.server.MinecraftServer;
@@ -26,6 +28,7 @@ public class TimerCustomConditionPacket extends TimerPacket {
         this.sendCondition = condition;
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     protected void convertClient2ServerPacket(DataOutputStream buf, MinecraftClient client) throws IOException {
         if (this.sendCondition != null) buf.writeUTF(this.sendCondition.getName());
@@ -46,6 +49,7 @@ public class TimerCustomConditionPacket extends TimerPacket {
         if (this.sendCondition != null) buf.writeUTF(this.sendCondition.getName());
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void receiveServer2ClientPacket(DataInputStream buf, MinecraftClient client) throws IOException {
         this.timerCondition(buf);

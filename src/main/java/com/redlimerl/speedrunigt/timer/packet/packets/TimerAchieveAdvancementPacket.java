@@ -8,7 +8,6 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
 
 import java.io.*;
 import java.util.Map;
@@ -27,6 +26,7 @@ public class TimerAchieveAdvancementPacket extends TimerPacket {
         this.sendAdvancement = advancement;
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     protected void convertClient2ServerPacket(DataOutputStream buf, MinecraftClient client) throws IOException {
         if (sendAdvancement != null) {

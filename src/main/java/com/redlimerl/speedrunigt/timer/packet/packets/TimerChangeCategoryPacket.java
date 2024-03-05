@@ -6,6 +6,8 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.server.MinecraftServer;
@@ -26,6 +28,7 @@ public class TimerChangeCategoryPacket extends TimerPacket {
         this.sendCategory = name;
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     protected void convertClient2ServerPacket(DataOutputStream buf, MinecraftClient client) throws IOException {
         if (this.sendCategory != null) {
@@ -52,6 +55,7 @@ public class TimerChangeCategoryPacket extends TimerPacket {
         }
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void receiveServer2ClientPacket(DataInputStream buf, MinecraftClient client) throws IOException {
         InGameTimer.getInstance().setCategory(RunCategory.getCategory(buf.readUTF()), false);

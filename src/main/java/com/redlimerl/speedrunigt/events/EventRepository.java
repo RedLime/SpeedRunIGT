@@ -3,7 +3,6 @@ package com.redlimerl.speedrunigt.events;
 import com.redlimerl.speedrunigt.instance.GameInstance;
 import com.redlimerl.speedrunigt.instance.TimerWorld;
 
-
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;

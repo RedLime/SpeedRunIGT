@@ -3,6 +3,8 @@ package com.redlimerl.speedrunigt.timer.packet.packets;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.server.MinecraftServer;
@@ -27,6 +29,7 @@ public class TimerAchieveCriteriaPacket extends TimerPacket {
         this.serverIsAdvancement = isAdvancement;
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     protected void convertClient2ServerPacket(DataOutputStream buf, MinecraftClient client) throws IOException {
         if (this.serverAdvancement != null) buf.writeUTF(this.serverAdvancement);
@@ -50,6 +53,7 @@ public class TimerAchieveCriteriaPacket extends TimerPacket {
         if (this.serverCriteria != null) buf.writeUTF(this.serverCriteria);
         if (this.serverIsAdvancement != null) buf.writeBoolean(this.serverIsAdvancement);
     }
+
 
     @Override
     public void receiveServer2ClientPacket(DataInputStream buf, MinecraftClient client) throws IOException {

@@ -8,7 +8,6 @@ import com.google.gson.JsonParser;
 import com.redlimerl.speedrunigt.utils.ResourcesHelper;
 import org.apache.commons.io.IOUtils;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;

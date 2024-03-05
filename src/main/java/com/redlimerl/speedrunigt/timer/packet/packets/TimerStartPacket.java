@@ -5,6 +5,8 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
 import com.redlimerl.speedrunigt.timer.running.RunType;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.server.MinecraftServer;
@@ -40,6 +42,7 @@ public class TimerStartPacket extends TimerPacket {
         this.sendRTA = rta;
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     protected void convertClient2ServerPacket(DataOutputStream buf, MinecraftClient client) throws IOException {
         if (this.sendTimer != null) {
@@ -83,6 +86,7 @@ public class TimerStartPacket extends TimerPacket {
         }
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void receiveServer2ClientPacket(DataInputStream buf, MinecraftClient client) throws IOException {
         this.timerInit(buf, client.isIntegratedServerRunning());
