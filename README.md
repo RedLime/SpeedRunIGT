@@ -16,38 +16,38 @@ The **Timer** Mod for Minecraft Speedrunning
 - Display RTA/IGT timers In-game
 - Auto Start & Pause the timer
   - Supported 20+ categories!
-  - You can make your category!
+  - Ability to make your own category
 - Configurable timer position, scale and color
 - Custom font in timer
 - Many configurable options
 - APIs for developers
-- Some of anti-cheat for speedrunning
+- Some sort of anti-cheat for speedrunning
 
 ## Downloads
-- [Download Page](https://redlime.github.io/SpeedRunIGT/) (Recommended)
+- [Download Page](https://redlime.github.io/SpeedRunIGT) (Recommended)
 - [Release Page](https://github.com/RedLime/SpeedRunIGT/releases)
 
 ## Support Versions
 ### Stable Versions
-- 1.14.x to 1.20.x (with Fabric Loader)
-- 1.7.x to 1.13.x (with Legacy Fabric Loader)
+- 1.14.x to 1.20.x (Fabric Loader)
+- 1.7.x to 1.13.x (Legacy Fabric Loader)
 - Some of subversions aren't supported. Check the available versions on the download page.
-### Unsupported Versions
-###### It was released before, but NO LONGER support any update
+### EoL Versions
+###### You can still use these versions, but no more support will be given!
 - 1.18.1, 1.19, 1.19.1, 1.19.3, 1.20-1.20.2 
 
 ## FaQ
-- Is it allowed in *[Speedrun.com](https://speedrun.com/mc)* run verification? ✅
-- Is it support Multi-Instances? ✅
-- Is it work with full-screen or macOS? ✅
-- How to add custom font in timer?
+- Is it allowed in *[Speedrun.com](https://speedrun.com/mc)*'s run verification? ✅
+- Does it support multi instances? ✅
+- Does it work with full-screen or macOS? ✅
+- How do I add a custom font to the timer?
   - Watch [this video with description](https://youtu.be/agBbiTQWj78)
-- If you have any question, join Discord server :)
+- If you have any questions, join the Discord server :)
 
-## Contribute translation project!
+## Contribute to the translation project!
 [Crowdin Project](https://crowdin.com/project/speedrunigt)
 
 ## Support
-- Official Discord Server : [SpeedRunIGT Development](https://discord.gg/7G2tfP7Xpe)
-- Discord : RedLime#0817
+- Official Discord Server: [SpeedRunIGT Development](https://discord.gg/7G2tfP7Xpe)
+- Discord Username + Tag: RedLime#0817
 - [API Docs](https://github.com/RedLime/SpeedRunIGT/wiki/SpeedRunIGT-API-Document)
