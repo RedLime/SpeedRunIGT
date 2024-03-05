@@ -4,11 +4,10 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.server.MinecraftServer;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.*;
 
 public class TimerCompletePacket extends TimerPacket {
 
@@ -25,29 +24,27 @@ public class TimerCompletePacket extends TimerPacket {
     }
 
     @Override
-    protected DataOutputStream createC2SPacket(DataOutputStream buf, MinecraftClient client, ByteArrayOutputStream baos) {
+    protected void convertClient2ServerPacket(DataOutputStream buf, MinecraftClient client) throws IOException {
         if (this.sendRTA != null) buf.writeLong(this.sendRTA);
-        return buf;
     }
 
     @Override
-    public void receiveClient2ServerPacket(DataInputStream buf, MinecraftServer server, byte[] bytes) {
+    public void receiveClient2ServerPacket(CustomPayloadC2SPacket packet, MinecraftServer server) throws IOException {
         if (!SpeedRunIGT.IS_CLIENT_SIDE) {
-            DataInputStream copiedBuf =  new DataInputStream(buf);
+            DataInputStream copiedBuf =  new DataInputStream(new ByteArrayInputStream(packet.field_2455));
             InGameTimer.complete(InGameTimer.getInstance().getStartTime() + copiedBuf.readLong(), false);
             copiedBuf.close();
         }
-        this.sendPacketToPlayers(bytes, server);
+        this.sendPacketToPlayers(packet.field_2455, server);
     }
 
     @Override
-    protected DataOutputStream convertServer2ClientPacket(DataOutputStream buf, MinecraftServer server) {
+    protected void convertServer2ClientPacket(DataOutputStream buf, MinecraftServer server) throws IOException {
         if (this.sendRTA != null) buf.writeLong(this.sendRTA);
-        return buf;
     }
 
     @Override
-    public void receiveServer2ClientPacket(DataInputStream buf, MinecraftClient client) {
+    public void receiveServer2ClientPacket(DataInputStream buf, MinecraftClient client) throws IOException {
         InGameTimer.complete(InGameTimer.getInstance().getStartTime() + buf.readLong(), false);
     }
 }

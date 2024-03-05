@@ -22,7 +22,7 @@ dependencies {
 	mappings "net.legacyfabric:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	runtimeOnly files("libs/StatsPerWorld-1.1+1.6.x.jar")
+	modRuntimeOnly files("libs/StatsPerWorld-1.1+1.6.x.jar")
 
 	// PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
 	// You may need to force-disable transitiveness on them.

@@ -6,6 +6,7 @@ import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 
@@ -16,7 +17,7 @@ public class TimerAchieveAdvancementPacket extends TimerPacket {
 
     public static final String IDENTIFIER = TimerPacket.identifier("ac_ad");
     private final String sendAdvancement;
-ByteArrayOutputStream
+
     public TimerAchieveAdvancementPacket() {
         this(null);
     }
@@ -26,19 +27,17 @@ ByteArrayOutputStream
         this.sendAdvancement = advancement;
     }
 
-    @Environment(EnvType.CLIENT)
     @Override
-    protected DataOutputStream createC2SPacket(DataOutputStream buf, MinecraftClient client, ByteArrayOutputStream baos) {
+    protected void convertClient2ServerPacket(DataOutputStream buf, MinecraftClient client) throws IOException {
         if (sendAdvancement != null) {
             buf.writeUTF(sendAdvancement);
         }
-        return buf;
     }
 
     @Override
-    public void receiveClient2ServerPacket(DataInputStream buf, MinecraftServer server, byte[] bytes) {
-        DataInputStream copiedBuf = new DataInputStream(buf);
-        InGameTimer.getInstance().tryInsertNewAdvancement(new Identifier(copiedBuf.readUTF()), null, true);
+    public void receiveClient2ServerPacket(CustomPayloadC2SPacket packet, MinecraftServer server) throws IOException {
+        DataInputStream copiedBuf = new DataInputStream(new ByteArrayInputStream(packet.field_2455));
+        InGameTimer.getInstance().tryInsertNewAdvancement(copiedBuf.readUTF(), null, true);
         copiedBuf.close();
 
         int count = 0, goal = InGameTimer.getInstance().getMoreData(7441);
@@ -51,15 +50,14 @@ ByteArrayOutputStream
             return;
         }
 
-        this.sendPacketToPlayers(bytes, server);
+        this.sendPacketToPlayers(packet.field_2455, server);
     }
 
     @Override
-    protected DataOutputStream createS2CPacket(DataOutputStream buf, MinecraftServer server) {
+    protected void convertServer2ClientPacket(DataOutputStream buf, MinecraftServer server) throws IOException {
         if (sendAdvancement != null) {
             buf.writeUTF(sendAdvancement);
         }
-        return buf;
     }
 
     @Environment(EnvType.CLIENT)

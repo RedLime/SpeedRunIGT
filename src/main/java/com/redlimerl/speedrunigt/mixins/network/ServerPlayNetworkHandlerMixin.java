@@ -12,9 +12,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-
 @Mixin(ServerPacketListener.class)
 public class ServerPlayNetworkHandlerMixin {
 
@@ -26,7 +23,7 @@ public class ServerPlayNetworkHandlerMixin {
             TimerPacket timerPacket = TimerPacket.createTimerPacketFromPacket(packet.channel);
             SpeedRunIGT.debug(String.format("Client->Server Packet: %s bytes, ID : %s", packet.field_2455.length, packet.channel));
             try {
-                if (timerPacket != null) timerPacket.receiveClient2ServerPacket(packet, this.server, packet.field_2455);
+                if (timerPacket != null) timerPacket.receiveClient2ServerPacket(packet, this.server);
             } catch (Exception e) {
                 e.printStackTrace();
                 SpeedRunIGT.error("Failed to read packet in server side, probably SpeedRunIGT version different between players");

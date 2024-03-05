@@ -6,11 +6,10 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.server.MinecraftServer;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.*;
 import java.util.Objects;
 
 public class TimerCustomConditionPacket extends TimerPacket {
@@ -28,33 +27,31 @@ public class TimerCustomConditionPacket extends TimerPacket {
     }
 
     @Override
-    protected DataOutputStream createC2SPacket(DataOutputStream buf, MinecraftClient client, ByteArrayOutputStream baos) {
+    protected void convertClient2ServerPacket(DataOutputStream buf, MinecraftClient client) throws IOException {
         if (this.sendCondition != null) buf.writeUTF(this.sendCondition.getName());
-        return buf;
     }
 
     @Override
-    public void receiveClient2ServerPacket(DataInputStream buf, MinecraftServer server) {
+    public void receiveClient2ServerPacket(CustomPayloadC2SPacket packet, MinecraftServer server) throws IOException {
         if (!SpeedRunIGT.IS_CLIENT_SIDE) {
-            DataInputStream copiedBuf = new DataInputStream(buf);
+            DataInputStream copiedBuf = new DataInputStream(new ByteArrayInputStream(packet.field_2455));
             this.timerCondition(copiedBuf);
             copiedBuf.close();
         }
-        this.sendPacketToPlayers(buf, server);
+        this.sendPacketToPlayers(packet.field_2455, server);
     }
 
     @Override
-    protected DataOutputStream convertServer2ClientPacket(DataOutputStream buf, MinecraftServer server) {
+    protected void convertServer2ClientPacket(DataOutputStream buf, MinecraftServer server) throws IOException {
         if (this.sendCondition != null) buf.writeUTF(this.sendCondition.getName());
-        return buf;
     }
 
     @Override
-    public void receiveServer2ClientPacket(DataInputStream buf, MinecraftClient client) {
+    public void receiveServer2ClientPacket(DataInputStream buf, MinecraftClient client) throws IOException {
         this.timerCondition(buf);
     }
 
-    public void timerCondition(DataInputStream buf) {
+    public void timerCondition(DataInputStream buf) throws IOException {
         String conditionName = buf.readUTF();
         for (CategoryCondition.Condition<?> condition : InGameTimer.getInstance().getCustomCondition().map(CategoryCondition::getConditionList).orElse(Lists.newArrayList())) {
             if (Objects.equals(condition.getName(), conditionName)) {

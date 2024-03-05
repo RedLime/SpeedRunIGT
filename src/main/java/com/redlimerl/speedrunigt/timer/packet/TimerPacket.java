@@ -43,22 +43,30 @@ public abstract class TimerPacket {
         return this.identifier;
     }
 
-    final CustomPayloadC2SPacket createClient2ServerPacket(MinecraftClient client) {
+    final CustomPayloadC2SPacket createClient2ServerPacket(MinecraftClient client) throws IOException {
         ByteArrayOutputStream buf = new ByteArrayOutputStream();
         this.convertClient2ServerPacket(new DataOutputStream(buf), client);
         return new CustomPayloadC2SPacket(this.identifier, buf.toByteArray());
     }
 
-    protected void sendPacketToPlayers(byte[] bytes, MinecraftServer server) {
+    // ignore the type
+    final CustomPayloadC2SPacket createServer2ClientPacket(MinecraftServer server) throws IOException {
+        ByteArrayOutputStream buf = new ByteArrayOutputStream();
+        this.convertServer2ClientPacket(new DataOutputStream(buf), server);
+        return new CustomPayloadC2SPacket(this.identifier, buf.toByteArray());
+    }
+
+
+    protected void sendPacketToPlayers(byte[] bytes, MinecraftServer server) throws IOException {
         TimerPacketUtils.sendServer2ClientPacket(server, this, bytes);
     }
 
-    protected abstract DataOutputStream convertClient2ServerPacket(DataOutputStream buf, MinecraftClient client);
+    protected abstract void convertClient2ServerPacket(DataOutputStream buf, MinecraftClient client) throws IOException;
 
-    // will likely be sending back to players, so need to read input while keeping the raw packet data to send back
-    public abstract void receiveClient2ServerPacket(CustomPayloadC2SPacket buf, MinecraftServer server, byte[] bytes);
+    // will likely be sending back to players, so need to take the packet instead of just its data
+    public abstract void receiveClient2ServerPacket(CustomPayloadC2SPacket packet, MinecraftServer server) throws IOException;
 
-    protected abstract ByteArrayOutputStream convertServer2ClientPacket(DataOutputStream buf, MinecraftServer server);
+    protected abstract void convertServer2ClientPacket(DataOutputStream buf, MinecraftServer server) throws IOException;
 
     public abstract void receiveServer2ClientPacket(DataInputStream buf, MinecraftClient client) throws IOException;
 }
