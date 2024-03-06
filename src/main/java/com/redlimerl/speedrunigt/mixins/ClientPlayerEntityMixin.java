@@ -174,7 +174,8 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity {
     @Inject(at = @At("HEAD"), method = "method_2651")
     public void updateNausea(CallbackInfo ci) {
         // Portal time update
-        if (this.changingDimension) {
+        // field_3996 -> changingDimension
+        if (this.field_3996) {
             if (++portalTick >= 81 && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
                 portalTick = 0;
                 if (InGameTimer.getInstance().getStatus() != TimerStatus.IDLE && field_1759.isInSingleplayer()) {

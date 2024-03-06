@@ -156,7 +156,7 @@ public abstract class MinecraftClientMixin {
         if (time < 2950) {
             Window window = new Window(this.options, this.width, this.height);
             String text = "SpeedRunIGT v" + (SpeedRunIGT.MOD_VERSION.split("\\+")[0]);
-            this.textRenderer.method_4247(text, this.currentScreen != null ? (int) ((window.getScaledWidth() - this.textRenderer.getStringWidth(text)) / 2f) : 4, (int) window.getScaledHeight() - 12,
+            this.textRenderer.method_964(text, this.currentScreen != null ? (int) ((window.getScaledWidth() - this.textRenderer.getStringWidth(text)) / 2f) : 4, (int) window.getScaledHeight() - 12,
                     ColorMixer.getArgb((int) (MathHelperExt.clamp((3000 - time) / 1000.0, 0, 1) * (this.currentScreen != null ? 90 : 130)), 255, 255, 255));
         }
 

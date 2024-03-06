@@ -43,7 +43,7 @@ public class OptionsScreenMixin extends Screen {
             GL11.glPushMatrix();
             GL11.glTranslatef(-.5f, -.5f, 0);
             field_1229.textureManager.bindTexture(field_1229.textureManager.getTextureFromPath("/gui/items.png"));
-            int id = timerButton.isHovered() ? ENDER_EYE : SpeedRunIGTUpdateChecker.UPDATE_STATUS == SpeedRunIGTUpdateChecker.UpdateStatus.OUTDATED ? BLAZE_POWDER : ENDER_PEARL;
+            int id = timerButton.method_894(this.field_1229, mouseX, mouseY) ? ENDER_EYE : SpeedRunIGTUpdateChecker.UPDATE_STATUS == SpeedRunIGTUpdateChecker.UpdateStatus.OUTDATED ? BLAZE_POWDER : ENDER_PEARL;
             drawTexture(timerButton.x + 2, timerButton.y + 2, id % 16 * 16, id / 16 * 16, 16, 16);
             GL11.glPopMatrix();
         }

@@ -63,18 +63,18 @@ public class TimerElement {
 
     private static void drawOutLine(TextRenderer textRenderer, int x, int y, String text, Integer color, TimerDecoration decoration) {
         if (decoration == TimerDecoration.OUTLINE) {
-            textRenderer.method_4247(text, x + 1, y + 1, 0);
-            textRenderer.method_4247(text, x + 1, y, 0);
-            textRenderer.method_4247(text, x + 1, y - 1, 0);
-            textRenderer.method_4247(text, x, y - 1, 0);
-            textRenderer.method_4247(text, x, y + 1, 0);
-            textRenderer.method_4247(text, x - 1, y + 1, 0);
-            textRenderer.method_4247(text, x - 1, y, 0);
-            textRenderer.method_4247(text, x - 1, y - 1, 0);
+            textRenderer.method_964(text, x + 1, y + 1, 0);
+            textRenderer.method_964(text, x + 1, y, 0);
+            textRenderer.method_964(text, x + 1, y - 1, 0);
+            textRenderer.method_964(text, x, y - 1, 0);
+            textRenderer.method_964(text, x, y + 1, 0);
+            textRenderer.method_964(text, x - 1, y + 1, 0);
+            textRenderer.method_964(text, x - 1, y, 0);
+            textRenderer.method_964(text, x - 1, y - 1, 0);
         } else if (decoration == TimerDecoration.SHADOW) {
-            textRenderer.method_4247(text, x + 1, y + 1, -12566464);
+            textRenderer.method_964(text, x + 1, y + 1, -12566464);
         }
-        textRenderer.method_4247(text, x, y, color);
+        textRenderer.method_964(text, x, y, color);
     }
 
     public Position getPosition() {
