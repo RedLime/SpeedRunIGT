@@ -10,9 +10,7 @@ import org.apache.commons.io.IOUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,8 +21,12 @@ import java.util.Properties;
 @Mixin(Language.class)
 public abstract class TranslationStorageMixin {
 
-    @Inject(method = "method_631", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Language;method_633(Ljava/util/Properties;Ljava/lang/String;)V", shift = At.Shift.BEFORE, ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void onLoad(String language, boolean refresh, CallbackInfo ci, Properties properties) {
+    @Shadow
+    protected abstract void method_633(Properties properties, String string);
+
+    @Redirect(method = "method_631", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Language;method_633(Ljava/util/Properties;Ljava/lang/String;)V"))
+    private void onLoad(Language instance, Properties properties, String language) {
+        method_633(properties, language);
         InputStream inputStream = TranslateHelper.setup(language, SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_ENGLISH_TRANSLATIONS));
         try {
             if (inputStream == null) return;
