@@ -289,7 +289,7 @@ public class SpeedRunOptionScreen extends Screen {
             GL11.glDisable(2896);
             GL11.glDisable(2912);
             Tessellator var2 = Tessellator.INSTANCE;
-            SpeedRunOptionScreen.this.field_1229.textureManager.method_5146("/gui/background.png");
+            SpeedRunOptionScreen.this.field_1229.textureManager.bindTexture(SpeedRunOptionScreen.this.field_1229.textureManager.getTextureFromPath("/gui/background.png"));
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             float var3 = 32.0F;
             var2.begin();

@@ -70,6 +70,6 @@ public class TranslateHelper {
     }
 
     public static void reload() {
-        Language.getInstance().method_631(Language.getInstance().getCode(), true);
+        Language.getInstance().setCode(Language.getInstance().getCode());
     }
 }

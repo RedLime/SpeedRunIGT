@@ -229,7 +229,7 @@ public abstract class ListWidget {
         GL11.glDisable(2896);
         GL11.glDisable(2912);
         Tessellator var16 = Tessellator.INSTANCE;
-        this.client.textureManager.method_5146("/gui/background.png");
+        this.client.textureManager.bindTexture(this.client.textureManager.getTextureFromPath("/gui/background.png"));
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         float var17 = 32.0F;
         var16.begin();
@@ -380,7 +380,7 @@ public abstract class ListWidget {
 
     private void renderHoleBackground(int top, int bottom, int topAlpha, int bottomAlpha) {
         Tessellator var5 = Tessellator.INSTANCE;
-        this.client.textureManager.method_5146("/gui/background.png");
+        this.client.textureManager.bindTexture(this.client.textureManager.getTextureFromPath("/gui/background.png"));
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         float var6 = 32.0F;
         var5.begin();

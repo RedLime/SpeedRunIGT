@@ -141,8 +141,7 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity {
                     items.contains(Item.GOLD_INGOT) &&
                     items.contains(Item.DIAMOND) &&
                     items.contains(Item.REDSTONE) &&
-                    items.contains(Item.EMERALD) &&
-                    items.contains(Item.NETHER_QUARTZ)
+                    items.contains(Item.EMERALD)
             ) {
                 for (int i = 0; i < this.inventory.main.length; i++) {
                     ItemStack item = this.inventory.main[i];
@@ -156,10 +155,10 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity {
 
         //Iron Armors & lvl 15
         if (timer.getCategory() == RunCategories.FULL_IA_15_LVL) {
-            if (armors.contains(Item.IRON_HELMET) &&
-                    armors.contains(Item.IRON_CHESTPLATE) &&
-                    armors.contains(Item.IRON_BOOTS) &&
-                    armors.contains(Item.IRON_LEGGINGS) && this.experienceLevel >= 15) {
+            if (armors.contains(Item.field_4265) &&
+                    armors.contains(Item.field_4266) &&
+                    armors.contains(Item.field_4268) &&
+                    armors.contains(Item.field_4267) && this.experienceLevel >= 15) {
                 InGameTimer.complete();
             }
         }

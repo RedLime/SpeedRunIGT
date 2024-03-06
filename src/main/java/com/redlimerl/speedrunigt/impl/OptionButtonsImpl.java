@@ -17,7 +17,6 @@ import com.redlimerl.speedrunigt.utils.TranslateHelper;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Language;
 import net.minecraft.util.math.MathHelper;
 import org.apache.commons.io.FileUtils;
@@ -445,7 +444,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
 
         if (Math.random() < 0.01) {
             factories.add(screen -> new OptionButtonFactory.Builder()
-                    .setButtonWidget(new ConsumerButtonWidget(0, 0, 150, 20, Formatting.OBFUSCATED + "no way LMAO", (button) -> {}))
+                    .setButtonWidget(new ConsumerButtonWidget(0, 0, 150, 20, "no way LMAO", (button) -> {}))
                     .setCategory("???")
             );
         }

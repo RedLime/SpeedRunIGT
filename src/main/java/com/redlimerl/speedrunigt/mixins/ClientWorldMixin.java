@@ -2,10 +2,8 @@ package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.logging.LogManager;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.SaveHandler;
 import net.minecraft.world.World;
@@ -32,8 +30,8 @@ public abstract class ClientWorldMixin extends World {
     @Final
     private Minecraft field_1659;
 
-    public ClientWorldMixin(SaveHandler saveHandler, String string, Dimension dimension, LevelInfo levelInfo, Profiler profiler, LogManager logManager) {
-        super(saveHandler, string, dimension, levelInfo, profiler, logManager);
+    public ClientWorldMixin(SaveHandler saveHandler, String string, Dimension dimension, LevelInfo levelInfo, Profiler profiler) {
+        super(saveHandler, string, dimension, levelInfo, profiler);
     }
 
 
@@ -43,8 +41,8 @@ public abstract class ClientWorldMixin extends World {
     }
 
     @Override
-    public boolean method_4721(int bx, int by, int bz, int block, int l, int m) {
-        boolean result = super.method_4721(bx, by, bz, block, l, m);
+    public boolean method_3683(int bx, int by, int bz, int l, int m) {
+        boolean result = super.method_3683(bx, by, bz, l, m);
 
         // TODO: doesn't support nether or overworld caves
         if (this.dimension.hasNoSkylight) {

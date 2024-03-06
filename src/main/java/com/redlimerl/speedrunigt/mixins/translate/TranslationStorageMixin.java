@@ -23,8 +23,8 @@ import java.util.Properties;
 @Mixin(Language.class)
 public abstract class TranslationStorageMixin {
 
-    @Inject(method = "method_631", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Language;method_633(Ljava/util/Properties;Ljava/lang/String;)V", shift = At.Shift.BEFORE, ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void onLoad(String language, boolean refresh, CallbackInfo ci, Properties properties) {
+    @Inject(method = "setCode", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Language;method_633(Ljava/util/Properties;Ljava/lang/String;)V", shift = At.Shift.BEFORE, ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
+    private void onLoad(String language, CallbackInfo ci, Properties properties) {
         InputStream inputStream = TranslateHelper.setup(language, SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_ENGLISH_TRANSLATIONS));
         try {
             if (inputStream == null) return;
