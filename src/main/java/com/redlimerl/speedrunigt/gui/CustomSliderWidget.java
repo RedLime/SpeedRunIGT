@@ -1,6 +1,6 @@
 package com.redlimerl.speedrunigt.gui;
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import org.lwjgl.opengl.GL11;
 
@@ -32,7 +32,7 @@ public class CustomSliderWidget extends ButtonWidget {
         return 0;
     }
 
-    protected void mouseDragged(MinecraftClient client, int mouseX, int mouseY) {
+    protected void method_893(Minecraft client, int mouseX, int mouseY) {
         if (this.visible) {
             if (this.dragging) {
                 this.progress = (float)(mouseX - (this.x + 4)) / (float)(this.width - 8);
@@ -54,8 +54,8 @@ public class CustomSliderWidget extends ButtonWidget {
         }
     }
 
-    public boolean isMouseOver(MinecraftClient client, int mouseX, int mouseY) {
-        if (super.isMouseOver(client, mouseX, mouseY)) {
+    public boolean method_894(Minecraft client, int mouseX, int mouseY) {
+        if (super.method_894(client, mouseX, mouseY)) {
             this.progress = (float)(mouseX - (this.x + 4)) / (float)(this.width - 8);
             if (this.progress < 0.0F) {
                 this.progress = 0.0F;

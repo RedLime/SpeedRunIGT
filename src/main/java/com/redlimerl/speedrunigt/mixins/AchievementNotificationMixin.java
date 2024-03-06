@@ -10,7 +10,7 @@ import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacketUtils;
 import com.redlimerl.speedrunigt.timer.packet.packets.TimerAchieveAdvancementPacket;
 import net.minecraft.advancement.Achievement;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AchievementNotification;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,7 +32,7 @@ public abstract class AchievementNotificationMixin {
         // For Timeline
         timer.tryInsertNewAdvancement(achieved.getStringId(), null, true);
         if (timer.isCoop() && (timer.getCategory() == RunCategories.ALL_ACHIEVEMENTS || timer.getCategory() == RunCategories.HALF || timer.getCategory() == RunCategories.POGLOOT_QUATER))
-            TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerAchieveAdvancementPacket(achieved.getStringId()));
+            TimerPacketUtils.sendClient2ServerPacket(Minecraft.getMinecraft(), new TimerAchieveAdvancementPacket(achieved.getStringId()));
 
         // Custom Json category
         if (timer.getCategory().getConditionJson() != null) {

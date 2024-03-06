@@ -6,8 +6,8 @@ import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -19,12 +19,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Objects;
 
-@Mixin(LivingEntity.class)
+@Mixin(MobEntity.class)
 public abstract class LivingEntityMixin extends Entity {
 
-    @Shadow protected boolean dead;
+    // LivingEntity#dead
+    @Shadow protected boolean field_3304;
 
-    @Shadow protected PlayerEntity attackingPlayer;
+    // LivingEntity#attackingPlayer
+    @Shadow protected PlayerEntity field_3331;
 
     public LivingEntityMixin(World world) {
         super(world);
@@ -34,15 +36,15 @@ public abstract class LivingEntityMixin extends Entity {
      * @reason Backported to 1.8
      */
 
-    @Inject(at = @At("HEAD"), method = "onKilled")
+    @Inject(at = @At("HEAD"), method = "dropInventory")
     public void onDeath(DamageSource source, CallbackInfo ci) {
         @NotNull InGameTimer timer = InGameTimer.getInstance();
 
-        if (this.removed || this.dead || timer.getStatus() == TimerStatus.NONE) return;
+        if (this.removed || this.field_3304 || timer.getStatus() == TimerStatus.NONE) return;
 
         // For Timelines
-        if (Objects.equals(EntityType.getEntityName(this), "WitherBoss") && this.attackingPlayer != null) timer.tryInsertNewTimeline("kill_wither");
-        if (Objects.equals(EntityType.getEntityName(this), "ElderGuardian") && this.attackingPlayer != null) timer.tryInsertNewTimeline("kill_elder_guardian");
+        if (Objects.equals(EntityType.getEntityName(this), "WitherBoss") && this.field_3331 != null) timer.tryInsertNewTimeline("kill_wither");
+        if (Objects.equals(EntityType.getEntityName(this), "ElderGuardian") && this.field_3331 != null) timer.tryInsertNewTimeline("kill_elder_guardian");
         if (Objects.equals(EntityType.getEntityName(this), "EnderDragon")) timer.tryInsertNewTimeline("kill_ender_dragon");
         if (Objects.equals(EntityType.getEntityName(this), "Blaze")) timer.tryInsertNewTimeline("killed_blaze");
 

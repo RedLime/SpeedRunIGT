@@ -5,10 +5,10 @@ import com.redlimerl.speedrunigt.gui.ConsumerButtonWidget;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
 import com.redlimerl.speedrunigt.version.ColorMixer;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.resource.language.I18n;
+import net.minecraft.util.Language;
 
 import java.util.Locale;
 
@@ -29,7 +29,7 @@ public class FailedCategoryInitScreen extends Screen {
 
     @Override
     public void init() {
-        buttons.add(new ConsumerButtonWidget(width / 2 - 100, height / 2 + 15, 200, 20, ScreenTexts.DONE, button -> MinecraftClient.getInstance().setScreen(null)));
+        buttons.add(new ConsumerButtonWidget(width / 2 - 100, height / 2 + 15, 200, 20, ScreenTexts.DONE, button -> Minecraft.getMinecraft().openScreen(null)));
     }
 
     @Override
@@ -47,8 +47,8 @@ public class FailedCategoryInitScreen extends Screen {
     public void render(int mouseX, int mouseY, float delta) {
         renderBackground();
         super.render(mouseX, mouseY, delta);
-        drawCenteredString(this.textRenderer, I18n.translate("speedrunigt.message.failed_add_category", this.fileName), width / 2, height / 2 - 35, TEXT_RED);
-        drawCenteredString(this.textRenderer, I18n.translate("speedrunigt.message.failed_add_category."+exception.getReason().name().toLowerCase(Locale.ROOT)), width / 2, height / 2 - 10, TEXT_WHITE);
+        drawCenteredString(this.textRenderer, Language.getInstance().translate("speedrunigt.message.failed_add_category", this.fileName), width / 2, height / 2 - 35, TEXT_RED);
+        drawCenteredString(this.textRenderer, Language.getInstance().translate("speedrunigt.message.failed_add_category."+exception.getReason().name().toLowerCase(Locale.ROOT)), width / 2, height / 2 - 10, TEXT_WHITE);
         drawCenteredString(this.textRenderer, exception.getDetails(), width / 2, height / 2 + 2, TEXT_WHITE);
     }
 }

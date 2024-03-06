@@ -1,15 +1,14 @@
 package com.redlimerl.speedrunigt.gui.screen;
 
 import com.redlimerl.speedrunigt.render.GLXExt;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.Tessellator;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 public abstract class ListWidget {
-    private final MinecraftClient client;
+    private final Minecraft client;
     protected int width;
     private int height;
     protected int yStart;
@@ -32,7 +31,7 @@ public abstract class ListWidget {
     protected int headerHeight;
     private boolean dragging = true;
 
-    public ListWidget(MinecraftClient minecraftClient, int i, int j, int k, int l, int m) {
+    public ListWidget(Minecraft minecraftClient, int i, int j, int k, int l, int m) {
         this.client = minecraftClient;
         this.width = i;
         this.height = j;
@@ -182,10 +181,10 @@ public abstract class ListWidget {
                     int var10 = mouseY - this.yStart - this.headerHeight + (int)this.scrollAmount - 4;
                     int var11 = var10 / this.entryHeight;
                     if (mouseX >= var8 && mouseX <= var9 && var11 >= 0 && var10 >= 0 && var11 < var4) {
-                        boolean var12 = var11 == this.selectedEntry && MinecraftClient.getTime() - this.time < 250L;
+                        boolean var12 = var11 == this.selectedEntry && Minecraft.getTime() - this.time < 250L;
                         this.selectEntry(var11, var12, mouseX, mouseY);
                         this.selectedEntry = var11;
-                        this.time = MinecraftClient.getTime();
+                        this.time = Minecraft.getTime();
                     } else if (mouseX >= var8 && mouseX <= var9 && var10 < 0) {
                         this.clickedHeader(mouseX - var8, mouseY - this.yStart + (int)this.scrollAmount - 4);
                         var7 = false;
@@ -230,7 +229,7 @@ public abstract class ListWidget {
         GL11.glDisable(2896);
         GL11.glDisable(2912);
         Tessellator var16 = Tessellator.INSTANCE;
-        this.client.getTextureManager().bindTexture(DrawableHelper.OPTIONS_BACKGROUND_TEXTURE);
+        this.client.textureManager.method_5146("/gui/background.png");
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         float var17 = 32.0F;
         var16.begin();
@@ -381,7 +380,7 @@ public abstract class ListWidget {
 
     private void renderHoleBackground(int top, int bottom, int topAlpha, int bottomAlpha) {
         Tessellator var5 = Tessellator.INSTANCE;
-        this.client.getTextureManager().bindTexture(DrawableHelper.OPTIONS_BACKGROUND_TEXTURE);
+        this.client.textureManager.method_5146("/gui/background.png");
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         float var6 = 32.0F;
         var5.begin();

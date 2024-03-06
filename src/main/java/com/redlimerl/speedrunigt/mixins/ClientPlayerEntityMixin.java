@@ -9,9 +9,9 @@ import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.category.condition.ObtainItemCategoryCondition;
 import net.minecraft.block.Block;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.ClientPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -27,28 +27,29 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Mixin(ClientPlayerEntity.class)
-public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
+public abstract class ClientPlayerEntityMixin extends PlayerEntity {
 
-    public ClientPlayerEntityMixin(World world, String string) {
-        super(world, string);
+    public ClientPlayerEntityMixin(World world) {
+        super(world);
     }
 
     @Shadow public abstract boolean isSneaking();
-    @Shadow protected MinecraftClient client;
+    @Shadow protected Minecraft field_1759;
 
 
-
-    @Inject(method = "tickMovement",
+    // tickMovement
+    @Inject(method = "method_2651",
             at = @At("TAIL"))
     private void onMove(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
         if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
 
-        if (timer.getStatus() == TimerStatus.IDLE && !InGameTimerUtils.IS_CHANGING_DIMENSION && InGameTimerClientUtils.isFocusedClick() && (this.velocityX != 0 || this.velocityZ != 0 || this.jumping || this.isSneaking())) {
+        if (timer.getStatus() == TimerStatus.IDLE && !InGameTimerUtils.IS_CHANGING_DIMENSION && InGameTimerClientUtils.isFocusedClick() && (this.velocityX != 0 || this.velocityZ != 0 || this.field_3350 || this.isSneaking())) {
             timer.setPause(false, "moved player");
         }
-        if (this.velocityX != 0 || this.velocityZ != 0 || this.jumping) {
+        // field_3350 -> jumping
+        if (this.velocityX != 0 || this.velocityZ != 0 || this.field_3350) {
             timer.updateFirstInput();
         }
 
@@ -164,20 +165,20 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         }
 
         //For Timelines
-        if (this.y >= 100 && this.isSleeping())
+        if (this.y >= 100 && this.inBed)
             timer.tryInsertNewTimeline("sleep_on_tower");
     }
 
 
     private Long latestPortalEnter = null;
     private int portalTick = 0;
-    @Inject(at = @At("HEAD"), method = "tickMovement")
+    @Inject(at = @At("HEAD"), method = "method_2651")
     public void updateNausea(CallbackInfo ci) {
         // Portal time update
         if (this.changingDimension) {
             if (++portalTick >= 81 && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
                 portalTick = 0;
-                if (InGameTimer.getInstance().getStatus() != TimerStatus.IDLE && client.isInSingleplayer()) {
+                if (InGameTimer.getInstance().getStatus() != TimerStatus.IDLE && field_1759.isInSingleplayer()) {
                     latestPortalEnter = System.currentTimeMillis();
                 }
             }

@@ -5,7 +5,7 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.PracticeTimerManager;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.class_469;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
@@ -21,7 +21,7 @@ import java.io.DataInputStream;
 @Mixin(class_469.class)
 public class ClientPlayNetworkHandlerMixin {
 
-    @Shadow private MinecraftClient client;
+    @Shadow private Minecraft field_1623;
 
     @Inject(method = "onCustomPayload", at = @At("HEAD"), cancellable = true)
     public void onCustom(CustomPayloadC2SPacket packet, CallbackInfo ci) {
@@ -31,7 +31,7 @@ public class ClientPlayNetworkHandlerMixin {
             SpeedRunIGT.debug(String.format("Server->Client Packet: %s bytes, ID : %s", packet.field_2455.length, packet.channel));
             try {
                 if (timerPacket != null && SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) {
-                    timerPacket.receiveServer2ClientPacket(buf, this.client);
+                    timerPacket.receiveServer2ClientPacket(buf, this.field_1623);
                     buf.close();
                 }
                 else throw new IllegalArgumentException();

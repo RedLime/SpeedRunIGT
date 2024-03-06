@@ -3,7 +3,7 @@ package com.redlimerl.speedrunigt.mixins;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import net.minecraft.block.Block;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.logging.LogManager;
 import net.minecraft.util.profiler.Profiler;
@@ -30,7 +30,7 @@ public abstract class ClientWorldMixin extends World {
 
     @Shadow
     @Final
-    private MinecraftClient client;
+    private Minecraft field_1659;
 
     public ClientWorldMixin(SaveHandler saveHandler, String string, Dimension dimension, LevelInfo levelInfo, Profiler profiler, LogManager logManager) {
         super(saveHandler, string, dimension, levelInfo, profiler, logManager);
@@ -100,7 +100,7 @@ public abstract class ClientWorldMixin extends World {
 
     @Unique
     private int getBedrockMaxHeight() {
-        if (this.client.isIntegratedServerRunning() && this.client.getServer().getWorld(this.dimension.dimensionType).dimension.generatorType == LevelGeneratorType.FLAT) {
+        if (this.field_1659.isIntegratedServerRunning() && this.field_1659.getServer().getWorld(this.dimension.dimensionType).dimension.generatorType == LevelGeneratorType.FLAT) {
             return 1;
         }
         return 5;

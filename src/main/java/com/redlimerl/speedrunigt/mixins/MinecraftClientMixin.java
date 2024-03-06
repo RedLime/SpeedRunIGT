@@ -18,7 +18,7 @@ import com.redlimerl.speedrunigt.timer.running.RunType;
 import com.redlimerl.speedrunigt.utils.MixinValues;
 import com.redlimerl.speedrunigt.utils.Vec2f;
 import com.redlimerl.speedrunigt.version.ColorMixer;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.DownloadingTerrainScreen;
@@ -39,7 +39,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(MinecraftClient.class)
+@Mixin(Minecraft.class)
 public abstract class MinecraftClientMixin {
 
     @Shadow public GameOptions options;
@@ -79,12 +79,12 @@ public abstract class MinecraftClientMixin {
         this.disconnectCheck = false;
     }
 
-    @Inject(method = "setScreen", at = @At("RETURN"))
+    @Inject(method = "openScreen", at = @At("RETURN"))
     public void onSetScreen(Screen screen, CallbackInfo ci) {
         if (InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN != null) {
             Screen screen1 = InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN;
             InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN = null;
-            MinecraftClient.getInstance().setScreen(screen1);
+            Minecraft.getMinecraft().openScreen(screen1);
         }
     }
 
@@ -221,7 +221,7 @@ public abstract class MinecraftClientMixin {
     }
 
     // Crash safety
-    @Inject(method = "cleanUpAfterCrash", at = @At("HEAD"))
+    @Inject(method = "cleanHeap", at = @At("HEAD"))
     public void onCrash(CallbackInfo ci) {
         if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) InGameTimer.leave();
     }
@@ -239,7 +239,7 @@ public abstract class MinecraftClientMixin {
     }
 
     // Disconnecting fix
-    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;setCurrentServerEntry(Lnet/minecraft/client/network/ServerInfo;)V", shift = At.Shift.BEFORE), method = "connect(Lnet/minecraft/client/world/ClientWorld;Ljava/lang/String;)V")
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;setCurrentServerEntry(Lnet/minecraft/client/network/ServerInfo;)V", shift = At.Shift.BEFORE), method = "connect(Lnet/minecraft/client/world/ClientWorld;Ljava/lang/String;)V")
     public void disconnect(CallbackInfo ci) {
         if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE && this.disconnectCheck) {
             GameInstance.getInstance().callEvents("leave_world");

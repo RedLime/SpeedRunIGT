@@ -1,7 +1,7 @@
 package com.redlimerl.speedrunigt.utils;
 
 import com.google.common.collect.Lists;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.util.Language;
 
 import java.io.File;
 import java.io.IOException;
@@ -70,6 +70,6 @@ public class TranslateHelper {
     }
 
     public static void reload() {
-        MinecraftClient.getInstance().reloadResources();
+        Language.getInstance().method_631(Language.getInstance().getCode(), true);
     }
 }

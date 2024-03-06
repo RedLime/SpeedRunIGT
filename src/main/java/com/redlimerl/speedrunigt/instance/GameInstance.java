@@ -6,7 +6,7 @@ import com.redlimerl.speedrunigt.events.EventFactory;
 import com.redlimerl.speedrunigt.events.EventFactoryLoader;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -43,8 +43,8 @@ public class GameInstance {
         }
     }
 
-    private static UUID getLocalPlayerID() {
-        return MinecraftClient.getInstance().field_3805.getUuid();
+    private static String getLocalPlayerID() {
+        return Minecraft.getMinecraft().session.username;
     }
 
     public void tryLoadWorld(String worldName) {
@@ -69,8 +69,8 @@ public class GameInstance {
 
         // Multiplayer check
         if (this.events.stream().anyMatch(event -> event.type.equals("multiplayer"))) return;
-        Set<UUID> previousPlayers = this.world.getPreviousPlayers();
-        if (previousPlayers.size() > 1 || (previousPlayers.size() == 1 && previousPlayers.stream().noneMatch(uuid -> uuid.equals(getLocalPlayerID())))) {
+        Set<String> previousPlayers = this.world.getPreviousPlayers();
+        if (previousPlayers.size() > 1 || (previousPlayers.size() == 1 && previousPlayers.stream().noneMatch(name -> name.equals(getLocalPlayerID())))) {
             this.callEvents("multiplayer");
         }
     }

@@ -11,11 +11,10 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.utils.OperatingUtils;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.resource.language.I18n;
+import net.minecraft.util.Language;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.opengl.GL11;
 
@@ -61,7 +60,7 @@ public class SpeedRunOptionScreen extends Screen {
             categorySubButtons.put(category, categoryList);
 
             if (!categorySelectButtons.containsKey(category)) {
-                ButtonWidget buttonWidget = new ConsumerButtonWidget(width - 110, 30 + ((categoryCount++ % 6) * 22), 80, 20, I18n.translate(category), (buttonWidget1) -> selectCategory(category));
+                ButtonWidget buttonWidget = new ConsumerButtonWidget(width - 110, 30 + ((categoryCount++ % 6) * 22), 80, 20, Language.getInstance().translate(category), (buttonWidget1) -> selectCategory(category));
                 categorySelectButtons.put(category, buttonWidget);
                 buttons.add(buttonWidget);
             }
@@ -77,9 +76,9 @@ public class SpeedRunOptionScreen extends Screen {
 
         buttons.add(new ConsumerButtonWidget(width - 85, height - 35, 70, 20, ScreenTexts.CANCEL, (button) -> onClose()));
 
-        buttons.add(new ConsumerButtonWidget(15, height - 35, 70, 20, I18n.translate("speedrunigt.menu.donate"), (button) -> OperatingUtils.setUrl("https://ko-fi.com/redlimerl")));
+        buttons.add(new ConsumerButtonWidget(15, height - 35, 70, 20, Language.getInstance().translate("speedrunigt.menu.donate"), (button) -> OperatingUtils.setUrl("https://ko-fi.com/redlimerl")));
 
-        buttons.add(new ConsumerButtonWidget(88, height - 35, 140, 20, I18n.translate("speedrunigt.menu.crowdin"), (button) -> OperatingUtils.setUrl("https://crowdin.com/project/speedrunigt")));
+        buttons.add(new ConsumerButtonWidget(88, height - 35, 140, 20, Language.getInstance().translate("speedrunigt.menu.crowdin"), (button) -> OperatingUtils.setUrl("https://crowdin.com/project/speedrunigt")));
 
         buttonListWidget = new ButtonScrollListWidget();
 
@@ -109,7 +108,7 @@ public class SpeedRunOptionScreen extends Screen {
     }
 
     public void onClose() {
-        if (this.client != null) this.client.setScreen(parent);
+        if (this.field_1229 != null) this.field_1229.openScreen(parent);
     }
 
     @Override
@@ -140,7 +139,7 @@ public class SpeedRunOptionScreen extends Screen {
         this.renderBackground();
         this.buttonListWidget.render(mouseX, mouseY, delta);
         super.render(mouseX, mouseY, delta);
-        drawCenteredString(this.textRenderer, I18n.translate("speedrunigt.title.options"), this.width / 2, 10, 16777215);
+        drawCenteredString(this.textRenderer, Language.getInstance().translate("speedrunigt.title.options"), this.width / 2, 10, 16777215);
         drawWithShadow(this.textRenderer, "v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215);
 
         ArrayList<String> tooltip = getToolTip(mouseX, mouseY);
@@ -229,7 +228,7 @@ public class SpeedRunOptionScreen extends Screen {
 
 
         if (SpeedRunIGTUpdateChecker.UPDATE_STATUS == SpeedRunIGTUpdateChecker.UpdateStatus.OUTDATED) {
-            tooltipList.add(I18n.translate("speedrunigt.message.update_found"));
+            tooltipList.add(Language.getInstance().translate("speedrunigt.message.update_found"));
         }
         return tooltipList;
     }
@@ -249,7 +248,7 @@ public class SpeedRunOptionScreen extends Screen {
     class ButtonScrollListWidget extends EntryListWidget {
 
         public ButtonScrollListWidget() {
-            super(SpeedRunOptionScreen.this.client, SpeedRunOptionScreen.this.width - 140, SpeedRunOptionScreen.this.height, 28, SpeedRunOptionScreen.this.height - 54, 24);
+            super(SpeedRunOptionScreen.this.field_1229, SpeedRunOptionScreen.this.width - 140, SpeedRunOptionScreen.this.height, 28, SpeedRunOptionScreen.this.height - 54, 24);
         }
 
         public void replaceButtons(Collection<ButtonWidget> buttonWidgets) {
@@ -285,12 +284,12 @@ public class SpeedRunOptionScreen extends Screen {
             super.render(mouseX, mouseY, delta);
 
             //Render bg on empty space
-            if (SpeedRunOptionScreen.this.client == null) return;
+            if (SpeedRunOptionScreen.this.field_1229 == null) return;
             int emptyWidth = this.width;
             GL11.glDisable(2896);
             GL11.glDisable(2912);
             Tessellator var2 = Tessellator.INSTANCE;
-            SpeedRunOptionScreen.this.client.getTextureManager().bindTexture(OPTIONS_BACKGROUND_TEXTURE);
+            SpeedRunOptionScreen.this.field_1229.textureManager.method_5146("/gui/background.png");
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             float var3 = 32.0F;
             var2.begin();
@@ -317,7 +316,7 @@ public class SpeedRunOptionScreen extends Screen {
             @Override
             public void draw(int index, int x, int y, int rowWidth, int rowHeight, Tessellator tessellator, int mouseX, int mouseY, boolean hovered) {
                 buttonWidget.y = y;
-                buttonWidget.render(SpeedRunOptionScreen.this.client, mouseX, mouseY);
+                buttonWidget.method_891(SpeedRunOptionScreen.this.field_1229, mouseX, mouseY);
             }
 
             @Override

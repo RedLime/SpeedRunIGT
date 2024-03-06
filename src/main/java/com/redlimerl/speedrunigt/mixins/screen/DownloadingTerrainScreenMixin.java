@@ -16,7 +16,7 @@ public abstract class DownloadingTerrainScreenMixin extends Screen {
     public void init() {
         super.init();
         InGameTimer timer = InGameTimer.getInstance();
-        if (client != null && client.isInSingleplayer() && !timer.isCoop() && timer.getStatus() != TimerStatus.IDLE) {
+        if (field_1229 != null && field_1229.isInSingleplayer() && !timer.isCoop() && timer.getStatus() != TimerStatus.IDLE) {
             timer.setPause(true, TimerStatus.IDLE, "dimension load?");
             InGameTimerUtils.IS_CHANGING_DIMENSION = false;
         }

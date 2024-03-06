@@ -4,7 +4,7 @@ import com.redlimerl.speedrunigt.gui.IdentifiableBooleanConsumer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.OptionButtonWidget;
-import net.minecraft.client.resource.language.I18n;
+import net.minecraft.util.Language;
 
 public class ConfirmScreen extends Screen {
     protected IdentifiableBooleanConsumer consumer;
@@ -20,8 +20,8 @@ public class ConfirmScreen extends Screen {
         this.title = string;
         this.subtitle = string2;
         this.identifier = i;
-        this.yesText = I18n.translate("gui.yes");
-        this.noText = I18n.translate("gui.no");
+        this.yesText = Language.getInstance().translate("gui.yes");
+        this.noText = Language.getInstance().translate("gui.no");
     }
 
     public ConfirmScreen(IdentifiableBooleanConsumer identifiableBooleanConsumer, String string, String string2, String string3, String string4, int i) {

@@ -10,7 +10,7 @@ import com.redlimerl.speedrunigt.timer.running.RunType;
 import com.redlimerl.speedrunigt.version.ColorMixer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DrawableHelper;
 import org.lwjgl.opengl.GL11;
 import net.minecraft.client.util.Window;
@@ -23,7 +23,7 @@ public class TimerDrawer {
     }
 
     private final boolean translateZ;
-    private final MinecraftClient client = MinecraftClient.getInstance();
+    private final Minecraft client = Minecraft.getMinecraft();
 
     private boolean needUpdate = false;
 

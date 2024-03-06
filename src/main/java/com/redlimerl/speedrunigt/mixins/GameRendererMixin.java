@@ -4,7 +4,7 @@ import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessorForAttack;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerClientUtils;
 import com.redlimerl.speedrunigt.utils.MixinValues;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.render.GameRenderer;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
 
-    @Shadow private MinecraftClient client;
+    @Shadow private Minecraft client;
 
     @Inject(method = "method_1331", at = @At(value = "TAIL"))
     private void drawTimer(CallbackInfo ci) {

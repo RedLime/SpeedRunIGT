@@ -7,7 +7,7 @@ import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.server.MinecraftServer;
 
@@ -44,7 +44,7 @@ public class TimerStartPacket extends TimerPacket {
 
     @Environment(EnvType.CLIENT)
     @Override
-    protected void convertClient2ServerPacket(DataOutputStream buf, MinecraftClient client) throws IOException {
+    protected void convertClient2ServerPacket(DataOutputStream buf, Minecraft client) throws IOException {
         if (this.sendTimer != null) {
             buf.writeUTF(this.sendTimer.getUuid().toString());
             buf.writeUTF(this.sendTimer.getCategory().getID());
@@ -88,7 +88,7 @@ public class TimerStartPacket extends TimerPacket {
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void receiveServer2ClientPacket(DataInputStream buf, MinecraftClient client) throws IOException {
+    public void receiveServer2ClientPacket(DataInputStream buf, Minecraft client) throws IOException {
         this.timerInit(buf, client.isIntegratedServerRunning());
     }
 

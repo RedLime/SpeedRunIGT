@@ -1,11 +1,11 @@
 package com.redlimerl.speedrunigt.gui.screen;
 
 import com.redlimerl.speedrunigt.gui.EntryWidget;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.render.Tessellator;
 
 public abstract class EntryListWidget extends ListWidget {
-    public EntryListWidget(MinecraftClient minecraftClient, int i, int j, int k, int l, int m) {
+    public EntryListWidget(Minecraft minecraftClient, int i, int j, int k, int l, int m) {
         super(minecraftClient, i, j, k, l, m);
     }
 

@@ -5,7 +5,7 @@ import com.redlimerl.speedrunigt.timer.TimerAdvancementTracker;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.server.MinecraftServer;
 
@@ -28,7 +28,7 @@ public class TimerAchieveAdvancementPacket extends TimerPacket {
 
     @Environment(EnvType.CLIENT)
     @Override
-    protected void convertClient2ServerPacket(DataOutputStream buf, MinecraftClient client) throws IOException {
+    protected void convertClient2ServerPacket(DataOutputStream buf, Minecraft client) throws IOException {
         if (sendAdvancement != null) {
             buf.writeUTF(sendAdvancement);
         }
@@ -62,7 +62,7 @@ public class TimerAchieveAdvancementPacket extends TimerPacket {
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void receiveServer2ClientPacket(DataInputStream buf, MinecraftClient client) throws IOException {
+    public void receiveServer2ClientPacket(DataInputStream buf, Minecraft client) throws IOException {
         String advancement = buf.readUTF();
         InGameTimer.getInstance().tryInsertNewAdvancement(advancement, null, true);
     }

@@ -11,11 +11,11 @@ import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.resource.language.I18n;
+import net.minecraft.util.Language;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -34,11 +34,11 @@ public class SpeedRunCategoryScreen extends Screen {
     @Override
     public void init() {
         buttons.add(new ConsumerButtonWidget(width / 2 - 100, height - 35, 200, 20, ScreenTexts.CANCEL, (button) -> onClose()));
-        this.listWidget = new CategorySelectionListWidget(this.client);
+        this.listWidget = new CategorySelectionListWidget(this.field_1229);
     }
 
     public void onClose() {
-        if (this.client != null) this.client.setScreen(parent);
+        if (this.field_1229 != null) this.field_1229.openScreen(parent);
     }
 
     @Override
@@ -67,15 +67,15 @@ public class SpeedRunCategoryScreen extends Screen {
     @Override
     public void render(int mouseX, int mouseY, float delta) {
         this.listWidget.render(mouseX, mouseY, delta);
-        this.drawCenteredString(this.textRenderer, I18n.translate("speedrunigt.option.timer_category"), this.width / 2, 16, 16777215);
-        this.drawCenteredString(this.textRenderer, "(" + I18n.translate("speedrunigt.option.timer_category.warning") + ")", this.width / 2, this.height - 46, 8421504);
+        this.drawCenteredString(this.textRenderer, Language.getInstance().translate("speedrunigt.option.timer_category"), this.width / 2, 16, 16777215);
+        this.drawCenteredString(this.textRenderer, "(" + Language.getInstance().translate("speedrunigt.option.timer_category.warning") + ")", this.width / 2, this.height - 46, 8421504);
         super.render(mouseX, mouseY, delta);
     }
 
     @Environment(EnvType.CLIENT)
     class CategorySelectionListWidget extends EntryListWidget {
         private final ArrayList<CategoryEntry> entries = new ArrayList<>();
-        public CategorySelectionListWidget(MinecraftClient minecraft) {
+        public CategorySelectionListWidget(Minecraft minecraft) {
             super(minecraft, SpeedRunCategoryScreen.this.width, SpeedRunCategoryScreen.this.height, 32, SpeedRunCategoryScreen.this.height - 55, 24);
             entries.addAll(RunCategory.getCategories().values().stream().filter(runCategory -> !runCategory.isHideCategory()).map(CategoryEntry::new).collect(Collectors.toList()));
             widgetButtons.addAll(entries.stream().map(entry -> entry.checkBox).collect(Collectors.toList()));
@@ -104,7 +104,7 @@ public class SpeedRunCategoryScreen extends Screen {
 
             public CategoryEntry(RunCategory category) {
                 this.checkBox = new ConsumerButtonWidget(0, 0, 20, 20, "", (button) -> {
-                    MinecraftClient.getInstance().field_3759.playSound("random.click", 1.0F, 1.0F);
+                    Minecraft.getMinecraft().soundSystem.playSound("random.click", 1.0F, 1.0F);
                     SpeedRunOption.setOption(SpeedRunOptions.TIMER_CATEGORY, category);
                     InGameTimer.getInstance().setCategory(category, true);
                     InGameTimer.getInstance().setUncompleted(true);
@@ -117,7 +117,7 @@ public class SpeedRunCategoryScreen extends Screen {
                 this.checkBox.x = x + 34;
                 this.checkBox.y = y;
                 this.checkBox.message = (InGameTimer.getInstance().getStatus() != TimerStatus.NONE ? InGameTimer.getInstance().getCategory() : SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY)) == this.category ? "█" : "";
-                this.checkBox.render(MinecraftClient.getInstance(), mouseX, mouseY);
+                this.checkBox.method_891(Minecraft.getMinecraft(), mouseX, mouseY);
                 drawWithShadow(SpeedRunCategoryScreen.this.textRenderer, category.getText(), this.checkBox.x + 24, this.checkBox.y + 6,14737632 | 255 << 24);
             }
 

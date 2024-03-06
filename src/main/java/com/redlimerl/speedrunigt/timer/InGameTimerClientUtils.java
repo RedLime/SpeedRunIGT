@@ -9,8 +9,7 @@ import com.redlimerl.speedrunigt.mixins.access.WorldRendererAccessor;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stat.Stat;
 import net.minecraft.stat.StatHandler;
@@ -26,7 +25,7 @@ public class InGameTimerClientUtils {
     public static JsonObject STATS_UPDATE = null;
 
     public static boolean canUnpauseTimer(boolean checkRender) {
-        MinecraftClient client = MinecraftClient.getInstance();
+        Minecraft client = Minecraft.getMinecraft();
         InGameTimer timer = InGameTimer.getInstance();
 
         if (timer.getStatus() != TimerStatus.IDLE) return false;
@@ -47,8 +46,8 @@ public class InGameTimerClientUtils {
 
 
     public static float getGeneratedChunkRatio() {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.world != null && client.field_6279 != null) {
+        Minecraft client = Minecraft.getMinecraft();
+        if (client.world != null && client.playerEntity != null) {
             int chunks = (16  >> client.options.renderDistance) * 2 + 1;
             return (float) ((ClientChunkProviderAccessor) client.world.getChunkProvider()).getChunkMap().getUsedEntriesCount() / (chunks * chunks);
         }
@@ -56,28 +55,28 @@ public class InGameTimerClientUtils {
     }
 
     public static boolean isHardcoreWorld() {
-        MinecraftClient client = MinecraftClient.getInstance();
-        return client.field_3805 != null && client.field_3805.world.getLevelProperties().isHardcore();
+        Minecraft client = Minecraft.getMinecraft();
+        return client.playerEntity != null && client.playerEntity.world.getLevelProperties().isHardcore();
     }
 
     public static Long getPlayerTime() {
-        StatHandler statHandler = MinecraftClient.getInstance().field_3763;
+        StatHandler statHandler = Minecraft.getMinecraft().statHandler;
         return statHandler == null ? null : statHandler.getStatLevel(Stats.MINUTES_PLAYED) * 50L;
     }
 
     public static @Nullable FailedCategoryInitScreen FAILED_CATEGORY_INIT_SCREEN = null;
     static void setCategoryWarningScreen(@Nullable String conditionFileName, InvalidCategoryException exception) {
-        if (MinecraftClient.getInstance().currentScreen == null)
+        if (Minecraft.getMinecraft().currentScreen == null)
             FAILED_CATEGORY_INIT_SCREEN = new FailedCategoryInitScreen(conditionFileName, exception);
-        else MinecraftClient.getInstance().setScreen(new FailedCategoryInitScreen(conditionFileName, exception));
+        else Minecraft.getMinecraft().openScreen(new FailedCategoryInitScreen(conditionFileName, exception));
     }
 
     static MinecraftServer getClientServer() {
-        return MinecraftClient.getInstance().getServer();
+        return Minecraft.getMinecraft().getServer();
     }
 
     public static boolean isFocusedClick() {
-        return ((MinecraftClientAccessorForAttack) MinecraftClient.getInstance()).getAttackCoolDown() <= 0;
+        return ((MinecraftClientAccessorForAttack) Minecraft.getMinecraft()).getAttackCoolDown() <= 0;
     }
 
 
@@ -88,9 +87,9 @@ public class InGameTimerClientUtils {
     public static void updateStatsJson(InGameTimer timer) {
         JsonObject jsonObject = new JsonObject();
         JsonObject jsonObject2 = new JsonObject();
-        jsonObject.add(MinecraftClient.getInstance().field_3805.getUuid().toString(), jsonObject2);
+        jsonObject.add(Minecraft.getMinecraft().playerEntity.username, jsonObject2);
         if (timer.isServerIntegrated) {
-            StatHandler stats = MinecraftClient.getInstance().field_3763;
+            StatHandler stats = Minecraft.getMinecraft().statHandler;
             for (Object object : stats.method_1734().entrySet()) {
                 @SuppressWarnings("unchecked")
                 Map.Entry<Stat, Integer> statEntry = (Map.Entry<Stat, Integer>) object;

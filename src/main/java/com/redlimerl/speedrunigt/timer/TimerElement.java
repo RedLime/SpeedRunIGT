@@ -2,14 +2,14 @@ package com.redlimerl.speedrunigt.timer;
 
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
 import com.redlimerl.speedrunigt.timer.TimerDrawer.Position;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.Window;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.opengl.GL11;
 
 public class TimerElement {
-    private static final MinecraftClient client = MinecraftClient.getInstance();
+    private static final Minecraft client = Minecraft.getMinecraft();
 
     private final TextRenderer textRenderer = client.textRenderer;
     private final Position position = new Position(0, 0);

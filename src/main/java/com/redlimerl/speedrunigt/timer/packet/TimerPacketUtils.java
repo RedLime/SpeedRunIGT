@@ -2,7 +2,7 @@ package com.redlimerl.speedrunigt.timer.packet;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 
@@ -12,10 +12,10 @@ import java.util.Collection;
 public class TimerPacketUtils {
 
     @Environment(EnvType.CLIENT)
-    public static void sendClient2ServerPacket(MinecraftClient client, TimerPacket packet) {
-        if (client.field_3805 != null && client.field_3805.field_1667 != null) {
+    public static void sendClient2ServerPacket(Minecraft client, TimerPacket packet) {
+        if (client.playerEntity != null && client.playerEntity.field_1667 != null) {
             try {
-                client.field_3805.field_1667.sendPacket(packet.createClient2ServerPacket(client));
+                client.playerEntity.field_1667.sendPacket(packet.createClient2ServerPacket(client));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

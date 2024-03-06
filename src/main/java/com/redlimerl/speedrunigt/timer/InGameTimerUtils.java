@@ -258,6 +258,6 @@ public class InGameTimerUtils {
         if (server == null) {
             return 0;
         }
-        return server.getWorld().difficulty;
+        return server.getWorld(0).difficulty;
     }
 }

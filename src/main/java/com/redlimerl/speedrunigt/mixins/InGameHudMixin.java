@@ -16,8 +16,9 @@ import java.util.regex.Pattern;
 @Mixin(InGameHud.class)
 public class InGameHudMixin {
 
-    @Inject(method = "setOverlayMessage(Ljava/lang/String;Z)V", at = @At("HEAD"))
-    public void onTitleMixin(String string, boolean tinted, CallbackInfo ci) {
+    // this does not work, there is no overlay setting for 1.5 except for records
+    @Inject(method = "setRecordPlayingOverlay", at = @At("HEAD"))
+    public void onTitleMixin(String string, CallbackInfo ci) {
         if (!SpeedRunOption.getOption(SpeedRunOptions.ENABLE_PRACTICE_DETECT))
             return;
         if ((InGameTimer.getInstance().isStarted() && !InGameTimer.getInstance().isCompleted()) && InGameTimer.getInstance().getCategory() == PracticeTimerManager.PRACTICE_CATEGORY)
