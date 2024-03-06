@@ -9,6 +9,7 @@
     "ServerWorldMixin",
     "access.LevelStorageAccessor",
     "access.PlayerManagerAccessor",
+    "access.TextRendererAccessor",
     "coop.PlayerManagerMixin",
     "coop.TimeCommandMixin",
     "network.ServerPlayNetworkHandlerMixin",

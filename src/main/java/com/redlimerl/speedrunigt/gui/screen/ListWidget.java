@@ -159,7 +159,7 @@ public abstract class ListWidget {
         int var6 = var5 + 6;
         if (mouseX > this.xStart && mouseX < this.xEnd && mouseY > this.yStart && mouseY < this.yEnd) {
             if (!Mouse.isButtonDown(0) || !this.isDragging()) {
-                for (; !this.client.options.touchscreen && Mouse.next(); this.client.currentScreen.handleMouse()) {
+                for (; Mouse.next(); this.client.currentScreen.handleMouse()) {
                     int var15 = Mouse.getEventDWheel();
                     if (var15 != 0) {
                         if (var15 > 0) {

@@ -24,7 +24,7 @@ public class OptionsScreenMixin extends Screen {
 
     @Inject(method = "init", at = @At("TAIL"))
     private void onInit(CallbackInfo ci) {
-        timerButton = new ButtonWidget(123456, this.width / 2 - 180, this.height / 6 - 12, 20, 20, "");
+        timerButton = new ButtonWidget(123456, this.width / 2 - 180, this.height / 6, 20, 20, "");
         buttons.add(timerButton);
     }
 

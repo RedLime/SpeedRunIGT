@@ -45,7 +45,7 @@ public abstract class ClientWorldMixin extends World {
         boolean result = super.method_3683(bx, by, bz, l, m);
 
         // TODO: doesn't support nether or overworld caves
-        if (this.dimension.hasNoSkylight) {
+        if (this.dimension.isNether) {
             return result;
         }
 
