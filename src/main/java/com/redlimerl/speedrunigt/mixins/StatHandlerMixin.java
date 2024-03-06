@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Map;
 
 @Mixin(StatHandler.class)
-public abstract class ServerStatHandlerMixin {
+public abstract class StatHandlerMixin {
     @Shadow public abstract Map<Stat, Integer> method_1734();
 
     private int updateTick = 0;
