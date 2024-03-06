@@ -36,6 +36,7 @@
     "retime.OptionSliderWidgetMixin",
     "retime.PairOptionButtonWidgetMixin",
     "retime.SodiumOptionImplMixin",
+    "screen.ControlsOptionsScreenMixin",
     "screen.CreateWorldScreenMixin",
     "screen.CreditsScreenMixin",
     "screen.DownloadingTerrainScreenMixin",
