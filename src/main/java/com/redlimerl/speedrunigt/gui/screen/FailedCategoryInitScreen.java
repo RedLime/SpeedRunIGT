@@ -29,7 +29,7 @@ public class FailedCategoryInitScreen extends Screen {
 
     @Override
     public void init() {
-        buttons.add(new ConsumerButtonWidget(width / 2 - 100, height / 2 + 15, 200, 20, ScreenTexts.DONE, button -> MinecraftClient.getInstance().openScreen(null)));
+        buttons.add(new ConsumerButtonWidget(width / 2 - 100, height / 2 + 15, 200, 20, ScreenTexts.DONE, button -> MinecraftClient.getInstance().setScreen(null)));
     }
 
     @Override

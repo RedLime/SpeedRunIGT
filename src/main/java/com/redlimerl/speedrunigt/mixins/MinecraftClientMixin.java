@@ -23,7 +23,7 @@ import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.DownloadingTerrainScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.options.GameOptions;
+import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.crash.CrashReport;
@@ -57,7 +57,7 @@ public abstract class MinecraftClientMixin {
     @Shadow public boolean skipGameRender;
     private boolean disconnectCheck = false;
 
-    @Inject(at = @At("HEAD"), method = "startGame")
+    @Inject(at = @At("HEAD"), method = "startIntegratedServer")
     public void onCreate(String name, String displayName, LevelInfo levelInfo, CallbackInfo ci) {
         try {
             if (levelInfo != null) {
@@ -80,12 +80,12 @@ public abstract class MinecraftClientMixin {
         this.disconnectCheck = false;
     }
 
-    @Inject(method = "openScreen", at = @At("RETURN"))
+    @Inject(method = "setScreen", at = @At("RETURN"))
     public void onSetScreen(Screen screen, CallbackInfo ci) {
         if (InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN != null) {
             Screen screen1 = InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN;
             InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN = null;
-            MinecraftClient.getInstance().openScreen(screen1);
+            MinecraftClient.getInstance().setScreen(screen1);
         }
     }
 
@@ -213,7 +213,7 @@ public abstract class MinecraftClientMixin {
     private float previousX=0;
     private float previousY=0;
 
-    @Inject(method="method_12141", at=@At(value="INVOKE", target = "Lorg/lwjgl/input/Mouse;getEventDWheel()I", remap = false))
+    @Inject(method="tickMouse", at=@At(value="INVOKE", target = "Lorg/lwjgl/input/Mouse;getEventDWheel()I", remap = false))
     public void getScrolled(CallbackInfo ci) {
         if(Mouse.getEventDWheel() != 0){
             unlock();
@@ -240,7 +240,7 @@ public abstract class MinecraftClientMixin {
     }
 
     // Crash safety
-    @Inject(method = "cleanHeap", at = @At("HEAD"))
+    @Inject(method = "cleanUpAfterCrash", at = @At("HEAD"))
     public void onCrash(CallbackInfo ci) {
         if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) InGameTimer.leave();
     }
@@ -258,7 +258,7 @@ public abstract class MinecraftClientMixin {
     }
 
     // Disconnecting fix
-    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resource/ResourcePackLoader;method_7040()V", shift = At.Shift.BEFORE), method = "connect(Lnet/minecraft/client/world/ClientWorld;Ljava/lang/String;)V")
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resource/ResourcePackLoader;clear()V", shift = At.Shift.BEFORE), method = "connect(Lnet/minecraft/client/world/ClientWorld;Ljava/lang/String;)V")
     public void disconnect(CallbackInfo ci) {
         if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE && this.disconnectCheck) {
             GameInstance.getInstance().callEvents("leave_world");
