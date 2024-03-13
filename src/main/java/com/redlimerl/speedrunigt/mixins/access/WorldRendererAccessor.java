@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(WorldRenderer.class)
 public interface WorldRendererAccessor {
 
-    @Accessor("field_1891")
+    @Accessor("hiddenEntityCount")
     int getRegularEntityCount();
 
 }

@@ -20,7 +20,7 @@ public class WorldRendererMixin {
         return object;
     }
 
-    @Inject(method = "method_1371", at = @At("TAIL"))
+    @Inject(method = "setWorld", at = @At("TAIL"))
     private void onSetWorld(ClientWorld clientWorld, CallbackInfo ci) {
         MixinValues.IS_CHANGED_WORLD = true;
     }
