@@ -213,29 +213,6 @@ public class SpeedRunOptionScreen extends Screen {
             return entries.size();
         }
 
-        @Override
-        public void render(int mouseX, int mouseY, float delta) {
-            super.render(mouseX, mouseY, delta);
-
-            //Render bg on empty space
-            if (this.client == null) return;
-            int emptyWidth = this.width;
-            GlStateManager.disableLighting();
-            GlStateManager.disableFog();
-            Tessellator var2 = Tessellator.getInstance();
-            BufferBuilder var3 = var2.getBuffer();
-            this.client.getTextureManager().bindTexture(OPTIONS_BACKGROUND_TEXTURE);
-            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            float var4 = 32.0F;
-            var3.method_21806();
-            var3.method_21807(4210752);
-            var3.method_9728(emptyWidth, this.height, 0.0D, emptyWidth, (float)this.height / var4);
-            var3.method_9728(SpeedRunOptionScreen.this.width, this.height, 0.0D, (float)SpeedRunOptionScreen.this.width / var4, (float)this.height / var4);
-            var3.method_9728(SpeedRunOptionScreen.this.width, 0.0D, 0.0D, (float)SpeedRunOptionScreen.this.width / var4, 0);
-            var3.method_9728(emptyWidth, 0.0D, 0.0D, emptyWidth, 0);
-            var2.method_9927();
-        }
-
         class ButtonScrollListEntry implements class_1803 {
             private final ButtonWidget buttonWidget;
 
