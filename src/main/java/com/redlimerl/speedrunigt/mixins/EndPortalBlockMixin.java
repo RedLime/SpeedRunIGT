@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(EndPortalBlock.class)
 public class EndPortalBlockMixin {
 
-    @Inject(method = "method_416", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;teleportToDimension(I)V", shift = At.Shift.BEFORE))
+    @Inject(method = "onEntityCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;teleportToDimension(I)V", shift = At.Shift.BEFORE))
     public void onCollisionPlayer(World world, int x, int y, int z, Entity entity, CallbackInfo ci) {
         if (entity instanceof PlayerEntity && world instanceof ServerWorld) {
             InGameTimer timer = InGameTimer.getInstance();

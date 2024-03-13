@@ -2,9 +2,8 @@ package com.redlimerl.speedrunigt.timer.category.condition;
 
 import com.google.gson.JsonObject;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
-import net.minecraft.achievement.Achievement;
-
 import java.util.Objects;
+import net.minecraft.advancement.Achievement;
 
 public class AdvancementCategoryCondition extends CategoryCondition.Condition<Achievement> {
 

@@ -8,7 +8,7 @@ import com.redlimerl.speedrunigt.mixins.access.ScreenAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.utils.OperatingUtils;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
-import net.minecraft.class_1803;
+import net.minecraft.client.class_1803;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.EntryListWidget;
@@ -108,7 +108,7 @@ public class SpeedRunOptionScreen extends Screen {
     }
 
     public void onClose() {
-        if (this.field_22534 != null) this.field_22534.openScreen(parent);
+        if (this.field_22534 != null) this.field_22534.setScreen(parent);
     }
 
     @Override
@@ -219,13 +219,13 @@ public class SpeedRunOptionScreen extends Screen {
             SpeedRunOptionScreen.this.field_22534.getTextureManager().bindTexture(field_22503);
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             float var3 = 32.0F;
-            var2.method_1405();
-            var2.method_1413(4210752);
-            var2.method_1399(emptyWidth, SpeedRunOptionScreen.this.field_22536, 0.0D, emptyWidth / var3, ((float)SpeedRunOptionScreen.this.field_22536 / var3));
-            var2.method_1399(SpeedRunOptionScreen.this.field_22535, SpeedRunOptionScreen.this.field_22536, 0.0D, ((float)SpeedRunOptionScreen.this.field_22535 / var3), (float)SpeedRunOptionScreen.this.field_22536 / var3);
-            var2.method_1399(SpeedRunOptionScreen.this.field_22535, 0.0D, 0.0D, ((float)SpeedRunOptionScreen.this.field_22535 / var3), 0);
-            var2.method_1399(emptyWidth, 0.0D, 0.0D, emptyWidth / var3, 0);
-            var2.method_1396();
+            var2.begin();
+            var2.color(4210752);
+            var2.vertex(emptyWidth, SpeedRunOptionScreen.this.field_22536, 0.0D, emptyWidth / var3, ((float)SpeedRunOptionScreen.this.field_22536 / var3));
+            var2.vertex(SpeedRunOptionScreen.this.field_22535, SpeedRunOptionScreen.this.field_22536, 0.0D, ((float)SpeedRunOptionScreen.this.field_22535 / var3), (float)SpeedRunOptionScreen.this.field_22536 / var3);
+            var2.vertex(SpeedRunOptionScreen.this.field_22535, 0.0D, 0.0D, ((float)SpeedRunOptionScreen.this.field_22535 / var3), 0);
+            var2.vertex(emptyWidth, 0.0D, 0.0D, emptyWidth / var3, 0);
+            var2.end();
         }
 
         class ButtonScrollListEntry implements class_1803 {
