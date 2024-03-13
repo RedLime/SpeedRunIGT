@@ -4,6 +4,10 @@ pluginManagement {
             name = 'Fabric'
             url = 'https://maven.fabricmc.net/'
         }
+        maven {
+            name = "legacy-fabric"
+            url = "https://repo.legacyfabric.net/repository/legacyfabric/"
+        }
         gradlePluginPortal()
     }
 }

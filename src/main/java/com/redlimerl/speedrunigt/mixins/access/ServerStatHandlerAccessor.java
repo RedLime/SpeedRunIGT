@@ -11,7 +11,7 @@ import java.util.Map;
 @Mixin(StatHandler.class)
 public interface ServerStatHandlerAccessor {
 
-    @Accessor("field_9047")
+    @Accessor("stats")
     Map<Stat, JsonIntSerializable> getStatMap();
 
 }
