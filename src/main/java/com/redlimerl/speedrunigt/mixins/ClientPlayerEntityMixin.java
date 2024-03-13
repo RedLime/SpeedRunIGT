@@ -97,8 +97,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             int slot = 0;
             for (int i = 0; i < this.inventory.field_15082.size(); i++) {
                 ItemStack itemStack = this.inventory.field_15082.get(i);
-                if (itemStack.isEmpty() || itemStack.getItem() == Items.AIR) continue;
-                String itemId = Item.getRawId(itemStack.getItem()) + (itemStack.isDamaged() ? (":" + itemStack.getMeta()) : "");
+                if (itemStack.isDamaged() || itemStack.getItem() == Items.AIR) continue;
+                String itemId = Item.getRawId(itemStack.getItem()) + (itemStack.isStackable() ? (":" + itemStack.getData()) : "");
                 if (!itemList.contains(itemId)) {
                     itemList.add(itemId);
                     slot++;
@@ -113,7 +113,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
             //Stack of Lime Wool
             if (timer.getCategory() == RunCategories.STACK_OF_LIME_WOOL) {
-                if (Item.fromBlock(Blocks.WOOL).equals(itemStack.getItem()) && itemStack.getMeta() == 5 && itemStack.getCount() == 64) InGameTimer.complete();
+                if (Item.fromBlock(Blocks.WOOL).equals(itemStack.getItem()) && itemStack.getData() == 5 && itemStack.getCount() == 64) InGameTimer.complete();
             }
         }
 
@@ -143,7 +143,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             ) {
                 for (int i = 0; i < this.inventory.field_15082.size(); i++) {
                     ItemStack item = this.inventory.field_15082.get(i);
-                    if (!item.isEmpty() && item.getItem().equals(Items.DYE) && DyeColor.getById(item.getMeta()) == DyeColor.BLUE) {
+                    if (!item.isDamaged() && item.getItem().equals(Items.DYE) && DyeColor.getById(item.getData()) == DyeColor.BLUE) {
                         InGameTimer.complete();
                     }
                 }

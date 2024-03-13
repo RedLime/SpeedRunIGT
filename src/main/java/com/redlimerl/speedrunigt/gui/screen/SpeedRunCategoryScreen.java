@@ -40,7 +40,7 @@ public class SpeedRunCategoryScreen extends Screen {
     }
 
     public void onClose() {
-        if (this.client != null) this.client.openScreen(parent);
+        if (this.client != null) this.client.setScreen(parent);
     }
 
     @Override

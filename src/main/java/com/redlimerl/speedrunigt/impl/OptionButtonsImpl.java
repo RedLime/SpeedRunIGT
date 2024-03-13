@@ -53,7 +53,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
                         new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.timer_position").asFormattedString(),
-                                (button) -> MinecraftClient.getInstance().openScreen(new TimerCustomizeScreen(screen)))
+                                (button) -> MinecraftClient.getInstance().setScreen(new TimerCustomizeScreen(screen)))
                 )
                 .setCategory("speedrunigt.option.category.general")
         );
@@ -61,7 +61,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
                         new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.timer_category").asFormattedString(),
-                                (button) -> MinecraftClient.getInstance().openScreen(new SpeedRunCategoryScreen(screen)))
+                                (button) -> MinecraftClient.getInstance().setScreen(new SpeedRunCategoryScreen(screen)))
                 )
                 .setCategory("speedrunigt.option.category.general")
         );
@@ -69,7 +69,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
                         new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.check_info").asFormattedString(),
-                                (button) -> MinecraftClient.getInstance().openScreen(new SpeedRunIGTInfoScreen(screen)))
+                                (button) -> MinecraftClient.getInstance().setScreen(new SpeedRunIGTInfoScreen(screen)))
                 )
                 .setCategory("speedrunigt.option.category.general")
         );
@@ -77,12 +77,12 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
                         new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.reload").asFormattedString(),
-                                (button) -> MinecraftClient.getInstance().openScreen(new ConfirmScreen((boolean1, i) -> {
+                                (button) -> MinecraftClient.getInstance().setScreen(new ConfirmScreen((boolean1, i) -> {
                                     if (boolean1) {
                                         SpeedRunOption.reload();
                                     }
-                                    MinecraftClient.getInstance().openScreen(screen);
-                                }, new TranslatableText("speedrunigt.message.reload_options").getString(), "", 0)))
+                                    MinecraftClient.getInstance().setScreen(screen);
+                                }, new TranslatableText("speedrunigt.message.reload_options").asUnformattedString(), "", 0)))
                 )
                 .setCategory("speedrunigt.option.category.general")
         );
@@ -92,12 +92,12 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                         new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.global_options").append(" : ").append(SpeedRunOption.isUsingGlobalConfig() ? ScreenTexts.ON : ScreenTexts.OFF).asFormattedString(),
                                 (button) -> {
                                     SpeedRunOption.setUseGlobalConfig(!SpeedRunOption.isUsingGlobalConfig());
-                                    MinecraftClient.getInstance().openScreen(new ConfirmScreen((boolean1, i) -> {
+                                    MinecraftClient.getInstance().setScreen(new ConfirmScreen((boolean1, i) -> {
                                         if (boolean1) {
                                             SpeedRunOption.reload();
                                         }
-                                        MinecraftClient.getInstance().openScreen(screen);
-                                    }, new TranslatableText("speedrunigt.message.reload_options").getString(), "", 0));
+                                        MinecraftClient.getInstance().setScreen(screen);
+                                    }, new TranslatableText("speedrunigt.message.reload_options").asUnformattedString(), "", 0));
                                 })
                 )
                 .setToolTip(() -> I18n.translate("speedrunigt.option.global_options.description", SpeedRunOption.getConfigPath()))
@@ -216,7 +216,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
 
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
-                        new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.current_extensions").getString(), (buttonWidget) -> {})
+                        new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.current_extensions").asUnformattedString(), (buttonWidget) -> {})
                 )
                 .setToolTip(() -> {
                     StringBuilder extension = new StringBuilder(I18n.translate("speedrunigt.option.current_extensions.description", SpeedRunIGTApi.getProviders().length));
@@ -359,7 +359,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
                         new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.delete_all_records").asFormattedString(),
-                                (button) -> MinecraftClient.getInstance().openScreen(new ConfirmScreen((boolean1, i) -> {
+                                (button) -> MinecraftClient.getInstance().setScreen(new ConfirmScreen((boolean1, i) -> {
                                     if (boolean1) {
                                         try {
                                             FileUtils.deleteDirectory(SpeedRunIGT.getRecordsPath().toFile());
@@ -370,7 +370,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                                             e.printStackTrace();
                                         }
                                     }
-                                    MinecraftClient.getInstance().openScreen(screen);
+                                    MinecraftClient.getInstance().setScreen(screen);
                                 }, new TranslatableText("speedrunigt.option.delete_all_records.description").asFormattedString(), "", 0)))
                 )
                 .setCategory("speedrunigt.option.category.records")
@@ -391,7 +391,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                             .setButtonWidget(
                                     new ConsumerButtonWidget(0, 0, 150, 20, new TranslatableText("speedrunigt.option.generate_timer_logs").asFormattedString(),
                                             (button) ->
-                                                    MinecraftClient.getInstance().openScreen(new ConfirmScreen((boolean1, i) -> {
+                                                    MinecraftClient.getInstance().setScreen(new ConfirmScreen((boolean1, i) -> {
                                                         if (boolean1) {
                                                             try {
                                                                 InGameTimer.writeTimerLogs(InGameTimer.getInstance());
@@ -399,7 +399,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
                                                                 e.printStackTrace();
                                                             }
                                                         }
-                                                        MinecraftClient.getInstance().openScreen(screen);
+                                                        MinecraftClient.getInstance().setScreen(screen);
                                                     }, new TranslatableText("speedrunigt.option.generate_timer_logs.message").asFormattedString(), "", 0))
                                     )
                             )
