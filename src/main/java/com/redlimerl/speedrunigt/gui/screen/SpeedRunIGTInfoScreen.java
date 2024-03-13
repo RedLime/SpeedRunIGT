@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.gui.screen;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.SpeedRunIGTUpdateChecker.UpdateStatus;
 import com.redlimerl.speedrunigt.gui.ConsumerButtonWidget;
 import com.redlimerl.speedrunigt.utils.OperatingUtils;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
@@ -66,7 +67,7 @@ public class SpeedRunIGTInfoScreen extends Screen {
 
     public void onClose() {
         if (this.field_22534 != null) {
-            this.field_22534.openScreen(parent);
+            this.field_22534.setScreen(parent);
         }
     }
 

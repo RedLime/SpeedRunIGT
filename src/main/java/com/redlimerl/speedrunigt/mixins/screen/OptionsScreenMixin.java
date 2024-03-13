@@ -30,7 +30,7 @@ public class OptionsScreenMixin extends Screen {
     private void onButtonClicked(ButtonWidget button, CallbackInfo ci) {
         if (button == timerButton) {
             if (this.field_22534 != null) {
-                this.field_22534.openScreen(new SpeedRunOptionScreen(this));
+                this.field_22534.setScreen(new SpeedRunOptionScreen(this));
             }
         }
     }

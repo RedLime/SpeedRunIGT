@@ -41,8 +41,8 @@ public abstract class ClientWorldMixin extends World {
     }
 
     @Override
-    public boolean method_4721(int bx, int by, int bz, Block block, int l, int m) {
-        boolean result = super.method_4721(bx, by, bz, block, l, m);
+    public boolean setBlock(int bx, int by, int bz, Block block, int l, int m) {
+        boolean result = super.setBlock(bx, by, bz, block, l, m);
 
         // TODO: doesn't support nether or overworld caves
         if (this.dimension.isNether) {
