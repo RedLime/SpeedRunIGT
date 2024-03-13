@@ -2,6 +2,7 @@ package com.redlimerl.speedrunigt.gui.screen;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
+import com.redlimerl.speedrunigt.SpeedRunIGTUpdateChecker.UpdateStatus;
 import com.redlimerl.speedrunigt.gui.ConsumerButtonWidget;
 import com.redlimerl.speedrunigt.utils.OperatingUtils;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
@@ -44,7 +45,7 @@ public class SpeedRunIGTInfoScreen extends Screen {
     public void render(int mouseX, int mouseY, float delta) {
         this.renderBackground();
         GlStateManager.pushMatrix();
-        GlStateManager.scalef(1.5f, 1.5f, 1.5f);
+        GlStateManager.scale(1.5f, 1.5f, 1.5f);
         this.drawCenteredString(this.textRenderer, new TranslatableText("speedrunigt.title").asFormattedString(), this.width / 3, 15, 16777215);
         GlStateManager.popMatrix();
         this.drawCenteredString(this.textRenderer, new LiteralText("Made by RedLime").asFormattedString(), this.width / 2, 50, 16777215);
@@ -66,7 +67,7 @@ public class SpeedRunIGTInfoScreen extends Screen {
 
     public void onClose() {
         if (this.client != null) {
-            this.client.openScreen(parent);
+            this.client.setScreen(parent);
         }
     }
 

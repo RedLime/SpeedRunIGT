@@ -99,8 +99,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             ArrayList<String> itemList = new ArrayList<>();
             int slot = 0;
             for (ItemStack itemStack : this.inventory.field_15082) {
-                if (itemStack == null || itemStack.isEmpty() || itemStack.getItem() == Items.AIR) continue;
-                String itemId = Item.getRawId(itemStack.getItem()) + (itemStack.isDamaged() ? (":" + itemStack.getMeta()) : "");
+                if (itemStack == null || itemStack.isDamaged() || itemStack.getItem() == Items.AIR) continue;
+                String itemId = Item.getRawId(itemStack.getItem()) + (itemStack.isStackable() ? (":" + itemStack.getData()) : "");
                 if (!itemList.contains(itemId)) {
                     itemList.add(itemId);
                     slot++;
@@ -146,7 +146,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                     items.contains(Items.QUARTZ)
             ) {
                 for (ItemStack item : this.inventory.field_15082) {
-                    if (item != null && !item.isEmpty() && item.getItem().equals(Items.DYE) && DyeColor.getById(item.getMeta()) == DyeColor.BLUE) {
+                    if (item != null && !item.isDamaged() && item.getItem().equals(Items.DYE) && DyeColor.getById(item.getData()) == DyeColor.BLUE) {
                         InGameTimer.complete();
                     }
                 }
