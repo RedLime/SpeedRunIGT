@@ -60,11 +60,6 @@ public class SpeedRunCategoryScreen extends Screen {
         context.drawCenteredTextWithShadow(this.textRenderer, "(" + I18n.translate("speedrunigt.option.timer_category.warning") + ")", this.width / 2, this.height - 46, 8421504);
     }
 
-    @Override
-    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
-        this.renderBackgroundTexture(context);
-    }
-
     @Environment(EnvType.CLIENT)
     class CategorySelectionListWidget extends ElementListWidget<CategorySelectionListWidget.CategoryEntry> {
         private final List<CategoryEntry> entryList = Lists.newArrayList();

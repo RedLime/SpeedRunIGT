@@ -109,7 +109,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                 shells += itemStack.getCount();
             }
             if (itemStack.getItem() instanceof BlockItem && ((BlockItem) itemStack.getItem()).getBlock() instanceof ShulkerBoxBlock) {
-                shells += InGameTimerUtils.getItemCountFromShulkerBox(itemStack, Items.NAUTILUS_SHELL);
+                shells += InGameTimerUtils.getItemCountFromShulkerBox(this.getWorld(), itemStack, Items.NAUTILUS_SHELL);
             }
             if (shells > timer.getMoreData(1541)) {
                 int i = 1;

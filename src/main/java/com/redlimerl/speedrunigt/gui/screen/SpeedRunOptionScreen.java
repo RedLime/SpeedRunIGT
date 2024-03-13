@@ -120,11 +120,6 @@ public class SpeedRunOptionScreen extends Screen {
         if (!tooltip.isEmpty() && !this.isDragging()) context.drawTooltip(textRenderer, tooltip, 0, height);
     }
 
-    @Override
-    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
-        this.renderBackgroundTexture(context);
-    }
-
     public ArrayList<Text> getToolTip(int mouseX, int mouseY) {
         ArrayList<Text> tooltipList = new ArrayList<>();
 

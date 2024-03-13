@@ -36,7 +36,7 @@ public class OptionsScreenMixin extends Screen {
         this.addDrawableChild(timerButton);
     }
 
-    @Inject(method = "render", at = @At("TAIL"))
+    @Inject(method = "", at = @At("TAIL"))
     private void renderEnderPearl(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         if (this.client != null) {
             context.getMatrices().push();
