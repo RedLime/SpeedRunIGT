@@ -18,9 +18,9 @@ public class RunPortalPos implements Serializable {
     }
 
     public RunPortalPos(Vec3i pos) {
-        this.x = pos.field_4613;
-        this.y = pos.field_4614;
-        this.z = pos.field_4615;
+        this.x = pos.x;
+        this.y = pos.y;
+        this.z = pos.z;
     }
 
     public double getX() {
@@ -43,9 +43,9 @@ public class RunPortalPos implements Serializable {
     }
 
     public double squaredDistanceTo(Vec3i pos) {
-        double d = pos.field_4613 - this.x;
-        double e = pos.field_4614 - this.y;
-        double f = pos.field_4615 - this.z;
+        double d = pos.x - this.x;
+        double e = pos.y - this.y;
+        double f = pos.z - this.z;
         return d * d + e * e + f * f;
     }
 

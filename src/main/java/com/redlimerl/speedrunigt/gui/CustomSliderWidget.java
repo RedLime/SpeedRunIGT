@@ -32,7 +32,7 @@ public class CustomSliderWidget extends ButtonWidget {
         return 0;
     }
 
-    protected void renderBg(MinecraftClient client, int mouseX, int mouseY) {
+    protected void mouseDragged(MinecraftClient client, int mouseX, int mouseY) {
         if (this.visible) {
             if (this.dragging) {
                 this.progress = (float)(mouseX - (this.x + 4)) / (float)(this.width - 8);

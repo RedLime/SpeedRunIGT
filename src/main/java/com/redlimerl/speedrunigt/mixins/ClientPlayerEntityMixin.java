@@ -98,8 +98,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             int slot = 0;
             for (int i = 0; i < this.inventory.main.length; i++) {
                 ItemStack itemStack = this.inventory.main[i];
-                if (itemStack == null || itemStack.isEmpty() || Item.fromBlock(Blocks.AIR) == itemStack.getItem()) continue;
-                String itemId = Item.getRawId(itemStack.getItem()) + (itemStack.isDamaged() ? (":" + itemStack.getMeta()) : "");
+                if (itemStack == null || itemStack.isDamaged() || Item.fromBlock(Blocks.AIR) == itemStack.getItem()) continue;
+                String itemId = Item.getRawId(itemStack.getItem()) + (itemStack.isStackable() ? (":" + itemStack.getData()) : "");
                 if (!itemList.contains(itemId)) {
                     itemList.add(itemId);
                     slot++;
@@ -120,8 +120,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             if (itemStack.getItem() == Items.BOOK) timer.tryInsertNewTimeline("pickup_book");
         }
 
-        List<Item> items = Arrays.stream(this.inventory.main).filter(itemStack -> itemStack != null && !itemStack.isEmpty()).map(ItemStack::getItem).collect(Collectors.toList());
-        List<Item> armors = Arrays.stream(this.inventory.armor).filter(itemStack -> itemStack != null && !itemStack.isEmpty()).map(ItemStack::getItem).collect(Collectors.toList());
+        List<Item> items = Arrays.stream(this.inventory.main).filter(itemStack -> itemStack != null && !itemStack.isDamaged()).map(ItemStack::getItem).collect(Collectors.toList());
+        List<Item> armors = Arrays.stream(this.inventory.armor).filter(itemStack -> itemStack != null && !itemStack.isDamaged()).map(ItemStack::getItem).collect(Collectors.toList());
 
         //All Swords
         if (timer.getCategory() == RunCategories.ALL_SWORDS) {
@@ -146,7 +146,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             ) {
                 for (int i = 0; i < this.inventory.main.length; i++) {
                     ItemStack item = this.inventory.main[i];
-                    if (item != null && !item.isEmpty() && item.getItem().equals(Items.DYE) && item.getMeta() == 4) {
+                    if (item != null && !item.isDamaged() && item.getItem().equals(Items.DYE) && item.getData() == 4) {
                         InGameTimer.complete();
                     }
                 }
