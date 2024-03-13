@@ -26,18 +26,18 @@ public class OptionsScreenMixin extends Screen {
             @Override
             public void method_18374(double d, double e) {
                 if (OptionsScreenMixin.this.client != null) {
-                    OptionsScreenMixin.this.client.openScreen(new SpeedRunOptionScreen(OptionsScreenMixin.this));
+                    OptionsScreenMixin.this.client.setScreen(new SpeedRunOptionScreen(OptionsScreenMixin.this));
                 }
             }
         };
-        method_13411(timerButton);
+        addButton(timerButton);
     }
 
     @Inject(method = "render", at = @At("TAIL"))
     private void renderEnderPearl(int mouseX, int mouseY, float delta, CallbackInfo ci) {
         if (this.client != null) {
             GlStateManager.pushMatrix();
-            GlStateManager.translatef(-.5f, -.5f, 0);
+            GlStateManager.translate(-.5f, -.5f, 0);
             this.client.getTextureManager().bindTexture(timerButton.isHovered() ? ENDER_EYE :
                     SpeedRunIGTUpdateChecker.UPDATE_STATUS == SpeedRunIGTUpdateChecker.UpdateStatus.OUTDATED ? BLAZE_POWDER : ENDER_PEARL);
             drawTexture(timerButton.x + 2, timerButton.y + 2, 0.0F, 0.0F, 16, 16, 16, 16);

@@ -294,7 +294,7 @@ public class TimerDrawer {
 
         //배경 렌더
         GlStateManager.pushMatrix();
-        if (translateZ) GlStateManager.translatef(0, 0, 998);
+        if (translateZ) GlStateManager.translate(0, 0, 998);
         if (bgOpacity > 0.01f) {
             Position rtaMin = new Position(rtaTimerElement.getPosition().getX() - rtaPadding, rtaTimerElement.getPosition().getY() - rtaPadding);
             Position rtaMax = new Position(rtaMin.getX() + rtaTimerElement.getScaledTextWidth() + ((rtaPadding - 1) + rtaPadding), rtaMin.getY() + rtaTimerElement.getScaledTextHeight() + ((rtaPadding - 1) + rtaPadding));

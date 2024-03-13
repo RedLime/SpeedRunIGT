@@ -55,8 +55,8 @@ public class TimerElement {
 
     public void draw(boolean doTranslate) {
         GlStateManager.pushMatrix();
-        if (doTranslate) GlStateManager.translatef(0, 0, 1);
-        GlStateManager.scalef(scale, scale, 1.0F);
+        if (doTranslate) GlStateManager.translate(0, 0, 1);
+        GlStateManager.scale(scale, scale, 1.0F);
         drawOutLine(this.textRenderer, scaledPosition.getX(), scaledPosition.getY(), text, color, decoration);
         GlStateManager.popMatrix();
     }

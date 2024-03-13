@@ -28,38 +28,10 @@
         }
     },
     {
-        "name": "distract_piglin",
-        "type": "advancement",
-        "data": {
-            "advancement": "nether/distract_piglin"
-        }
-    },
-    {
-        "name": "enter_bastion",
-        "type": "advancement",
-        "data": {
-            "advancement": "nether/find_bastion"
-        }
-    },
-    {
-        "name": "loot_bastion",
-        "type": "advancement",
-        "data": {
-            "advancement": "nether/loot_bastion"
-        }
-    },
-    {
         "name": "obtain_obsidian",
         "type": "advancement",
         "data": {
             "advancement": "story/form_obsidian"
-        }
-    },
-    {
-        "name": "obtain_crying_obsidian",
-        "type": "advancement",
-        "data": {
-            "advancement": "nether/obtain_crying_obsidian"
         }
     },
     {

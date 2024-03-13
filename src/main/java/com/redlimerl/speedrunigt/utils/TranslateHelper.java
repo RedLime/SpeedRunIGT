@@ -69,6 +69,6 @@ public class TranslateHelper {
     }
 
     public static void reload() {
-        MinecraftClient.getInstance().stitchTextures();
+        MinecraftClient.getInstance().reloadResources();
     }
 }

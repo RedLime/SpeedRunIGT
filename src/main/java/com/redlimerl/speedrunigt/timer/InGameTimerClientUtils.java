@@ -23,7 +23,7 @@ public class InGameTimerClientUtils {
 
         if (timer.getStatus() != TimerStatus.IDLE) return false;
 
-        if (!client.isPaused() && client.worldRenderer != null && client.isWindowFocused() && client.field_19945.method_18252()
+        if (!client.isPaused() && client.worldRenderer != null && client.isFullscreen() && client.field_19945.method_18252()
                 && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
             if (checkRender) {
                 WorldRendererAccessor worldRenderer = (WorldRendererAccessor) client.worldRenderer;
@@ -65,7 +65,7 @@ public class InGameTimerClientUtils {
     static void setCategoryWarningScreen(@Nullable String conditionFileName, InvalidCategoryException exception) {
         if (MinecraftClient.getInstance().currentScreen == null)
             FAILED_CATEGORY_INIT_SCREEN = new FailedCategoryInitScreen(conditionFileName, exception);
-        else MinecraftClient.getInstance().openScreen(new FailedCategoryInitScreen(conditionFileName, exception));
+        else MinecraftClient.getInstance().setScreen(new FailedCategoryInitScreen(conditionFileName, exception));
     }
 
     static MinecraftServer getClientServer() {
