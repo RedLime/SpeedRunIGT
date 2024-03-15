@@ -3,11 +3,13 @@ package com.redlimerl.speedrunigt.timer.packet.packets;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
-import com.redlimerl.speedrunigt.timer.packet.TimerPacketBuf;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.server.MinecraftServer;
+
+import java.io.*;
 
 public class TimerAchieveCriteriaPacket extends TimerPacket {
 
@@ -29,34 +31,32 @@ public class TimerAchieveCriteriaPacket extends TimerPacket {
 
     @Environment(EnvType.CLIENT)
     @Override
-    protected TimerPacketBuf convertClient2ServerPacket(TimerPacketBuf buf, MinecraftClient client) {
-        if (serverAdvancement != null) buf.writeString(serverAdvancement);
-        if (serverCriteria != null) buf.writeString(serverCriteria);
-        if (serverIsAdvancement != null) buf.writeBoolean(serverIsAdvancement);
-        return buf;
+    protected void convertClient2ServerPacket(DataOutputStream buf, MinecraftClient client) throws IOException {
+        if (this.serverAdvancement != null) buf.writeUTF(this.serverAdvancement);
+        if (this.serverCriteria != null) buf.writeUTF(this.serverCriteria);
+        if (this.serverIsAdvancement != null) buf.writeBoolean(this.serverIsAdvancement);
     }
 
     @Override
-    public void receiveClient2ServerPacket(TimerPacketBuf buf, MinecraftServer server) {
+    public void receiveClient2ServerPacket(CustomPayloadC2SPacket packet, MinecraftServer server) throws IOException {
         if (!SpeedRunIGT.IS_CLIENT_SIDE) {
-            TimerPacketBuf copiedBuf = buf.copy();
-            InGameTimer.getInstance().tryInsertNewAdvancement(copiedBuf.readString(), copiedBuf.readString(), copiedBuf.readBoolean());
-            copiedBuf.release();
+            DataInputStream copiedBuf = new DataInputStream(new ByteArrayInputStream(packet.field_2455));
+            InGameTimer.getInstance().tryInsertNewAdvancement(copiedBuf.readUTF(), copiedBuf.readUTF(), copiedBuf.readBoolean());
+            copiedBuf.close();
         }
-        this.sendPacketToPlayers(buf, server);
+        this.sendPacketToPlayers(packet.field_2455, server);
     }
 
     @Override
-    protected TimerPacketBuf convertServer2ClientPacket(TimerPacketBuf buf, MinecraftServer server) {
-        if (serverAdvancement != null) buf.writeString(serverAdvancement);
-        if (serverCriteria != null) buf.writeString(serverCriteria);
-        if (serverIsAdvancement != null) buf.writeBoolean(serverIsAdvancement);
-        return buf;
+    protected void convertServer2ClientPacket(DataOutputStream buf, MinecraftServer server) throws IOException {
+        if (this.serverAdvancement != null) buf.writeUTF(this.serverAdvancement);
+        if (this.serverCriteria != null) buf.writeUTF(this.serverCriteria);
+        if (this.serverIsAdvancement != null) buf.writeBoolean(this.serverIsAdvancement);
     }
 
-    @Environment(EnvType.CLIENT)
+
     @Override
-    public void receiveServer2ClientPacket(TimerPacketBuf buf, MinecraftClient client) {
-        InGameTimer.getInstance().tryInsertNewAdvancement(buf.readString(), buf.readString(), buf.readBoolean());
+    public void receiveServer2ClientPacket(DataInputStream buf, MinecraftClient client) throws IOException {
+        InGameTimer.getInstance().tryInsertNewAdvancement(buf.readUTF(), buf.readUTF(), buf.readBoolean());
     }
 }

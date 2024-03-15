@@ -1,12 +1,12 @@
 package com.redlimerl.speedrunigt.timer;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
-import com.redlimerl.speedrunigt.mixins.access.ServerStatHandlerAccessor;
+import com.redlimerl.speedrunigt.gui.screen.FailedCategoryInitScreen;
+import com.redlimerl.speedrunigt.mixins.access.PlayerManagerAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
@@ -14,11 +14,10 @@ import com.redlimerl.speedrunigt.timer.logs.TimerPauseLog;
 import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import com.redlimerl.speedrunigt.timer.running.RunPortalPos;
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.impl.FabricLoaderImpl;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.stat.ServerStatHandler;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.GameMode;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.OverworldDimension;
 import net.minecraft.world.dimension.TheNetherDimension;
@@ -37,6 +36,7 @@ public class InGameTimerUtils {
     public static final HashSet<Object> CHANGED_OPTIONS = Sets.newHashSet();
     public static boolean RETIME_IS_WAITING_LOAD = false;
     public static boolean IS_SET_SEED = false;
+    public static long LATEST_TIMER_TIME = 0;
 
     public static @Nullable File getTimerLogDir(String worldName, String pathName) {
         Path path;
@@ -48,7 +48,7 @@ public class InGameTimerUtils {
         }
 
         File worldFolder = path.toFile();
-        File file = path.resolve(SpeedRunIGT.MOD_ID).resolve(pathName).toFile();
+        File file = pathName.isEmpty() ? path.resolve(SpeedRunIGT.MOD_ID).toFile() : path.resolve(SpeedRunIGT.MOD_ID).resolve(pathName).toFile();
 
         if (!worldFolder.exists() || !worldFolder.isDirectory()) {
             SpeedRunIGT.error("World directory doesn't exist, couldn't make timer dirs");
@@ -56,7 +56,7 @@ public class InGameTimerUtils {
         }
 
         if (!file.exists()) {
-            SpeedRunIGT.debug(file.mkdirs() ? "make timer dirs" : "failed to make timer dirs");
+            SpeedRunIGT.debug(file.mkdirs() ? "Made timer dirs" : "Failed to make timer dirs");
         } else if (!file.isDirectory()) {
             return null;
         }
@@ -71,7 +71,7 @@ public class InGameTimerUtils {
         if (arrayList.size() == 0) return "";
         StringBuilder stringBuilder = new StringBuilder();
         if (completeCount > 0) {
-            stringBuilder.append("/* The timer/log is segmented. If you need previous logs, check the igt_freeze").append(InGameTimer.getLogSuffix(completeCount)).append(" file.").append(" */\n");
+            stringBuilder.append("/* The timer/log is segmented. If you need previous logs, check the igt_freeze").append(InGameTimer.getLogSuffix(completeCount - 1)).append(" file.").append(" */\n");
         }
         for (Object o : arrayList) {
             stringBuilder.append(o.toString()).append("\n");
@@ -89,7 +89,7 @@ public class InGameTimerUtils {
 
         StringBuilder stringBuilder = new StringBuilder();
         if (completeCount > 0) {
-            stringBuilder.append("/* The timer/log is segmented. If you need previous logs, check the igt_timer").append(InGameTimer.getLogSuffix(completeCount)).append(" file.").append(" */\n");
+            stringBuilder.append("/* The timer/log is segmented. If you need previous logs, check the igt_timer").append(InGameTimer.getLogSuffix(completeCount - 1)).append(" file.").append(" */\n");
         }
         if (makeHeader) {
             stringBuilder.append(makeLogText(5, "No"))
@@ -142,11 +142,13 @@ public class InGameTimerUtils {
         jsonObject.addProperty("is_completed", timer.isCompleted());
         jsonObject.addProperty("is_coop", timer.isCoop());
         jsonObject.addProperty("is_hardcore", timer.isHardcore());
-        jsonObject.addProperty("is_legacy_igt", timer.isLegacyIGT());
         jsonObject.addProperty("world_name", timer.worldName);
+        jsonObject.addProperty("is_cheat_allowed", timer.isCheatAvailable());
+        jsonObject.addProperty("default_gamemode", timer.getDefaultGameMode());
         jsonObject.addProperty("date", System.currentTimeMillis());
         jsonObject.addProperty("retimed_igt", timer.getRetimedInGameTime());
         jsonObject.addProperty("final_igt", timer.getInGameTime(false));
+        jsonObject.addProperty("stats_igt", timer.getCompleteStatIGT());
         jsonObject.addProperty("final_rta", timer.getRealTimeAttack());
         if (timer.lanOpenedTime == null) jsonObject.add("open_lan", JsonNull.INSTANCE);
         else jsonObject.addProperty("open_lan", timer.lanOpenedTime);
@@ -160,7 +162,9 @@ public class InGameTimerUtils {
         }
         jsonObject.add("timelines", timelineArr);
         jsonObject.add("advancements", SpeedRunIGT.GSON.toJsonTree(sortMapByValue(timer.getAdvancementsTracker().getAdvancements())));
-        jsonObject.add("stats", getStatsJson(timer));
+        if (SpeedRunIGT.IS_CLIENT_SIDE) {
+            jsonObject.add("stats", InGameTimerClientUtils.getStatsJson(timer));
+        }
 
         return jsonObject;
     }
@@ -176,26 +180,18 @@ public class InGameTimerUtils {
         return result;
     }
 
-    @SuppressWarnings("unchecked")
-    public static JsonObject getStatsJson(InGameTimer timer) {
-        JsonObject jsonObject = new JsonObject();
-        MinecraftServer server = getServer();
-        if (timer.isServerIntegrated && server != null && server.getPlayerManager() != null) {
-            ArrayList<ServerPlayerEntity> serverPlayerEntities = Lists.newArrayList(server.getPlayerManager().players);
-            for (ServerPlayerEntity serverPlayerEntity : serverPlayerEntities) {
-                jsonObject.add(serverPlayerEntity.getUuid().toString(), SpeedRunIGT.GSON.fromJson(ServerStatHandler.method_8272(((ServerStatHandlerAccessor) serverPlayerEntity.getStatHandler()).getStatMap()), JsonObject.class));
-            }
-        }
-        return jsonObject;
-    }
-
     public static boolean isHardcoreWorld() {
         if (SpeedRunIGT.IS_CLIENT_SIDE) return InGameTimerClientUtils.isHardcoreWorld();
         return SpeedRunIGT.DEDICATED_SERVER.isHardcore();
     }
 
     public static String getMinecraftVersion() {
-        return FabricLoaderImpl.INSTANCE.getGameProvider().getNormalizedGameVersion();
+        Optional<ModContainer> mcContainer = FabricLoader.getInstance().getModContainer("minecraft");
+        if (mcContainer.isPresent()) {
+            ModContainer mc = mcContainer.get();
+            return mc.getMetadata().getVersion().getFriendlyString();
+        }
+        return "unknown";
     }
 
     public static boolean isLoadableBlind(Dimension dimensionType, Vec3d netherPos, Vec3d overPos) {
@@ -211,14 +207,29 @@ public class InGameTimerUtils {
         return true;
     }
 
-    public static boolean isBlindTraveled(Vec3d netherPos) {
+    public static int isBlindTraveled(Vec3d netherPos) {
         InGameTimer timer = InGameTimer.getInstance();
-        for (RunPortalPos portalPos : timer.lastNetherPortalPos) {
-            if (portalPos.squaredDistanceTo(netherPos) < 16) return false;
+        for (int i = 0; i < timer.lastNetherPortalPos.size(); i++) {
+            if (timer.lastNetherPortalPos.get(i).squaredDistanceTo(netherPos) < 16) return i;
         }
-        return true;
+        return -1;
     }
 
+    public static int getPortalNumber(Vec3d portalPos) {
+        int index = isBlindTraveled(portalPos);
+        return Math.max(hasHomeTraveled() ? index : index - 1, 0);
+    }
+
+    public static boolean hasHomeTraveled() {
+        for (TimerTimeline timeline : InGameTimer.getInstance().getTimelines()) {
+            if (timeline.getName().equalsIgnoreCase("nether_travel_home")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static @Nullable FailedCategoryInitScreen FAILED_CATEGORY_INIT_SCREEN = null;
     public static void setCategoryWarningScreen(@Nullable String conditionFileName, InvalidCategoryException exception) {
         if (SpeedRunIGT.IS_CLIENT_SIDE) {
             InGameTimerClientUtils.setCategoryWarningScreen(conditionFileName, exception);
@@ -228,5 +239,25 @@ public class InGameTimerUtils {
 
     public static MinecraftServer getServer() {
         return SpeedRunIGT.IS_CLIENT_SIDE ? InGameTimerClientUtils.getClientServer() : SpeedRunIGT.DEDICATED_SERVER;
+    }
+
+    public static int getCurrentWorldDefaultGameMode() {
+        MinecraftServer server = getServer();
+        if (server == null) return GameMode.SURVIVAL.getGameModeId();
+        return server.method_3026().getGameModeId();
+    }
+
+    public static boolean isCurrentWorldCheatAvailable() {
+        MinecraftServer server = getServer();
+        if (server == null) return false;
+        return ((PlayerManagerAccessor) server.getPlayerManager()).isCheatsAllowedInject();
+    }
+
+    public static int getCurrentDifficulty() {
+        MinecraftServer server = getServer();
+        if (server == null) {
+            return 0;
+        }
+        return server.getWorld().difficulty;
     }
 }

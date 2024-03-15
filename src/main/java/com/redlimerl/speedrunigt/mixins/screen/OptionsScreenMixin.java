@@ -2,10 +2,15 @@ package com.redlimerl.speedrunigt.mixins.screen;
 
 import com.redlimerl.speedrunigt.SpeedRunIGTUpdateChecker;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunOptionScreen;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SettingsScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.texture.SpriteAtlasTexture;
+import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
+import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -13,33 +18,39 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(SettingsScreen.class)
 public class OptionsScreenMixin extends Screen {
-    private static final Identifier ENDER_PEARL = new Identifier("textures/items/ender_pearl.png");
-    private static final Identifier BLAZE_POWDER = new Identifier("textures/items/blaze_powder.png");
-    private static final Identifier ENDER_EYE = new Identifier("textures/items/ender_eye.png");
+//    n.m.item.Item#method_6324
+    private static final String ENDER_PEARL = "ender_pearl";
+    private static final String BLAZE_POWDER = "blaze_powder";
+    private static final String ENDER_EYE = "ender_eye";
 
     private ButtonWidget timerButton;
 
-    @Inject(method = "method_21947", at = @At("TAIL"))
+    @Inject(method = "init", at = @At("TAIL"))
     private void onInit(CallbackInfo ci) {
-        timerButton = new ButtonWidget(123456, this.field_22535 / 2 - 180, this.field_22536 / 6 - 12, 20, 20, "");
-        field_22537.add(timerButton);
+        timerButton = new ButtonWidget(123456, this.width / 2 - 180, this.height / 6 - 12, 20, 20, "");
+        buttons.add(timerButton);
     }
 
-    @Inject(method = "method_21930", at = @At("TAIL"))
+    @Inject(method = "buttonClicked", at = @At("TAIL"))
     private void onButtonClicked(ButtonWidget button, CallbackInfo ci) {
         if (button == timerButton) {
-            if (this.field_22534 != null) {
-                this.field_22534.openScreen(new SpeedRunOptionScreen(this));
+            if (this.client != null) {
+                this.client.setScreen(new SpeedRunOptionScreen(this));
             }
         }
     }
 
-    @Inject(method = "method_21925", at = @At("TAIL"))
+    @Inject(method = "render", at = @At("TAIL"))
     private void renderEnderPearl(int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        if (this.field_22534 != null) {
-            this.field_22534.getTextureManager().bindTexture(timerButton.method_21885() ? ENDER_EYE :
-                    SpeedRunIGTUpdateChecker.UPDATE_STATUS == SpeedRunIGTUpdateChecker.UpdateStatus.OUTDATED ? BLAZE_POWDER : ENDER_PEARL);
-            method_21875(timerButton.x + 2, timerButton.y + 2, 0.0F, 0.0F, 16, 16, 16, 16);
+        if (this.client != null) {
+            GL11.glPushMatrix();
+            GL11.glTranslatef(-.5f, -.5f, 0);
+            MinecraftClient.getInstance().getTextureManager().bindTexture(SpriteAtlasTexture.field_6557);
+            Sprite texture = ((SpriteAtlasTexture) MinecraftClient.getInstance().getTextureManager().getTexture(SpriteAtlasTexture.field_6557)).getSprite(
+                    timerButton.isHovered() ? ENDER_EYE : SpeedRunIGTUpdateChecker.UPDATE_STATUS == SpeedRunIGTUpdateChecker.UpdateStatus.OUTDATED ? BLAZE_POWDER : ENDER_PEARL
+            );
+            method_4944(timerButton.x + 2, timerButton.y + 2, texture, 16, 16);
+            GL11.glPopMatrix();
         }
     }
 }

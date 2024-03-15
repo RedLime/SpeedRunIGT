@@ -1,0 +1,55 @@
+[
+    {
+        "name": "obtain_iron_ingot",
+        "type": "achievement",
+        "data": {
+            "achievement": "acquireIron"
+        }
+    },
+    {
+        "name": "enter_nether",
+        "type": "insert_timeline",
+        "data": {
+            "timeline": "enter_nether"
+        }
+    },
+    {
+        "name": "killed_blaze",
+        "type": "timeline",
+        "data": {
+            "timeline": "killed_blaze"
+        }
+    },
+    {
+        "name": "first_portal",
+        "type": "nether_travel",
+        "data": {
+            "portal": "0"
+        }
+    },
+    {
+        "name": "second_portal",
+        "type": "nether_travel",
+        "data": {
+            "portal": "1"
+        }
+    },
+    {
+        "name": "enter_end",
+        "type": "insert_timeline",
+        "data": {
+            "timeline": "enter_end"
+        }
+    },
+    {
+        "name": "kill_dragon",
+        "type": "insert_timeline",
+        "data": {
+            "timeline": "kill_ender_dragon"
+        }
+    },
+    {
+        "name": "credits",
+        "type": "roll_credits"
+    }
+]

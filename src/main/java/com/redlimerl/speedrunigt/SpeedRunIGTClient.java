@@ -3,15 +3,13 @@ package com.redlimerl.speedrunigt;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.api.SpeedRunIGTApi;
 import com.redlimerl.speedrunigt.impl.OptionButtonsImpl;
+import com.redlimerl.speedrunigt.instance.GameInstance;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
-import com.redlimerl.speedrunigt.utils.KeyBindingRegistry;
-import com.redlimerl.speedrunigt.utils.TranslateHelper;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
-import net.minecraft.client.options.KeyBinding;
-
+import net.minecraft.client.option.KeyBinding;
 import java.util.Collection;
 
 public class SpeedRunIGTClient implements ClientModInitializer {
@@ -44,25 +42,8 @@ public class SpeedRunIGTClient implements ClientModInitializer {
         // End initializing
         isInitialized = true;
 
-        // Translate initialize
-        try {
-            TranslateHelper.init();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-
-        // Key Bindings initialize
-        timerResetKeyBinding = KeyBindingRegistry.registerKeyBinding(new KeyBinding(
-                "speedrunigt.controls.start_timer",
-                22,
-                "speedrunigt.title.options"
-        ));
-        timerStopKeyBinding = KeyBindingRegistry.registerKeyBinding(new KeyBinding(
-                "speedrunigt.controls.stop_timer",
-                23,
-                "speedrunigt.title.options"
-        ));
-
         SpeedRunIGT.IS_CLIENT_SIDE = true;
+
+        GameInstance.createInstance();
     }
 }

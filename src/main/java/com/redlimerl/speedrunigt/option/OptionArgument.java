@@ -1,6 +1,6 @@
 package com.redlimerl.speedrunigt.option;
 
-import net.minecraft.util.Identifier;
+import com.redlimerl.speedrunigt.Identifier;
 
 public abstract class OptionArgument<T> {
     private final Identifier key;
@@ -12,11 +12,11 @@ public abstract class OptionArgument<T> {
     }
 
     public T getDefaultValue() {
-        return defaultValue;
+        return this.defaultValue;
     }
 
     public Identifier getKey() {
-        return key;
+        return this.key;
     }
 
     public abstract T valueFromString(String string);

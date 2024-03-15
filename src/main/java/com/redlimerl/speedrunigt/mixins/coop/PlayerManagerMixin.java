@@ -25,7 +25,7 @@ public abstract class PlayerManagerMixin {
 
     @Inject(method = "onPlayerConnect", at = @At("TAIL"))
     public void onPlayerConnectInject(Connection player, ServerPlayerEntity par2, CallbackInfo ci) {
-        if (this.getCurrentPlayerCount() > 1 && !InGameTimer.getInstance().isCompleted()) {
+        if (this.getCurrentPlayerCount() > (SpeedRunIGT.IS_CLIENT_SIDE ? 1 : 0) && !InGameTimer.getInstance().isCompleted()) {
             if (InGameTimer.getInstance().isStarted() || !SpeedRunIGT.IS_CLIENT_SIDE) {
                 long rta = InGameTimer.getInstance().getRealTimeAttack();
                 TimerPacketUtils.sendServer2ClientPacket(this.server, new TimerStartPacket(InGameTimer.getInstance(), rta));

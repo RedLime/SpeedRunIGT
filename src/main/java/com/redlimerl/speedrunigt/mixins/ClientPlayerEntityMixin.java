@@ -29,12 +29,13 @@ import java.util.stream.Collectors;
 @Mixin(ClientPlayerEntity.class)
 public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
 
-    @Shadow public abstract boolean isSneaking();
-    @Shadow protected MinecraftClient client;
-
     public ClientPlayerEntityMixin(World world, String string) {
         super(world, string);
     }
+
+    @Shadow public abstract boolean isSneaking();
+    @Shadow protected MinecraftClient client;
+
 
 
     @Inject(method = "tickMovement",
@@ -57,10 +58,29 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
         // Custom Json category
         if (timer.getCategory().getConditionJson() != null) {
-            for (CategoryCondition.Condition<?> condition : timer.getCustomCondition().getConditionList()) {
-                if (condition instanceof ObtainItemCategoryCondition) {
-                    timer.updateCondition((ObtainItemCategoryCondition) condition, playerItemList);
+            for (CategoryCondition.Conditions conditions : timer.getCustomCondition().map(CategoryCondition::getConditions).orElse(Lists.newArrayList())) {
+                int strict = 0;
+                for (CategoryCondition.Condition<?> condition : conditions.getConditions()) {
+                    if (condition instanceof ObtainItemCategoryCondition) {
+                        ObtainItemCategoryCondition obtainItemCondition = (ObtainItemCategoryCondition) condition;
+                        boolean canComplete = obtainItemCondition.checkConditionComplete(playerItemList);
+                        if (obtainItemCondition.isStrictMode()) {
+                            if (!canComplete) strict++;
+                        } else {
+                            timer.updateCondition(obtainItemCondition, playerItemList);
+                        }
+                    }
                 }
+
+                if (strict == 0) {
+                    for (CategoryCondition.Condition<?> condition : conditions.getConditions()) {
+                        if (condition instanceof ObtainItemCategoryCondition) {
+                            ObtainItemCategoryCondition obtainItemCondition = (ObtainItemCategoryCondition) condition;
+                            timer.updateCondition(obtainItemCondition, playerItemList);
+                        }
+                    }
+                }
+
             }
             timer.checkConditions();
         }
@@ -77,8 +97,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             int slot = 0;
             for (int i = 0; i < this.inventory.main.length; i++) {
                 ItemStack itemStack = this.inventory.main[i];
-                if (itemStack == null || itemStack.isEmpty() || itemStack.id == 0) continue;
-                String itemId = itemStack.id + (itemStack.isDamaged() ? (":" + itemStack.getMeta()) : "");
+                if (itemStack == null || itemStack.isDamaged() || itemStack.getItem() == null) continue;
+                String itemId = itemStack.getItem().id + (itemStack.isStackable() ? (":" + itemStack.getData()) : "");
                 if (!itemList.contains(itemId)) {
                     itemList.add(itemId);
                     slot++;
@@ -93,12 +113,14 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
             //Stack of Lime Wool
             if (timer.getCategory() == RunCategories.STACK_OF_LIME_WOOL) {
-                if (itemStack.id == Block.WOOL.id && itemStack.getDamage() == 5 && itemStack.count == 64) InGameTimer.complete();
+                if (itemStack.getItem() == Item.ITEMS[Block.WOOL.id] && itemStack.getDamage() == 5 && itemStack.count == 64) InGameTimer.complete();
             }
+
+            if (itemStack.getItem() == Item.BOOK) timer.tryInsertNewTimeline("pickup_book");
         }
 
-        List<Item> items = Arrays.stream(this.inventory.main).filter(itemStack -> itemStack != null && !itemStack.isEmpty()).map(ItemStack::getItem).collect(Collectors.toList());
-        List<Item> armors = Arrays.stream(this.inventory.armor).filter(itemStack -> itemStack != null && !itemStack.isEmpty()).map(ItemStack::getItem).collect(Collectors.toList());
+        List<Item> items = Arrays.stream(this.inventory.main).filter(itemStack -> itemStack != null && !itemStack.isDamaged()).map(ItemStack::getItem).collect(Collectors.toList());
+        List<Item> armors = Arrays.stream(this.inventory.armor).filter(itemStack -> itemStack != null && !itemStack.isDamaged()).map(ItemStack::getItem).collect(Collectors.toList());
 
         //All Swords
         if (timer.getCategory() == RunCategories.ALL_SWORDS) {
@@ -123,7 +145,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             ) {
                 for (int i = 0; i < this.inventory.main.length; i++) {
                     ItemStack item = this.inventory.main[i];
-                    if (item != null && !item.isEmpty() && item.getItem().equals(Item.DYES) && item.getMeta() == 4) {
+                    if (item != null && !item.isDamaged() && item.getItem().equals(Item.DYES) && item.getData() == 4) {
                         InGameTimer.complete();
                     }
                 }
@@ -136,7 +158,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             if (armors.contains(Item.IRON_HELMET) &&
                     armors.contains(Item.IRON_CHESTPLATE) &&
                     armors.contains(Item.IRON_BOOTS) &&
-                    armors.contains(Item.IRON_LEGGINGS) && experienceLevel >= 15) {
+                    armors.contains(Item.IRON_LEGGINGS) && this.experienceLevel >= 15) {
                 InGameTimer.complete();
             }
         }
@@ -147,6 +169,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     }
 
 
+    private Long latestPortalEnter = null;
     private int portalTick = 0;
     @Inject(at = @At("HEAD"), method = "tickMovement")
     public void updateNausea(CallbackInfo ci) {
@@ -155,14 +178,15 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             if (++portalTick >= 81 && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
                 portalTick = 0;
                 if (InGameTimer.getInstance().getStatus() != TimerStatus.IDLE && client.isInSingleplayer()) {
-                    InGameTimerUtils.IS_CHANGING_DIMENSION = true;
-                    InGameTimer.getInstance().setPause(true, TimerStatus.IDLE, "portal ticks");
+                    latestPortalEnter = System.currentTimeMillis();
                 }
             }
         } else {
-            if (portalTick > 0 && InGameTimerUtils.IS_CHANGING_DIMENSION)
-                InGameTimerUtils.IS_CHANGING_DIMENSION = false;
-            portalTick = 0;
+            if (this.latestPortalEnter != null) {
+                InGameTimer.getInstance().tryExcludeIGT(System.currentTimeMillis() - this.latestPortalEnter, "nether portal lag");
+                this.latestPortalEnter = null;
+            }
+            this.portalTick = 0;
         }
     }
 

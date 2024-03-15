@@ -20,16 +20,16 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(ServerWorld.class)
 public abstract class ServerWorldMixin extends World {
 
-    public ServerWorldMixin(SaveHandler saveHandler, String string, Dimension dimension, LevelInfo levelInfo, Profiler profiler, LogManager logger) {
-        super(saveHandler, string, dimension, levelInfo, profiler, logger);
+    public ServerWorldMixin(SaveHandler saveHandler, String string, Dimension dimension, LevelInfo levelInfo, Profiler profiler, LogManager logManager) {
+        super(saveHandler, string, dimension, levelInfo, profiler, logManager);
     }
 
     @Override
-    public boolean method_4721(int x, int y, int z, int i, int j, int k) {
-        boolean result = super.method_4721(x, y, z, i, j, k);
+    public boolean method_4721(int i, int j, int k, int block, int l, int m) {
+        boolean result = super.method_4721(i, j, k, block, l, m);
 
         InGameTimer timer = InGameTimer.getInstance();
-        if (!this.isClient && k == 2 && i == Block.END_PORTAL.id && timer.getCategory() == RunCategories.ALL_PORTALS && dimension instanceof OverworldDimension) {
+        if (!this.isClient && m == 2 && block == Block.END_PORTAL.id && timer.getCategory() == RunCategories.ALL_PORTALS && dimension instanceof OverworldDimension) {
             for (RunPortalPos runPortalPos : timer.getEndPortalPosList()) {
                 if (runPortalPos.squaredDistanceTo(new Vec3i(i, j, k)) < 100) {
                     return result;

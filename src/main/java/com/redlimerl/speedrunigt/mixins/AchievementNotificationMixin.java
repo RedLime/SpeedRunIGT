@@ -1,5 +1,7 @@
 package com.redlimerl.speedrunigt.mixins;
 
+import com.google.common.collect.Lists;
+import com.redlimerl.speedrunigt.instance.GameInstance;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerAdvancementTracker;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
@@ -28,6 +30,9 @@ public abstract class AchievementNotificationMixin {
 
         if (timer.getStatus() == TimerStatus.NONE) return;
 
+        // Events system
+        GameInstance.getInstance().callEvents("achievement", factory -> achieved.getStringId().substring("achievement.".length()).equals(factory.getDataValue("achievement")));
+
         // For Timeline
         timer.tryInsertNewAdvancement(achieved.getStringId(), null, true);
         if (timer.isCoop() && (timer.getCategory() == RunCategories.ALL_ACHIEVEMENTS || timer.getCategory() == RunCategories.HALF || timer.getCategory() == RunCategories.POGLOOT_QUATER))
@@ -35,7 +40,7 @@ public abstract class AchievementNotificationMixin {
 
         // Custom Json category
         if (timer.getCategory().getConditionJson() != null) {
-            for (CategoryCondition.Condition<?> condition : timer.getCustomCondition().getConditionList()) {
+            for (CategoryCondition.Condition<?> condition : timer.getCustomCondition().map(CategoryCondition::getConditionList).orElse(Lists.newArrayList())) {
                 if (condition instanceof AdvancementCategoryCondition) {
                     timer.updateCondition((AdvancementCategoryCondition) condition, achieved);
                 }

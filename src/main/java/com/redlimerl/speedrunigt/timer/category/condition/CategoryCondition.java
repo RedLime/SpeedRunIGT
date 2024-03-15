@@ -1,5 +1,7 @@
 package com.redlimerl.speedrunigt.timer.category.condition;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -8,9 +10,7 @@ import com.redlimerl.speedrunigt.api.CategoryConditionRegisterHelper;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
 import net.fabricmc.loader.api.SemanticVersion;
-import net.fabricmc.loader.impl.util.version.VersionPredicateParser;
-import org.spongepowered.include.com.google.common.collect.Lists;
-import org.spongepowered.include.com.google.common.collect.Maps;
+import net.fabricmc.loader.api.metadata.version.VersionPredicate;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -20,31 +20,37 @@ import java.util.Map;
 
 public class CategoryCondition implements Serializable {
 
-    private static class Conditions implements Serializable {
+    public static class Conditions implements Serializable {
         private final ArrayList<Condition<?>> conditions = new ArrayList<>();
+
+        public List<Condition<?>> getConditions() {
+            return this.conditions;
+        }
     }
 
     @SuppressWarnings("FieldCanBeLocal")
     public static class Condition<T> implements Serializable {
         private final String name;
+        private final JsonObject jsonObject;
         boolean isCompleted = false;
 
         public Condition(JsonObject jsonObject) throws InvalidCategoryException {
             if (!jsonObject.has("name"))
                 throw new InvalidCategoryException(InvalidCategoryException.Reason.INVALID_JSON_DATA, "condition \"name\" is undefined.");
             this.name = jsonObject.get("name").getAsString();
+            this.jsonObject = jsonObject;
         }
 
         public final boolean isCompleted() {
-            return isCompleted;
+            return this.isCompleted;
         }
 
         public final void setCompleted(boolean completed) {
-            isCompleted = completed;
+            this.isCompleted = completed;
         }
 
         public final String getName() {
-            return name;
+            return this.name;
         }
 
         public boolean checkConditionComplete(T obj) {
@@ -87,7 +93,7 @@ public class CategoryCondition implements Serializable {
                 for (JsonElement jsonCondition : jsonConditions) {
                     JsonObject jsonObject = jsonCondition.getAsJsonObject();
                     if (jsonObject.has("version") &&
-                            !VersionPredicateParser.parse(jsonObject.get("version").getAsString()).test(SemanticVersion.parse(InGameTimerUtils.getMinecraftVersion()))) {
+                            !VersionPredicate.parse(jsonObject.get("version").getAsString()).test(SemanticVersion.parse(InGameTimerUtils.getMinecraftVersion()))) {
                         continue;
                     }
                     andConditions.conditions.add(getConditionType(jsonCondition.getAsJsonObject()));
@@ -106,7 +112,7 @@ public class CategoryCondition implements Serializable {
 
 
     public boolean isDone() {
-        for (Conditions conditionList : availableConditions) {
+        for (Conditions conditionList : this.availableConditions) {
             int done = 0;
             for (Condition<?> condition : conditionList.conditions) {
                 if (condition.isCompleted) done++;
@@ -116,9 +122,30 @@ public class CategoryCondition implements Serializable {
         return false;
     }
 
-    public List<Condition<?>> getConditionList() {
+    public List<? extends Condition<?>> getConditionList() {
         ArrayList<Condition<?>> list = Lists.newArrayList();
-        for (Conditions availableCondition : availableConditions) list.addAll(availableCondition.conditions);
+        for (Conditions availableCondition : this.availableConditions) list.addAll(availableCondition.conditions);
         return list;
+    }
+
+    public List<Conditions> getConditions() {
+        return this.availableConditions;
+    }
+
+    public void refreshConditionClasses() {
+        for (Conditions conditions : this.availableConditions) {
+            ArrayList<Condition<?>> newConditionList = Lists.newArrayList();
+            for (Condition<?> condition : conditions.conditions) {
+                try {
+                    Condition<?> newCondition = getConditionType(condition.jsonObject);
+                    newCondition.setCompleted(condition.isCompleted());
+                    newConditionList.add(newCondition);
+                } catch (InvalidCategoryException e) {
+                    newConditionList.add(condition);
+                }
+            }
+            conditions.conditions.clear();
+            conditions.conditions.addAll(newConditionList);
+        }
     }
 }

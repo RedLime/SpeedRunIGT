@@ -22,9 +22,9 @@ public class StatCategoryCondition extends CategoryCondition.Condition<JsonObjec
     @Override
     public boolean checkConditionComplete(JsonObject statObject) {
         try {
-            JsonObject jsonElement = statObject.get(stat).getAsJsonObject();
+            JsonObject jsonElement = statObject.get(stat.toString()).getAsJsonObject();
             if (jsonElement.isJsonObject()) {
-                int count = jsonElement.get("value").getAsInt();
+                int count = jsonElement.getAsNumber().intValue();
                 if (count >= goal) return true;
             } else {
                 int count = statObject.get(stat).getAsInt();

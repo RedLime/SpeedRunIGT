@@ -6,7 +6,7 @@ import com.google.gson.JsonParser;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import net.fabricmc.loader.api.SemanticVersion;
-import net.fabricmc.loader.impl.util.version.VersionPredicateParser;
+import net.fabricmc.loader.api.metadata.version.VersionPredicate;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -22,6 +22,9 @@ public class CustomCategoryManager {
     }
 
     public static void init() {
+        init(true);
+    }
+    public static void init(boolean warningScreen) {
         File dir = getCategoryPath().toFile();
         dir.mkdirs();
 
@@ -34,8 +37,8 @@ public class CustomCategoryManager {
             try {
                 JsonObject jsonObject = new JsonParser().parse(FileUtils.readFileToString(file, StandardCharsets.UTF_8)).getAsJsonObject();
 
-                if (!VersionPredicateParser.parse(jsonObject.get("version").getAsString()).test(SemanticVersion.parse(InGameTimerUtils.getMinecraftVersion()))) {
-                    SpeedRunIGT.error(String.format("Failed to add '%s' category file, it doesn't work for this version", file.getName()));
+                if (!VersionPredicate.parse(jsonObject.get("version").getAsString()).test(SemanticVersion.parse(InGameTimerUtils.getMinecraftVersion()))) {
+                    SpeedRunIGT.debug(String.format("Failed to add '%s' category file, it doesn't work for this version", file.getName()));
                     continue;
                 }
 
@@ -48,7 +51,7 @@ public class CustomCategoryManager {
                 try {
                     RunCategory.registerCategory(runCategory);
                 } catch (IllegalArgumentException e) {
-                    InGameTimerUtils.setCategoryWarningScreen(file.getName(), new InvalidCategoryException(InvalidCategoryException.Reason.DUPLICATED_CATEGORY_ID, ""));
+                    if (warningScreen) InGameTimerUtils.setCategoryWarningScreen(file.getName(), new InvalidCategoryException(InvalidCategoryException.Reason.DUPLICATED_CATEGORY_ID, ""));
                 }
             } catch (JsonParseException | IOException e) {
                 InGameTimerUtils.setCategoryWarningScreen(file.getName(), new InvalidCategoryException(InvalidCategoryException.Reason.FAILED_JSON_PARSE, ""));

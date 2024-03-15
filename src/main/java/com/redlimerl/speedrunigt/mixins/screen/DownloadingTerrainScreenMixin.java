@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.mixins.screen;
 
 import com.redlimerl.speedrunigt.timer.InGameTimer;
+import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import net.minecraft.client.gui.screen.DownloadingTerrainScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -12,11 +13,12 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 public abstract class DownloadingTerrainScreenMixin extends Screen {
 
     @Override
-    public void method_21947() {
-        super.method_21947();
+    public void init() {
+        super.init();
         InGameTimer timer = InGameTimer.getInstance();
-        if (field_22534 != null && field_22534.isInSingleplayer() && !timer.isCoop() && timer.getStatus() != TimerStatus.IDLE) {
+        if (client != null && client.isInSingleplayer() && !timer.isCoop() && timer.getStatus() != TimerStatus.IDLE) {
             timer.setPause(true, TimerStatus.IDLE, "dimension load?");
+            InGameTimerUtils.IS_CHANGING_DIMENSION = false;
         }
     }
 

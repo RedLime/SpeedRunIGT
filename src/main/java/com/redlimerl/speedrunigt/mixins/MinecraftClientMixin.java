@@ -1,8 +1,10 @@
 package com.redlimerl.speedrunigt.mixins;
 
+import com.redlimerl.speedrunigt.MathHelperExt;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.SpeedRunIGTClient;
 import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
+import com.redlimerl.speedrunigt.instance.GameInstance;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
@@ -15,14 +17,18 @@ import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import com.redlimerl.speedrunigt.utils.MixinValues;
 import com.redlimerl.speedrunigt.utils.Vec2f;
+import com.redlimerl.speedrunigt.version.ColorMixer;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.CreditsScreen;
+import net.minecraft.client.gui.screen.DownloadingTerrainScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.*;
-import net.minecraft.client.options.GameOptions;
+import net.minecraft.client.option.GameOptions;
+import net.minecraft.client.util.Window;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.crash.CrashReport;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.level.LevelInfo;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Mouse;
@@ -31,7 +37,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MinecraftClient.class)
@@ -45,6 +50,10 @@ public abstract class MinecraftClientMixin {
 
     @Shadow private boolean paused;
 
+    @Shadow public TextRenderer textRenderer;
+    @Shadow public int width;
+    @Shadow public int height;
+    @Shadow public boolean skipGameRender;
     private boolean disconnectCheck = false;
 
     @Inject(at = @At("HEAD"), method = "method_2935")
@@ -52,7 +61,11 @@ public abstract class MinecraftClientMixin {
         try {
             if (levelInfo != null) {
                 RunCategory category = SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY);
-                if (category.isAutoStart()) InGameTimer.start(name, RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
+                if (category.isAutoStart()) {
+                    InGameTimer.start(name, RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
+                    InGameTimer.getInstance().setDefaultGameMode(levelInfo.method_3758().getGameModeId());
+                    InGameTimer.getInstance().setCheatAvailable(levelInfo.allowCommands());
+                }
             } else {
                 boolean loaded = InGameTimer.load(name);
                 if (!loaded) InGameTimer.end();
@@ -63,18 +76,15 @@ public abstract class MinecraftClientMixin {
             e.printStackTrace();
         }
         InGameTimerUtils.IS_CHANGING_DIMENSION = true;
-        disconnectCheck = false;
+        this.disconnectCheck = false;
     }
 
-    @Inject(method = "openScreen", at = @At("RETURN"))
+    @Inject(method = "setScreen", at = @At("RETURN"))
     public void onSetScreen(Screen screen, CallbackInfo ci) {
-        if (screen instanceof ProgressScreen) {
-            disconnectCheck = true;
-        }
         if (InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN != null) {
             Screen screen1 = InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN;
             InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN = null;
-            MinecraftClient.getInstance().openScreen(screen1);
+            MinecraftClient.getInstance().setScreen(screen1);
         }
     }
 
@@ -84,10 +94,7 @@ public abstract class MinecraftClientMixin {
         InGameTimer timer = InGameTimer.getInstance();
 
         InGameTimerUtils.IS_CHANGING_DIMENSION = false;
-
-        if (timer.getStatus() != TimerStatus.NONE) {
-            timer.setPause(true, TimerStatus.IDLE, "changed dimension");
-        }
+        timer.setPause(true, TimerStatus.IDLE, "changed dimension");
 
         // For Timelines
         if (targetWorld.dimension.dimensionType == -1) {
@@ -112,8 +119,10 @@ public abstract class MinecraftClientMixin {
     private int saveTickCount = 0;
     @Inject(method = "tick", at = @At("RETURN"))
     private void onTickMixin(CallbackInfo ci) {
-        if (++saveTickCount >= 20)
+        if (++this.saveTickCount >= 20) {
             SpeedRunOption.checkSave();
+            this.saveTickCount = 0;
+        }
     }
 
     @Inject(method = "runGameLoop", at = @At("TAIL"))
@@ -131,8 +140,7 @@ public abstract class MinecraftClientMixin {
     }
 
     private PositionType currentPositionType = PositionType.DEFAULT;
-    @Inject(method = "runGameLoop", at = @At(value = "INVOKE",
-            target ="Lnet/minecraft/client/render/GameRenderer;method_1331(F)V", shift = At.Shift.AFTER))
+    @Inject(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/AchievementNotification;tick()V", shift = At.Shift.AFTER))
     private void drawTimer(CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
@@ -144,30 +152,39 @@ public abstract class MinecraftClientMixin {
             }
         }
 
+        long time = System.currentTimeMillis() - InGameTimerUtils.LATEST_TIMER_TIME;
+        if (time < 2950) {
+            Window window = new Window(this.options, this.width, this.height);
+            String text = "SpeedRunIGT v" + (SpeedRunIGT.MOD_VERSION.split("\\+")[0]);
+            this.textRenderer.draw(text, this.currentScreen != null ? (int) ((window.getScaledWidth() - this.textRenderer.getStringWidth(text)) / 2f) : 4, (int) window.getScaledHeight() - 12,
+                    ColorMixer.getArgb((int) (MathHelperExt.clamp((3000 - time) / 1000.0, 0, 1) * (this.currentScreen != null ? 90 : 130)), 255, 255, 255));
+        }
+
         SpeedRunIGT.DEBUG_DATA = timer.getStatus().name();
         if (!this.options.hudHidden && this.world != null && timer.getStatus() != TimerStatus.NONE
-                && (!this.isPaused() || this.currentScreen instanceof CreditsScreen || this.currentScreen instanceof GameMenuScreen || !SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS))
-                && !(!this.isPaused() && SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) && this.options.debugEnabled)
+                && (!this.paused || this.currentScreen instanceof CreditsScreen || this.currentScreen instanceof GameMenuScreen || !SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS))
+                && !(!this.paused && SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) && this.options.debugEnabled)
                 && !(this.currentScreen instanceof TimerCustomizeScreen)
-                && MixinValues.IS_RENDERED_BEFORE) {
+                && MixinValues.IS_RENDERED_BEFORE
+                && !this.skipGameRender) {
             boolean needUpdate = SpeedRunIGTClient.TIMER_DRAWER.isNeedUpdate();
             boolean enableSplit = SpeedRunOption.getOption(SpeedRunOptions.ENABLE_TIMER_SPLIT_POS);
             if (needUpdate || enableSplit) {
                 PositionType updatePositionType = PositionType.DEFAULT;
                 if (enableSplit && this.options.debugEnabled)
                     updatePositionType = PositionType.WHILE_F3;
-                if (enableSplit && this.isPaused() && !(this.currentScreen instanceof DownloadingTerrainScreen))
+                if (enableSplit && this.paused && !(this.currentScreen instanceof DownloadingTerrainScreen))
                     updatePositionType = PositionType.WHILE_PAUSED;
 
-                if (currentPositionType != updatePositionType || needUpdate) {
-                    currentPositionType = updatePositionType;
-                    Vec2f igtPos = currentPositionType == PositionType.DEFAULT
+                if (this.currentPositionType != updatePositionType || needUpdate) {
+                    this.currentPositionType = updatePositionType;
+                    Vec2f igtPos = this.currentPositionType == PositionType.DEFAULT
                             ? new Vec2f(SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_POSITION_X), SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_POSITION_Y))
-                            : SpeedRunOption.getOption(currentPositionType == PositionType.WHILE_F3 ? SpeedRunOptions.TIMER_IGT_POSITION_FOR_F3 : SpeedRunOptions.TIMER_IGT_POSITION_FOR_PAUSE);
+                            : SpeedRunOption.getOption(this.currentPositionType == PositionType.WHILE_F3 ? SpeedRunOptions.TIMER_IGT_POSITION_FOR_F3 : SpeedRunOptions.TIMER_IGT_POSITION_FOR_PAUSE);
 
-                    Vec2f rtaPos = currentPositionType == PositionType.DEFAULT
+                    Vec2f rtaPos = this.currentPositionType == PositionType.DEFAULT
                             ? new Vec2f(SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_POSITION_X), SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_POSITION_Y))
-                            : SpeedRunOption.getOption(currentPositionType == PositionType.WHILE_F3 ? SpeedRunOptions.TIMER_RTA_POSITION_FOR_F3 : SpeedRunOptions.TIMER_RTA_POSITION_FOR_PAUSE);
+                            : SpeedRunOption.getOption(this.currentPositionType == PositionType.WHILE_F3 ? SpeedRunOptions.TIMER_RTA_POSITION_FOR_F3 : SpeedRunOptions.TIMER_RTA_POSITION_FOR_PAUSE);
 
                     SpeedRunIGTClient.TIMER_DRAWER.setRTA_XPos(rtaPos.x);
                     SpeedRunIGTClient.TIMER_DRAWER.setRTA_YPos(rtaPos.y);
@@ -179,16 +196,18 @@ public abstract class MinecraftClientMixin {
         }
 
         MixinValues.IS_RENDERED_BEFORE = false;
+
+        if (this.world != null)
+            disconnectCheck = true;
     }
 
 
 
-    @Redirect(method="tick", at=@At(value="INVOKE", target = "Lorg/lwjgl/input/Mouse;getEventDWheel()I", remap = false))
-    public int getScrolled(){
+    @Inject(method="tick", at=@At(value="INVOKE", target = "Lorg/lwjgl/input/Mouse;getEventDWheel()I", remap = false))
+    public void getScrolled(CallbackInfo ci){
         if(Mouse.getEventDWheel()!=0){
             unlock();
         }
-        return Mouse.getEventDWheel();
     }
 
     private void unlock() {
@@ -196,13 +215,13 @@ public abstract class MinecraftClientMixin {
         if (InGameTimerClientUtils.canUnpauseTimer(false)) {
             timer.setPause(false, "moved mouse wheel");
         }
-        if (Display.isActive() && !MinecraftClient.getInstance().isPaused() && Mouse.isGrabbed()) {
+        if (Display.isActive() && !this.paused && Mouse.isGrabbed()) {
             timer.updateFirstInput();
         }
     }
 
     // Crash safety
-    @Inject(method = "cleanHeap", at = @At("HEAD"))
+    @Inject(method = "cleanUpAfterCrash", at = @At("HEAD"))
     public void onCrash(CallbackInfo ci) {
         if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) InGameTimer.leave();
     }
@@ -214,15 +233,16 @@ public abstract class MinecraftClientMixin {
     }
 
     // Record save
-    @Inject(method = "stop", at = @At(value = "INVOKE", target = "Lnet/minecraft/stat/StatHandler;method_1739()V", shift = At.Shift.BEFORE))
+    @Inject(method = "stop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/GlAllocationUtils;method_848()V", shift = At.Shift.BEFORE))
     public void onStop(CallbackInfo ci) {
         InGameTimer.getInstance().writeRecordFile(false);
     }
 
     // Disconnecting fix
-    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/LevelStorageAccess;method_254()V", shift = At.Shift.BEFORE), method = "connect(Lnet/minecraft/client/world/ClientWorld;Ljava/lang/String;)V")
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;setCurrentServerEntry(Lnet/minecraft/client/network/ServerInfo;)V", shift = At.Shift.BEFORE), method = "connect(Lnet/minecraft/client/world/ClientWorld;Ljava/lang/String;)V")
     public void disconnect(CallbackInfo ci) {
-        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE && disconnectCheck) {
+        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE && this.disconnectCheck) {
+            GameInstance.getInstance().callEvents("leave_world");
             InGameTimer.leave();
         }
     }

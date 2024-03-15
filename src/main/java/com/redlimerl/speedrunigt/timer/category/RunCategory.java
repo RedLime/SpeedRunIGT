@@ -3,7 +3,7 @@ package com.redlimerl.speedrunigt.timer.category;
 import com.google.gson.JsonArray;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.client.resource.language.I18n;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
@@ -27,7 +27,7 @@ public class RunCategory {
     }
 
     public static void registerCategory(RunCategory category) {
-        if (SpeedRunIGT.isInitialized()) return;
+        //if (SpeedRunIGT.isInitialized()) return;
         for (String id : CATEGORIES.keySet()) {
             if (id.equalsIgnoreCase(category.getID())) {
                 throw new IllegalArgumentException("ID \"" + id + "\" is an already registered RunCategory ID.");
@@ -44,6 +44,7 @@ public class RunCategory {
     private final boolean autoStart;
     private final boolean canSegment;
     private final boolean customUrl;
+    private final boolean hideCategory;
     private final Function<InGameTimer, Boolean> retimeFunction;
     private final @Nullable String conditionFileName;
     private final @Nullable JsonArray conditionJson;
@@ -57,11 +58,32 @@ public class RunCategory {
     }
 
     public RunCategory(String id, String categoryUrl, String translateKey, @Nullable String conditionFileName, @Nullable JsonArray conditionJson) {
-        this(id, categoryUrl, translateKey, conditionFileName, conditionJson, true, false, false, (value) -> false);
+        this(
+                id,
+                categoryUrl,
+                translateKey,
+                conditionFileName,
+                conditionJson,
+                true,
+                false,
+                false,
+                false,
+                (value) -> false
+        );
     }
 
-    public RunCategory(String id, String categoryUrl, String translateKey, @Nullable String conditionFileName, @Nullable JsonArray conditionJson,
-                       boolean autoStart, boolean canSegment, boolean customUrl, Function<InGameTimer, Boolean> retimeFunction) {
+    public RunCategory(
+            String id,
+            String categoryUrl,
+            String translateKey,
+            @Nullable String conditionFileName,
+            @Nullable JsonArray conditionJson,
+            boolean autoStart,
+            boolean canSegment,
+            boolean customUrl,
+            boolean hideCategory,
+            Function<InGameTimer, Boolean> retimeFunction
+        ) {
         this.id = id;
         this.categoryUrl = categoryUrl;
         this.translateKey = translateKey;
@@ -70,38 +92,45 @@ public class RunCategory {
         this.autoStart = autoStart;
         this.canSegment = canSegment;
         this.customUrl = customUrl;
+        this.hideCategory = hideCategory;
         this.retimeFunction = retimeFunction;
     }
 
     public String getID() {
-        return id;
+        return this.id;
     }
 
     public String getLeaderboardUrl() {
-        return (customUrl ? "" : "https://www.speedrun.com/") + categoryUrl;
+        return (this.customUrl ? "" : "https://www.speedrun.com/") + this.categoryUrl;
     }
 
     public boolean canSegment() {
-        return canSegment;
+        return this.canSegment;
     }
 
     public boolean isAutoStart() {
-        return autoStart;
+        return this.autoStart;
     }
 
     public boolean isNeedAutoRetime(InGameTimer timer) {
+        return this.retimeFunction.apply(timer);
+    }
+
+    public boolean isNeedAutoRetime(InGameTimer timer, Function<InGameTimer, Boolean> retimeFunction) {
         return retimeFunction.apply(timer);
     }
 
-    public TranslatableText getText() {
-        return new TranslatableText(translateKey);
+    public boolean isHideCategory() { return this.hideCategory; }
+
+    public String getText() {
+        return I18n.translate(this.translateKey);
     }
 
     public @Nullable JsonArray getConditionJson() {
-        return conditionJson;
+        return this.conditionJson;
     }
 
     public @Nullable String getConditionFileName() {
-        return conditionFileName;
+        return this.conditionFileName;
     }
 }

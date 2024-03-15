@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt;
 
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.redlimerl.speedrunigt.api.CategoryConditionRegisterHelper;
@@ -17,7 +18,6 @@ import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.minecraft.server.MinecraftServer;
 import org.apache.commons.io.FileUtils;
-import org.spongepowered.include.com.google.common.collect.Sets;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +25,6 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -41,7 +40,7 @@ public class SpeedRunIGT implements ModInitializer {
     public static String DEBUG_DATA = "";
     public static String MOD_VERSION;
 
-    public static final Gson GSON = new GsonBuilder().create();
+    public static final Gson GSON = new GsonBuilder().serializeNulls().disableHtmlEscaping().create();
     public static final Gson PRETTY_GSON = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
     public static final Path FONT_PATH = getGlobalPath().resolve("fonts");
 
@@ -119,10 +118,10 @@ public class SpeedRunIGT implements ModInitializer {
         TimerPackets.init();
     }
 
-    private static final Logger LOGGER = LogManager.getLogManager().getLogger("SpeedRunIGT");
+    private static final Logger LOGGER = Logger.getLogger("SpeedRunIGT");
     public static void debug(Object obj) {
         if (IS_DEBUG_MODE) LOGGER.info(obj.toString());
     }
-    public static void error(Object obj) { LOGGER.warning(obj.toString()); }
+    public static void error(Object obj) { LOGGER.severe(obj.toString()); }
 }
 //Void was here :)

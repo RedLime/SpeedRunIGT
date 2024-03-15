@@ -4,16 +4,18 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.SpeedRunIGTUpdateChecker;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.gui.ConsumerButtonWidget;
+import com.redlimerl.speedrunigt.gui.EntryWidget;
+import com.redlimerl.speedrunigt.mixins.access.ButtonWidgetAccessor;
 import com.redlimerl.speedrunigt.mixins.access.ScreenAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.utils.OperatingUtils;
 import com.redlimerl.speedrunigt.version.ScreenTexts;
-import net.minecraft.class_1803;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.EntryListWidget;
+import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.Tessellator;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.opengl.GL11;
 
@@ -34,13 +36,12 @@ public class SpeedRunOptionScreen extends Screen {
     private ButtonWidget nextPageButton = null;
 
     public SpeedRunOptionScreen(Screen parent) {
-        super();
         this.parent = parent;
     }
 
     @Override
-    public void method_21947() {
-        super.method_21947();
+    public void init() {
+        super.init();
         categorySubButtons.clear();
         categorySelectButtons.clear();
         tooltips.clear();
@@ -60,29 +61,30 @@ public class SpeedRunOptionScreen extends Screen {
             categorySubButtons.put(category, categoryList);
 
             if (!categorySelectButtons.containsKey(category)) {
-                ButtonWidget buttonWidget = new ConsumerButtonWidget(field_22535 - 110, 30 + ((categoryCount++ % 6) * 22), 80, 20, new TranslatableText(category).asFormattedString(), (buttonWidget1) -> selectCategory(category));
+                ButtonWidget buttonWidget = new ConsumerButtonWidget(width - 110, 30 + ((categoryCount++ % 6) * 22), 80, 20, I18n.translate(category), (buttonWidget1) -> selectCategory(category));
                 categorySelectButtons.put(category, buttonWidget);
-                field_22537.add(buttonWidget);
+                buttons.add(buttonWidget);
             }
         }
 
-        prevPageButton = new ConsumerButtonWidget(field_22535 - 110, 30 + (6 * 22), 38, 20, "<", (button) -> openPage(-1));
-        field_22537.add(prevPageButton);
+        prevPageButton = new ConsumerButtonWidget(width - 110, 30 + (6 * 22), 38, 20, "<", (button) -> openPage(-1));
+        buttons.add(prevPageButton);
 
-        nextPageButton = new ConsumerButtonWidget(field_22535 - 68, 30 + (6 * 22), 38, 20, ">", (button) -> openPage(+1));
-        field_22537.add(nextPageButton);
+        nextPageButton = new ConsumerButtonWidget(width - 68, 30 + (6 * 22), 38, 20, ">", (button) -> openPage(+1));
+        buttons.add(nextPageButton);
 
-        openPage(0);
+        openPage(page);
 
-        field_22537.add(new ConsumerButtonWidget(field_22535 - 85, field_22536 - 35, 70, 20, ScreenTexts.CANCEL, (button) -> onClose()));
+        buttons.add(new ConsumerButtonWidget(width - 85, height - 35, 70, 20, ScreenTexts.CANCEL, (button) -> onClose()));
 
-        field_22537.add(new ConsumerButtonWidget(15, field_22536 - 35, 70, 20, new TranslatableText("speedrunigt.menu.donate").asFormattedString(), (button) -> OperatingUtils.setUrl("https://ko-fi.com/redlimerl")));
+        buttons.add(new ConsumerButtonWidget(15, height - 35, 70, 20, I18n.translate("speedrunigt.menu.donate"), (button) -> OperatingUtils.setUrl("https://ko-fi.com/redlimerl")));
 
-        field_22537.add(new ConsumerButtonWidget(88, field_22536 - 35, 140, 20, new TranslatableText("speedrunigt.menu.crowdin").asFormattedString(), (button) -> OperatingUtils.setUrl("https://crowdin.com/project/speedrunigt")));
+        buttons.add(new ConsumerButtonWidget(88, height - 35, 140, 20, I18n.translate("speedrunigt.menu.crowdin"), (button) -> OperatingUtils.setUrl("https://crowdin.com/project/speedrunigt")));
 
         buttonListWidget = new ButtonScrollListWidget();
 
-        categorySelectButtons.keySet().stream().findFirst().ifPresent(this::selectCategory);
+        if (!currentSelectCategory.isEmpty()) selectCategory(currentSelectCategory);
+        else categorySelectButtons.keySet().stream().findFirst().ifPresent(this::selectCategory);
     }
 
     public void openPage(int num) {
@@ -91,60 +93,133 @@ public class SpeedRunOptionScreen extends Screen {
 
         int count = 0;
         for (ButtonWidget value : categorySelectButtons.values()) {
-            value.field_22512 = this.page * 6 <= count && (this.page + 1) * 6 > count;
+            value.visible = this.page * 6 <= count && (this.page + 1) * 6 > count;
             count++;
         }
 
         if (maxPage == 0) {
-            prevPageButton.field_22512 = false;
-            nextPageButton.field_22512 = false;
+            prevPageButton.visible = false;
+            nextPageButton.visible = false;
         } else {
-            prevPageButton.field_22512 = true;
-            nextPageButton.field_22512 = true;
-            prevPageButton.field_22511 = !(this.page == 0);
-            nextPageButton.field_22511 = !(maxPage == this.page);
+            prevPageButton.visible = true;
+            nextPageButton.visible = true;
+            prevPageButton.active = !(this.page == 0);
+            nextPageButton.active = !(maxPage == this.page);
         }
     }
 
     public void onClose() {
-        if (this.field_22534 != null) this.field_22534.openScreen(parent);
+        if (this.client != null) this.client.setScreen(parent);
     }
 
     @Override
-    protected void method_21930(ButtonWidget button) {
+    protected void buttonClicked(ButtonWidget button) {
         if (button instanceof ConsumerButtonWidget) {
             ((ConsumerButtonWidget) button).onClick();
         }
-        super.method_21930(button);
+        super.buttonClicked(button);
     }
 
     @Override
-    protected void method_21926(int mouseX, int mouseY, int button) {
+    protected void mouseClicked(int mouseX, int mouseY, int button) {
         ArrayList<ButtonWidget> widgets = new ArrayList<>(widgetButtons);
-        field_22537.addAll(widgets);
-        super.method_21926(mouseX, mouseY, button);
-        field_22537.removeAll(widgets);
+        buttons.addAll(widgets);
+        super.mouseClicked(mouseX, mouseY, button);
+        buttons.removeAll(widgets);
+        this.buttonListWidget.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
-    public void method_21925(int mouseX, int mouseY, float delta) {
-        this.method_21946();
-        this.buttonListWidget.method_21897(mouseX, mouseY, delta);
-        super.method_21925(mouseX, mouseY, delta);
-        method_21881(this.field_22540, new TranslatableText("speedrunigt.title.options").asFormattedString(), this.field_22535 / 2, 10, 16777215);
-        field_22540.method_956("v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215);
+    protected void mouseReleased(int mouseX, int mouseY, int button) {
+        super.mouseReleased(mouseX, mouseY, button);
+        this.buttonListWidget.mouseReleased(mouseX, mouseY, button);
+    }
+
+    @Override
+    public void render(int mouseX, int mouseY, float delta) {
+        this.renderBackground();
+        this.buttonListWidget.render(mouseX, mouseY, delta);
+        super.render(mouseX, mouseY, delta);
+        drawCenteredString(this.textRenderer, I18n.translate("speedrunigt.title.options"), this.width / 2, 10, 16777215);
+        drawWithShadow(this.textRenderer, "v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215);
 
         ArrayList<String> tooltip = getToolTip(mouseX, mouseY);
-        if (!tooltip.isEmpty() && ((ScreenAccessor) this).getPrevClickedButton() == null) this.method_21932(tooltip, 0, field_22536);
+        if (!tooltip.isEmpty() && ((ScreenAccessor) this).getPrevClickedButton() == null) this.drawTooltip(tooltip, 0, height);
+    }
+
+    protected void drawTooltip(String string, int i, int j) {
+        this.drawTooltip(Collections.singletonList(string), i, j);
+    }
+
+    protected void drawTooltip(List<String> list, int i, int j) {
+        if (!list.isEmpty()) {
+            GL11.glDisable(32826);
+            DiffuseLighting.disable();
+            GL11.glDisable(2896);
+            GL11.glDisable(2929);
+            int var4 = 0;
+
+            for(String var6 : list) {
+                int var7 = this.textRenderer.getStringWidth(var6);
+                if (var7 > var4) {
+                    var4 = var7;
+                }
+            }
+
+            int var14 = i + 12;
+            int var15 = j - 12;
+            int var8 = 8;
+            if (list.size() > 1) {
+                var8 += 2 + (list.size() - 1) * 10;
+            }
+
+            if (var14 + var4 > this.width) {
+                var14 -= 28 + var4;
+            }
+
+            if (var15 + var8 + 6 > this.height) {
+                var15 = this.height - var8 - 6;
+            }
+
+            this.zOffset = 300.0F;
+            int var9 = -267386864;
+            this.fillGradient(var14 - 3, var15 - 4, var14 + var4 + 3, var15 - 3, var9, var9);
+            this.fillGradient(var14 - 3, var15 + var8 + 3, var14 + var4 + 3, var15 + var8 + 4, var9, var9);
+            this.fillGradient(var14 - 3, var15 - 3, var14 + var4 + 3, var15 + var8 + 3, var9, var9);
+            this.fillGradient(var14 - 4, var15 - 3, var14 - 3, var15 + var8 + 3, var9, var9);
+            this.fillGradient(var14 + var4 + 3, var15 - 3, var14 + var4 + 4, var15 + var8 + 3, var9, var9);
+            int var10 = 1347420415;
+            int var11 = (var10 & 16711422) >> 1 | var10 & 0xFF000000;
+            this.fillGradient(var14 - 3, var15 - 3 + 1, var14 - 3 + 1, var15 + var8 + 3 - 1, var10, var11);
+            this.fillGradient(var14 + var4 + 2, var15 - 3 + 1, var14 + var4 + 3, var15 + var8 + 3 - 1, var10, var11);
+            this.fillGradient(var14 - 3, var15 - 3, var14 + var4 + 3, var15 - 3 + 1, var10, var10);
+            this.fillGradient(var14 - 3, var15 + var8 + 2, var14 + var4 + 3, var15 + var8 + 3, var11, var11);
+
+            for(int var12 = 0; var12 < list.size(); ++var12) {
+                String var13 = (String)list.get(var12);
+                this.textRenderer.method_956(var13, var14, var15, -1);
+                if (var12 == 0) {
+                    var15 += 2;
+                }
+
+                var15 += 10;
+            }
+
+            this.zOffset = 0.0F;
+            GL11.glEnable(2896);
+            GL11.glEnable(2929);
+            DiffuseLighting.enableNormally();
+            GL11.glEnable(32826);
+        }
     }
 
     public ArrayList<String> getToolTip(int mouseX, int mouseY) {
         ArrayList<String> tooltipList = new ArrayList<>();
 
 
-        int e = buttonListWidget.method_21910(mouseX, mouseY);
+        int e = buttonListWidget.getEntryAt(mouseX, mouseY);
         if (e > -1) {
-            ButtonWidget element = buttonListWidget.method_6697(e).getButtonWidget();
+            ButtonWidget element = buttonListWidget.getEntry(e).getButtonWidget();
             if (tooltips.containsKey(element)) {
                 String text = tooltips.get(element).get();
                 tooltipList.addAll(Arrays.asList(text.split("\n")));
@@ -154,7 +229,7 @@ public class SpeedRunOptionScreen extends Screen {
 
 
         if (SpeedRunIGTUpdateChecker.UPDATE_STATUS == SpeedRunIGTUpdateChecker.UpdateStatus.OUTDATED) {
-            tooltipList.add(new TranslatableText("speedrunigt.message.update_found").asFormattedString());
+            tooltipList.add(I18n.translate("speedrunigt.message.update_found"));
         }
         return tooltipList;
     }
@@ -162,19 +237,19 @@ public class SpeedRunOptionScreen extends Screen {
 
     public void selectCategory(String key) {
         if (categorySelectButtons.containsKey(key) && categorySubButtons.containsKey(key)) {
-            if (categorySelectButtons.containsKey(currentSelectCategory)) categorySelectButtons.get(currentSelectCategory).field_22511 = true;
+            if (categorySelectButtons.containsKey(currentSelectCategory)) categorySelectButtons.get(currentSelectCategory).active = true;
             currentSelectCategory = key;
 
-            categorySelectButtons.get(key).field_22511 = false;
+            categorySelectButtons.get(key).active = false;
             buttonListWidget.replaceButtons(categorySubButtons.get(key));
-            buttonListWidget.method_21917(0);
+            buttonListWidget.scroll(0);
         }
     }
 
     class ButtonScrollListWidget extends EntryListWidget {
 
         public ButtonScrollListWidget() {
-            super(SpeedRunOptionScreen.this.field_22534, SpeedRunOptionScreen.this.field_22535 - 140, SpeedRunOptionScreen.this.field_22536, 28, SpeedRunOptionScreen.this.field_22536 - 54, 24);
+            super(SpeedRunOptionScreen.this.client, SpeedRunOptionScreen.this.width - 140, SpeedRunOptionScreen.this.height, 28, SpeedRunOptionScreen.this.height - 54, 24);
         }
 
         public void replaceButtons(Collection<ButtonWidget> buttonWidgets) {
@@ -189,50 +264,50 @@ public class SpeedRunOptionScreen extends Screen {
         }
 
         @Override
-        public int method_21909() {
+        public int getRowWidth() {
             return 150;
         }
 
         private final ArrayList<ButtonScrollListEntry> entries = new ArrayList<>();
 
         @Override
-        public ButtonScrollListEntry method_6697(int i) {
+        public ButtonScrollListEntry getEntry(int i) {
             return entries.get(i);
         }
 
         @Override
-        protected int method_21905() {
+        protected int getEntryCount() {
             return entries.size();
         }
 
         @Override
-        public void method_21897(int mouseX, int mouseY, float delta) {
-            super.method_21897(mouseX, mouseY, delta);
+        public void render(int mouseX, int mouseY, float delta) {
+            super.render(mouseX, mouseY, delta);
 
             //Render bg on empty space
-            if (SpeedRunOptionScreen.this.field_22534 == null) return;
-            int emptyWidth = this.field_22514;
+            if (SpeedRunOptionScreen.this.client == null) return;
+            int emptyWidth = this.width;
             GL11.glDisable(2896);
             GL11.glDisable(2912);
             Tessellator var2 = Tessellator.INSTANCE;
-            SpeedRunOptionScreen.this.field_22534.getTextureManager().bindTexture(field_22503);
+            SpeedRunOptionScreen.this.client.getTextureManager().bindTexture(OPTIONS_BACKGROUND_TEXTURE);
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             float var3 = 32.0F;
-            var2.method_1405();
-            var2.method_1413(4210752);
-            var2.method_1399(emptyWidth, SpeedRunOptionScreen.this.field_22536, 0.0D, emptyWidth / var3, ((float)SpeedRunOptionScreen.this.field_22536 / var3));
-            var2.method_1399(SpeedRunOptionScreen.this.field_22535, SpeedRunOptionScreen.this.field_22536, 0.0D, ((float)SpeedRunOptionScreen.this.field_22535 / var3), (float)SpeedRunOptionScreen.this.field_22536 / var3);
-            var2.method_1399(SpeedRunOptionScreen.this.field_22535, 0.0D, 0.0D, ((float)SpeedRunOptionScreen.this.field_22535 / var3), 0);
-            var2.method_1399(emptyWidth, 0.0D, 0.0D, emptyWidth / var3, 0);
-            var2.method_1396();
+            var2.begin();
+            var2.color(4210752);
+            var2.vertex(emptyWidth, SpeedRunOptionScreen.this.height, 0.0D, emptyWidth / var3, ((float)SpeedRunOptionScreen.this.height / var3));
+            var2.vertex(SpeedRunOptionScreen.this.width, SpeedRunOptionScreen.this.height, 0.0D, ((float)SpeedRunOptionScreen.this.width / var3), (float)SpeedRunOptionScreen.this.height / var3);
+            var2.vertex(SpeedRunOptionScreen.this.width, 0.0D, 0.0D, ((float)SpeedRunOptionScreen.this.width / var3), 0);
+            var2.vertex(emptyWidth, 0.0D, 0.0D, emptyWidth / var3, 0);
+            var2.end();
         }
 
-        class ButtonScrollListEntry implements class_1803 {
+        class ButtonScrollListEntry implements EntryWidget {
             private final ButtonWidget buttonWidget;
 
             public ButtonScrollListEntry(ButtonWidget buttonWidget) {
                 this.buttonWidget = buttonWidget;
-                this.buttonWidget.x = (ButtonScrollListWidget.this.field_22514 - this.buttonWidget.method_21890()) / 2;
+                this.buttonWidget.x = (ButtonScrollListWidget.this.width - ((ButtonWidgetAccessor)this.buttonWidget).getWidth()) / 2;
             }
 
             public ButtonWidget getButtonWidget() {
@@ -240,18 +315,18 @@ public class SpeedRunOptionScreen extends Screen {
             }
 
             @Override
-            public void method_6700(int index, int x, int y, int rowWidth, int rowfield_22536, Tessellator tessellator, int mouseX, int mouseY, boolean hovered) {
+            public void draw(int index, int x, int y, int rowWidth, int rowHeight, Tessellator tessellator, int mouseX, int mouseY, boolean hovered) {
                 buttonWidget.y = y;
-                buttonWidget.method_21887(SpeedRunOptionScreen.this.field_22534, mouseX, mouseY);
+                buttonWidget.render(SpeedRunOptionScreen.this.client, mouseX, mouseY);
             }
 
             @Override
-            public boolean method_6699(int i, int j, int k, int l, int m, int n) {
+            public boolean mouseClicked(int i, int j, int k, int l, int m, int n) {
                 return false;
             }
 
             @Override
-            public void method_6701(int i, int j, int k, int l, int m, int n) {
+            public void mouseReleased(int i, int j, int k, int l, int m, int n) {
 
             }
         }

@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.timer;
 
+import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecimals;
@@ -12,6 +13,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import org.lwjgl.opengl.GL11;
+import net.minecraft.client.util.Window;
 
 @Environment(EnvType.CLIENT)
 public class TimerDrawer {
@@ -262,6 +264,12 @@ public class TimerDrawer {
 
     public String getIGTText() {
         InGameTimer timer = InGameTimer.getInstance();
+
+        if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE) && timer.isServerIntegrated && InGameTimerUtils.getServer() != null && SpeedRunIGT.IS_CLIENT_SIDE) {
+            Long inGameTime = timer.isCompleted() ? timer.getCompleteStatIGT() : InGameTimerClientUtils.getPlayerTime();
+            if (inGameTime != null) return (this.simply ? "" : "IGT: ") + getTimeFormat(inGameTime);
+        }
+
         long igt = timer.isCompleted() && SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE)
                 && timer.getCategory() == RunCategories.ANY && timer.getRunType() == RunType.RANDOM_SEED
                 && (System.currentTimeMillis() / 3000) % 2 == 0
@@ -286,7 +294,15 @@ public class TimerDrawer {
         igtTimerElement.init(igtXPos, igtYPos, igtScale, igtText, igtColor, igtDecoration, 9);
 
         //배경 렌더
+        Window window = new Window(this.client.options, this.client.width, this.client.height);
         GL11.glPushMatrix();
+        GL11.glClear(256);
+        GL11.glMatrixMode(5889);
+        GL11.glLoadIdentity();
+        GL11.glOrtho(0.0, window.getWidth(), window.getHeight(), 0.0, 1000.0, 3000.0);
+        GL11.glMatrixMode(5888);
+        GL11.glLoadIdentity();
+        GL11.glTranslatef(0.0f, 0.0f, -2000.0f);
         if (translateZ) GL11.glTranslatef(0, 0, 998);
         if (bgOpacity > 0.01f) {
             Position rtaMin = new Position(rtaTimerElement.getPosition().getX() - rtaPadding, rtaTimerElement.getPosition().getY() - rtaPadding);
@@ -296,11 +312,11 @@ public class TimerDrawer {
             int opacity = ColorMixer.getArgb((int) (bgOpacity * 255), 0, 0, 0);
             if (rtaMin.getX() < igtMax.getX() && rtaMin.getY() < igtMax.getY() &&
                     igtMin.getX() < rtaMax.getX() && igtMin.getY() < rtaMax.getY()) {
-                DrawableHelper.method_21878(Math.min(rtaMin.getX(), igtMin.getX()), Math.min(rtaMin.getY(), igtMin.getY()),
+                DrawableHelper.fill(Math.min(rtaMin.getX(), igtMin.getX()), Math.min(rtaMin.getY(), igtMin.getY()),
                         Math.max(rtaMax.getX(), igtMax.getX()), Math.max(rtaMax.getY(), igtMax.getY()), opacity);
             } else {
-                if (rtaScale != 0) DrawableHelper.method_21878(rtaMin.getX(), rtaMin.getY(), rtaMax.getX(), rtaMax.getY(), opacity);
-                if (igtScale != 0) DrawableHelper.method_21878(igtMin.getX(), igtMin.getY(), igtMax.getX(), igtMax.getY(), opacity);
+                if (rtaScale != 0) DrawableHelper.fill(rtaMin.getX(), rtaMin.getY(), rtaMax.getX(), rtaMax.getY(), opacity);
+                if (igtScale != 0) DrawableHelper.fill(igtMin.getX(), igtMin.getY(), igtMax.getX(), igtMax.getY(), opacity);
             }
         }
 

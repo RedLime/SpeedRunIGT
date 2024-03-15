@@ -1,7 +1,8 @@
 //file:noinspection GroovyUnusedAssignment
 //file:noinspection GroovyAssignabilityCheck
 plugins {
-	id 'fabric-loom' version '0.12-SNAPSHOT'
+	id "fabric-loom" version "1.4-SNAPSHOT"
+	id "legacy-looming" version "1.4-SNAPSHOT"
 	id 'maven-publish'
 }
 
@@ -13,21 +14,15 @@ version = "${project.mod_version}+${project.minecraft_version}"
 group = project.maven_group
 
 repositories {
-	maven {
-		name = "legacy-fabric"
-		url = "https://maven.legacyfabric.net"
-	}
-}
-
-loom {
-	setIntermediaryUrl('https://maven.legacyfabric.net/net/fabricmc/intermediary/%1$s/intermediary-%1$s-v2.jar')
 }
 
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+	mappings "net.legacyfabric:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+	modRuntimeOnly files("libs/StatsPerWorld-1.1+1.6.x.jar")
 
 	// PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
 	// You may need to force-disable transitiveness on them.
@@ -38,6 +33,7 @@ processResources {
 
 	filesMatching("fabric.mod.json") {
 		expand "version": project.version
+		filter { line -> line.replace("{{MC_VERSION}}", project.minecraft_version_code) }
 	}
 }
 

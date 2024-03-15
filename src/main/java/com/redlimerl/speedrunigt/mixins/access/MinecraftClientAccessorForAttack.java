@@ -10,4 +10,6 @@ public interface MinecraftClientAccessorForAttack {
     @Accessor("attackCooldown")
     int getAttackCoolDown();
 
+    @Accessor
+    boolean isPaused();
 }

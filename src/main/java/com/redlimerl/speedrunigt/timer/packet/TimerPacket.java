@@ -5,9 +5,9 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.server.MinecraftServer;
 
+import java.io.*;
 import java.util.HashMap;
 import java.util.function.Supplier;
 
@@ -42,35 +42,40 @@ public abstract class TimerPacket {
     }
 
     public String getIdentifier() {
-        return identifier;
+        return this.identifier;
     }
 
     @Environment(EnvType.CLIENT)
-    final CustomPayloadC2SPacket createClient2ServerPacket(MinecraftClient client) {
-        TimerPacketBuf buf = TimerPacketBuf.create();
-        return new CustomPayloadC2SPacket(identifier, convertClient2ServerPacket(buf, client).getBuffer());
+    final CustomPayloadC2SPacket createClient2ServerPacket(MinecraftClient client) throws IOException {
+        ByteArrayOutputStream buf = new ByteArrayOutputStream();
+        this.convertClient2ServerPacket(new DataOutputStream(buf), client);
+        return new CustomPayloadC2SPacket(this.identifier, buf.toByteArray());
     }
 
-    final CustomPayloadS2CPacket createServer2ClientPacket(MinecraftServer server, TimerPacketBuf buf) {
-        return new CustomPayloadS2CPacket(identifier, convertServer2ClientPacket(buf.copy(), server).getBuffer());
+    final CustomPayloadC2SPacket createServer2ClientPacket(MinecraftServer server, byte[] bytes) throws IOException {
+        ByteArrayOutputStream buf = new ByteArrayOutputStream();
+        buf.write(bytes);
+        this.convertServer2ClientPacket(new DataOutputStream(buf), server);
+        return new CustomPayloadC2SPacket(this.identifier, buf.toByteArray());
     }
 
-    final CustomPayloadS2CPacket createServer2ClientPacket(MinecraftServer server) {
-        TimerPacketBuf buf = TimerPacketBuf.create();
-        return createServer2ClientPacket(server, buf);
+    final CustomPayloadC2SPacket createServer2ClientPacket(MinecraftServer server) throws IOException {
+        ByteArrayOutputStream buf = new ByteArrayOutputStream();
+        this.convertServer2ClientPacket(new DataOutputStream(buf), server);
+        return new CustomPayloadC2SPacket(this.identifier, buf.toByteArray());
     }
 
-    protected void sendPacketToPlayers(TimerPacketBuf buf, MinecraftServer server) {
-        TimerPacketUtils.sendServer2ClientPacket(server, this, buf);
+
+    protected void sendPacketToPlayers(byte[] bytes, MinecraftServer server) throws IOException {
+        TimerPacketUtils.sendServer2ClientPacket(server, this, bytes);
     }
 
     @Environment(EnvType.CLIENT)
-    protected abstract TimerPacketBuf convertClient2ServerPacket(TimerPacketBuf buf, MinecraftClient client);
+    protected abstract void convertClient2ServerPacket(DataOutputStream buf, MinecraftClient client) throws IOException;
 
-    public abstract void receiveClient2ServerPacket(TimerPacketBuf buf, MinecraftServer server);
+    public abstract void receiveClient2ServerPacket(CustomPayloadC2SPacket packet, MinecraftServer server) throws IOException;
 
-    protected abstract TimerPacketBuf convertServer2ClientPacket(TimerPacketBuf buf, MinecraftServer server);
+    protected abstract void convertServer2ClientPacket(DataOutputStream buf, MinecraftServer server) throws IOException;
 
-    @Environment(EnvType.CLIENT)
-    public abstract void receiveServer2ClientPacket(TimerPacketBuf buf, MinecraftClient client);
+    public abstract void receiveServer2ClientPacket(DataInputStream buf, MinecraftClient client) throws IOException;
 }
