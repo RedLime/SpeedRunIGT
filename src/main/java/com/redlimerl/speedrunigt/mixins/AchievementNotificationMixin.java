@@ -1,6 +1,7 @@
 package com.redlimerl.speedrunigt.mixins;
 
 import com.google.common.collect.Lists;
+import com.redlimerl.speedrunigt.instance.GameInstance;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerAdvancementTracker;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
@@ -28,6 +29,9 @@ public abstract class AchievementNotificationMixin {
         InGameTimer timer = InGameTimer.getInstance();
 
         if (timer.getStatus() == TimerStatus.NONE) return;
+
+        // Events system
+        GameInstance.getInstance().callEvents("achievement", factory -> achieved.name.substring("achievement.".length()).equals(factory.getDataValue("achievement")));
 
         // For Timeline
         timer.tryInsertNewAdvancement(achieved.name, null, true);
