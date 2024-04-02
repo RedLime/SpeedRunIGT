@@ -35,23 +35,23 @@ public abstract class TimerPacket {
     }
 
     static void registryPacketClient(Identifier identifier) {
-        ClientPlayNetworking.registerGlobalReceiver(identifier, (client, handler, buf, responseSender) -> {
-            TimerPacket timerPacket = TimerPacket.createTimerPacketFromPacket(identifier);
-            TimerPacketBuf timerPacketBuf = TimerPacketBuf.of(buf);
-            if (timerPacket != null && SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) {
-                timerPacket.receiveServer2ClientPacket(timerPacketBuf, client);
-            }
-        });
+//        ClientPlayNetworking.registerGlobalReceiver(identifier, (client, handler, buf, responseSender) -> {
+//            TimerPacket timerPacket = TimerPacket.createTimerPacketFromPacket(identifier);
+//            TimerPacketBuf timerPacketBuf = TimerPacketBuf.of(buf);
+//            if (timerPacket != null && SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) {
+//                timerPacket.receiveServer2ClientPacket(timerPacketBuf, client);
+//            }
+//        });
     }
 
     static void registryPacketServer(Identifier identifier) {
-        ServerPlayNetworking.registerGlobalReceiver(identifier, (server, player, handler, buf, responseSender) -> {
-            TimerPacket timerPacket = TimerPacket.createTimerPacketFromPacket(identifier);
-            TimerPacketBuf timerPacketBuf = TimerPacketBuf.of(buf);
-            if (timerPacket != null) {
-                timerPacket.receiveClient2ServerPacket(timerPacketBuf, server);
-            }
-        });
+//        ServerPlayNetworking.registerGlobalReceiver(identifier, (server, player, handler, buf, responseSender) -> {
+//            TimerPacket timerPacket = TimerPacket.createTimerPacketFromPacket(identifier);
+//            TimerPacketBuf timerPacketBuf = TimerPacketBuf.of(buf);
+//            if (timerPacket != null) {
+//                timerPacket.receiveClient2ServerPacket(timerPacketBuf, server);
+//            }
+//        });
     }
 
     public static Identifier identifier(String id) {

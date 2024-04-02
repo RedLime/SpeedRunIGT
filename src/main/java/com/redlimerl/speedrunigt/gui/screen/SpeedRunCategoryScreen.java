@@ -70,11 +70,6 @@ public class SpeedRunCategoryScreen extends Screen {
             this.replaceEntries(entryList);
         }
 
-        @Override
-        protected int getScrollbarPositionX() {
-            return super.getScrollbarPositionX() + 30;
-        }
-
         @Environment(EnvType.CLIENT)
         public class CategoryEntry extends ElementListWidget.Entry<CategoryEntry> {
 

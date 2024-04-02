@@ -2,6 +2,7 @@ package com.redlimerl.speedrunigt.timer.packet;
 
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 
 /**

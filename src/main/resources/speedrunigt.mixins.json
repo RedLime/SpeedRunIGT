@@ -42,6 +42,7 @@
     "screen.GameMenuScreenMixin",
     "screen.GeneratorOptionsMixin",
     "screen.OptionsScreenMixin",
+    "screen.PotatoScreenMixin",
     "server.IntegratedServerMixin",
     "timeline.SoundSystemMixin",
     "translate.TranslationStorageMixin"

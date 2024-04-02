@@ -1,15 +1,20 @@
 package com.redlimerl.speedrunigt.mixins.screen;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import com.redlimerl.speedrunigt.SpeedRunIGTUpdateChecker;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunOptionScreen;
 import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.OptionsScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
+import net.minecraft.client.gui.widget.Positioner;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -26,18 +31,23 @@ public class OptionsScreenMixin extends Screen {
         super(title);
     }
 
-    @Inject(method = "init", at = @At("TAIL"))
-    private void onInit(CallbackInfo ci) {
-        timerButton = ButtonWidgetHelper.create(this.width / 2 - 180, this.height / 6 - 12, 20, 20, Text.empty(), (buttonWidget) -> {
+    @Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/DirectionalLayoutWidget;add(Lnet/minecraft/client/gui/widget/Widget;)Lnet/minecraft/client/gui/widget/Widget;", ordinal = 1))
+    private void onInit(CallbackInfo ci, @Local(ordinal = 1) DirectionalLayoutWidget widget) {
+        timerButton = widget.add(ButtonWidget.builder(Text.empty(), (buttonWidget) -> {
             if (this.client != null) {
                 this.client.setScreen(new SpeedRunOptionScreen(this));
             }
-        });
-        this.addDrawableChild(timerButton);
+        }).size(20, 20).build());
     }
 
-    @Inject(method = "", at = @At("TAIL"))
-    private void renderEnderPearl(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);
+        this.renderEnderPearl(context);
+    }
+
+    @Unique
+    private void renderEnderPearl(DrawContext context) {
         if (this.client != null) {
             context.getMatrices().push();
             context.getMatrices().translate(-.5f, -.5f, 0);

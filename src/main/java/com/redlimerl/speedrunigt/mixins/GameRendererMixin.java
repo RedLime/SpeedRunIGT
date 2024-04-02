@@ -19,6 +19,7 @@ import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
 import org.joml.Matrix4f;
+import org.joml.Matrix4fStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -36,7 +37,7 @@ public class GameRendererMixin {
     @Inject(method = "render", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/toast/ToastManager;draw(Lnet/minecraft/client/gui/DrawContext;)V", shift = At.Shift.AFTER),
             locals = LocalCapture.CAPTURE_FAILHARD)
-    private void drawTimer(float tickDelta, long startTime, boolean tick, CallbackInfo ci, float f, boolean bl, int i, int j, Window window, Matrix4f matrix4f, MatrixStack matrixStack, DrawContext drawContext) {
+    private void drawTimer(float tickDelta, long startTime, boolean tick, CallbackInfo ci, float f, boolean bl, int i, int j, Window window, Matrix4f matrix4f, Matrix4fStack matrixStack, DrawContext drawContext) {
         InGameTimer timer = InGameTimer.getInstance();
 
         if (InGameTimerClientUtils.canUnpauseTimer(true)) {

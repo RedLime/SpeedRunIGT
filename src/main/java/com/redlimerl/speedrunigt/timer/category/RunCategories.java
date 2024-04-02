@@ -41,6 +41,7 @@ public class RunCategories {
             .setCanSegment(true).build();
     public static AllBlocksRunCategory ALL_BLOCKS = new AllBlocksRunCategory();
     public static RunCategory MINE_A_CHUNK = new RunCategory("MINE_A_CHUNK","mcce#Mine_a_Chunk");
+    public static RunCategory POTATO = new RunCategory("POTATO", "mc_af#<not-set>");
 
     public static void checkAllBossesCompleted() {
         InGameTimer timer = InGameTimer.getInstance();

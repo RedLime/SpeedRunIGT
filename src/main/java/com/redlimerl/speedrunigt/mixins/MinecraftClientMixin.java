@@ -11,6 +11,7 @@ import com.redlimerl.speedrunigt.utils.FontUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
 import net.minecraft.client.font.Font;
+import net.minecraft.client.font.FontFilterType;
 import net.minecraft.client.font.FontStorage;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.world.LevelLoadingScreen;
@@ -149,7 +150,7 @@ public abstract class MinecraftClientMixin {
                     FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) MinecraftClient.getInstance()).getFontManager();
                     for (Map.Entry<Identifier, List<Font>> listEntry : loader.entrySet()) {
                         FontStorage fontStorage = new FontStorage(fontManager.getTextureManager(), listEntry.getKey());
-                        fontStorage.setFonts(listEntry.getValue());
+                        fontStorage.setFonts(listEntry.getValue().stream().map(font -> new Font.FontFilterPair(font, FontFilterType.FilterMap.NO_FILTER)).toList(), Collections.emptySet());
                         fontManager.getFontStorages().put(listEntry.getKey(), fontStorage);
                     }
                     TimerDrawer.fontHeightMap.clear();

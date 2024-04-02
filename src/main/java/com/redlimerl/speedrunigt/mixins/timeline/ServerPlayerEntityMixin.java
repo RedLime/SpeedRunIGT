@@ -43,14 +43,14 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
     private Vec3d lastPortalPos = null;
 
     @Inject(method = "moveToWorld", at = @At("HEAD"))
-    public void onChangeDimension(ServerWorld destination, CallbackInfoReturnable<Entity> cir) {
+    public void onChangeDimension(ServerWorld destination, boolean bl, CallbackInfoReturnable<Entity> cir) {
         beforeWorld = this.getServerWorld();
         lastPortalPos = this.getPos();
         InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = !InGameTimer.getInstance().isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY;
     }
 
     @Inject(method = "moveToWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;onPlayerChangeDimension(Lnet/minecraft/server/network/ServerPlayerEntity;)V", shift = At.Shift.AFTER))
-    public void onChangedDimension(ServerWorld destination, CallbackInfoReturnable<Entity> cir) {
+    public void onChangedDimension(ServerWorld destination, boolean bl, CallbackInfoReturnable<Entity> cir) {
         RegistryKey<World> oldRegistryKey = beforeWorld.getRegistryKey();
         RegistryKey<World> newRegistryKey = getServerWorld().getRegistryKey();
 
