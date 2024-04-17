@@ -71,8 +71,8 @@ public class SpeedRunCategoryScreen extends Screen {
         }
 
         @Override
-        protected int getScrollbarPositionX() {
-            return super.getScrollbarPositionX() + 30;
+        protected int getScrollbarX() {
+            return super.getScrollbarX() + 30;
         }
 
         @Environment(EnvType.CLIENT)

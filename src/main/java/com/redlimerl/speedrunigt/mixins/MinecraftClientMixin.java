@@ -11,7 +11,9 @@ import com.redlimerl.speedrunigt.utils.FontUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
 import net.minecraft.client.font.Font;
+import net.minecraft.client.font.FontFilterType;
 import net.minecraft.client.font.FontStorage;
+import net.minecraft.client.gui.screen.DownloadingTerrainScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.world.LevelLoadingScreen;
 import net.minecraft.client.option.GameOptions;
@@ -33,6 +35,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin {
@@ -58,7 +61,7 @@ public abstract class MinecraftClientMixin {
     }
 
     @Inject(at = @At("HEAD"), method = "joinWorld")
-    public void onJoin(ClientWorld targetWorld, CallbackInfo ci) {
+    public void onJoin(ClientWorld targetWorld, DownloadingTerrainScreen.WorldEntryReason worldEntryReason, CallbackInfo ci) {
         if (targetWorld == null) return;
 
         InGameTimer timer = InGameTimer.getInstance();
@@ -146,10 +149,17 @@ public abstract class MinecraftClientMixin {
             @Override
             protected void apply(Map<Identifier, List<Font>> loader, ResourceManager manager, Profiler profiler) {
                 try {
+                    EnumSet<FontFilterType> set = EnumSet.noneOf(FontFilterType.class);
+                    if (options.getForceUnicodeFont().getValue()) {
+                        set.add(FontFilterType.UNIFORM);
+                    }
+                    if (options.getJapaneseGlyphVariants().getValue()) {
+                        set.add(FontFilterType.JAPANESE_VARIANTS);
+                    }
                     FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) MinecraftClient.getInstance()).getFontManager();
                     for (Map.Entry<Identifier, List<Font>> listEntry : loader.entrySet()) {
                         FontStorage fontStorage = new FontStorage(fontManager.getTextureManager(), listEntry.getKey());
-                        fontStorage.setFonts(listEntry.getValue());
+                        fontStorage.setFonts(listEntry.getValue().stream().map(font -> new Font.FontFilterPair(font, FontFilterType.FilterMap.NO_FILTER)).collect(Collectors.toList()), set);
                         fontManager.getFontStorages().put(listEntry.getKey(), fontStorage);
                     }
                     TimerDrawer.fontHeightMap.clear();
