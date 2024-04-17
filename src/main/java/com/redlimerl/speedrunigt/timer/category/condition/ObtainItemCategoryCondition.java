@@ -3,6 +3,7 @@ package com.redlimerl.speedrunigt.timer.category.condition;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
+import net.minecraft.component.ComponentMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.StringNbtReader;
@@ -45,8 +46,8 @@ public class ObtainItemCategoryCondition extends CategoryCondition.Condition<Lis
         for (ItemStack itemStack : itemStacks) {
             if (itemStack != null && Objects.equals(Registries.ITEM.getId(itemStack.getItem()).toString(), itemID) && (itemDamage == null || itemStack.getDamage() == itemDamage)) {
                 if (!nbtTag.isEmpty()) {
-                    if (itemStack.getNbt() == null) continue;
-                    NbtCompound itemTag = itemStack.getNbt();
+                    if (itemStack.getComponents() == null) continue;
+                    ComponentMap itemTag = itemStack.getComponents();
                     if (!itemTag.equals(nbtTag)) continue;
                 }
                 amount += itemStack.getCount();

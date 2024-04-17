@@ -43,7 +43,7 @@ public class AllBlocksRunCategory extends RunCategory {
     }
 
     private static boolean isIncludedAllBlocks(Block block) {
-        if (block.getLootTableId() == LootTables.EMPTY) return false;
+        if (block.getLootTableKey() == LootTables.EMPTY) return false;
         if (block == Blocks.NETHER_PORTAL) return false;
         if (block == Blocks.FARMLAND) return false;
         if (block == Blocks.DIRT_PATH) return false;
