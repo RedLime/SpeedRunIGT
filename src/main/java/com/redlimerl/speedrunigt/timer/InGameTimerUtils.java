@@ -17,16 +17,13 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.inventory.Inventories;
+import net.minecraft.component.type.ContainerComponent;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameMode;
@@ -272,16 +269,10 @@ public class InGameTimerUtils {
         if (!(itemStack.getItem() instanceof BlockItem) || !(((BlockItem) itemStack.getItem()).getBlock() instanceof ShulkerBoxBlock))
             return 0;
 
-        NbtCompound nbt = Objects.requireNonNull(itemStack.get(DataComponentTypes.BLOCK_ENTITY_DATA)).copyNbt();
-        if (nbt != null) {
-            if (nbt.contains("Items", NbtElement.LIST_TYPE)) {
-                DefaultedList<ItemStack> defaultedList = DefaultedList.ofSize(27, ItemStack.EMPTY);
-                Inventories.readNbt(nbt, defaultedList, world.getRegistryManager());
-                for (ItemStack stack : defaultedList) {
-                    if (stack != null && stack.getItem() == targetItem) {
-                        count += stack.getCount();
-                    }
-                }
+        Iterable<ItemStack> stacks = itemStack.getOrDefault(DataComponentTypes.CONTAINER, ContainerComponent.DEFAULT).iterateNonEmpty();
+        for (ItemStack stack : stacks) {
+            if (stack != null && stack.getItem() == targetItem) {
+                count += stack.getCount();
             }
         }
 
