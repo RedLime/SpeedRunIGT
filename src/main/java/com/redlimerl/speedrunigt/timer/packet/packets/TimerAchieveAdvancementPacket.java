@@ -6,14 +6,14 @@ import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacketBuf;
 import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
 
 import java.util.Map;
 
 public class TimerAchieveAdvancementPacket extends TimerPacket {
 
-    public static final Identifier IDENTIFIER = TimerPacket.identifier("achieve_advancement");
+    public static final CustomPayload.Id<CustomPayload> IDENTIFIER = TimerPacket.identifier("achieve_advancement");
     private final AdvancementEntry sendAdvancement;
 
     public TimerAchieveAdvancementPacket() {

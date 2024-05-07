@@ -10,18 +10,17 @@ import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
 
 public class TimerInitializePacket extends TimerPacket {
 
-    public static final Identifier IDENTIFIER = TimerPacket.identifier("timer_init");
+    public static final CustomPayload.Id<CustomPayload> IDENTIFIER = TimerPacket.identifier("timer_init");
+    public static final PacketCodec<RegistryByteBuf, TimerInitializePacket> CODEC = TimerPacket.codecOf(TimerInitializePacket::write, TimerInitializePacket::new);
     private final RunType runType;
     private final RunCategory category;
-
-    public TimerInitializePacket() {
-        this(null);
-    }
 
     public TimerInitializePacket(InGameTimer timer) {
         super(IDENTIFIER);
@@ -32,6 +31,17 @@ public class TimerInitializePacket extends TimerPacket {
             this.runType = RunType.RANDOM_SEED;
             this.category = RunCategories.ANY;
         }
+    }
+
+    public TimerInitializePacket(RegistryByteBuf buf) {
+        super(IDENTIFIER);
+        this.runType = RunType.fromInt(buf.readInt());
+        this.category = RunCategory.getCategory(buf.readString());
+    }
+
+    public void write(RegistryByteBuf buf) {
+        buf.writeInt(this.runType.getCode());
+        buf.writeString(this.category.getID());
     }
 
     @Environment(EnvType.CLIENT)
@@ -69,7 +79,7 @@ public class TimerInitializePacket extends TimerPacket {
         this.init(buf, client.isIntegratedServerRunning());
     }
 
-    private void init(TimerPacketBuf buf, boolean isIntegrated) {
+    private TimerInitializePacket init(TimerPacketBuf buf, boolean isIntegrated) {
         int runType = buf.readInt();
         RunCategory category = RunCategory.getCategory(buf.readString());
 
@@ -78,5 +88,6 @@ public class TimerInitializePacket extends TimerPacket {
         InGameTimer.getInstance().setCategory(category, false);
         InGameTimer.getInstance().setCoop(true);
         InGameTimer.getInstance().setServerIntegrated(isIntegrated);
+        return this;
     }
 }

@@ -9,15 +9,15 @@ import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
 
 import java.util.Enumeration;
 import java.util.Objects;
 
 public class TimerStartPacket extends TimerPacket {
 
-    public static final Identifier IDENTIFIER = TimerPacket.identifier("timer_start");
+    public static final CustomPayload.Id<CustomPayload> IDENTIFIER = TimerPacket.identifier("timer_start");
     private final InGameTimer sendTimer;
     private final String customData;
     private final long sendRTA;

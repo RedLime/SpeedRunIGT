@@ -10,12 +10,12 @@ import com.redlimerl.speedrunigt.timer.packet.TimerPacketBuf;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
 
 public class TimerChangeCategoryPacket extends TimerPacket {
 
-    public static final Identifier IDENTIFIER = TimerPacket.identifier("timer_category");
+    public static final CustomPayload.Id<CustomPayload> IDENTIFIER = TimerPacket.identifier("timer_category");
     private final String sendCategory;
 
     public TimerChangeCategoryPacket() {

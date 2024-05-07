@@ -9,14 +9,14 @@ import com.redlimerl.speedrunigt.timer.packet.TimerPacketBuf;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
 
 import java.util.Objects;
 
 public class TimerCustomConditionPacket extends TimerPacket {
 
-    public static final Identifier IDENTIFIER = TimerPacket.identifier("condition_custom");
+    public static final CustomPayload.Id<CustomPayload> IDENTIFIER = TimerPacket.identifier("condition_custom");
     private final CategoryCondition.Condition<?> sendCondition;
 
     public TimerCustomConditionPacket() {

@@ -2,28 +2,32 @@ package com.redlimerl.speedrunigt.timer.packet;
 
 import com.google.common.collect.Maps;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
-import com.redlimerl.speedrunigt.option.SpeedRunOption;
-import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketDecoder;
+import net.minecraft.network.codec.ValueFirstEncoder;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
 import java.util.function.Supplier;
 
-public abstract class TimerPacket {
+public abstract class TimerPacket implements CustomPayload {
     public enum Side {
         SERVER,
         CLIENT
     }
 
     private static final HashMap<String, Supplier<? extends TimerPacket>> registered = Maps.newHashMap();
-    static void registryPacket(Identifier identifier, Supplier<? extends TimerPacket> packet, Side side) {
+
+    public static <B, V> PacketCodec<B, V> codecOf(ValueFirstEncoder<B, V> encoder, PacketDecoder<B, V> decoder) {
+        return PacketCodec.of(encoder, decoder);
+    }
+
+    static void registryPacket(CustomPayload.Id<CustomPayload> identifier, Supplier<? extends TimerPacket> packet, Side side) {
         switch (side) {
             case SERVER -> {
                 registered.put(identifier.toString(), packet);
@@ -34,32 +38,32 @@ public abstract class TimerPacket {
         }
     }
 
-    static void registryPacketClient(Identifier identifier) {
-        ClientPlayNetworking.registerGlobalReceiver(identifier, (client, handler, buf, responseSender) -> {
-            TimerPacket timerPacket = TimerPacket.createTimerPacketFromPacket(identifier);
-            TimerPacketBuf timerPacketBuf = TimerPacketBuf.of(buf);
-            if (timerPacket != null && SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) {
-                timerPacket.receiveServer2ClientPacket(timerPacketBuf, client);
-            }
-        });
+    static void registryPacketClient(CustomPayload.Id<CustomPayload> identifier) {
+//        ClientPlayNetworking.registerGlobalReceiver(identifier, (payload, context) -> {
+//            TimerPacket timerPacket = TimerPacket.createTimerPacketFromPacket(identifier);
+//            TimerPacketBuf timerPacketBuf = TimerPacketBuf.of(payload);
+//            if (timerPacket != null && SpeedRunOption.getOption(SpeedRunOptions.AUTOMATIC_COOP_MODE)) {
+//                timerPacket.receiveServer2ClientPacket(timerPacketBuf, context.client());
+//            }
+//        });
     }
 
-    static void registryPacketServer(Identifier identifier) {
-        ServerPlayNetworking.registerGlobalReceiver(identifier, (server, player, handler, buf, responseSender) -> {
-            TimerPacket timerPacket = TimerPacket.createTimerPacketFromPacket(identifier);
-            TimerPacketBuf timerPacketBuf = TimerPacketBuf.of(buf);
-            if (timerPacket != null) {
-                timerPacket.receiveClient2ServerPacket(timerPacketBuf, server);
-            }
-        });
+    static void registryPacketServer(CustomPayload.Id<CustomPayload> identifier) {
+//        ServerPlayNetworking.registerGlobalReceiver(identifier, (payload, context) -> {
+//            TimerPacket timerPacket = TimerPacket.createTimerPacketFromPacket(identifier);
+//            TimerPacketBuf timerPacketBuf = TimerPacketBuf.of(payload);
+//            if (timerPacket != null) {
+//                timerPacket.receiveClient2ServerPacket(timerPacketBuf, context.player().getServer());
+//            }
+//        });
     }
 
-    public static Identifier identifier(String id) {
-        return new Identifier(SpeedRunIGT.MOD_ID, id);
+    public static CustomPayload.Id<CustomPayload> identifier(String id) {
+        return CustomPayload.id(SpeedRunIGT.MOD_ID + ":" + id);
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends TimerPacket> T createTimerPacketFromPacket(Identifier identifier) {
+    public static <T extends TimerPacket> T createTimerPacketFromPacket(CustomPayload.Id<CustomPayload> identifier) {
         if (registered.containsKey(identifier.toString())) {
             try {
                 TimerPacket packet = registered.get(identifier.toString()).get();
@@ -71,14 +75,19 @@ public abstract class TimerPacket {
         return null;
     }
 
-    private final Identifier identifier;
+    private final CustomPayload.Id<CustomPayload> identifier;
 
-    public TimerPacket(Identifier identifier) {
+    public TimerPacket(CustomPayload.Id<CustomPayload> identifier) {
         this.identifier = identifier;
     }
 
-    public Identifier getIdentifier() {
+    public CustomPayload.Id<CustomPayload> getIdentifier() {
         return this.identifier;
+    }
+
+    @Override
+    public Id<? extends CustomPayload> getId() {
+        return this.getIdentifier();
     }
 
     @Environment(EnvType.CLIENT)

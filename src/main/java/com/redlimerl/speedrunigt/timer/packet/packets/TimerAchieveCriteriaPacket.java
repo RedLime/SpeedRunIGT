@@ -7,12 +7,12 @@ import com.redlimerl.speedrunigt.timer.packet.TimerPacketBuf;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
 
 public class TimerAchieveCriteriaPacket extends TimerPacket {
 
-    public static final Identifier IDENTIFIER = TimerPacket.identifier("achieve_criteria");
+    public static final CustomPayload.Id<CustomPayload> IDENTIFIER = TimerPacket.identifier("achieve_criteria");
     private final String serverAdvancement;
     private final String serverCriteria;
     private final Boolean serverIsAdvancement;

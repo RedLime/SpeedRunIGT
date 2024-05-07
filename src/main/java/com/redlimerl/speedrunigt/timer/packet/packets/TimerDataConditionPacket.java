@@ -7,12 +7,12 @@ import com.redlimerl.speedrunigt.timer.packet.TimerPacketBuf;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
 
 public class TimerDataConditionPacket extends TimerPacket {
 
-    public static final Identifier IDENTIFIER = TimerPacket.identifier("condition_data");
+    public static final CustomPayload.Id<CustomPayload> IDENTIFIER = TimerPacket.identifier("condition_data");
     private final Integer sendKey;
     private final Integer sendValue;
 
