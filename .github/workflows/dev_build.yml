@@ -1,15 +1,6 @@
 name: 'dev_build'
 on:
   workflow_dispatch:
-    inputs:
-      release_version:
-        description: 'Release version'
-        required: true
-        type: string
-      is_prerelease:
-        description: 'is Pre-release?'
-        required: false
-        type: boolean
 
 jobs:
   build:
