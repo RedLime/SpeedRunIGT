@@ -2,6 +2,7 @@ package com.redlimerl.speedrunigt.timer.packet;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
@@ -12,28 +13,19 @@ import java.util.Collection;
 public class TimerPacketUtils {
 
     @Environment(EnvType.CLIENT)
-    public static void sendClient2ServerPacket(MinecraftClient client, TimerPacket packet) {
-        // avoid a crash caused by a client packet sending too early
-        if (MinecraftClient.getInstance().getNetworkHandler() != null) {
-//            ClientPlayNetworking.send(packet.getIdentifier(), packet.createClient2ServerPacket(client));
-        }
+    public static void sendClient2ServerPacket(MinecraftClient client, TimerPacket<?> packet) {
+        if (client.getNetworkHandler() != null) ClientPlayNetworking.send(packet);
     }
 
-    public static void sendServer2ClientPacket(ServerPlayerEntity player, TimerPacket packet) {
-//        ServerPlayNetworking.send(player, packet.getIdentifier(), packet.createServer2ClientPacket(player.server));
-    }
-
-    public static void sendServer2ClientPacket(Collection<ServerPlayerEntity> players, TimerPacket packet) {
+    public static void sendServer2ClientPacket(Collection<ServerPlayerEntity> players, TimerPacket<?> packet) {
         for (ServerPlayerEntity player : players) sendServer2ClientPacket(player, packet);
     }
 
-    public static void sendServer2ClientPacket(MinecraftServer server, TimerPacket packet) {
-        sendServer2ClientPacket(server.getPlayerManager().getPlayerList(), packet);
+    public static void sendServer2ClientPacket(MinecraftServer server, TimerPacket<?> packet) {
+        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) sendServer2ClientPacket(player, packet);
     }
 
-    public static void sendServer2ClientPacket(MinecraftServer server, TimerPacket packet, TimerPacketBuf buf) {
-        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-            ServerPlayNetworking.send(player, () -> null);
-        }
+    public static void sendServer2ClientPacket(ServerPlayerEntity player, TimerPacket<?> packet) {
+        ServerPlayNetworking.send(player, packet);
     }
 }

@@ -480,7 +480,7 @@ public class InGameTimer implements Serializable {
                 InGameTimerUtils.setCategoryWarningScreen(category.getConditionFileName(), exception);
             }
         }
-        if (this.isCoop() && canSendPacket && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerChangeCategoryPacket(this.category));
+        if (this.isCoop() && canSendPacket && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerChangeCategoryPacket(this.getCategory()));
     }
 
     public boolean isCoop() {
