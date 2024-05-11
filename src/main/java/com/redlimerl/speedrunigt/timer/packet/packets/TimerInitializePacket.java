@@ -5,23 +5,21 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
-import com.redlimerl.speedrunigt.timer.packet.TimerPacketBuf;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
 
-public class TimerInitializePacket extends TimerPacket {
+public class TimerInitializePacket extends TimerPacket<TimerInitializePacket> {
 
-    public static final Identifier IDENTIFIER = TimerPacket.identifier("timer_init");
+    public static final CustomPayload.Id<TimerInitializePacket> IDENTIFIER = TimerPacket.identifier("timer_init");
+    public static final PacketCodec<RegistryByteBuf, TimerInitializePacket> CODEC = TimerPacket.codecOf(TimerInitializePacket::write, TimerInitializePacket::new);
     private final RunType runType;
     private final RunCategory category;
-
-    public TimerInitializePacket() {
-        this(null);
-    }
 
     public TimerInitializePacket(InGameTimer timer) {
         super(IDENTIFIER);
@@ -34,48 +32,35 @@ public class TimerInitializePacket extends TimerPacket {
         }
     }
 
-    @Environment(EnvType.CLIENT)
-    @Override
-    protected TimerPacketBuf convertClient2ServerPacket(TimerPacketBuf buf, MinecraftClient client) {
+    public TimerInitializePacket(RegistryByteBuf buf) {
+        super(IDENTIFIER);
+        this.runType = RunType.fromInt(buf.readInt());
+        this.category = RunCategory.getCategory(buf.readString());
+    }
+
+    protected void write(RegistryByteBuf buf) {
         buf.writeInt(this.runType.getCode());
         buf.writeString(this.category.getID());
-        return buf;
     }
 
     @Override
-    public void receiveClient2ServerPacket(TimerPacketBuf buf, MinecraftServer server) {
+    public void receiveClient2ServerPacket(MinecraftServer server) {
         if (!SpeedRunIGT.IS_CLIENT_SIDE) {
-            TimerPacketBuf copiedBuf = buf.copy();
-            this.init(copiedBuf, true);
-            copiedBuf.release();
+            this.init(true);
         }
-        this.sendPacketToPlayers(buf, server);
-    }
-
-    @Override
-    protected TimerPacketBuf convertServer2ClientPacket(TimerPacketBuf buf, MinecraftServer server) {
-        buf.writeInt(this.runType.getCode());
-        buf.writeString(this.category.getID());
-
-        TimerPacketBuf copiedBuf = buf.copy();
-        this.init(copiedBuf, true);
-        copiedBuf.release();
-        return buf;
+        this.sendPacketToPlayers(server);
     }
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void receiveServer2ClientPacket(TimerPacketBuf buf, MinecraftClient client) {
-        this.init(buf, client.isIntegratedServerRunning());
+    public void receiveServer2ClientPacket(MinecraftClient client) {
+        this.init(client.isIntegratedServerRunning());
     }
 
-    private void init(TimerPacketBuf buf, boolean isIntegrated) {
-        int runType = buf.readInt();
-        RunCategory category = RunCategory.getCategory(buf.readString());
-
-        InGameTimer.start("", RunType.fromInt(runType));
+    private void init(boolean isIntegrated) {
+        InGameTimer.start("", this.runType);
         InGameTimer.getInstance().setStartTime(0);
-        InGameTimer.getInstance().setCategory(category, false);
+        InGameTimer.getInstance().setCategory(this.category, false);
         InGameTimer.getInstance().setCoop(true);
         InGameTimer.getInstance().setServerIntegrated(isIntegrated);
     }

@@ -6,59 +6,46 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
-import com.redlimerl.speedrunigt.timer.packet.TimerPacketBuf;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
 
-public class TimerChangeCategoryPacket extends TimerPacket {
+public class TimerChangeCategoryPacket extends TimerPacket<TimerChangeCategoryPacket> {
 
-    public static final Identifier IDENTIFIER = TimerPacket.identifier("timer_category");
-    private final String sendCategory;
+    public static final CustomPayload.Id<TimerChangeCategoryPacket> IDENTIFIER = TimerPacket.identifier("timer_category");
+    public static final PacketCodec<RegistryByteBuf, TimerChangeCategoryPacket> CODEC = TimerPacket.codecOf(TimerChangeCategoryPacket::write, TimerChangeCategoryPacket::new);
+    private final RunCategory category;
 
-    public TimerChangeCategoryPacket() {
-        this(null);
-    }
-
-    public TimerChangeCategoryPacket(String name) {
+    public TimerChangeCategoryPacket(RunCategory category) {
         super(IDENTIFIER);
-        this.sendCategory = name;
+        this.category = category;
     }
 
-    @Environment(EnvType.CLIENT)
-    @Override
-    protected TimerPacketBuf convertClient2ServerPacket(TimerPacketBuf buf, MinecraftClient client) {
-        if (this.sendCategory != null) {
-            buf.writeString(this.sendCategory);
-        }
-        return buf;
+    public TimerChangeCategoryPacket(RegistryByteBuf buf) {
+        this(RunCategory.getCategory(buf.readString()));
     }
 
     @Override
-    public void receiveClient2ServerPacket(TimerPacketBuf buf, MinecraftServer server) {
+    protected void write(RegistryByteBuf buf) {
+        buf.writeString(this.category.getID());
+    }
+
+    @Override
+    public void receiveClient2ServerPacket(MinecraftServer server) {
         if (!SpeedRunIGT.IS_CLIENT_SIDE) {
-            TimerPacketBuf copiedBuf = buf.copy();
-            RunCategory runCategory = RunCategory.getCategory(copiedBuf.readString());
-            InGameTimer.getInstance().setCategory(runCategory, false);
-            SpeedRunOption.setOption(SpeedRunOptions.TIMER_CATEGORY, runCategory);
-            copiedBuf.release();
+            InGameTimer.getInstance().setCategory(this.category, false);
+            SpeedRunOption.setOption(SpeedRunOptions.TIMER_CATEGORY, this.category);
         }
-        this.sendPacketToPlayers(buf, server);
-    }
-
-    @Override
-    protected TimerPacketBuf convertServer2ClientPacket(TimerPacketBuf buf, MinecraftServer server) {
-        if (this.sendCategory != null) {
-            buf.writeString(this.sendCategory);
-        }
-        return buf;
+        this.sendPacketToPlayers(server);
     }
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void receiveServer2ClientPacket(TimerPacketBuf buf, MinecraftClient client) {
-        InGameTimer.getInstance().setCategory(RunCategory.getCategory(buf.readString()), false);
+    public void receiveServer2ClientPacket(MinecraftClient client) {
+        InGameTimer.getInstance().setCategory(this.category, false);
     }
 }

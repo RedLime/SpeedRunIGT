@@ -3,41 +3,43 @@ package com.redlimerl.speedrunigt.timer.packet.packets;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerAdvancementTracker;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
-import com.redlimerl.speedrunigt.timer.packet.TimerPacketBuf;
 import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 
 import java.util.Map;
 
-public class TimerAchieveAdvancementPacket extends TimerPacket {
+public class TimerAchieveAdvancementPacket extends TimerPacket<TimerAchieveAdvancementPacket> {
 
-    public static final Identifier IDENTIFIER = TimerPacket.identifier("achieve_advancement");
-    private final AdvancementEntry sendAdvancement;
+    public static final CustomPayload.Id<TimerAchieveAdvancementPacket> IDENTIFIER = TimerPacket.identifier("achieve_advancement");
+    public static final PacketCodec<RegistryByteBuf, TimerAchieveAdvancementPacket> CODEC = TimerPacket.codecOf(TimerAchieveAdvancementPacket::write, TimerAchieveAdvancementPacket::new);
+    private final Identifier sendAdvancement;
 
-    public TimerAchieveAdvancementPacket() {
-        this(null);
+    TimerAchieveAdvancementPacket(Identifier identifier) {
+        super(IDENTIFIER);
+        this.sendAdvancement = identifier;
     }
 
     public TimerAchieveAdvancementPacket(AdvancementEntry advancement) {
-        super(IDENTIFIER);
-        this.sendAdvancement = advancement;
+        this(advancement.id());
+    }
+
+    public TimerAchieveAdvancementPacket(RegistryByteBuf buf) {
+        this(buf.readIdentifier());
     }
 
     @Override
-    protected TimerPacketBuf convertClient2ServerPacket(TimerPacketBuf buf, MinecraftClient client) {
-        if (sendAdvancement != null) {
-            buf.writeIdentifier(sendAdvancement.id());
-        }
-        return buf;
+    protected void write(RegistryByteBuf buf) {
+        buf.writeIdentifier(this.sendAdvancement);
     }
 
     @Override
-    public void receiveClient2ServerPacket(TimerPacketBuf buf, MinecraftServer server) {
-        TimerPacketBuf copiedBuf = buf.copy();
-        InGameTimer.getInstance().tryInsertNewAdvancement(copiedBuf.readIdentifier().toString(), null, true);
-        copiedBuf.release();
+    public void receiveClient2ServerPacket(MinecraftServer server) {
+        InGameTimer.getInstance().tryInsertNewAdvancement(this.sendAdvancement.toString(), null, true);
 
         int count = 0, goal = InGameTimer.getInstance().getMoreData(7441);
         for (Map.Entry<String, TimerAdvancementTracker.AdvancementTrack> track : InGameTimer.getInstance().getAdvancementsTracker().getAdvancements().entrySet()) {
@@ -49,19 +51,11 @@ public class TimerAchieveAdvancementPacket extends TimerPacket {
             return;
         }
 
-        this.sendPacketToPlayers(buf, server);
+        this.sendPacketToPlayers(server);
     }
 
     @Override
-    protected TimerPacketBuf convertServer2ClientPacket(TimerPacketBuf buf, MinecraftServer server) {
-        if (sendAdvancement != null) {
-            buf.writeIdentifier(sendAdvancement.id());
-        }
-        return buf;
-    }
-
-    @Override
-    public void receiveServer2ClientPacket(TimerPacketBuf buf, MinecraftClient client) {
-        InGameTimer.getInstance().tryInsertNewAdvancement(buf.readIdentifier().toString(), null, true);
+    public void receiveServer2ClientPacket(MinecraftClient client) {
+        InGameTimer.getInstance().tryInsertNewAdvancement(this.sendAdvancement.toString(), null, true);
     }
 }

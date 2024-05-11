@@ -3,53 +3,45 @@ package com.redlimerl.speedrunigt.timer.packet.packets;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
-import com.redlimerl.speedrunigt.timer.packet.TimerPacketBuf;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
 
-public class TimerTimelinePacket extends TimerPacket {
+public class TimerTimelinePacket extends TimerPacket<TimerTimelinePacket> {
 
-    public static final Identifier IDENTIFIER = TimerPacket.identifier("timer_timeline");
+    public static final CustomPayload.Id<TimerTimelinePacket> IDENTIFIER = TimerPacket.identifier("timer_timeline");
+    public static final PacketCodec<RegistryByteBuf, TimerTimelinePacket> CODEC = TimerPacket.codecOf(TimerTimelinePacket::write, TimerTimelinePacket::new);
     private final String sendTimeline;
-
-    public TimerTimelinePacket() {
-        this("");
-    }
 
     public TimerTimelinePacket(String timeline) {
         super(IDENTIFIER);
         this.sendTimeline = timeline;
     }
 
-    @Environment(EnvType.CLIENT)
-    @Override
-    protected TimerPacketBuf convertClient2ServerPacket(TimerPacketBuf buf, MinecraftClient client) {
-        if (this.sendTimeline != null) buf.writeString(this.sendTimeline);
-        return buf;
+    public TimerTimelinePacket(RegistryByteBuf buf) {
+        this(buf.readString());
     }
 
     @Override
-    public void receiveClient2ServerPacket(TimerPacketBuf buf, MinecraftServer server) {
+    protected void write(RegistryByteBuf buf) {
+        buf.writeString(this.sendTimeline);
+    }
+
+    @Override
+    public void receiveClient2ServerPacket(MinecraftServer server) {
         if (!SpeedRunIGT.IS_CLIENT_SIDE) {
-            TimerPacketBuf copiedBuf = buf.copy();
-            InGameTimer.getInstance().tryInsertNewTimeline(copiedBuf.readString(), false);
-            copiedBuf.release();
+            InGameTimer.getInstance().tryInsertNewTimeline(this.sendTimeline, false);
         }
-        this.sendPacketToPlayers(buf, server);
-    }
-
-    @Override
-    protected TimerPacketBuf convertServer2ClientPacket(TimerPacketBuf buf, MinecraftServer server) {
-        if (this.sendTimeline != null) buf.writeString(this.sendTimeline);
-        return buf;
+        this.sendPacketToPlayers( server);
     }
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void receiveServer2ClientPacket(TimerPacketBuf buf, MinecraftClient client) {
-        InGameTimer.getInstance().tryInsertNewTimeline(buf.readString(), false);
+    public void receiveServer2ClientPacket(MinecraftClient client) {
+        InGameTimer.getInstance().tryInsertNewTimeline(this.sendTimeline, false);
     }
 }

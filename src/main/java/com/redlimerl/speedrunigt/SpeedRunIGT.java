@@ -11,7 +11,6 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.timer.category.CustomCategoryManager;
 import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
-import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
 import com.redlimerl.speedrunigt.timer.packet.TimerPackets;
 import com.redlimerl.speedrunigt.utils.FontIdentifier;
 import net.fabricmc.api.ModInitializer;
@@ -121,7 +120,7 @@ public class SpeedRunIGT implements ModInitializer {
         SpeedRunIGTUpdateChecker.checkUpdate();
 
         // Initializing packets
-        TimerPackets.init(TimerPacket.Side.SERVER);
+        TimerPackets.init();
     }
 
     private static final Logger LOGGER = LogManager.getLogger("SpeedRunIGT");

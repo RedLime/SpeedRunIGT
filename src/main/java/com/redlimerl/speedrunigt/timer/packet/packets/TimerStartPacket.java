@@ -4,108 +4,89 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
-import com.redlimerl.speedrunigt.timer.packet.TimerPacketBuf;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
 
 import java.util.Enumeration;
 import java.util.Objects;
+import java.util.UUID;
 
-public class TimerStartPacket extends TimerPacket {
+public class TimerStartPacket extends TimerPacket<TimerStartPacket> {
 
-    public static final Identifier IDENTIFIER = TimerPacket.identifier("timer_start");
-    private final InGameTimer sendTimer;
+    public static final CustomPayload.Id<TimerStartPacket> IDENTIFIER = TimerPacket.identifier("timer_start");
+    public static final PacketCodec<RegistryByteBuf, TimerStartPacket> CODEC = TimerPacket.codecOf(TimerStartPacket::write, TimerStartPacket::new);
+    private final UUID timerUuid;
+    private final RunType runType;
+    private final RunCategory category;
     private final String customData;
     private final long sendRTA;
 
-    public TimerStartPacket() {
-        this(null, InGameTimer.getInstance().getRealTimeAttack());
-    }
-
     public TimerStartPacket(InGameTimer timer, long rta) {
         super(IDENTIFIER);
-        this.sendTimer = timer;
         StringBuilder stringBuilder = new StringBuilder();
-        if (timer != null) {
-            Enumeration<Integer> keyInt = timer.getMoreDataKeys();
-            while (keyInt.hasMoreElements()) {
-                Integer key = keyInt.nextElement();
-                Integer value = timer.getMoreData(key);
-                stringBuilder.append(key).append(",").append(value).append(";");
-            }
+        Enumeration<Integer> keyInt = timer.getMoreDataKeys();
+        while (keyInt.hasMoreElements()) {
+            Integer key = keyInt.nextElement();
+            Integer value = timer.getMoreData(key);
+            stringBuilder.append(key).append(",").append(value).append(";");
         }
+        this.timerUuid = timer.getUuid();
+        this.category = timer.getCategory();
+        this.runType = timer.getRunType();
         this.customData = stringBuilder.substring(0, stringBuilder.length() - (stringBuilder.length() > 0 ? 1 : 0));
         this.sendRTA = rta;
     }
 
-    @Environment(EnvType.CLIENT)
-    @Override
-    protected TimerPacketBuf convertClient2ServerPacket(TimerPacketBuf buf, MinecraftClient client) {
-        if (this.sendTimer != null) {
-            buf.writeString(this.sendTimer.getUuid().toString());
-            buf.writeString(this.sendTimer.getCategory().getID());
-            buf.writeLong(this.sendRTA);
-            buf.writeInt(this.sendTimer.getRunType().getCode());
-            buf.writeString(this.customData);
-        }
-        return buf;
+    public TimerStartPacket(RegistryByteBuf buf) {
+        super(IDENTIFIER);
+        this.timerUuid = buf.readUuid();
+        this.category = RunCategory.getCategory(buf.readString());
+        this.runType = RunType.fromInt(buf.readInt());
+        this.customData = buf.readString();
+        this.sendRTA = buf.readLong();
+    }
+
+    protected void write(RegistryByteBuf buf) {
+        buf.writeUuid(this.timerUuid);
+        buf.writeString(this.category.getID());
+        buf.writeInt(this.runType.getCode());
+        buf.writeString(this.customData);
+        buf.writeLong(this.sendRTA);
     }
 
     @Override
-    public void receiveClient2ServerPacket(TimerPacketBuf buf, MinecraftServer server) {
+    public void receiveClient2ServerPacket(MinecraftServer server) {
         if (!SpeedRunIGT.IS_CLIENT_SIDE) {
-            TimerPacketBuf copiedBuf = buf.copy();
-            this.timerInit(copiedBuf, true);
-            copiedBuf.release();
+            this.timerInit(true);
         }
-        this.sendPacketToPlayers(buf, server);
-    }
-
-    @Override
-    protected TimerPacketBuf convertServer2ClientPacket(TimerPacketBuf buf, MinecraftServer server) {
-        if (this.sendTimer != null) {
-            buf.writeString(this.sendTimer.getUuid().toString());
-            buf.writeString(this.sendTimer.getCategory().getID());
-            buf.writeLong(this.sendRTA);
-            buf.writeInt(this.sendTimer.getRunType().getCode());
-            buf.writeString(this.customData);
-
-            TimerPacketBuf copiedBuf = buf.copy();
-            this.timerInit(copiedBuf, true);
-            copiedBuf.release();
-        }
-        return buf;
+        this.sendPacketToPlayers(server);
     }
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void receiveServer2ClientPacket(TimerPacketBuf buf, MinecraftClient client) {
-        this.timerInit(buf, client.isIntegratedServerRunning());
+    public void receiveServer2ClientPacket(MinecraftClient client) {
+        this.timerInit(client.isIntegratedServerRunning());
     }
 
-    public void timerInit(TimerPacketBuf buf, boolean isIntegrated) {
-        String uuid = buf.readString();
-        RunCategory category = RunCategory.getCategory(buf.readString());
-        long rtaTime = buf.readLong();
-        int runType = buf.readInt();
-        String readCustom = buf.readString();
+    public void timerInit(boolean isIntegrated) {
+        long startTime = System.currentTimeMillis() - this.sendRTA;
 
-        long startTime = System.currentTimeMillis() - rtaTime;
-
-        if (!SpeedRunIGT.IS_CLIENT_SIDE || !Objects.equals(InGameTimer.getInstance().getUuid().toString(), uuid)) {
-            InGameTimer.start("", RunType.fromInt(runType));
+        if (!SpeedRunIGT.IS_CLIENT_SIDE || !Objects.equals(InGameTimer.getInstance().getUuid().toString(), this.timerUuid.toString())) {
+            InGameTimer.start("", this.runType);
             InGameTimer.getInstance().setStartTime(startTime);
             InGameTimer.getInstance().setCategory(category, false);
         }
         InGameTimer.getInstance().setCoop(true);
         InGameTimer.getInstance().setServerIntegrated(isIntegrated);
 
-        if (!readCustom.isEmpty()) {
-            for (String customString : readCustom.split(";")) {
+        if (!this.customData.isEmpty()) {
+            for (String customString : this.customData.split(";")) {
                 String[] data = customString.split(",");
                 int key = Integer.parseInt(data[0]);
                 int value = Integer.parseInt(data[1]);
