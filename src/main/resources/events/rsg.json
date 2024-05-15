@@ -21,6 +21,13 @@
         }
     },
     {
+        "name": "trade",
+        "type": "advancement",
+        "data": {
+            "advancement": "adventure/trade"
+        }
+    },
+    {
         "name": "enter_nether",
         "type": "advancement",
         "data": {
