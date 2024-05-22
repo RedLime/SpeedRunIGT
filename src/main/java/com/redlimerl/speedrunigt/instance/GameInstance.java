@@ -44,7 +44,7 @@ public class GameInstance {
     }
 
     private static String getLocalPlayerID() {
-        return MinecraftClient.getInstance().getSession().getUsername();
+        return MinecraftClient.getInstance().getSession().getUsername().toLowerCase();
     }
 
     public void tryLoadWorld(String worldName) {
