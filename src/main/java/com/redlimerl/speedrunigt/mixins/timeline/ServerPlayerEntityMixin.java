@@ -49,17 +49,20 @@ public abstract class ServerPlayerEntityMixin {
             }
 
             if (oldDimension == DimensionType.NETHER && newDimension == DimensionType.OVERWORLD) {
+                // doing this early, so we can use the portal pos list for the portal number
+                int portalIndex = InGameTimerUtils.isBlindTraveled(this.lastPortalPos);
+                boolean isNewPortal = InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(newDimension, lastPortalPos.add(0, 0, 0), player.getPos().add(0, 0, 0));
                 if (this.isEnoughTravel(player)) {
-                    int portalIndex = InGameTimerUtils.isBlindTraveled(lastPortalPos);
-                    GameInstance.getInstance().callEvents("nether_travel", factory -> factory.getDataValue("portal").equals(String.valueOf(portalIndex)));
+                    int portalNum = InGameTimerUtils.getPortalNumber(this.lastPortalPos);
+                    GameInstance.getInstance().callEvents("nether_travel", factory -> factory.getDataValue("portal").equals(String.valueOf(portalNum)));
                     InGameTimer.getInstance().tryInsertNewTimeline("nether_travel");
                     if (portalIndex == 0) {
                         InGameTimer.getInstance().tryInsertNewTimeline("nether_travel_home");
                     } else {
                         timer.tryInsertNewTimeline("nether_travel_blind");
                     }
+                if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY) InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = isNewPortal;
                 }
-                if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY) InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(DimensionType.OVERWORLD, lastPortalPos.add(0, 0, 0), player.getPos().add(0, 0, 0));
             }
         }
     }
