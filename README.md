@@ -30,11 +30,11 @@ The **Timer** Mod for Minecraft Speedrunning
 ## Support Versions
 ### Stable Versions
 - 1.14.x to 1.20.x (with Fabric Loader)
-- 1.7.x to 1.13.x (with Legacy Fabric Loader)
+- 1.3.x to 1.13.x (with Legacy Fabric Loader)
 - Some of subversions aren't supported. Check the available versions on the download page.
 ### Unsupported Versions
 ###### It was released before, but NO LONGER support any update
-- 1.18.1, 1.19, 1.19.1, 1.19.3, 1.20-1.20.2 
+- 1.19, 1.19.1, 1.19.3, 1.20, 1.20.2 
 
 ## FaQ
 - Is it allowed in *[Speedrun.com](https://speedrun.com/mc)* run verification? ✅
