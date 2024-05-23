@@ -33,7 +33,7 @@
   ],
 
   "depends": {
-    "fabricloader": ">=0.14.20",
+    "fabricloader": ">=0.15",
     "minecraft": "{{MC_VERSION}}"
   },
 
