@@ -6,7 +6,7 @@ import com.redlimerl.speedrunigt.timer.running.RunType;
 
 public class PracticeTimerManager {
 
-    public static final RunCategory PRACTICE_CATEGORY = RunCategoryBuilder.create("pratice_world", "", "Practice").setHideCategory(true).build();
+    public static final RunCategory PRACTICE_CATEGORY = RunCategoryBuilder.create("practice_world", "", "Practice").setHideCategory(true).build();
 
 
     public static void startPractice(float offsetTime) {
