@@ -1,12 +1,12 @@
 package com.redlimerl.speedrunigt.option;
 
+import com.redlimerl.speedrunigt.Identifier;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import com.redlimerl.speedrunigt.utils.Vec2f;
-import net.minecraft.util.Identifier;
 
 import java.util.Objects;
 
