@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.mixins.timeline;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.authlib.GameProfile;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.instance.GameInstance;
@@ -16,6 +17,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import org.spongepowered.asm.mixin.Mixin;
@@ -52,20 +54,20 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
     }
 
     @Inject(method = "moveToWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;onPlayerChangeDimension(Lnet/minecraft/server/network/ServerPlayerEntity;)V", shift = At.Shift.AFTER))
-    public void onChangedDimension(ServerWorld destination, CallbackInfoReturnable<Entity> cir) {
+    public void onChangedDimension(ServerWorld destination, CallbackInfoReturnable<Entity> cir, @Local TeleportTarget target) {
         DimensionType currentDimension = destination.getDimension();
 
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() != TimerStatus.NONE) {
             if (oldDimension.isBedWorking() && currentDimension.hasCeiling()) {
                 if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY)
-                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.NETHER, this.getPos().add(0, 0, 0), lastPortalPos.add(0, 0, 0));
+                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.NETHER, target.position.add(0, 0, 0), lastPortalPos.add(0, 0, 0));
             }
 
             if (oldDimension.hasCeiling() && currentDimension.isBedWorking()) {
                 // doing this early, so we can use the portal pos list for the portal number
                 int portalIndex = InGameTimerUtils.isBlindTraveled(this.lastPortalPos);
-                boolean isNewPortal = InGameTimerUtils.isLoadableBlind(World.OVERWORLD, this.lastPortalPos.add(0, 0, 0), this.getPos().add(0, 0, 0));
+                boolean isNewPortal = InGameTimerUtils.isLoadableBlind(World.OVERWORLD, this.lastPortalPos.add(0, 0, 0), target.position.add(0, 0, 0));
                 if (this.isEnoughTravel()) {
                     int portalNum = InGameTimerUtils.getPortalNumber(this.lastPortalPos);
                     SpeedRunIGT.debug("Portal number: " + portalNum);
