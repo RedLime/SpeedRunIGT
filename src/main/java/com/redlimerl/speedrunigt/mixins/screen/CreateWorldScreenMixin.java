@@ -20,7 +20,7 @@ public class CreateWorldScreenMixin {
 
     @Inject(method = "method_0_2778", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;startIntegratedServer(Ljava/lang/String;Ljava/lang/String;Lnet/minecraft/world/level/LevelInfo;)V", shift = At.Shift.BEFORE))
     public void onGenerate(CallbackInfo ci) {
-        InGameTimerUtils.IS_SET_SEED = !StringUtils.isEmpty(this.seedField.getText()) || isAtumSetSeed();
+        InGameTimerUtils.IS_SET_SEED = !StringUtils.isEmpty(this.seedField.getText()) && !this.seedField.getText().trim().equals("0") || isAtumSetSeed();
     }
 
     private boolean isAtumSetSeed() {
@@ -31,7 +31,7 @@ public class CreateWorldScreenMixin {
                 if (Modifier.isStatic(field.getModifiers())) {
                     if (field.getName().equals("seed")) {
                         String seed = (String) field.get(null);
-                        if (!StringUtils.isEmpty(seed)) isSetSeed = true;
+                        if (!StringUtils.isEmpty(seed) && !seed.trim().equals("0")) isSetSeed = true;
                         else break;
                     }
                     if (field.getName().equals("isRunning")) {
