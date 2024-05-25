@@ -52,9 +52,9 @@ public class TimerWorld {
     /**
      * Gets the UUIDs of all players that have previously played this world
      */
-    public Set<UUID> getPreviousPlayers() {
+    public Set<String> getPreviousPlayers() {
         try {
-            return Arrays.stream(Objects.requireNonNull(worldFolderPath.resolveSibling("stats").toFile().list())).map(s -> UUID.fromString(s.split("\\.")[0])).collect(Collectors.toSet());
+            return Arrays.stream(Objects.requireNonNull(worldFolderPath.resolveSibling("stats").toFile().list())).map(s -> { int i1 = s.indexOf('_') + 1; int i2 = s.lastIndexOf('_'); return s.substring(i1, i2); }).collect(Collectors.toSet());
         } catch (Exception e) {
             return Collections.emptySet();
         }
