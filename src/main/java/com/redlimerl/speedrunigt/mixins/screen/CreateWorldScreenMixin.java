@@ -4,6 +4,7 @@ import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import org.apache.commons.lang3.StringUtils;
+import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -13,14 +14,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-@Mixin(CreateWorldScreen.class)
+@Mixin(value = CreateWorldScreen.class, priority = 1050)
 public class CreateWorldScreenMixin {
 
     @Shadow private TextFieldWidget seedField;
 
     @Inject(method = "buttonClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;startGame(Ljava/lang/String;Ljava/lang/String;Lnet/minecraft/world/level/LevelInfo;)V", shift = At.Shift.BEFORE))
     public void onGenerate(CallbackInfo ci) {
-        InGameTimerUtils.IS_SET_SEED = !StringUtils.isEmpty(this.seedField.getText()) || isAtumSetSeed();
+        InGameTimerUtils.IS_SET_SEED = !StringUtils.isEmpty(this.seedField.getText()) && !this.seedField.getText().trim().equals("0");
+    }
+
+    @Dynamic
+    // method injected by atum
+    @Inject(method = "createLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;startIntegratedServer(Ljava/lang/String;Ljava/lang/String;Lnet/minecraft/world/level/LevelInfo;)V", shift = At.Shift.BEFORE), require = 0)
+    public void onGenerateAtum(CallbackInfo ci) {
+        InGameTimerUtils.IS_SET_SEED = isAtumSetSeed();
     }
 
     private boolean isAtumSetSeed() {
@@ -31,7 +39,7 @@ public class CreateWorldScreenMixin {
                 if (Modifier.isStatic(field.getModifiers())) {
                     if (field.getName().equals("seed")) {
                         String seed = (String) field.get(null);
-                        if (!StringUtils.isEmpty(seed)) isSetSeed = true;
+                        if (!StringUtils.isEmpty(seed) && !seed.trim().equals("0")) isSetSeed = true;
                         else break;
                     }
                     if (field.getName().equals("isRunning")) {
