@@ -108,7 +108,7 @@
         "name": "kill_dragon",
         "type": "insert_timeline",
         "data": {
-            "entity": "kill_ender_dragon"
+            "timeline": "kill_ender_dragon"
         }
     },
     {
