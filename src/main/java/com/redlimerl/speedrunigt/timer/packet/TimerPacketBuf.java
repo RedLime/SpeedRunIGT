@@ -1,8 +1,8 @@
 package com.redlimerl.speedrunigt.timer.packet;
 
+import com.redlimerl.speedrunigt.Identifier;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
 
 /**
