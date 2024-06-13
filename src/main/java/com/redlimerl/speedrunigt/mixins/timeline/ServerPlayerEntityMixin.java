@@ -44,15 +44,15 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
     private ServerWorld beforeWorld = null;
     private Vec3d lastPortalPos = null;
 
-    @Inject(method = "moveToWorld", at = @At("HEAD"))
-    public void onChangeDimension(ServerWorld destination, CallbackInfoReturnable<Entity> cir) {
+    @Inject(method = "teleportTo", at = @At("HEAD"))
+    public void onChangeDimension(TeleportTarget target, CallbackInfoReturnable<Entity> cir) {
         beforeWorld = this.getServerWorld();
         lastPortalPos = this.getPos();
         InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = !InGameTimer.getInstance().isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY;
     }
 
-    @Inject(method = "moveToWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;onPlayerChangeDimension(Lnet/minecraft/server/network/ServerPlayerEntity;)V", shift = At.Shift.AFTER))
-    public void onChangedDimension(ServerWorld destination, CallbackInfoReturnable<Entity> cir, @Local TeleportTarget target) {
+    @Inject(method = "teleportTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;onDimensionChanged(Lnet/minecraft/entity/Entity;)V", shift = At.Shift.AFTER))
+    public void onChangedDimension(TeleportTarget target, CallbackInfoReturnable<Entity> cir) {
         RegistryKey<World> oldRegistryKey = beforeWorld.getRegistryKey();
         RegistryKey<World> newRegistryKey = getServerWorld().getRegistryKey();
 
@@ -60,13 +60,13 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         if (timer.getStatus() != TimerStatus.NONE) {
             if (oldRegistryKey == World.OVERWORLD && newRegistryKey == World.NETHER) {
                 if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY)
-                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.NETHER, target.position.add(0, 0, 0), lastPortalPos.add(0, 0, 0));
+                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.NETHER, target.pos().add(0, 0, 0), lastPortalPos.add(0, 0, 0));
             }
 
             if (oldRegistryKey == World.NETHER && newRegistryKey == World.OVERWORLD) {
                 // doing this early, so we can use the portal pos list for the portal number
                 int portalIndex = InGameTimerUtils.isBlindTraveled(this.lastPortalPos);
-                boolean isNewPortal = InGameTimerUtils.isLoadableBlind(World.OVERWORLD, this.lastPortalPos.add(0, 0, 0), target.position.add(0, 0, 0));
+                boolean isNewPortal = InGameTimerUtils.isLoadableBlind(World.OVERWORLD, this.lastPortalPos.add(0, 0, 0), target.pos().add(0, 0, 0));
                 if (this.isEnoughTravel()) {
                     int portalNum = InGameTimerUtils.getPortalNumber(this.lastPortalPos);
                     SpeedRunIGT.debug("Portal number: " + portalNum);

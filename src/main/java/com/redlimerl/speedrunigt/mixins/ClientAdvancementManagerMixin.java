@@ -78,22 +78,22 @@ public abstract class ClientAdvancementManagerMixin {
             }
 
             //How Did We Get Here
-            if (timer.getCategory() == RunCategories.HOW_DID_WE_GET_HERE && Objects.equals(advancement.getAdvancementEntry().id().toString(), new Identifier("nether/all_effects").toString())) {
+            if (timer.getCategory() == RunCategories.HOW_DID_WE_GET_HERE && Objects.equals(advancement.getAdvancementEntry().id().toString(), Identifier.of("nether/all_effects").toString())) {
                 InGameTimer.complete();
             }
 
             //Hero of Village
-            if (timer.getCategory() == RunCategories.HERO_OF_VILLAGE && Objects.equals(advancement.getAdvancementEntry().id().toString(), new Identifier("adventure/hero_of_the_village").toString())) {
+            if (timer.getCategory() == RunCategories.HERO_OF_VILLAGE && Objects.equals(advancement.getAdvancementEntry().id().toString(), Identifier.of("adventure/hero_of_the_village").toString())) {
                 InGameTimer.complete();
             }
 
             //Arbalistic
-            if (timer.getCategory() == RunCategories.ARBALISTIC && Objects.equals(advancement.getAdvancementEntry().id().toString(), new Identifier("adventure/arbalistic").toString())) {
+            if (timer.getCategory() == RunCategories.ARBALISTIC && Objects.equals(advancement.getAdvancementEntry().id().toString(), Identifier.of("adventure/arbalistic").toString())) {
                 InGameTimer.complete();
             }
 
             //Cover Me In Debris
-            if (timer.getCategory() == RunCategories.COVER_ME_IN_DEBRIS && Objects.equals(advancement.getAdvancementEntry().id().toString(), new Identifier("nether/netherite_armor").toString())) {
+            if (timer.getCategory() == RunCategories.COVER_ME_IN_DEBRIS && Objects.equals(advancement.getAdvancementEntry().id().toString(), Identifier.of("nether/netherite_armor").toString())) {
                 InGameTimer.complete();
             }
         }

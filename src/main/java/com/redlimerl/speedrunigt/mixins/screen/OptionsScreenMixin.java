@@ -16,9 +16,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(OptionsScreen.class)
 public class OptionsScreenMixin extends Screen {
-    private static final Identifier ENDER_PEARL = new Identifier("textures/item/ender_pearl.png");
-    private static final Identifier BLAZE_POWDER = new Identifier("textures/item/blaze_powder.png");
-    private static final Identifier ENDER_EYE = new Identifier("textures/item/ender_eye.png");
+    private static final Identifier ENDER_PEARL = Identifier.of("textures/item/ender_pearl.png");
+    private static final Identifier BLAZE_POWDER = Identifier.of("textures/item/blaze_powder.png");
+    private static final Identifier ENDER_EYE = Identifier.of("textures/item/ender_eye.png");
 
     private ButtonWidget timerButton;
 

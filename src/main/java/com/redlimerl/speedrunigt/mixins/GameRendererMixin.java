@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.mixins;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.SpeedRunIGTClient;
 import com.redlimerl.speedrunigt.gui.screen.TimerCustomizeScreen;
@@ -13,6 +14,7 @@ import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.DownloadingTerrainScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.util.Window;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
@@ -32,11 +34,9 @@ public class GameRendererMixin {
     @Shadow @Final
     MinecraftClient client;
     private TimerDrawer.PositionType currentPositionType = TimerDrawer.PositionType.DEFAULT;
-    @SuppressWarnings("InvalidInjectorMethodSignature")
     @Inject(method = "render", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/client/toast/ToastManager;draw(Lnet/minecraft/client/gui/DrawContext;)V", shift = At.Shift.AFTER),
-            locals = LocalCapture.CAPTURE_FAILHARD)
-    private void drawTimer(float tickDelta, long startTime, boolean tick, CallbackInfo ci, float f, boolean bl, int i, int j, Window window, Matrix4f matrix4f, Matrix4fStack matrixStack, DrawContext drawContext) {
+            target = "Lnet/minecraft/client/toast/ToastManager;draw(Lnet/minecraft/client/gui/DrawContext;)V", shift = At.Shift.AFTER))
+    private void drawTimer(RenderTickCounter tickCounter, boolean tick, CallbackInfo ci, @Local DrawContext drawContext) {
         InGameTimer timer = InGameTimer.getInstance();
 
         if (InGameTimerClientUtils.canUnpauseTimer(true)) {
