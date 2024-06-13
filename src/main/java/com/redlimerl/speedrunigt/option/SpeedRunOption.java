@@ -88,7 +88,7 @@ public class SpeedRunOption {
                 for (String s : optionData.split("\n")) {
                     String[] od = s.split(":", 3);
                     if (od.length == 3) {
-                        options.put(new Identifier(od[0], od[1]), od[2]);
+                        options.put(Identifier.of(od[0], od[1]), od[2]);
                     }
                 }
             }

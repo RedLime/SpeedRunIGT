@@ -10,6 +10,7 @@ import net.minecraft.network.codec.PacketDecoder;
 import net.minecraft.network.codec.ValueFirstEncoder;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.Identifier;
 
 public abstract class TimerPacket<T extends CustomPayload> implements CustomPayload {
 
@@ -18,7 +19,7 @@ public abstract class TimerPacket<T extends CustomPayload> implements CustomPayl
     }
 
     public static <T extends CustomPayload> CustomPayload.Id<T> identifier(String id) {
-        return CustomPayload.id(SpeedRunIGT.MOD_ID + ":" + id);
+        return new CustomPayload.Id<>(Identifier.of(SpeedRunIGT.MOD_ID, id));
     }
 
     private final CustomPayload.Id<T> identifier;

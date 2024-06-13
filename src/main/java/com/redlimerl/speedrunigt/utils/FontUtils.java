@@ -44,7 +44,7 @@ public class FontUtils {
             }
             FreeTypeUtil.checkError(FreeType.FT_Select_Charmap(fT_Face, FreeType.FT_ENCODING_UNICODE), "Find unicode charmap");
 
-            Identifier fontIdentifier = new Identifier(SpeedRunIGT.MOD_ID, file.getName().toLowerCase(Locale.ROOT).replace(".ttf", "").replaceAll(" ", "_").replaceAll("[^a-z0-9/._-]", ""));
+            Identifier fontIdentifier = Identifier.of(SpeedRunIGT.MOD_ID, file.getName().toLowerCase(Locale.ROOT).replace(".ttf", "").replaceAll(" ", "_").replaceAll("[^a-z0-9/._-]", ""));
             ArrayList<Font> fontArrayList = new ArrayList<>();
 
             FontConfigure fontConfigure;
