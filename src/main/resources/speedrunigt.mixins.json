@@ -27,6 +27,7 @@
     "PlayerAdvancementTrackerMixin",
     "ServerStatHandlerMixin",
     "access.AbstractButtonWidgetAccessor",
+    "access.DoubleOptionSliderWidgetAccessor",
     "access.FontManagerAccessor",
     "access.FontStorageAccessor",
     "access.MinecraftClientAccessor",
