@@ -7,6 +7,13 @@
         }
     },
     {
+        "name": "obtain_gold_block",
+        "type": "insert_timeline",
+        "data": {
+            "timeline": "pick_gold_block"
+        }
+    },
+    {
         "name": "obtain_iron_pickaxe",
         "type": "advancement",
         "data": {
