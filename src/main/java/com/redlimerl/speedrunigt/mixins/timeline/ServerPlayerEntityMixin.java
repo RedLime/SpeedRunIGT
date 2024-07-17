@@ -83,6 +83,6 @@ public abstract class ServerPlayerEntityMixin {
                 .filter(Objects::nonNull) // Remove nulls
                 .map(ItemStack::getItem) // Turn each item stack into its item
                 .collect(Collectors.toSet()); // Collect to a set of items that the player has
-        return currentItemTypes.contains(Item.EYE_OF_ENDER) || (currentItemTypes.contains(Item.ENDER_PEARL) && (currentItemTypes.contains(Item.BLAZE_ROD) || currentItemTypes.contains(Item.BLAZE_POWDER)));
+        return currentItemTypes.contains(Item.EYE_OF_ENDER) || currentItemTypes.contains(Item.BLAZE_ROD) || currentItemTypes.contains(Item.BLAZE_POWDER);
     }
 }
