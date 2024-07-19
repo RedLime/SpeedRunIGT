@@ -164,9 +164,10 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity {
             }
         }
 
-        //For Timelines
-        if (this.y >= 100 && this.inBed)
-            timer.tryInsertNewTimeline("sleep_on_tower");
+        // This is flawed as the most recent towers do a strat called "bunk bed" where the player spawns well below y 100
+        // For Timelines
+        // if (this.y >= 100 && this.isSleeping())
+        //     timer.tryInsertNewTimeline("sleep_on_tower");
     }
 
 
