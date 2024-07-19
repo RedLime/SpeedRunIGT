@@ -42,6 +42,13 @@
         }
     },
     {
+        "name": "tower_start",
+        "type": "insert_timeline",
+        "data": {
+            "timeline": "tower_start"
+        }
+    },
+    {
         "name": "enter_end",
         "type": "insert_timeline",
         "data": {
