@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Objects;
 import java.util.Set;
@@ -29,6 +30,13 @@ public abstract class ServerPlayerEntityMixin {
 
     private ServerWorld beforeWorld = null;
     private Vec3d lastPortalPos = null;
+
+    @Inject(method = "respawnPlayer", at = @At("RETURN"))
+    private void onRespawnPlayer(ServerPlayerEntity dimension, int alive, boolean par3, CallbackInfoReturnable<ServerPlayerEntity> cir) {
+        if (cir.getReturnValue().y > 150 && cir.getReturnValue().getSpawnPosition() /*gets respawn point, null if using world spawn*/ != null) {
+            InGameTimer.getInstance().tryInsertNewTimeline("tower_start");
+        }
+    }
 
     @Inject(method = "teleportToDimension", at = @At("HEAD"))
     public void onChangeDimension(ServerPlayerEntity player, int dimension, CallbackInfo ci) {
