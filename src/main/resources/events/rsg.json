@@ -49,6 +49,13 @@
         }
     },
     {
+        "name": "break_underground_bookshelf",
+        "type": "insert_timeline",
+        "data": {
+            "timeline": "break_underground_bookshelf"
+        }
+    },
+    {
         "name": "enter_end",
         "type": "insert_timeline",
         "data": {
