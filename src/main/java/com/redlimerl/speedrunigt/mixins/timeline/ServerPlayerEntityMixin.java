@@ -36,7 +36,7 @@ public abstract class ServerPlayerEntityMixin {
 
     @Inject(method = "respawnPlayer", at = @At("RETURN"))
     private void onRespawnPlayer(ServerPlayerEntity dimension, int alive, boolean par3, CallbackInfoReturnable<ServerPlayerEntity> cir) {
-        if (cir.getReturnValue().y > 150 && cir.getReturnValue().method_3186() /*gets respawn point, null if using world spawn*/ != null) {
+        if (cir.getReturnValue().y > 150 && cir.getReturnValue().getSpawnPosition() /*gets respawn point, null if using world spawn*/ != null) {
             InGameTimer.getInstance().tryInsertNewTimeline("tower_start");
         }
     }
