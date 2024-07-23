@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -30,6 +31,13 @@ public abstract class ServerPlayerEntityMixin {
 
     private ServerWorld beforeWorld = null;
     private Vec3d lastPortalPos = null;
+
+    @Inject(method = "respawnPlayer", at = @At("RETURN"))
+    private void onRespawnPlayer(ServerPlayerEntity dimension, int alive, boolean par3, CallbackInfoReturnable<ServerPlayerEntity> cir) {
+        if (cir.getReturnValue().y > 150 && cir.getReturnValue().getSpawnPosition() /*gets respawn point, null if using world spawn*/ != null) {
+            InGameTimer.getInstance().tryInsertNewTimeline("tower_start");
+        }
+    }
 
     @Inject(method = "teleportToDimension", at = @At("HEAD"))
     public void onChangeDimension(ServerPlayerEntity player, int dimension, CallbackInfo ci) {
@@ -74,6 +82,6 @@ public abstract class ServerPlayerEntityMixin {
                 .filter(Objects::nonNull) // Remove nulls
                 .map(ItemStack::getItem) // Turn each item stack into its item
                 .collect(Collectors.toSet()); // Collect to a set of items that the player has
-        return currentItemTypes.contains(Items.EYE_OF_ENDER) || (currentItemTypes.contains(Items.ENDER_PEARL) && (currentItemTypes.contains(Items.BLAZE_ROD) || currentItemTypes.contains(Items.BLAZE_POWDER)));
+        return currentItemTypes.contains(Items.EYE_OF_ENDER) || currentItemTypes.contains(Items.BLAZE_ROD) || currentItemTypes.contains(Items.BLAZE_POWDER);
     }
 }
