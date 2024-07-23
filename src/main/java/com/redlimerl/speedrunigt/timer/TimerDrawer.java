@@ -5,6 +5,7 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecimals;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
+import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDisplayAlign;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import com.redlimerl.speedrunigt.version.ColorMixer;
@@ -32,12 +33,14 @@ public class TimerDrawer {
     private float igtScale;
     private Integer igtColor;
     private TimerDecoration igtDecoration;
+    private TimerDisplayAlign igtDisplayAlign;
 
     private float rtaXPos;
     private float rtaYPos;
     private float rtaScale;
     private Integer rtaColor;
     private TimerDecoration rtaDecoration;
+    private TimerDisplayAlign rtaDisplayAlign;
 
     private int igtPadding;
     private int rtaPadding;
@@ -55,11 +58,13 @@ public class TimerDrawer {
                 SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_SCALE),
                 SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_COLOR),
                 SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_DECO),
+                SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_DISPLAY_ALIGN),
                 SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_POSITION_X),
                 SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_POSITION_Y),
                 SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_SCALE),
                 SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_COLOR),
                 SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_DECO),
+                SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_DISPLAY_ALIGN),
                 SpeedRunOption.getOption(SpeedRunOptions.IGT_BACKGROUND_PADDING),
                 SpeedRunOption.getOption(SpeedRunOptions.RTA_BACKGROUND_PADDING),
                 SpeedRunOption.getOption(SpeedRunOptions.BACKGROUND_OPACITY),
@@ -70,8 +75,8 @@ public class TimerDrawer {
     }
 
     public TimerDrawer(boolean translateZ,
-                       float igtXPos, float igtYPos, float igtScale, Integer igtColor, TimerDecoration igtDecoration,
-                       float rtaXPos, float rtaYPos, float rtaScale, Integer rtaColor, TimerDecoration rtaDecoration,
+                       float igtXPos, float igtYPos, float igtScale, Integer igtColor, TimerDecoration igtDecoration, TimerDisplayAlign igtDisplayAlign,
+                       float rtaXPos, float rtaYPos, float rtaScale, Integer rtaColor, TimerDecoration rtaDecoration, TimerDisplayAlign rtaDisplayAlign,
                        int igtPadding, int rtaPadding, float bgOpacity,
                        boolean simply, boolean toggle, boolean isLocked, TimerDecimals timerDecimals) {
         this.translateZ = translateZ;
@@ -80,11 +85,13 @@ public class TimerDrawer {
         this.igtScale = igtScale;
         this.igtColor = igtColor;
         this.igtDecoration = igtDecoration;
+        this.igtDisplayAlign = igtDisplayAlign;
         this.rtaXPos = rtaXPos;
         this.rtaYPos = rtaYPos;
         this.rtaScale = rtaScale;
         this.rtaColor = rtaColor;
         this.rtaDecoration = rtaDecoration;
+        this.rtaDisplayAlign = rtaDisplayAlign;
         this.igtPadding = igtPadding;
         this.rtaPadding = rtaPadding;
         this.bgOpacity = bgOpacity;
@@ -190,6 +197,22 @@ public class TimerDrawer {
         this.rtaDecoration = rtaDecoration;
     }
 
+    public TimerDisplayAlign getRTADisplayAlign() {
+        return rtaDisplayAlign;
+    }
+
+    public void setRTADisplayAlign(TimerDisplayAlign rtaDisplayAlign) {
+        this.rtaDisplayAlign = rtaDisplayAlign;
+    }
+
+    public TimerDisplayAlign getIGTDisplayAlign() {
+        return igtDisplayAlign;
+    }
+
+    public void setIGTDisplayAlign(TimerDisplayAlign igtDisplayAlign) {
+        this.igtDisplayAlign = igtDisplayAlign;
+    }
+
     public boolean isLocked() {
         return isLocked;
     }
@@ -290,8 +313,8 @@ public class TimerDrawer {
         //초기 값 조정
         TimerElement igtTimerElement = new TimerElement();
         TimerElement rtaTimerElement = new TimerElement();
-        rtaTimerElement.init(rtaXPos, rtaYPos, rtaScale, rtaText, rtaColor, rtaDecoration, 9);
-        igtTimerElement.init(igtXPos, igtYPos, igtScale, igtText, igtColor, igtDecoration, 9);
+        rtaTimerElement.init(rtaXPos, rtaYPos, rtaScale, rtaText, rtaColor, rtaDecoration, rtaDisplayAlign, 9);
+        igtTimerElement.init(igtXPos, igtYPos, igtScale, igtText, igtColor, igtDecoration, igtDisplayAlign, 9);
 
         //배경 렌더
         Window window = new Window(this.client, this.client.width, this.client.height);
