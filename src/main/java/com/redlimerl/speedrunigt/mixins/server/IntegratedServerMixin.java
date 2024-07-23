@@ -14,7 +14,12 @@ public class IntegratedServerMixin {
 
     @Inject(method = "method_3000", at = @At("RETURN"))
     public void onOpenLan(LevelInfo.GameMode gamemode, boolean bl, CallbackInfoReturnable<String> cir) {
-        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) InGameTimer.getInstance().openedLanIntegratedServer();
+        if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) {
+            InGameTimer.getInstance().openedLanIntegratedServer();
+            if (bl) {
+                InGameTimer.getInstance().setCheatAvailable(true);
+            }
+        }
     }
 
 }
