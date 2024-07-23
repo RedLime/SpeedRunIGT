@@ -447,11 +447,11 @@ public class TimerCustomizeScreen extends Screen {
         );
 
         igtOptions.add(
-                addButton(new ConsumerButtonWidget(this.width / 2 + 6, this.height / 2 + 28, 120, 20, new TranslatableText("speedrunigt.option.timer_position.align", "IGT").append(" : ").append(new TranslatableText("speedrunigt.option.timer_position.align." + drawer.getIGTDisplayAlign().name().toLowerCase(Locale.ROOT))).asFormattedString(), (ButtonWidget button) -> {
+                addButton(new ConsumerButtonWidget(field_22535 / 2 + 6, field_22536 / 2 + 28, 120, 20, new TranslatableText("speedrunigt.option.timer_position.align", "IGT").append(" : ").append(new TranslatableText("speedrunigt.option.timer_position.align." + drawer.getIGTDisplayAlign().name().toLowerCase(Locale.ROOT))).asFormattedString(), (ButtonWidget button) -> {
                     int order = drawer.getIGTDisplayAlign().ordinal();
                     drawer.setIGTDisplayAlign(TimerDisplayAlign.values()[(++order) % TimerDisplayAlign.values().length]);
                     changed = true;
-                    button.message = (new TranslatableText("speedrunigt.option.timer_position.align", "IGT").append(" : ").append(new TranslatableText("speedrunigt.option.timer_position.align." + drawer.getIGTDisplayAlign().name().toLowerCase(Locale.ROOT))).asFormattedString());
+                    button.field_22510 = (new TranslatableText("speedrunigt.option.timer_position.align", "IGT").append(" : ").append(new TranslatableText("speedrunigt.option.timer_position.align." + drawer.getIGTDisplayAlign().name().toLowerCase(Locale.ROOT))).asFormattedString());
                 }))
         );
     }
@@ -551,11 +551,11 @@ public class TimerCustomizeScreen extends Screen {
         );
 
         rtaOptions.add(
-                addButton(new ConsumerButtonWidget(this.width / 2 + 6, this.height / 2 + 28, 120, 20, new TranslatableText("speedrunigt.option.timer_position.align", "RTA").append(" : ").append(new TranslatableText("speedrunigt.option.timer_position.align." + drawer.getRTADisplayAlign().name().toLowerCase(Locale.ROOT))).asFormattedString(), (ButtonWidget button) -> {
+                addButton(new ConsumerButtonWidget(field_22535 / 2 + 6, field_22536 / 2 + 28, 120, 20, new TranslatableText("speedrunigt.option.timer_position.align", "RTA").append(" : ").append(new TranslatableText("speedrunigt.option.timer_position.align." + drawer.getRTADisplayAlign().name().toLowerCase(Locale.ROOT))).asFormattedString(), (ButtonWidget button) -> {
                     int order = drawer.getRTADisplayAlign().ordinal();
                     drawer.setRTADisplayAlign(TimerDisplayAlign.values()[(++order) % TimerDisplayAlign.values().length]);
                     changed = true;
-                    button.message = (new TranslatableText("speedrunigt.option.timer_position.align", "RTA").append(" : ").append(new TranslatableText("speedrunigt.option.timer_position.align." + drawer.getRTADisplayAlign().name().toLowerCase(Locale.ROOT))).asFormattedString());
+                    button.field_22510 = (new TranslatableText("speedrunigt.option.timer_position.align", "RTA").append(" : ").append(new TranslatableText("speedrunigt.option.timer_position.align." + drawer.getRTADisplayAlign().name().toLowerCase(Locale.ROOT))).asFormattedString());
                 }))
         );
     }
