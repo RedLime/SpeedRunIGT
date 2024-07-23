@@ -26,6 +26,14 @@ public abstract class TranslationStorageMixin {
 
     @Redirect(method = "method_631", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Language;method_633(Ljava/util/Properties;Ljava/lang/String;)V"))
     private void onLoad(Language instance, Properties properties, String language) {
+        // Fix crash on dev environment
+        InputStream sourceCheck = Language.class.getResourceAsStream("/lang/" + language + ".lang");
+        if (sourceCheck == null) return;
+        try {
+            sourceCheck.close();
+        } catch (IOException ignored) {}
+        // &&
+
         method_633(properties, language);
         InputStream inputStream = TranslateHelper.setup(language, SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_ENGLISH_TRANSLATIONS));
         try {
