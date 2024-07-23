@@ -70,6 +70,13 @@
         }
     },
     {
+        "name": "tower_start",
+        "type": "insert_timeline",
+        "data": {
+            "timeline": "tower_start"
+        }
+    },
+    {
         "name": "enter_stronghold",
         "type": "advancement",
         "data": {
