@@ -13,11 +13,11 @@ import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.timer.TimerDrawer.PositionType;
 import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -488,11 +488,11 @@ public class TimerCustomizeScreen extends Screen {
         );
 
         igtOptions.add(
-                addDrawableChild(new ButtonWidget(this.width / 2 + 6, this.height / 2 + 28, 120, 20, new TranslatableText("speedrunigt.option.timer_position.align", "IGT").append(" : ").append(new TranslatableText("speedrunigt.option.timer_position.align." + drawer.getIGTDisplayAlign().name().toLowerCase(Locale.ROOT))), (ButtonWidget button) -> {
+                addDrawableChild(new ButtonWidget(this.width / 2 + 6, this.height / 2 + 28, 120, 20, Text.translatable("speedrunigt.option.timer_position.align", "IGT").append(" : ").append(Text.translatable("speedrunigt.option.timer_position.align." + drawer.getIGTDisplayAlign().name().toLowerCase(Locale.ROOT))), (ButtonWidget button) -> {
                     int order = drawer.getIGTDisplayAlign().ordinal();
                     drawer.setIGTDisplayAlign(TimerDisplayAlign.values()[(++order) % TimerDisplayAlign.values().length]);
                     changed = true;
-                    button.setMessage(new TranslatableText("speedrunigt.option.timer_position.align", "IGT").append(" : ").append(new TranslatableText("speedrunigt.option.timer_position.align." + drawer.getIGTDisplayAlign().name().toLowerCase(Locale.ROOT))));
+                    button.setMessage(Text.translatable("speedrunigt.option.timer_position.align", "IGT").append(" : ").append(Text.translatable("speedrunigt.option.timer_position.align." + drawer.getIGTDisplayAlign().name().toLowerCase(Locale.ROOT))));
                 }))
         );
     }
@@ -592,11 +592,11 @@ public class TimerCustomizeScreen extends Screen {
         );
 
         rtaOptions.add(
-                addDrawableChild(new ButtonWidget(this.width / 2 + 6, this.height / 2 + 28, 120, 20, new TranslatableText("speedrunigt.option.timer_position.align", "RTA").append(" : ").append(new TranslatableText("speedrunigt.option.timer_position.align." + drawer.getRTADisplayAlign().name().toLowerCase(Locale.ROOT))), (ButtonWidget button) -> {
+                addDrawableChild(new ButtonWidget(this.width / 2 + 6, this.height / 2 + 28, 120, 20, Text.translatable("speedrunigt.option.timer_position.align", "RTA").append(" : ").append(Text.translatable("speedrunigt.option.timer_position.align." + drawer.getRTADisplayAlign().name().toLowerCase(Locale.ROOT))), (ButtonWidget button) -> {
                     int order = drawer.getRTADisplayAlign().ordinal();
                     drawer.setRTADisplayAlign(TimerDisplayAlign.values()[(++order) % TimerDisplayAlign.values().length]);
                     changed = true;
-                    button.setMessage(new TranslatableText("speedrunigt.option.timer_position.align", "RTA").append(" : ").append(new TranslatableText("speedrunigt.option.timer_position.align." + drawer.getRTADisplayAlign().name().toLowerCase(Locale.ROOT))));
+                    button.setMessage(Text.translatable("speedrunigt.option.timer_position.align", "RTA").append(" : ").append(Text.translatable("speedrunigt.option.timer_position.align." + drawer.getRTADisplayAlign().name().toLowerCase(Locale.ROOT))));
                 }))
         );
     }
