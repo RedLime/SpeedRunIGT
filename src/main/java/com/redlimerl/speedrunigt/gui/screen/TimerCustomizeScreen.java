@@ -8,6 +8,7 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecimals;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
+import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDisplayAlign;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.timer.TimerDrawer.PositionType;
 import com.redlimerl.speedrunigt.version.ColorMixer;
@@ -181,6 +182,8 @@ public class TimerCustomizeScreen extends Screen {
             SpeedRunIGTClient.TIMER_DRAWER.setIGTColor(drawer.getIGTColor());
             SpeedRunOption.setOption(SpeedRunOptions.TIMER_IGT_DECO, drawer.getIGTDecoration());
             SpeedRunIGTClient.TIMER_DRAWER.setIGTDecoration(drawer.getIGTDecoration());
+            SpeedRunOption.setOption(SpeedRunOptions.TIMER_IGT_DISPLAY_ALIGN, drawer.getIGTDisplayAlign());
+            SpeedRunIGTClient.TIMER_DRAWER.setIGTDisplayAlign(drawer.getIGTDisplayAlign());
 
             SpeedRunOption.setOption(SpeedRunOptions.TIMER_RTA_SCALE, drawer.getRTAScale());
             SpeedRunIGTClient.TIMER_DRAWER.setRTAScale(drawer.getRTAScale());
@@ -188,6 +191,8 @@ public class TimerCustomizeScreen extends Screen {
             SpeedRunIGTClient.TIMER_DRAWER.setRTAColor(drawer.getRTAColor());
             SpeedRunOption.setOption(SpeedRunOptions.TIMER_RTA_DECO, drawer.getRTADecoration());
             SpeedRunIGTClient.TIMER_DRAWER.setRTADecoration(drawer.getRTADecoration());
+            SpeedRunOption.setOption(SpeedRunOptions.TIMER_RTA_DISPLAY_ALIGN, drawer.getRTADisplayAlign());
+            SpeedRunIGTClient.TIMER_DRAWER.setRTADisplayAlign(drawer.getRTADisplayAlign());
 
             SpeedRunOption.setOption(SpeedRunOptions.DISPLAY_TIME_ONLY, drawer.isSimplyTimer());
             SpeedRunIGTClient.TIMER_DRAWER.setSimplyTimer(drawer.isSimplyTimer());
@@ -480,6 +485,15 @@ public class TimerCustomizeScreen extends Screen {
                     button.setMessage(new TranslatableText("speedrunigt.option.timer_position.text_decorate", "IGT").append(" : ").append(new TranslatableText("speedrunigt.option.timer_position.text_decorate." + drawer.getIGTDecoration().name().toLowerCase(Locale.ROOT))).asFormattedString());
                 }))
         );
+
+        igtOptions.add(
+                addButton(new ButtonWidget(this.width / 2 + 6, this.height / 2 + 28, 120, 20, new TranslatableText("speedrunigt.option.timer_position.align", "IGT").append(" : ").append(new TranslatableText("speedrunigt.option.timer_position.align." + drawer.getIGTDisplayAlign().name().toLowerCase(Locale.ROOT))).asFormattedString(), (ButtonWidget button) -> {
+                    int order = drawer.getIGTDisplayAlign().ordinal();
+                    drawer.setIGTDisplayAlign(TimerDisplayAlign.values()[(++order) % TimerDisplayAlign.values().length]);
+                    changed = true;
+                    button.setMessage(new TranslatableText("speedrunigt.option.timer_position.align", "IGT").append(" : ").append(new TranslatableText("speedrunigt.option.timer_position.align." + drawer.getIGTDisplayAlign().name().toLowerCase(Locale.ROOT))).asFormattedString());
+                }))
+        );
     }
 
     public void initRTAButtons() {
@@ -573,6 +587,15 @@ public class TimerCustomizeScreen extends Screen {
                     drawer.setRTADecoration(TimerDecoration.values()[(++order) % TimerDecoration.values().length]);
                     changed = true;
                     button.setMessage(new TranslatableText("speedrunigt.option.timer_position.text_decorate", "RTA").append(" : ").append(new TranslatableText("speedrunigt.option.timer_position.text_decorate." + drawer.getRTADecoration().name().toLowerCase(Locale.ROOT))).asFormattedString());
+                }))
+        );
+
+        rtaOptions.add(
+                addButton(new ButtonWidget(this.width / 2 + 6, this.height / 2 + 28, 120, 20, new TranslatableText("speedrunigt.option.timer_position.align", "RTA").append(" : ").append(new TranslatableText("speedrunigt.option.timer_position.align." + drawer.getRTADisplayAlign().name().toLowerCase(Locale.ROOT))).asFormattedString(), (ButtonWidget button) -> {
+                    int order = drawer.getRTADisplayAlign().ordinal();
+                    drawer.setRTADisplayAlign(TimerDisplayAlign.values()[(++order) % TimerDisplayAlign.values().length]);
+                    changed = true;
+                    button.setMessage(new TranslatableText("speedrunigt.option.timer_position.align", "RTA").append(" : ").append(new TranslatableText("speedrunigt.option.timer_position.align." + drawer.getRTADisplayAlign().name().toLowerCase(Locale.ROOT))).asFormattedString());
                 }))
         );
     }

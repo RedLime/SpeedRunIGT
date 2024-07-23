@@ -2,6 +2,7 @@ package com.redlimerl.speedrunigt.timer;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecoration;
+import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDisplayAlign;
 import com.redlimerl.speedrunigt.timer.TimerDrawer.Position;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -24,7 +25,7 @@ public class TimerElement {
         this.textRenderer = textRenderer;
     }
 
-    public void init(float xPos, float yPos, float scale, String text, Integer color, TimerDecoration decoration, float fontHeight) {
+    public void init(float xPos, float yPos, float scale, String text, Integer color, TimerDecoration decoration, TimerDisplayAlign displayAlign, float fontHeight) {
         this.scale = scale;
         this.text = text;
         this.color = color;
@@ -43,15 +44,21 @@ public class TimerElement {
 
         this.textWidth = this.textRenderer.getStringWidth(text);
 
-        //가로 화면 밖으로 나갈 시 재조정
-        if (getScaledTextWidth() + this.position.getX() > scaledWindowWidth) {
-            this.scaledPosition.setX(this.scaledPosition.getX() - Math.round((getScaledTextWidth() - 1) / scale));
-            this.position.setX(this.position.getX() - getScaledTextWidth());
+        if (displayAlign != TimerDisplayAlign.LEFT) {
+            if (displayAlign == TimerDisplayAlign.RIGHT || (displayAlign == TimerDisplayAlign.AUTO && this.getScaledTextWidth() + this.position.getX() > scaledWindowWidth)) {
+                this.scaledPosition.setX(this.scaledPosition.getX() - Math.round((this.getScaledTextWidth() - 1) / scale));
+                this.position.setX(this.position.getX() - this.getScaledTextWidth());
+            }
+            if (displayAlign == TimerDisplayAlign.CENTER) {
+                this.scaledPosition.setX(this.scaledPosition.getX() - Math.round((this.getScaledTextWidth() - 1) / scale / 2));
+                this.position.setX(this.position.getX() - (this.getScaledTextWidth() / 2));
+            }
         }
-        //세로 화면 밖으로 나갈 시 재조정
-        if (getScaledTextHeight() + this.position.getY() > scaledWindowHeight) {
-            this.scaledPosition.setY(this.scaledPosition.getY() - MathHelper.floor(getScaledTextHeight() / scale));
-            this.position.setY(this.position.getY() - getScaledTextWidth());
+
+        // Fix vertical height
+        if (this.getScaledTextHeight() + this.position.getY() > scaledWindowHeight) {
+            this.scaledPosition.setY(this.scaledPosition.getY() - MathHelper.floor(this.getScaledTextHeight() / scale));
+            this.position.setY(this.position.getY() - this.getScaledTextWidth());
         }
     }
 
