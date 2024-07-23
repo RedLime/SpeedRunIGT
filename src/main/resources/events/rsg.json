@@ -7,6 +7,13 @@
         }
     },
     {
+        "name": "trade",
+        "type": "insert_timeline",
+        "data": {
+            "timeline": "trade_with_villager"
+        }
+    },
+    {
         "name": "enter_nether",
         "type": "insert_timeline",
         "data": {
@@ -32,6 +39,20 @@
         "type": "nether_travel",
         "data": {
             "portal": "1"
+        }
+    },
+    {
+        "name": "tower_start",
+        "type": "insert_timeline",
+        "data": {
+            "timeline": "tower_start"
+        }
+    },
+    {
+        "name": "break_underground_bookshelf",
+        "type": "insert_timeline",
+        "data": {
+            "timeline": "break_underground_bookshelf"
         }
     },
     {

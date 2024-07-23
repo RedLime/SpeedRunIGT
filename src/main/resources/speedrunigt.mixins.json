@@ -14,6 +14,7 @@
     "coop.PlayerManagerMixin",
     "coop.TimeCommandMixin",
     "network.ServerPlayNetworkHandlerMixin",
+    "timeline.BookshelfBlockMixin",
     "timeline.ServerPlayerEntityMixin",
     "timeline.VillagerEntityMixin"
   ],
