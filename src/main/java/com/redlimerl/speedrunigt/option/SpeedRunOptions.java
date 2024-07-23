@@ -543,7 +543,7 @@ public class SpeedRunOptions {
     };
 
     public enum TimerDisplayAlign { AUTO, LEFT, CENTER, RIGHT }
-    public static final OptionArgument<TimerDisplayAlign> TIMER_RTA_DISPLAY_ALIGN = new OptionArgument<TimerDisplayAlign>(new Identifier(SpeedRunIGT.MOD_ID, "timer_display_align_rta"), TimerDisplayAlign.AUTO) {
+    public static final OptionArgument<TimerDisplayAlign> TIMER_RTA_DISPLAY_ALIGN = new OptionArgument<TimerDisplayAlign>(Identifier.of(SpeedRunIGT.MOD_ID, "timer_display_align_rta"), TimerDisplayAlign.AUTO) {
         @Override
         public TimerDisplayAlign valueFromString(String string) {
             return TimerDisplayAlign.valueOf(string);
@@ -555,7 +555,7 @@ public class SpeedRunOptions {
         }
     };
 
-    public static final OptionArgument<TimerDisplayAlign> TIMER_IGT_DISPLAY_ALIGN = new OptionArgument<TimerDisplayAlign>(new Identifier(SpeedRunIGT.MOD_ID, "timer_display_align_igt"), TimerDisplayAlign.AUTO) {
+    public static final OptionArgument<TimerDisplayAlign> TIMER_IGT_DISPLAY_ALIGN = new OptionArgument<TimerDisplayAlign>(Identifier.of(SpeedRunIGT.MOD_ID, "timer_display_align_igt"), TimerDisplayAlign.AUTO) {
         @Override
         public TimerDisplayAlign valueFromString(String string) {
             return TimerDisplayAlign.valueOf(string);
