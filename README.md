@@ -4,10 +4,13 @@ Join [SpeedRunIGT Development](https://discord.gg/7G2tfP7Xpe) Discord!
 
 ![GitHub Repo stars](https://img.shields.io/github/stars/RedLime/SpeedRunIGT?style=social)
 ![GitHub](https://img.shields.io/github/license/RedLime/SpeedRunIGT?style=flat-square)
-![GitHub all releases](https://img.shields.io/github/downloads/RedLime/SpeedRunIGT/total?label=GitHub%20downloads&style=flat-square)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/RedLime/SpeedRunIGT?style=flat-square)
 [![Crowdin](https://badges.crowdin.net/speedrunigt/localized.svg)](https://crowdin.com/project/speedrunigt)
 [![Discord Shield](https://discordapp.com/api/guilds/1033677387143061574/widget.png?style=shield)](https://discord.gg/7G2tfP7Xpe)
+
+![GitHub all releases](https://img.shields.io/github/downloads/RedLime/SpeedRunIGT/total?label=GitHub%20Downloads&style=flat-square)
+![GitHub all releases](https://img.shields.io/curseforge/dt/538881?label=CurseForge%20Downloads&style=flat-square)
+![GitHub all releases](https://img.shields.io/modrinth/dt/speedrunigt?label=Modrinth%20Downloads&style=flat-square)
 
 ## What is this mod?
 The **Timer** Mod for Minecraft Speedrunning
