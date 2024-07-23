@@ -541,4 +541,29 @@ public class SpeedRunOptions {
             return String.valueOf(value);
         }
     };
+
+    public enum TimerDisplayAlign { AUTO, LEFT, CENTER, RIGHT }
+    public static final OptionArgument<TimerDisplayAlign> TIMER_RTA_DISPLAY_ALIGN = new OptionArgument<TimerDisplayAlign>(new Identifier(SpeedRunIGT.MOD_ID, "timer_display_align_rta"), TimerDisplayAlign.AUTO) {
+        @Override
+        public TimerDisplayAlign valueFromString(String string) {
+            return TimerDisplayAlign.valueOf(string);
+        }
+
+        @Override
+        public String valueToString(TimerDisplayAlign value) {
+            return value.name();
+        }
+    };
+
+    public static final OptionArgument<TimerDisplayAlign> TIMER_IGT_DISPLAY_ALIGN = new OptionArgument<TimerDisplayAlign>(new Identifier(SpeedRunIGT.MOD_ID, "timer_display_align_igt"), TimerDisplayAlign.AUTO) {
+        @Override
+        public TimerDisplayAlign valueFromString(String string) {
+            return TimerDisplayAlign.valueOf(string);
+        }
+
+        @Override
+        public String valueToString(TimerDisplayAlign value) {
+            return value.name();
+        }
+    };
 }
