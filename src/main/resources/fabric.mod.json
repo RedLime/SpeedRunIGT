@@ -6,7 +6,12 @@
   "name": "SpeedRunIGT",
   "description": "Displays the timer with RTA, IGT in Minecraft",
   "authors": [
-    "RedLime"
+    {
+      "name": "RedLime",
+      "contact": {
+        "homepage": "https://github.com/RedLime"
+      }
+    }
   ],
   "contact": {
     "sources": "https://github.com/RedLime/SpeedRunIGT"
@@ -39,5 +44,15 @@
 
   "breaks": {
     "ghostrunner": "<=3.0"
+  },
+
+  "suggests": {
+    "speedrunapi": "*"
+  },
+
+  "custom": {
+    "speedrunapi": {
+      "screen": "com.redlimerl.speedrunigt.gui.screen.SpeedRunOptionScreenProvider"
+    }
   }
 }

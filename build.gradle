@@ -26,6 +26,8 @@ dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "com.github.RedLime:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	// https://jitpack.io/#kingcontaria/speedrunapi
+	modImplementation "com.github.KingContaria:SpeedrunAPI:3d7827a9c1"
 
 	// PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
 	// You may need to force-disable transitiveness on them.
