@@ -1,4 +1,4 @@
-name: 'publish'
+name: 'publish for new mc release'
 on:
   workflow_dispatch:
     inputs:
