@@ -1,0 +1,76 @@
+name: 'publish'
+on:
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: 'Release version'
+        required: true
+        type: string
+      target_mc_version:
+        description: 'Minecraft(Branch) version'
+        required: true
+        type: string
+      is_prerelease:
+        description: 'is Pre-release?'
+        required: false
+        type: boolean
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout ${{ inputs.target_mc_version }}
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.target_mc_version }}
+
+      - name: Read value from Properties-file
+        uses: madhead/read-java-properties@latest
+        id: properties
+        with:
+          file: gradle.properties
+          all: true
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'adopt'
+
+
+      - name: Make gradlew executable - ${{ inputs.target_mc_version }}
+        run: chmod +x ./gradlew
+      - name: Build artifacts - ${{ inputs.target_mc_version }}
+        run: ./gradlew build
+
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Package
+          path: build/libs/*.jar
+
+
+      - name: Upload artifacts to Modrinth and Curseforge
+        if: ${{ inputs.is_prerelease == false }}
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          modrinth-id: jnkd7LkJ
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          modrinth-featured: true
+          modrinth-unfeature-mode: subset
+
+          curseforge-id: 538881
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+          files: build/libs/!(*-@(dev|sources|all)).jar
+
+          name: ${{ inputs.release_version }} (for ${{ steps.properties.outputs.minecraft_version }})
+          version: ${{ inputs.release_version }}+${{ steps.properties.outputs.minecraft_version }}
+          changelog: Check changelogs in https://github.com/RedLime/SpeedRunIGT/releases/tag/${{ inputs.release_version }}
+          game-versions: ${{ steps.properties.outputs.minecraft_version }}
+          game-version-filter: any
+          version-type: release
+          loaders: |
+            fabric
+            quilt
