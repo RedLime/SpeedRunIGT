@@ -34,10 +34,7 @@
 
   "depends": {
     "fabricloader": ">=0.15",
-    "minecraft": [
-      "1.21-rc.1",
-      "1.21"
-    ]
+    "minecraft": "{{MC_VERSION}}"
   },
 
   "breaks": {
