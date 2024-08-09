@@ -1,7 +1,6 @@
 {
   "required": true,
   "package": "com.redlimerl.speedrunigt.mixins",
-  "plugin": "com.redlimerl.speedrunigt.SpeedRunIGTMixinPlugin",
   "mixins": [
     "access.ServerStatHandlerAccessor",
 
