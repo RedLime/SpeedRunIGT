@@ -689,7 +689,9 @@ public class InGameTimer implements Serializable {
                 //if ((toStatus == TimerStatus.IDLE || toStatus == TimerStatus.PAUSED) && !isCompleted()) TheRunRequestHelper.updateTimerData(this, TheRunTimer.PacketType.PAUSE);
                 if (this.isStarted()) {
                     if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_DATA_AUTO_SAVE) == SpeedRunOptions.TimerSaveInterval.PAUSE && this.status != TimerStatus.LEAVE) save();
-                    this.writeRecordFile(true);
+                    // writes the global file on leaving the world.
+                    // otherwise with seedqueue, the global record is only updated upon joining the next world.
+                    this.writeRecordFile(toStatus != TimerStatus.LEAVE);
                 }
             }
         } else {
