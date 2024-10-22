@@ -14,7 +14,7 @@ public class SoundSystemMixin {
 
     @Inject(method = "play(Lnet/minecraft/client/sound/SoundInstance;)V", at = @At("RETURN"))
     public void onSoundPlay(SoundInstance soundInstance, CallbackInfo ci) {
-        if (soundInstance.getId().equals(SoundEvents.ENTITY_VILLAGER_AMBIENT.getId()) && InGameTimer.getInstance().isPlaying()) {
+        if (soundInstance.getId().equals(SoundEvents.ENTITY_VILLAGER_AMBIENT.id()) && InGameTimer.getInstance().isPlaying()) {
             InGameTimer.getInstance().tryInsertNewTimeline("found_villager");
         }
     }

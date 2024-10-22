@@ -15,19 +15,15 @@ import net.minecraft.client.gui.screen.DownloadingTerrainScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.client.util.Window;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
-import org.joml.Matrix4f;
-import org.joml.Matrix4fStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
@@ -51,7 +47,7 @@ public class GameRendererMixin {
         if (time < 2950) {
             String text = "SpeedRunIGT v" + (SpeedRunIGT.MOD_VERSION.split("\\+")[0]);
             drawContext.drawText(this.client.textRenderer, text, this.client.currentScreen != null ? (int) ((this.client.getWindow().getScaledWidth() - this.client.textRenderer.getWidth(text)) / 2f) : 4, this.client.getWindow().getScaledHeight() - 12,
-                    ColorHelper.Argb.getArgb((int) (MathHelper.clamp((3000 - time) / 1000.0, 0, 1) * (this.client.currentScreen != null ? 90 : 130)), 255, 255, 255), false);
+                    ColorHelper.getArgb((int) (MathHelper.clamp((3000 - time) / 1000.0, 0, 1) * (this.client.currentScreen != null ? 90 : 130)), 255, 255, 255), false);
         }
 
         SpeedRunIGT.DEBUG_DATA = timer.getStatus().name();

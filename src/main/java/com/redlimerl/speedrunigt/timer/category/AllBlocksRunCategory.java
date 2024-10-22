@@ -6,7 +6,6 @@ import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
-import net.minecraft.loot.LootTables;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -43,7 +42,7 @@ public class AllBlocksRunCategory extends RunCategory {
     }
 
     private static boolean isIncludedAllBlocks(Block block) {
-        if (block.getLootTableKey() == LootTables.EMPTY) return false;
+        if (block.getLootTableKey().isEmpty()) return false;
         if (block == Blocks.NETHER_PORTAL) return false;
         if (block == Blocks.FARMLAND) return false;
         if (block == Blocks.DIRT_PATH) return false;

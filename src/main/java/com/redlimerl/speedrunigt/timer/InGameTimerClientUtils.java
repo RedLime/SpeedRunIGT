@@ -27,7 +27,7 @@ public class InGameTimerClientUtils {
             if (checkRender) {
                 WorldRendererAccessor worldRenderer = (WorldRendererAccessor) client.worldRenderer;
                 int chunks = worldRenderer.invokeCompletedChunkCount();
-                int entities = worldRenderer.getRegularEntityCount() - (client.options.getPerspective().isFirstPerson() ? 0 : 1);
+                int entities = worldRenderer.getRenderedEntityCount() - (client.options.getPerspective().isFirstPerson() ? 0 : 1);
 
                 return chunks + entities > 0;
             }

@@ -394,21 +394,21 @@ public class TimerCustomizeScreen extends Screen {
 
     public void initIGTButtons() {
         igtOptions.add(
-                addDrawableChild(new SliderWidget(width / 2 - 127, height / 2 - 16, 120, 20, Text.translatable("speedrunigt.option.timer_position.color_red", "IGT").append(" : ").append(String.valueOf(ColorHelper.Argb.getRed(drawer.getIGTColor()))), ColorHelper.Argb.getRed(drawer.getIGTColor()) / 255.0f) {
+                addDrawableChild(new SliderWidget(width / 2 - 127, height / 2 - 16, 120, 20, Text.translatable("speedrunigt.option.timer_position.color_red", "IGT").append(" : ").append(String.valueOf(ColorHelper.getRed(drawer.getIGTColor()))), ColorHelper.getRed(drawer.getIGTColor()) / 255.0f) {
                     @Override
                     protected void updateMessage() {
-                        this.setMessage(Text.translatable("speedrunigt.option.timer_position.color_red", "IGT").append(" : ").append(String.valueOf(ColorHelper.Argb.getRed(drawer.getIGTColor()))));
+                        this.setMessage(Text.translatable("speedrunigt.option.timer_position.color_red", "IGT").append(" : ").append(String.valueOf(ColorHelper.getRed(drawer.getIGTColor()))));
                     }
 
                     @Override
                     protected void applyValue() {
                         int color = drawer.getIGTColor();
                         drawer.setIGTColor(
-                                ColorHelper.Argb.getArgb(
-                                        ColorHelper.Argb.getAlpha(color),
+                                ColorHelper.getArgb(
+                                        ColorHelper.getAlpha(color),
                                         (int) (this.value * 255),
-                                        ColorHelper.Argb.getGreen(color),
-                                        ColorHelper.Argb.getBlue(color)
+                                        ColorHelper.getGreen(color),
+                                        ColorHelper.getBlue(color)
                                 )
                         );
                         changed = true;
@@ -417,21 +417,21 @@ public class TimerCustomizeScreen extends Screen {
         );
 
         igtOptions.add(
-                addDrawableChild(new SliderWidget(width / 2 - 127, height / 2 + 6, 120, 20, Text.translatable("speedrunigt.option.timer_position.color_green", "IGT").append(" : ").append(String.valueOf(ColorHelper.Argb.getGreen(drawer.getIGTColor()))), ColorHelper.Argb.getGreen(drawer.getIGTColor()) / 255.0f) {
+                addDrawableChild(new SliderWidget(width / 2 - 127, height / 2 + 6, 120, 20, Text.translatable("speedrunigt.option.timer_position.color_green", "IGT").append(" : ").append(String.valueOf(ColorHelper.getGreen(drawer.getIGTColor()))), ColorHelper.getGreen(drawer.getIGTColor()) / 255.0f) {
                     @Override
                     protected void updateMessage() {
-                        this.setMessage(Text.translatable("speedrunigt.option.timer_position.color_green", "IGT").append(" : ").append(String.valueOf(ColorHelper.Argb.getGreen(drawer.getIGTColor()))));
+                        this.setMessage(Text.translatable("speedrunigt.option.timer_position.color_green", "IGT").append(" : ").append(String.valueOf(ColorHelper.getGreen(drawer.getIGTColor()))));
                     }
 
                     @Override
                     protected void applyValue() {
                         int color = drawer.getIGTColor();
                         drawer.setIGTColor(
-                                ColorHelper.Argb.getArgb(
-                                        ColorHelper.Argb.getAlpha(color),
-                                        ColorHelper.Argb.getRed(color),
+                                ColorHelper.getArgb(
+                                        ColorHelper.getAlpha(color),
+                                        ColorHelper.getRed(color),
                                         (int) (this.value * 255),
-                                        ColorHelper.Argb.getBlue(color)
+                                        ColorHelper.getBlue(color)
                                 )
                         );
                         changed = true;
@@ -440,20 +440,20 @@ public class TimerCustomizeScreen extends Screen {
         );
 
         igtOptions.add(
-                addDrawableChild(new SliderWidget(width / 2 - 127, height / 2 + 28, 120, 20, Text.translatable("speedrunigt.option.timer_position.color_blue", "IGT").append(" : ").append(String.valueOf(ColorHelper.Argb.getBlue(drawer.getIGTColor()))), ColorHelper.Argb.getBlue(drawer.getIGTColor()) / 255.0f) {
+                addDrawableChild(new SliderWidget(width / 2 - 127, height / 2 + 28, 120, 20, Text.translatable("speedrunigt.option.timer_position.color_blue", "IGT").append(" : ").append(String.valueOf(ColorHelper.getBlue(drawer.getIGTColor()))), ColorHelper.getBlue(drawer.getIGTColor()) / 255.0f) {
                     @Override
                     protected void updateMessage() {
-                        this.setMessage(Text.translatable("speedrunigt.option.timer_position.color_blue", "IGT").append(" : ").append(String.valueOf(ColorHelper.Argb.getBlue(drawer.getIGTColor()))));
+                        this.setMessage(Text.translatable("speedrunigt.option.timer_position.color_blue", "IGT").append(" : ").append(String.valueOf(ColorHelper.getBlue(drawer.getIGTColor()))));
                     }
 
                     @Override
                     protected void applyValue() {
                         int color = drawer.getIGTColor();
                         drawer.setIGTColor(
-                                ColorHelper.Argb.getArgb(
-                                        ColorHelper.Argb.getAlpha(color),
-                                        ColorHelper.Argb.getRed(color),
-                                        ColorHelper.Argb.getGreen(color),
+                                ColorHelper.getArgb(
+                                        ColorHelper.getAlpha(color),
+                                        ColorHelper.getRed(color),
+                                        ColorHelper.getGreen(color),
                                         (int) (this.value * 255)
                                 )
                         );
@@ -498,21 +498,21 @@ public class TimerCustomizeScreen extends Screen {
 
     public void initRTAButtons() {
         rtaOptions.add(
-                addDrawableChild(new SliderWidget(width / 2 - 127, height / 2 - 16, 120, 20, Text.translatable("speedrunigt.option.timer_position.color_red", "RTA").append(" : ").append(String.valueOf(ColorHelper.Argb.getRed(drawer.getRTAColor()))), ColorHelper.Argb.getRed(drawer.getRTAColor()) / 255.0f) {
+                addDrawableChild(new SliderWidget(width / 2 - 127, height / 2 - 16, 120, 20, Text.translatable("speedrunigt.option.timer_position.color_red", "RTA").append(" : ").append(String.valueOf(ColorHelper.getRed(drawer.getRTAColor()))), ColorHelper.getRed(drawer.getRTAColor()) / 255.0f) {
                     @Override
                     protected void updateMessage() {
-                        this.setMessage(Text.translatable("speedrunigt.option.timer_position.color_red", "RTA").append(" : ").append(String.valueOf(ColorHelper.Argb.getRed(drawer.getRTAColor()))));
+                        this.setMessage(Text.translatable("speedrunigt.option.timer_position.color_red", "RTA").append(" : ").append(String.valueOf(ColorHelper.getRed(drawer.getRTAColor()))));
                     }
 
                     @Override
                     protected void applyValue() {
                         int color = drawer.getRTAColor();
                         drawer.setRTAColor(
-                                ColorHelper.Argb.getArgb(
-                                        ColorHelper.Argb.getAlpha(color),
+                                ColorHelper.getArgb(
+                                        ColorHelper.getAlpha(color),
                                         (int) (this.value * 255),
-                                        ColorHelper.Argb.getGreen(color),
-                                        ColorHelper.Argb.getBlue(color)
+                                        ColorHelper.getGreen(color),
+                                        ColorHelper.getBlue(color)
                                 )
                         );
                         changed = true;
@@ -521,21 +521,21 @@ public class TimerCustomizeScreen extends Screen {
         );
 
         rtaOptions.add(
-                addDrawableChild(new SliderWidget(width / 2 - 127, height / 2 + 6, 120, 20, Text.translatable("speedrunigt.option.timer_position.color_green", "RTA").append(" : ").append(String.valueOf(ColorHelper.Argb.getGreen(drawer.getRTAColor()))), ColorHelper.Argb.getGreen(drawer.getRTAColor()) / 255.0f) {
+                addDrawableChild(new SliderWidget(width / 2 - 127, height / 2 + 6, 120, 20, Text.translatable("speedrunigt.option.timer_position.color_green", "RTA").append(" : ").append(String.valueOf(ColorHelper.getGreen(drawer.getRTAColor()))), ColorHelper.getGreen(drawer.getRTAColor()) / 255.0f) {
                     @Override
                     protected void updateMessage() {
-                        this.setMessage(Text.translatable("speedrunigt.option.timer_position.color_green", "RTA").append(" : ").append(String.valueOf(ColorHelper.Argb.getGreen(drawer.getRTAColor()))));
+                        this.setMessage(Text.translatable("speedrunigt.option.timer_position.color_green", "RTA").append(" : ").append(String.valueOf(ColorHelper.getGreen(drawer.getRTAColor()))));
                     }
 
                     @Override
                     protected void applyValue() {
                         int color = drawer.getRTAColor();
                         drawer.setRTAColor(
-                                ColorHelper.Argb.getArgb(
-                                        ColorHelper.Argb.getAlpha(color),
-                                        ColorHelper.Argb.getRed(color),
+                                ColorHelper.getArgb(
+                                        ColorHelper.getAlpha(color),
+                                        ColorHelper.getRed(color),
                                         (int) (this.value * 255),
-                                        ColorHelper.Argb.getBlue(color)
+                                        ColorHelper.getBlue(color)
                                 )
                         );
                         changed = true;
@@ -544,20 +544,20 @@ public class TimerCustomizeScreen extends Screen {
         );
 
         rtaOptions.add(
-                addDrawableChild(new SliderWidget(width / 2 - 127, height / 2 + 28, 120, 20, Text.translatable("speedrunigt.option.timer_position.color_blue", "RTA").append(" : ").append(String.valueOf(ColorHelper.Argb.getBlue(drawer.getRTAColor()))), ColorHelper.Argb.getBlue(drawer.getRTAColor()) / 255.0f) {
+                addDrawableChild(new SliderWidget(width / 2 - 127, height / 2 + 28, 120, 20, Text.translatable("speedrunigt.option.timer_position.color_blue", "RTA").append(" : ").append(String.valueOf(ColorHelper.getBlue(drawer.getRTAColor()))), ColorHelper.getBlue(drawer.getRTAColor()) / 255.0f) {
                     @Override
                     protected void updateMessage() {
-                        this.setMessage(Text.translatable("speedrunigt.option.timer_position.color_blue", "RTA").append(" : ").append(String.valueOf(ColorHelper.Argb.getBlue(drawer.getRTAColor()))));
+                        this.setMessage(Text.translatable("speedrunigt.option.timer_position.color_blue", "RTA").append(" : ").append(String.valueOf(ColorHelper.getBlue(drawer.getRTAColor()))));
                     }
 
                     @Override
                     protected void applyValue() {
                         int color = drawer.getRTAColor();
                         drawer.setRTAColor(
-                                ColorHelper.Argb.getArgb(
-                                        ColorHelper.Argb.getAlpha(color),
-                                        ColorHelper.Argb.getRed(color),
-                                        ColorHelper.Argb.getGreen(color),
+                                ColorHelper.getArgb(
+                                        ColorHelper.getAlpha(color),
+                                        ColorHelper.getRed(color),
+                                        ColorHelper.getGreen(color),
                                         (int) (this.value * 255)
                                 )
                         );

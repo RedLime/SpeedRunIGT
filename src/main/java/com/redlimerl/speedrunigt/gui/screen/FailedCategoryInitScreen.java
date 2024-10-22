@@ -31,8 +31,8 @@ public class FailedCategoryInitScreen extends Screen {
         addDrawableChild(ButtonWidgetHelper.create(width / 2 - 100, height / 2 + 15, 200, 20, ScreenTexts.DONE, button -> close()));
     }
 
-    private static final int TEXT_WHITE = ColorHelper.Argb.getArgb(255, 255, 255, 255);
-    private static final int TEXT_RED = ColorHelper.Argb.getArgb(255, 255, 70, 70);
+    private static final int TEXT_WHITE = ColorHelper.getArgb(255, 255, 255, 255);
+    private static final int TEXT_RED = ColorHelper.getArgb(255, 255, 70, 70);
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);

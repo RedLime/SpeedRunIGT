@@ -1,6 +1,5 @@
 package com.redlimerl.speedrunigt.mixins.timeline;
 
-import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.authlib.GameProfile;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.instance.GameInstance;
@@ -60,13 +59,13 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         if (timer.getStatus() != TimerStatus.NONE) {
             if (oldRegistryKey == World.OVERWORLD && newRegistryKey == World.NETHER) {
                 if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY)
-                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.NETHER, target.pos().add(0, 0, 0), lastPortalPos.add(0, 0, 0));
+                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.NETHER, target.position().add(0, 0, 0), lastPortalPos.add(0, 0, 0));
             }
 
             if (oldRegistryKey == World.NETHER && newRegistryKey == World.OVERWORLD) {
                 // doing this early, so we can use the portal pos list for the portal number
                 int portalIndex = InGameTimerUtils.isBlindTraveled(this.lastPortalPos);
-                boolean isNewPortal = InGameTimerUtils.isLoadableBlind(World.OVERWORLD, this.lastPortalPos.add(0, 0, 0), target.pos().add(0, 0, 0));
+                boolean isNewPortal = InGameTimerUtils.isLoadableBlind(World.OVERWORLD, this.lastPortalPos.add(0, 0, 0), target.position().add(0, 0, 0));
                 if (this.isEnoughTravel()) {
                     int portalNum = InGameTimerUtils.getPortalNumber(this.lastPortalPos);
                     SpeedRunIGT.debug("Portal number: " + portalNum);

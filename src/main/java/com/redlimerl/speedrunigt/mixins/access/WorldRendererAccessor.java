@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(WorldRenderer.class)
 public interface WorldRendererAccessor {
 
-    @Accessor("regularEntityCount")
-    int getRegularEntityCount();
+    @Accessor("renderedEntitiesCount")
+    int getRenderedEntityCount();
 
     @Invoker("getCompletedChunkCount")
     int invokeCompletedChunkCount();
