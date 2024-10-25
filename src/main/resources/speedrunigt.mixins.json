@@ -10,11 +10,13 @@
     "ServerWorldMixin",
     "access.LevelStorageAccessor",
     "access.PlayerManagerAccessor",
+    "access.ServerChunkProviderAccessor",
     "access.ServerStatHandlerAccessor",
     "coop.PlayerManagerMixin",
     "coop.TimeCommandMixin",
     "network.ServerPlayNetworkHandlerMixin",
     "timeline.ServerPlayerEntityMixin",
+    "timeline.ServerPlayerEntityMixin2",
     "timeline.VillagerEntityMixin"
   ],
   "client": [
