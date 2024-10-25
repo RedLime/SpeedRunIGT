@@ -1,13 +1,16 @@
 package com.redlimerl.speedrunigt.mixins.timeline;
 
 import com.redlimerl.speedrunigt.mixins.access.ServerChunkProviderAccessor;
+import com.redlimerl.speedrunigt.mixins.access.SurfaceChunkGeneratorAccessor;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.NetherFortressStructure;
+import net.minecraft.structure.StrongholdStructure;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.NetherChunkGenerator;
+import net.minecraft.world.dimension.OverworldDimension;
 import net.minecraft.world.dimension.TheNetherDimension;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -31,6 +34,13 @@ public abstract class ServerPlayerEntityMixin2 {
                 boolean isInFortress = fortressFeature.method_46(this.method_4086().x, this.method_4086().y + 1, this.method_4086().z);
                 if (isInFortress) {
                     timer.tryInsertNewTimeline("found_fortress");
+                }
+            }
+            if (this.getServerWorld().dimension instanceof OverworldDimension) {
+                StrongholdStructure strongholdStructure = ((SurfaceChunkGeneratorAccessor) ((ServerChunkProviderAccessor) this.getServerWorld().getChunkProvider()).getChunkGenerator()).getStrongholdGenerator();
+                boolean isInStronghold = strongholdStructure.method_46(this.method_4086().x, this.method_4086().y + 1, this.method_4086().z);
+                if (isInStronghold) {
+                    timer.tryInsertNewTimeline("found_stronghold");
                 }
             }
         }
