@@ -15,6 +15,7 @@
     "coop.PlayerManagerMixin",
     "coop.TimeCommandMixin",
     "network.ServerPlayNetworkHandlerMixin",
+    "timeline.EyeOfEnderMixin",
     "timeline.ServerPlayerEntityMixin",
     "timeline.ServerPlayerEntityMixin2",
     "timeline.VillagerEntityMixin"
