@@ -152,7 +152,7 @@ public class SpeedRunOptionScreen extends Screen {
 
             categorySelectButtons.get(key).active = false;
             buttonListWidget.replaceButtons(categorySubButtons.get(key));
-            buttonListWidget.setScrollAmount(0);
+            buttonListWidget.setScrollY(0);
         }
     }
 
