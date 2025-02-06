@@ -26,7 +26,7 @@ public class ResourcesHelper {
             path = Paths.get(parent.toURI());
         }
         try (Stream<Path> children = Files.list(path)) {
-            return children.map(Path::toString).toArray(String[]::new);
+            return children.map(inner -> inner.subpath(inner.getNameCount() - 2, inner.getNameCount())).map(Path::toString).toArray(String[]::new);
         }
     }
 

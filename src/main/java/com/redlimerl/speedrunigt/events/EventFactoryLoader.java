@@ -46,7 +46,7 @@ public class EventFactoryLoader {
                 String[] parts = resource.split("/");
                 String source = parts[parts.length - 1].replace(".json", "");
 
-                InputStream stream = ResourcesHelper.toStream(resource);
+                InputStream stream = ResourcesHelper.toStream("/" + resource);
                 String content = IOUtils.toString(stream, Charset.defaultCharset());
                 JsonArray eventsArray = PARSER.parse(content).getAsJsonArray();
                 for (JsonElement element : eventsArray) {
