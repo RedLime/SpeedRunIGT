@@ -8,12 +8,15 @@ import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.category.condition.ObtainItemCategoryCondition;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.MovementType;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -26,6 +29,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(ClientPlayerEntity.class)
@@ -52,9 +56,10 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         }
 
         List<ItemStack> playerItemList = Lists.newArrayList();
-        playerItemList.addAll(this.getInventory().armor);
-        playerItemList.addAll(this.getInventory().offHand);
-        playerItemList.addAll(this.getInventory().main);
+        playerItemList.addAll(this.getInventory().getMainStacks());
+        for (Integer slotId : PlayerInventory.EQUIPMENT_SLOTS.keySet()) {
+            playerItemList.add(this.getInventory().getStack(slotId));
+        }
 
         // Custom Json category
         if (timer.getCategory().getConditionJson() != null) {
@@ -91,7 +96,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
         //Full Inventory
         if (timer.getCategory() == RunCategories.FULL_INV) {
-            if (this.getInventory().main.stream().filter(itemStack -> itemStack != null && itemStack != ItemStack.EMPTY && itemStack.getItem() != Items.AIR).map(ItemStack::getItem).distinct().toArray().length == 36)
+            if (this.getInventory().getMainStacks().stream().filter(itemStack -> itemStack != null && itemStack != ItemStack.EMPTY && itemStack.getItem() != Items.AIR).map(ItemStack::getItem).distinct().toArray().length == 36)
                 InGameTimer.complete();
             return;
         }
@@ -127,8 +132,13 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             }
         }
 
-        List<Item> items = this.getInventory().main.stream().map(ItemStack::getItem).toList();
-        List<Item> armors = this.getInventory().armor.stream().map(ItemStack::getItem).toList();
+        List<Item> items = this.getInventory().getMainStacks().stream().map(ItemStack::getItem).toList();
+        List<Item> armors = new ArrayList<>();
+        for (Int2ObjectMap.Entry<EquipmentSlot> entry : PlayerInventory.EQUIPMENT_SLOTS.int2ObjectEntrySet()) {
+            if (entry.getValue().getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
+                armors.add(this.getInventory().getStack(entry.getIntKey()).getItem());
+            }
+        }
 
         //All Workstations
         if (timer.getCategory() == RunCategories.ALL_WORKSTATIONS) {

@@ -281,8 +281,8 @@ public class InGameTimerUtils {
 
     public static int getCurrentWorldDefaultGameMode() {
         MinecraftServer server = getServer();
-        if (server == null) return GameMode.SURVIVAL.getId();
-        return server.getDefaultGameMode().getId();
+        if (server == null) return GameMode.SURVIVAL.getIndex();
+        return server.getDefaultGameMode().getIndex();
     }
 
     public static boolean isCurrentWorldCheatAvailable() {

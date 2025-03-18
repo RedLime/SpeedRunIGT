@@ -30,7 +30,7 @@ public class ObtainItemCategoryCondition extends CategoryCondition.Condition<Lis
             this.strictMode = !jsonObject.has("strict_mode") || jsonObject.get("strict_mode").getAsBoolean(); // Optional
             if (jsonObject.has("item_tag")) {
                 JsonElement jsonElement = jsonObject.get("item_tag");
-                this.nbtTag = StringNbtReader.parse(jsonElement.getAsString());
+                this.nbtTag = StringNbtReader.readCompound(jsonElement.getAsString());
             } else {
                 this.nbtTag = new NbtCompound();
             }

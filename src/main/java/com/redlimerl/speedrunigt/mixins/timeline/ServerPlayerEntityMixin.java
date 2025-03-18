@@ -9,6 +9,7 @@ import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -85,7 +86,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
     @Unique
     private boolean isEnoughTravel() {
-        Set<Item> currentItemTypes = Stream.concat(this.getInventory().main.stream(), this.getInventory().offHand.stream()) // Go over both main inventory and offHand item list
+        Set<Item> currentItemTypes = Stream.concat(this.getInventory().getMainStacks().stream(), Stream.of(this.getInventory().getStack(PlayerInventory.OFF_HAND_SLOT))) // Go over both main inventory and offHand item list
                 .filter(Objects::nonNull) // Remove nulls
                 .map(ItemStack::getItem) // Turn each item stack into its item
                 .collect(Collectors.toSet()); // Collect to a set of items that the player has

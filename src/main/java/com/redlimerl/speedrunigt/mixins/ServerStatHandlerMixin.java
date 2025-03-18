@@ -18,7 +18,6 @@ import net.minecraft.stat.ServerStatHandler;
 import net.minecraft.stat.Stat;
 import net.minecraft.stat.StatHandler;
 import net.minecraft.stat.StatType;
-import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -31,11 +30,6 @@ import java.util.Map;
 
 @Mixin(ServerStatHandler.class)
 public abstract class ServerStatHandlerMixin extends StatHandler {
-
-    @Shadow
-    private static <T> Identifier getStatId(Stat<T> stat) {
-        return null;
-    }
 
     @Shadow @Final private MinecraftServer server;
 
@@ -73,8 +67,8 @@ public abstract class ServerStatHandlerMixin extends StatHandler {
     private JsonObject getStatJson() {
         HashMap<StatType, JsonObject> map = Maps.newHashMap();
         for (Object2IntMap.Entry entry : this.statMap.object2IntEntrySet()) {
-            Stat stat = (Stat)entry.getKey();
-            map.computeIfAbsent(stat.getType(), statType -> new JsonObject()).addProperty(getStatId(stat).toString(), entry.getIntValue());
+            Stat<?> stat = (Stat)entry.getKey();
+            map.computeIfAbsent(stat.getType(), statType -> new JsonObject()).addProperty(stat.getValue().toString(), entry.getIntValue());
         }
         JsonObject jsonObject = new JsonObject();
         for (Map.Entry entry : map.entrySet()) {

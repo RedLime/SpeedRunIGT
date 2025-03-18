@@ -9,6 +9,7 @@ import com.redlimerl.speedrunigt.timer.running.RunPortalPos;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.EndPortalBlock;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityCollisionHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -22,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class EndPortalBlockMixin {
 
     @Inject(method = "onEntityCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;tryUsePortal(Lnet/minecraft/block/Portal;Lnet/minecraft/util/math/BlockPos;)V", shift = At.Shift.BEFORE))
-    public void onCollisionPlayer(BlockState state, World world, BlockPos pos, Entity entity, CallbackInfo ci) {
+    public void onCollisionPlayer(BlockState state, World world, BlockPos pos, Entity entity, EntityCollisionHandler handler, CallbackInfo ci) {
         if (entity instanceof PlayerEntity && world instanceof ServerWorld) {
             InGameTimer timer = InGameTimer.getInstance();
 

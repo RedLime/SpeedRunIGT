@@ -26,7 +26,7 @@ public class IntegratedServerLoaderMixin {
         RunCategory category = SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY);
         if (category.isAutoStart()) {
             InGameTimer.start(session.getDirectoryName(), RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
-            InGameTimer.getInstance().setDefaultGameMode(saveProperties.getLevelInfo().getGameMode().getId());
+            InGameTimer.getInstance().setDefaultGameMode(saveProperties.getLevelInfo().getGameMode().getIndex());
             InGameTimer.getInstance().setCheatAvailable(saveProperties.getLevelInfo().areCommandsAllowed());
             InGameTimer.getInstance().checkDifficulty(saveProperties.getDifficulty());
         }

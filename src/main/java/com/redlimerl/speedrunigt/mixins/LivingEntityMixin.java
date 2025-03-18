@@ -6,6 +6,7 @@ import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LazyEntityReference;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
@@ -23,7 +24,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Shadow protected boolean dead;
 
-    @Shadow @Nullable protected PlayerEntity attackingPlayer;
+    @Shadow @Nullable protected LazyEntityReference<PlayerEntity> attackingPlayer;
 
     public LivingEntityMixin(EntityType<?> type, World world) {
         super(type, world);
