@@ -1,7 +1,6 @@
 package com.redlimerl.speedrunigt.impl;
 
 import com.redlimerl.speedrunigt.api.SpeedRunIGTApi;
-import com.redlimerl.speedrunigt.timer.PracticeTimerManager;
 import com.redlimerl.speedrunigt.timer.category.RunCategory;
 
 import java.util.ArrayList;
@@ -14,7 +13,6 @@ public class CategoryRegistryImpl implements SpeedRunIGTApi {
     public Collection<RunCategory> registerCategories() {
         ArrayList<RunCategory> list = new ArrayList<>();
         list.add(ANY);list.add(CUSTOM);
-        list.add(PracticeTimerManager.PRACTICE_CATEGORY);
         list.add(ALL_ADVANCEMENTS);list.add(HALF);list.add(POGLOOT_QUATER);
         list.add(ALL_PORTALS);list.add(ALL_BLOCKS);
         list.add(KILL_ALL_BOSSES);list.add(KILL_WITHER);list.add(KILL_ELDER_GUARDIAN);
