@@ -6,7 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -85,7 +85,7 @@ public class EventRepository {
     private void writeEventToLog(Event event) throws IOException {
         Files.write(
                 this.eventsPath,
-                (this.serializeEvent(event) + "\n").getBytes(Charset.defaultCharset()),
+                (this.serializeEvent(event) + "\n").getBytes(StandardCharsets.UTF_8),
                 StandardOpenOption.CREATE,
                 StandardOpenOption.APPEND
         );
@@ -94,7 +94,7 @@ public class EventRepository {
     private void writeWorldDataToGlobalFile() throws IOException {
         Files.write(
                 this.globalEventsPath,
-                (this.world.getWorldData() + "\n").getBytes(Charset.defaultCharset()),
+                (this.world.getWorldData() + "\n").getBytes(StandardCharsets.UTF_8),
                 StandardOpenOption.CREATE,
                 StandardOpenOption.WRITE,
                 StandardOpenOption.TRUNCATE_EXISTING

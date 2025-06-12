@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +47,7 @@ public class EventFactoryLoader {
                 String source = parts[parts.length - 1].replace(".json", "");
 
                 InputStream stream = ResourcesHelper.toStream("/" + resource);
-                String content = IOUtils.toString(stream, Charset.defaultCharset());
+                String content = IOUtils.toString(stream, StandardCharsets.UTF_8);
                 JsonArray eventsArray = PARSER.parse(content).getAsJsonArray();
                 for (JsonElement element : eventsArray) {
                     JsonObject eventObject = element.getAsJsonObject();
