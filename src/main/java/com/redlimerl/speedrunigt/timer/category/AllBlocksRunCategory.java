@@ -19,7 +19,7 @@ import java.util.Set;
 public class AllBlocksRunCategory extends RunCategory {
 
     public AllBlocksRunCategory() {
-        super("all_blocks", "", "All Blocks");
+        super("ALL_BLOCKS", "", "All Blocks");
     }
 
     @Override
