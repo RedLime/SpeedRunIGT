@@ -2,7 +2,7 @@ package com.redlimerl.speedrunigt.gui.screen;
 
 import net.minecraft.client.gui.screen.Screen;
 import org.jetbrains.annotations.NotNull;
-import org.mcsr.speedrunapi.config.api.SpeedrunConfigScreenProvider;
+import me.contaria.speedrunapi.config.api.SpeedrunConfigScreenProvider;
 
 @SuppressWarnings("unused")
 public class SpeedRunOptionScreenProvider implements SpeedrunConfigScreenProvider {

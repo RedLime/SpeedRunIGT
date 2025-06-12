@@ -43,7 +43,8 @@
   },
 
   "breaks": {
-    "ghostrunner": "<=3.0"
+    "ghostrunner": "<=3.0",
+    "speedrunapi": "<2.0"
   },
 
   "suggests": {
