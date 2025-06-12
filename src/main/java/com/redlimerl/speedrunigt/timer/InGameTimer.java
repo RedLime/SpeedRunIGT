@@ -84,6 +84,7 @@ public class InGameTimer implements Serializable {
     private boolean isRTAMode = false;
     private int defaultGameMode = 0;
     private boolean isCheatAvailable = false;
+    private boolean invisible = false;
 
     //Timer time
     long startTime = 0;
@@ -889,6 +890,14 @@ public class InGameTimer implements Serializable {
 
     public void setRTAMode(boolean RTAMode) {
         this.isRTAMode = RTAMode;
+    }
+
+    public void setInvisible(boolean invisible) {
+        this.invisible = invisible;
+    }
+
+    public boolean isInvisible() {
+        return invisible;
     }
 
     public Long getCompleteStatIGT() {

@@ -2,60 +2,49 @@
   "required": true,
   "package": "com.redlimerl.speedrunigt.mixins",
   "mixins": [
-    "access.ServerStatHandlerAccessor",
-
-    "coop.PlayerManagerMixin",
-    "coop.TimeCommandMixin",
-
-    "network.CustomPayloadC2SPacketAccessor",
-    "network.ServerPlayNetworkHandlerMixin",
-
-    "timeline.ServerPlayerEntityMixin",
-
     "EndPortalBlockMixin",
     "LivingEntityMixin",
     "PlayerAdvancementTrackerMixin",
     "SeedCommandMixin",
     "ServerStatHandlerMixin",
-    "ServerWorldMixin"
+    "ServerWorldMixin",
+    "access.ServerStatHandlerAccessor",
+    "command.CommandManagerMixin",
+    "coop.PlayerManagerMixin",
+    "coop.TimeCommandMixin",
+    "network.CustomPayloadC2SPacketAccessor",
+    "network.ServerPlayNetworkHandlerMixin",
+    "timeline.ServerPlayerEntityMixin"
   ],
   "client": [
-    "access.DoubleOptionSliderWidgetAccessor",
-    "access.FontManagerAccessor",
-    "access.FontStorageAccessor",
-    "access.MinecraftClientAccessor",
-    "access.MinecraftClientAccessorForAttack",
-    "access.WorldRendererAccessor",
-
-    "keybinding.GameOptionsMixin",
-    "keybinding.KeyBindingAccessor",
-
-    "network.ClientPlayNetworkHandlerMixin",
-
-    "retime.OptionButtonWidgetMixin",
-    "retime.OptionScreenMixin",
-    "retime.OptionSliderWidgetMixin",
-    "retime.SodiumOptionImplMixin",
-
-    "screen.CreditsScreenMixin",
-    "screen.DownloadingTerrainScreenMixin",
-    "screen.GameMenuScreenMixin",
-    "screen.GeneratorOptionsMixin",
-    "screen.OptionsScreenMixin",
-
-    "server.IntegratedServerMixin",
-
-    "timeline.SoundSystemMixin",
-
-    "translate.TranslationStorageMixin",
-
     "ClientAdvancementManagerMixin",
     "ClientPlayerEntityMixin",
     "ClientWorldMixin",
     "InGameHudMixin",
     "KeyBindingMixin",
     "MinecraftClientMixin",
-    "MouseMixin"
+    "MouseMixin",
+    "access.DoubleOptionSliderWidgetAccessor",
+    "access.FontManagerAccessor",
+    "access.FontStorageAccessor",
+    "access.MinecraftClientAccessor",
+    "access.MinecraftClientAccessorForAttack",
+    "access.WorldRendererAccessor",
+    "keybinding.GameOptionsMixin",
+    "keybinding.KeyBindingAccessor",
+    "network.ClientPlayNetworkHandlerMixin",
+    "retime.OptionButtonWidgetMixin",
+    "retime.OptionScreenMixin",
+    "retime.OptionSliderWidgetMixin",
+    "retime.SodiumOptionImplMixin",
+    "screen.CreditsScreenMixin",
+    "screen.DownloadingTerrainScreenMixin",
+    "screen.GameMenuScreenMixin",
+    "screen.GeneratorOptionsMixin",
+    "screen.OptionsScreenMixin",
+    "server.IntegratedServerMixin",
+    "timeline.SoundSystemMixin",
+    "translate.TranslationStorageMixin"
   ],
   "server": [
     "server.DedicatedServerMixin"

@@ -328,7 +328,7 @@ public class TimerDrawer {
 
     @SuppressWarnings("deprecation")
     public void draw() {
-        if (!this.toggle) return;
+        if (!this.toggle || InGameTimer.getInstance().isInvisible()) return;
 
         MutableText igtText = this.getIGTText();
         MutableText rtaText = this.getRTAText();
