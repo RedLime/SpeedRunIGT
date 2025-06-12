@@ -20,6 +20,8 @@ public class RunCategoryArgumentType implements ArgumentType<RunCategory> {
 
     @Override
     public RunCategory parse(StringReader reader) throws CommandSyntaxException {
-        return RunCategory.getCategory(reader.readString());
+        String key = reader.readString();
+        if (!RunCategory.getCategories().containsKey(key)) return null;
+        return RunCategory.getCategory(key);
     }
 }
