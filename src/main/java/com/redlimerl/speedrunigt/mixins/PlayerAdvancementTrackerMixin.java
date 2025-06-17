@@ -19,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import java.util.Map;
+import java.util.Objects;
 
 @Mixin(PlayerAdvancementTracker.class)
 public abstract class PlayerAdvancementTrackerMixin {
@@ -50,7 +51,7 @@ public abstract class PlayerAdvancementTrackerMixin {
 
         if (timer.getStatus() != TimerStatus.NONE) {
             timer.tryInsertNewAdvancement(advancement.id().toString(), criteriaKey, advancement.value().display().isPresent());
-            if (timer.isCoop()) TimerPacketUtils.sendServer2ClientPacket(owner.server, new TimerAchieveCriteriaPacket(advancement.id().toString(), criteriaKey, advancement.value().display().isPresent()));
+            if (timer.isCoop()) TimerPacketUtils.sendServer2ClientPacket(Objects.requireNonNull(owner.getServer()), new TimerAchieveCriteriaPacket(advancement.id().toString(), criteriaKey, advancement.value().display().isPresent()));
         }
     }
 }

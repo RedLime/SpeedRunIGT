@@ -21,6 +21,7 @@ import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.util.Colors;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
@@ -295,18 +296,18 @@ public class TimerCustomizeScreen extends Screen {
 
         drawer.draw(context);
 
-        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 15, 16777215);
+        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 15, Colors.WHITE);
 
         if (!hide) {
             if (!igtButton.active || !rtaButton.active) {
                 if (drawer.isLocked()) {
                     context.drawCenteredTextWithShadow(this.textRenderer,
-                            Text.translatable("speedrunigt.option.timer_position.description.lock"), this.width / 2, this.height / 2 - 80, 16777215);
+                            Text.translatable("speedrunigt.option.timer_position.description.lock"), this.width / 2, this.height / 2 - 80, Colors.WHITE);
                 } else {
                     context.drawCenteredTextWithShadow(this.textRenderer,
-                            Text.translatable("speedrunigt.option.timer_position.description"), this.width / 2, this.height / 2 - 80, 16777215);
+                            Text.translatable("speedrunigt.option.timer_position.description"), this.width / 2, this.height / 2 - 80, Colors.WHITE);
                     context.drawCenteredTextWithShadow(this.textRenderer,
-                            Text.translatable("speedrunigt.option.timer_position.description.move"), this.width / 2, this.height / 2 - 69, 16777215);
+                            Text.translatable("speedrunigt.option.timer_position.description.move"), this.width / 2, this.height / 2 - 69, Colors.WHITE);
                 }
             }
 
@@ -328,7 +329,7 @@ public class TimerCustomizeScreen extends Screen {
                             text.append(" [Selected]").formatted(Formatting.ITALIC);
                         }
                         context.drawCenteredTextWithShadow(this.textRenderer, text, this.width / 2 - 30,
-                                this.height / 2 - 11 + (i * 22), 16777215);
+                                this.height / 2 - 11 + (i * 22), Colors.WHITE);
                     }
                 }
             }

@@ -7,6 +7,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.MutableText;
+import net.minecraft.util.Colors;
+import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
 
 public class TimerElement {
@@ -59,27 +61,27 @@ public class TimerElement {
     }
 
     public void draw(DrawContext drawContext, boolean doTranslate) {
-        drawContext.getMatrices().push();
-        if (doTranslate) drawContext.getMatrices().translate(0, 0, 1);
-        drawContext.getMatrices().scale(scale, scale, 1f);
+        drawContext.getMatrices().pushMatrix();
+//        if (doTranslate) drawContext.getMatrices().transform(new Vector3f(0, 0, 1));
+        drawContext.getMatrices().scale(scale, scale);
         drawOutLine(client.textRenderer, drawContext, scaledPosition.getX(), scaledPosition.getY(), text, color, decoration);
-        drawContext.getMatrices().pop();
+        drawContext.getMatrices().popMatrix();
     }
 
     private static void drawOutLine(TextRenderer textRenderer, DrawContext drawContext, int x, int y, MutableText text, Integer color, TimerDecoration decoration) {
         if (decoration == TimerDecoration.OUTLINE) {
-            drawContext.drawText(textRenderer, text, x + 1, y + 1, 0, false);
-            drawContext.drawText(textRenderer, text, x + 1, y, 0, false);
-            drawContext.drawText(textRenderer, text, x + 1, y - 1, 0, false);
-            drawContext.drawText(textRenderer, text, x, y - 1, 0, false);
-            drawContext.drawText(textRenderer, text, x, y + 1, 0, false);
-            drawContext.drawText(textRenderer, text, x - 1, y + 1, 0, false);
-            drawContext.drawText(textRenderer, text, x - 1, y, 0, false);
-            drawContext.drawText(textRenderer, text, x - 1, y - 1, 0, false);
+            drawContext.drawText(textRenderer, text, x + 1, y + 1, Colors.BLACK, false);
+            drawContext.drawText(textRenderer, text, x + 1, y, Colors.BLACK, false);
+            drawContext.drawText(textRenderer, text, x + 1, y - 1, Colors.BLACK, false);
+            drawContext.drawText(textRenderer, text, x, y - 1, Colors.BLACK, false);
+            drawContext.drawText(textRenderer, text, x, y + 1, Colors.BLACK, false);
+            drawContext.drawText(textRenderer, text, x - 1, y + 1, Colors.BLACK, false);
+            drawContext.drawText(textRenderer, text, x - 1, y, Colors.BLACK, false);
+            drawContext.drawText(textRenderer, text, x - 1, y - 1, Colors.BLACK, false);
         } else if (decoration == TimerDecoration.SHADOW) {
-            drawContext.drawText(textRenderer, text, x + 1, y + 1, -12566464, false);
+            drawContext.drawText(textRenderer, text, x + 1, y + 1, Colors.DARK_GRAY, false);
         }
-        drawContext.drawText(textRenderer, text, x, y, color, false);
+        drawContext.drawText(textRenderer, text, x, y, ColorHelper.getArgb(ColorHelper.getRed(color), ColorHelper.getGreen(color), ColorHelper.getBlue(color)), false);
     }
 
     public Position getPosition() {

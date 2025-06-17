@@ -39,7 +39,7 @@ public class TimerWorld {
         this.mods.forEach(modsArray::add);
         object.addProperty("world_path", this.worldFolderPath.getParent().toString().replace("\\", "/"));
         object.add("mods", modsArray);
-        object.addProperty("version", this.version.getName());
+        object.addProperty("version", this.version.name());
         object.addProperty("mod_version", SpeedRunIGT.MOD_VERSION);
         object.addProperty("category", InGameTimer.getInstance().getCategory().getID());
         return object;

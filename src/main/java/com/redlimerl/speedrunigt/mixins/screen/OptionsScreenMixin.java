@@ -3,11 +3,11 @@ package com.redlimerl.speedrunigt.mixins.screen;
 import com.redlimerl.speedrunigt.SpeedRunIGTUpdateChecker;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunOptionScreen;
 import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.OptionsScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
@@ -41,11 +41,11 @@ public class OptionsScreenMixin extends Screen {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
         if (this.client != null) {
-            context.getMatrices().push();
-            context.getMatrices().translate(-.5f, -.5f, 0);
-            context.drawTexture(RenderLayer::getGuiTextured, timerButton.isHovered() ? ENDER_EYE : SpeedRunIGTUpdateChecker.UPDATE_STATUS == SpeedRunIGTUpdateChecker.UpdateStatus.OUTDATED ? BLAZE_POWDER : ENDER_PEARL,
+            context.getMatrices().pushMatrix();
+            context.getMatrices().translate(-.5f, -.5f);
+            context.drawTexture(RenderPipelines.GUI_TEXTURED, timerButton.isHovered() ? ENDER_EYE : SpeedRunIGTUpdateChecker.UPDATE_STATUS == SpeedRunIGTUpdateChecker.UpdateStatus.OUTDATED ? BLAZE_POWDER : ENDER_PEARL,
                     timerButton.getX() + 2, timerButton.getY() + 2, 0.0F, 0.0F, 16, 16, 16, 16);
-            context.getMatrices().pop();
+            context.getMatrices().popMatrix();
         }
     }
 }

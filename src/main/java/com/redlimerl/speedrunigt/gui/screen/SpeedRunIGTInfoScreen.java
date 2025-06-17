@@ -7,6 +7,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
+import net.minecraft.util.Colors;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
 
@@ -42,20 +43,21 @@ public class SpeedRunIGTInfoScreen extends Screen {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
 
-        context.getMatrices().push();
-        context.getMatrices().scale(1.5F, 1.5F, 1.5F);
-        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 3, 15, 16777215);
-        context.getMatrices().pop();
+        context.getMatrices().pushMatrix();
+        context.getMatrices().scale(1.5F, 1.5F);
+        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 3, 15, Colors.WHITE);
+        context.getMatrices().popMatrix();
+
         context.drawCenteredTextWithShadow(this.textRenderer,
-                Text.literal("Version : "+ SpeedRunIGT.MOD_VERSION.split("\\+")[0]), this.width / 2, 78, 16777215);
+                Text.literal("Version : "+ SpeedRunIGT.MOD_VERSION.split("\\+")[0]), this.width / 2, 78, Colors.WHITE);
         if (UPDATE_STATUS != UpdateStatus.NONE) {
             if (UPDATE_STATUS == UpdateStatus.OUTDATED) {
                 update.active = true;
-                context.drawCenteredTextWithShadow(this.textRenderer, Text.literal("Updated Version : "+ UPDATE_VERSION).formatted(Formatting.YELLOW), this.width / 2, 88, 16777215);
+                context.drawCenteredTextWithShadow(this.textRenderer, Text.literal("Updated Version : "+ UPDATE_VERSION).formatted(Formatting.YELLOW), this.width / 2, 88, Colors.WHITE);
             }
             context.drawCenteredTextWithShadow(this.textRenderer,
                     Text.translatable("speedrunigt.message.update."+UPDATE_STATUS.name().toLowerCase(Locale.ROOT)),
-                    this.width / 2, 116, 16777215);
+                    this.width / 2, 116, Colors.WHITE);
         }
     }
 

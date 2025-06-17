@@ -16,7 +16,6 @@ import net.minecraft.item.Items;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
@@ -35,26 +34,28 @@ import java.util.stream.Stream;
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
-    @Shadow public abstract ServerWorld getServerWorld();
+    @Shadow public abstract ServerWorld getWorld();
 
-    public ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
-        super(world, pos, yaw, gameProfile);
-    }
-
+    @Unique
     private ServerWorld beforeWorld = null;
+    @Unique
     private Vec3d lastPortalPos = null;
 
-    @Inject(method = "teleportTo", at = @At("HEAD"))
+    public ServerPlayerEntityMixin(World world, GameProfile profile) {
+        super(world, profile);
+    }
+
+    @Inject(method = "teleportTo(Lnet/minecraft/world/TeleportTarget;)Lnet/minecraft/server/network/ServerPlayerEntity;", at = @At("HEAD"))
     public void onChangeDimension(TeleportTarget target, CallbackInfoReturnable<Entity> cir) {
-        beforeWorld = this.getServerWorld();
+        beforeWorld = this.getWorld();
         lastPortalPos = this.getPos();
         InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = !InGameTimer.getInstance().isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY;
     }
 
-    @Inject(method = "teleportTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;onDimensionChanged(Lnet/minecraft/entity/Entity;)V", shift = At.Shift.AFTER))
+    @Inject(method = "teleportTo(Lnet/minecraft/world/TeleportTarget;)Lnet/minecraft/server/network/ServerPlayerEntity;", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;onDimensionChanged(Lnet/minecraft/entity/Entity;)V", shift = At.Shift.AFTER))
     public void onChangedDimension(TeleportTarget target, CallbackInfoReturnable<Entity> cir) {
         RegistryKey<World> oldRegistryKey = beforeWorld.getRegistryKey();
-        RegistryKey<World> newRegistryKey = getServerWorld().getRegistryKey();
+        RegistryKey<World> newRegistryKey = this.getWorld().getRegistryKey();
 
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() != TimerStatus.NONE) {

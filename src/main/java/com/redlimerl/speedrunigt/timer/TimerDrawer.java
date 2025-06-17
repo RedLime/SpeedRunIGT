@@ -354,8 +354,7 @@ public class TimerDrawer {
         igtTimerElement.init(igtXPos, igtYPos, igtScale, igtText, igtColor, igtDecoration, igtDisplayAlign, fontHeight);
 
         //배경 렌더
-        drawContext.getMatrices().push();
-        if (translateZ) drawContext.getMatrices().translate(0, 0, 998);
+        drawContext.getMatrices().pushMatrix();
         if (bgOpacity > 0.01f) {
             Position rtaMin = new Position(rtaTimerElement.getPosition().getX() - rtaPadding, rtaTimerElement.getPosition().getY() - rtaPadding);
             Position rtaMax = new Position(rtaMin.getX() + rtaTimerElement.getScaledTextWidth() + ((rtaPadding - 1) + rtaPadding), rtaMin.getY() + rtaTimerElement.getScaledTextHeight() + ((rtaPadding - 1) + rtaPadding));
@@ -375,7 +374,7 @@ public class TimerDrawer {
         //렌더
         if (igtScale != 0) igtTimerElement.draw(drawContext, translateZ);
         if (rtaScale != 0) rtaTimerElement.draw(drawContext, translateZ);
-        drawContext.getMatrices().pop();
+        drawContext.getMatrices().popMatrix();
 
     }
 

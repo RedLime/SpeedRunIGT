@@ -14,6 +14,7 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
+import net.minecraft.util.Colors;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 
@@ -113,8 +114,8 @@ public class SpeedRunOptionScreen extends Screen {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
         this.buttonListWidget.render(context, mouseX, mouseY, delta);
-        context.drawCenteredTextWithShadow(textRenderer, this.title, this.width / 2, 10, 16777215);
-        context.drawText(textRenderer, "v"+ SpeedRunIGT.MOD_VERSION, 4, 4, 16777215, true);
+        context.drawCenteredTextWithShadow(textRenderer, this.title, this.width / 2, 10, Colors.WHITE);
+        context.drawText(textRenderer, "v"+ SpeedRunIGT.MOD_VERSION, 4, 4, Colors.WHITE, true);
 
         ArrayList<Text> tooltip = getToolTip(mouseX, mouseY);
         if (!tooltip.isEmpty() && !this.isDragging()) context.drawTooltip(textRenderer, tooltip, 0, height);
