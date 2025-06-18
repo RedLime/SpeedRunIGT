@@ -12,6 +12,7 @@
     "access.PlayerManagerAccessor",
     "access.ServerChunkProviderAccessor",
     "access.ServerStatHandlerAccessor",
+    "access.StructureFeatureAccessor",
     "access.SurfaceChunkGeneratorAccessor",
     "coop.PlayerManagerMixin",
     "coop.TimeCommandMixin",
