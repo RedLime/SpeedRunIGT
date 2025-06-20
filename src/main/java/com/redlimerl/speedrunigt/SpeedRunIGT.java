@@ -12,6 +12,7 @@ import com.redlimerl.speedrunigt.timer.category.CustomCategoryManager;
 import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.packet.TimerPackets;
+import com.redlimerl.speedrunigt.utils.FilesHelper;
 import com.redlimerl.speedrunigt.utils.FontIdentifier;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
@@ -25,11 +26,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.nio.file.Paths;
+import java.util.*;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class SpeedRunIGT implements ModInitializer {
@@ -52,16 +52,26 @@ public class SpeedRunIGT implements ModInitializer {
     public static Path getMainPath() {
         return FabricLoader.getInstance().getGameDir().resolve(MOD_ID);
     }
-    public static Path getGlobalPath() { return new File(System.getProperty("user.home").replace("\\", "/"), SpeedRunIGT.MOD_ID).toPath(); }
+    public static Path getGlobalPath() {
+        switch (net.minecraft.util.Util.getOperatingSystem()) {
+            case LINUX:
+                return Optional.ofNullable(System.getenv("XDG_DATA_HOME"))
+                        .map((data_home) -> Paths.get(data_home, MOD_ID))
+                        .orElse(Paths.get(System.getProperty("user.home"), ".local", "share", MOD_ID));
+            case WINDOWS:
+                return Paths.get(System.getenv("APPDATA"), MOD_ID);
+            case OSX:
+                return Paths.get(System.getProperty("user.home"), "Library", "Application Support", MOD_ID);
+            default:
+                return Paths.get(System.getProperty("user.home"), MOD_ID);
+        }
+    }
     public static Path getRecordsPath() { return getGlobalPath().resolve("records"); }
 
     public static final Set<ModContainer> API_PROVIDERS = Sets.newHashSet();
 
     static {
         getMainPath().toFile().mkdirs();
-        getGlobalPath().toFile().mkdirs();
-        getRecordsPath().toFile().mkdirs();
-        FONT_PATH.toFile().mkdirs();
 
         //Delete all old timer data
         File oldWorlds = getMainPath().resolve("worlds").toFile();
@@ -78,6 +88,18 @@ public class SpeedRunIGT implements ModInitializer {
     public void onInitialize() {
         MOD_VERSION = (FabricLoader.getInstance().getModContainer(SpeedRunIGT.MOD_ID).isPresent()
                         ? FabricLoader.getInstance().getModContainer(SpeedRunIGT.MOD_ID).get().getMetadata().getVersion().getFriendlyString() : "Unknown+Unknown");
+
+        try {
+            restoreOldGlobalDir();
+        } catch (IOException e) {
+            LOGGER.error("Failed to restore the global data directory", e);
+        }
+
+        debug("Global data path: {}", getGlobalPath());
+
+        getGlobalPath().toFile().mkdirs();
+        getRecordsPath().toFile().mkdirs();
+        FONT_PATH.toFile().mkdirs();
 
         // init default categories
         new CategoryRegistryImpl().registerCategories().forEach(RunCategory::registerCategory);
@@ -123,9 +145,21 @@ public class SpeedRunIGT implements ModInitializer {
         TimerPackets.init();
     }
 
+    private static void restoreOldGlobalDir() throws IOException {
+        Path oldDataDir = Paths.get(System.getProperty("user.home"), MOD_ID);
+
+        if (Files.isDirectory(oldDataDir) && !Files.exists(getGlobalPath())) {
+            LOGGER.info("Restoring old global data directory...");
+            FilesHelper.recursiveCopy(oldDataDir, getGlobalPath());
+        }
+    }
+
     private static final Logger LOGGER = LogManager.getLogger("SpeedRunIGT");
     public static void debug(Object obj) {
         if (IS_DEBUG_MODE) LOGGER.info(obj);
+    }
+    public static void debug(String fmt, Object obj) {
+        if (IS_DEBUG_MODE) LOGGER.info(fmt, obj);
     }
     public static void error(Object obj) { LOGGER.error(obj); }
 }
