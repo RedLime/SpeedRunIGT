@@ -3,14 +3,11 @@ package com.redlimerl.speedrunigt.mixins.screen;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.redlimerl.speedrunigt.SpeedRunIGTUpdateChecker;
 import com.redlimerl.speedrunigt.gui.screen.SpeedRunOptionScreen;
-import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.OptionsScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
-import net.minecraft.client.gui.widget.Positioner;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,18 +23,25 @@ public class OptionsScreenMixin extends Screen {
     private static final Identifier ENDER_EYE = new Identifier("textures/item/ender_eye.png");
 
     private ButtonWidget timerButton;
+    private DirectionalLayoutWidget headerWidget;
 
     protected OptionsScreenMixin(Text title) {
         super(title);
     }
 
-    @Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/DirectionalLayoutWidget;add(Lnet/minecraft/client/gui/widget/Widget;)Lnet/minecraft/client/gui/widget/Widget;", ordinal = 1))
+    @Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/option/OptionsScreen;initTabNavigation()V"))
     private void onInit(CallbackInfo ci, @Local(ordinal = 1) DirectionalLayoutWidget widget) {
-        timerButton = widget.add(ButtonWidget.builder(Text.empty(), (buttonWidget) -> {
+        headerWidget = widget;
+        timerButton = this.addDrawableChild(ButtonWidget.builder(Text.empty(), (buttonWidget) -> {
             if (this.client != null) {
                 this.client.setScreen(new SpeedRunOptionScreen(this));
             }
         }).size(20, 20).build());
+    }
+
+    @Inject(method = "initTabNavigation", at = @At("TAIL"))
+    private void onRescale(CallbackInfo ci) {
+        timerButton.setPosition(headerWidget.getX() - 25, headerWidget.getY());
     }
 
     @Override
