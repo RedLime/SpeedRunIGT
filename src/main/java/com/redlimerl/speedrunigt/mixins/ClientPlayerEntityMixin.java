@@ -18,7 +18,6 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -191,28 +190,24 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     }
 
 
-    private static int portalTick = 0;
-    private static Identifier lastDimension;
+    private Long latestPortalEnter = null;
+    private int portalTick = 0;
     @Inject(at = @At("HEAD"), method = "tick")
     public void updateNausea(CallbackInfo ci) {
         // Portal time update
-        // doesn't work if you ever exit but still have cooldown, unfortunately
-        // this version at least says inNetherPortal false when you get put on the other side so no 1.16.1 portal bug
-        if (lastDimension == null) {
-            lastDimension = this.clientWorld.getRegistryKey().getValue();
-        }
         if (this.inNetherPortal) {
-            ++portalTick;
-        }
-         else {
-            if (portalTick > 0) {
-                Identifier dimension = this.clientWorld.getRegistryKey().getValue();
-                if (portalTick >= 81 && !lastDimension.equals(dimension)) {
-                    InGameTimer.getInstance().tryExcludeIGT((portalTick - 80) * 50L, "nether portal lag");
-                }
-                lastDimension = dimension;
+            if (++portalTick >= 81 && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
                 portalTick = 0;
+                if (InGameTimer.getInstance().getStatus() != TimerStatus.IDLE && client.isInSingleplayer()) {
+                    latestPortalEnter = System.currentTimeMillis();
+                }
             }
+        } else {
+            if (this.latestPortalEnter != null) {
+                InGameTimer.getInstance().tryExcludeIGT(System.currentTimeMillis() - this.latestPortalEnter, "nether portal lag");
+                this.latestPortalEnter = null;
+            }
+            this.portalTick = 0;
         }
     }
 

@@ -878,7 +878,7 @@ public class InGameTimer implements Serializable {
 
     public void tryExcludeIGT(long igt, String reason) {
         this.excludedIGT += igt;
-        System.out.printf("[SpeedRunIGT] this play seems to be caught in specific lag(%s). excluded IGT for this time: %s\n", reason, igt);
+        System.out.printf("[SpeedRunIGT] this play seems to be caught in specific lag(%s). excluded IGT for this time: .%s", reason, igt);
     }
 
     public boolean isRTAMode() {
