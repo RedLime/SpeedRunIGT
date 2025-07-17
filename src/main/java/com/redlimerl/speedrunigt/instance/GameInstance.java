@@ -55,10 +55,10 @@ public class GameInstance {
         File worldFile = InGameTimerUtils.getTimerLogDir(worldName, "");
         if (worldFile != null) {
             this.loadWorld(worldFile.toPath());
-            LOGGER.info("Loaded events world.");
+            LOGGER.debug("Loaded events world.");
             checkJoinEvents();
         } else {
-            LOGGER.error("Didn't load events world.");
+            LOGGER.debug("Didn't load events world.");
         }
     }
 
