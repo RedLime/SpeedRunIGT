@@ -413,6 +413,11 @@ public class InGameTimer implements Serializable {
 
                     INSTANCE.worldName = name;
                     COMPLETED_INSTANCE.worldName = name;
+
+                    if (INSTANCE.getCategory() == RunCategories.ERROR_CATEGORY) {
+                        INSTANCE.setCategory(RunCategories.ANY, false);
+                    }
+
                     GameInstance.getInstance().tryLoadWorld(name);
 
                     INSTANCE.getCustomCondition().ifPresent(CategoryCondition::refreshConditionClasses);

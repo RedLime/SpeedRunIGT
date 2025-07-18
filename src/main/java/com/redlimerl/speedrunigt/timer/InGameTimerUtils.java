@@ -60,7 +60,7 @@ public class InGameTimerUtils {
         File file = pathName.isEmpty() ? path.resolve(SpeedRunIGT.MOD_ID).toFile() : path.resolve(SpeedRunIGT.MOD_ID).resolve(pathName).toFile();
 
         if (!worldFolder.exists() || !worldFolder.isDirectory()) {
-            SpeedRunIGT.error("World directory doesn't exist, couldn't make timer dirs");
+            SpeedRunIGT.debug("World directory doesn't exist, couldn't make timer dirs");
             return null;
         }
 
