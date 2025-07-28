@@ -26,7 +26,7 @@ public class TranslationStorageMixin {
             // minecraft always loads en_us as a backup, if using only english translations just skip loading the other attempts
             if (SpeedRunOption.getOption(SpeedRunOptions.ALWAYS_ENGLISH_TRANSLATIONS) && !resource.getId().getPath().equalsIgnoreCase("lang/en_us.json"))
                 return;
-            Optional.ofNullable(ResourcesHelper.toStream("/assets/speedrunigt/" + resource.getId().getPath()))
+            Optional.ofNullable(ResourcesHelper.toStream("assets/speedrunigt/" + resource.getId().getPath()))
                     .ifPresent(langStream -> Language.load(langStream, translationMap::put));
         });
     }
