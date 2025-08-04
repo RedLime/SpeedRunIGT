@@ -101,6 +101,7 @@ public class TimerStartPacket extends TimerPacket {
             InGameTimer.getInstance().setStartTime(startTime);
             InGameTimer.getInstance().setCategory(category, false);
         }
+        InGameTimer.getInstance().setPause(false, "coop start");
         InGameTimer.getInstance().setCoop(true);
         InGameTimer.getInstance().setServerIntegrated(isIntegrated);
 
