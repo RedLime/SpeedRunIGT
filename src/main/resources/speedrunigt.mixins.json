@@ -9,6 +9,7 @@
     "ServerStatHandlerMixin",
     "ServerWorldMixin",
     "access.ServerStatHandlerAccessor",
+    "command.ArgumentTypesMixin",
     "command.CommandManagerMixin",
     "coop.PlayerManagerMixin",
     "coop.TimeCommandMixin",
