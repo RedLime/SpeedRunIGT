@@ -191,7 +191,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         }
     }
 
-
+    /*
     private Long latestPortalEnter = null;
     private int portalTick = 0;
     @Inject(at = @At("HEAD"), method = "tick")
@@ -212,6 +212,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             this.portalTick = 0;
         }
     }
+    */
 
     @Override
     public void changeLookDirection(double cursorDeltaX, double cursorDeltaY) {
