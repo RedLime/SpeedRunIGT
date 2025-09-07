@@ -2,8 +2,8 @@ package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
+import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.profiler.Profiler;
@@ -14,10 +14,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.gen.chunk.FlatChunkGenerator;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -28,10 +25,6 @@ import java.util.function.Supplier;
 
 @Mixin(ClientWorld.class)
 public abstract class ClientWorldMixin extends World {
-    @Shadow
-    @Final
-    private MinecraftClient client;
-
     protected ClientWorldMixin(MutableWorldProperties mutableWorldProperties, RegistryKey<World> registryKey, RegistryKey<DimensionType> registryKey2, DimensionType dimensionType, Supplier<Profiler> profiler, boolean bl, boolean bl2, long l) {
         super(mutableWorldProperties, registryKey, registryKey2, dimensionType, profiler, bl, bl2, l);
     }
@@ -44,14 +37,13 @@ public abstract class ClientWorldMixin extends World {
     @Unique
     private final int[][] heightmapAccumulator = new int[16 * 3][16 * 3];
 
+    @Unique
+    private final BlockPos.Mutable mutable = new BlockPos.Mutable();
+
     @Inject(method = "updateListeners", at = @At("TAIL"))
     public void onBlockUpdate(BlockPos pos, BlockState oldState, BlockState newState, int flags, CallbackInfo ci) {
-        InGameTimer timer = InGameTimer.getInstance();
-        if (timer.getCategory() != RunCategories.MINE_A_CHUNK) {
-            return;
-        }
-
-        if (this.getDimensionRegistryKey() == DimensionType.THE_END_REGISTRY_KEY) {
+        RunCategory category = InGameTimer.getInstance().getCategory();
+        if (category != RunCategories.MINE_A_CHUNK && category != RunCategories.MINE_A_CHUNK_SF) {
             return;
         }
 
@@ -74,16 +66,19 @@ public abstract class ClientWorldMixin extends World {
         }
 
         boolean hasCeiling = this.getDimension().hasCeiling();
-        int firstNonBedrockLayer = this.getFirstNonBedrockLayer();
+        int firstNonBedrockLayer = category == RunCategories.MINE_A_CHUNK ? 5 : (category == RunCategories.MINE_A_CHUNK_SF ? 1 : -1);
+        assert firstNonBedrockLayer != -1;
         int lastNonBedrockLayer = this.getDimensionHeight() - 6;
 
-        BlockPos.Mutable mutable = new BlockPos.Mutable();
         for (int x = 0; x < 16 * 3; ++x) {
             for (int z = 0; z < 16 * 3; ++z) {
                 boolean columnClear = true;
                 Chunk chunk = this.getChunk(chunkX + (x >> 4) - 1, chunkZ + (z >> 4) - 1, ChunkStatus.FULL, false);
                 assert chunk != null; // already checked at the start
-                if (hasCeiling) {
+                if (!hasCeiling) {
+                    // calculate chunk coordinates
+                    columnClear = chunk.getHeightmap(Heightmap.Type.WORLD_SURFACE).get(x & 15, z & 15) <= firstNonBedrockLayer;
+                } else {
                     // check the column manually, use mutable for less churn
                     // calculate world coordinates
                     mutable.set((chunkX << 4) - 16 + x, 0, (chunkZ << 4) - 16 + z);
@@ -94,42 +89,32 @@ public abstract class ClientWorldMixin extends World {
                             break;
                         }
                     }
-                } else {
-                    // calculate chunk coordinates
-                    columnClear = chunk.getHeightmap(Heightmap.Type.WORLD_SURFACE).get(x & 15, z & 15) <= firstNonBedrockLayer;
                 }
-                if (columnClear) {
-                    if (x == 0 || z == 0) {
-                        // special case for first row and column, no previous work to check
-                        heightmapAccumulator[x][z] = 1;
-                        continue;
-                    }
-                    //  calculate the max value the next square is allowed to be using the bounds of the previous adjacent ones
-                    int currentSquareLevel = Math.min(Math.min(heightmapAccumulator[x - 1][z], heightmapAccumulator[x][z - 1]), heightmapAccumulator[x - 1][z - 1]) + 1;
-                    // if we hit 16 on the square level, we've found a large enough area
-                    if (currentSquareLevel == 16) {
-                        InGameTimer.complete();
-                        return;
-                    }
-                    // otherwise, just assign the value to it's place in the matrix
-                    heightmapAccumulator[x][z] = currentSquareLevel;
-                } else {
+                if (!columnClear) {
                     heightmapAccumulator[x][z] = 0;
+                    continue;
                 }
+                if (x == 0 || z == 0) {
+                    // special case for first row and column, no previous work to check
+                    heightmapAccumulator[x][z] = 1;
+                    continue;
+                }
+                //  calculate the max value the next square is allowed to be using the bounds of the previous adjacent ones
+                int currentSquareLevel = Math.min(Math.min(heightmapAccumulator[x - 1][z], heightmapAccumulator[x][z - 1]), heightmapAccumulator[x - 1][z - 1]) + 1;
+                // if we hit 16 on the square level, we've found a large enough area
+                if (currentSquareLevel == 16) {
+                    InGameTimer.complete();
+                    return;
+                }
+                // otherwise, just assign the value to it's place in the matrix
+                heightmapAccumulator[x][z] = currentSquareLevel;
             }
         }
     }
 
-    @Unique
-    private int getFirstNonBedrockLayer() {
-        if (this.client.isIntegratedServerRunning() && this.client.getServer().getWorld((this.getRegistryKey())).getChunkManager().getChunkGenerator() instanceof FlatChunkGenerator) {
-            return 1;
-        }
-        return 5;
-    }
-
     // for debugging purposes
     @Unique
+    @SuppressWarnings("unused")
     private void printHeightmapAccumulator(int[][] heightmap) {
         for (int[] row : heightmap) {
             for (int height : row) {
@@ -141,6 +126,7 @@ public abstract class ClientWorldMixin extends World {
     }
 
     @Unique
+    @SuppressWarnings("unused")
     private void printHeightmap(int chunkX, int chunkZ) {
         for (int x = 0; x < 16 * 3; ++x) {
             for (int z = 0; z < 16 * 3; ++z) {
