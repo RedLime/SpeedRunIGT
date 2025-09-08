@@ -107,7 +107,9 @@ public class TimerCommand {
     }
 
     private static int startTimer(ServerCommandSource source, RunCategory runCategory, boolean instantStart) {
+        boolean coop = InGameTimer.getInstance().isCoop();
         InGameTimer.start(InGameTimer.getInstance().getWorldName(), RunType.OLD_WORLD);
+        InGameTimer.getInstance().setCoop(coop);
         InGameTimer.getInstance().setCategory(runCategory, true);
         if (instantStart) InGameTimer.getInstance().setPause(false, "instant start");
         source.sendFeedback(new LiteralText("Timer is started" + (instantStart ? " instantly" : "") + " with " + runCategory.getText().getString() + " category"), true);
