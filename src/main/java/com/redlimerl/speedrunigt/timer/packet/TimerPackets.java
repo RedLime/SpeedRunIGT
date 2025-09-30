@@ -31,7 +31,7 @@ public class TimerPackets {
                     (payload, context) -> payload.receiveServer2ClientPacket(context.client()));
         }
         ServerPlayNetworking.registerGlobalReceiver(id,
-                (payload, context) -> payload.receiveClient2ServerPacket(context.server()));
+                (payload, context) -> payload.receiveClient2ServerPacket(context.player().getServer()));
     }
 
 }

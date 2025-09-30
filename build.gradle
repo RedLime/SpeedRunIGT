@@ -1,7 +1,7 @@
 //file:noinspection GroovyUnusedAssignment
 //file:noinspection GroovyAssignabilityCheck
 plugins {
-	id 'fabric-loom' version '1.11-SNAPSHOT'
+	id 'fabric-loom' version '1.10-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -28,7 +28,6 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	include(modImplementation fabricApi.module("fabric-api-base", project.fabric_version))
 	include(modImplementation fabricApi.module("fabric-networking-api-v1", project.fabric_version))
-	include(modImplementation fabricApi.module("fabric-key-binding-api-v1", project.fabric_version))
 }
 
 processResources {

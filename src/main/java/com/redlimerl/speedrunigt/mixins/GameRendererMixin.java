@@ -11,8 +11,8 @@ import com.redlimerl.speedrunigt.timer.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.CreditsScreen;
+import net.minecraft.client.gui.screen.DownloadingTerrainScreen;
 import net.minecraft.client.gui.screen.GameMenuScreen;
-import net.minecraft.client.gui.screen.world.LevelLoadingScreen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.util.math.ColorHelper;
@@ -21,7 +21,6 @@ import net.minecraft.util.math.Vec2f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -29,8 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
     @Shadow @Final
-    private MinecraftClient client;
-    @Unique
+    MinecraftClient client;
     private TimerDrawer.PositionType currentPositionType = TimerDrawer.PositionType.DEFAULT;
     @Inject(method = "render", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/toast/ToastManager;draw(Lnet/minecraft/client/gui/DrawContext;)V", shift = At.Shift.AFTER))
@@ -64,7 +62,7 @@ public class GameRendererMixin {
                 TimerDrawer.PositionType updatePositionType = TimerDrawer.PositionType.DEFAULT;
                 if (enableSplit && this.client.getDebugHud().shouldShowDebugHud())
                     updatePositionType = TimerDrawer.PositionType.WHILE_F3;
-                if (enableSplit && this.client.isPaused() && !(this.client.currentScreen instanceof LevelLoadingScreen) && (this.client.currentScreen instanceof GameMenuScreen && ((GameMenuScreenAccessor) this.client.currentScreen).isShowMenu()))
+                if (enableSplit && this.client.isPaused() && !(this.client.currentScreen instanceof DownloadingTerrainScreen) && (this.client.currentScreen instanceof GameMenuScreen && ((GameMenuScreenAccessor) this.client.currentScreen).isShowMenu()))
                     updatePositionType = TimerDrawer.PositionType.WHILE_PAUSED;
 
                 if (currentPositionType != updatePositionType || needUpdate) {

@@ -15,7 +15,6 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.MutableText;
-import net.minecraft.text.StyleSpriteSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ColorHelper;
@@ -335,14 +334,15 @@ public class TimerDrawer {
 
             FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) client).getFontManager();
             if (getTimerFont() != MinecraftClient.DEFAULT_FONT_ID && fontManager.getFontStorages().containsKey(getTimerFont())) {
-                rtaText.setStyle(rtaText.getStyle().withFont(new StyleSpriteSource.Font(getTimerFont())));
-                igtText.setStyle(igtText.getStyle().withFont(new StyleSpriteSource.Font(getTimerFont())));
-//                if (!fontHeightMap.containsKey(getTimerFont().toString())) {
-//                    BakedGlyph glyph = fontManager.getFontStorages().get(getTimerFont()).getGlyphs(false).get('I');
-//                    glyph.create().textureView().sa,
-//                    fontHeightMap.put(getTimerFont().toString(), glyph.getHeight() / glyph.getOversample());
-//                }
-//                fontHeight = fontHeightMap.get(getTimerFont().toString());
+                rtaText.setStyle(rtaText.getStyle().withFont(getTimerFont()));
+                igtText.setStyle(igtText.getStyle().withFont(getTimerFont()));
+                if (!fontHeightMap.containsKey(getTimerFont().toString())) {
+                    fontManager.getFontStorages().get(getTimerFont()).getGlyph('I', false).bake(glyph -> {
+                        fontHeightMap.put(getTimerFont().toString(), glyph.getHeight() / glyph.getOversample());
+                        return null;
+                    });
+                }
+                fontHeight = fontHeightMap.get(getTimerFont().toString());
             }
 
         }

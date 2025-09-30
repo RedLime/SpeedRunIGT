@@ -13,7 +13,7 @@ import net.minecraft.client.RunArgs;
 import net.minecraft.client.font.Font;
 import net.minecraft.client.font.FontFilterType;
 import net.minecraft.client.font.FontStorage;
-import net.minecraft.client.font.GlyphBaker;
+import net.minecraft.client.gui.screen.DownloadingTerrainScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.world.LevelLoadingScreen;
 import net.minecraft.client.option.GameOptions;
@@ -29,7 +29,6 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -62,7 +61,9 @@ public abstract class MinecraftClientMixin {
     }
 
     @Inject(at = @At("HEAD"), method = "joinWorld")
-    public void onJoin(ClientWorld world, CallbackInfo ci) {
+    public void onJoin(ClientWorld targetWorld, DownloadingTerrainScreen.WorldEntryReason worldEntryReason, CallbackInfo ci) {
+        if (targetWorld == null) return;
+
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() == TimerStatus.NONE) return;
 
@@ -70,27 +71,26 @@ public abstract class MinecraftClientMixin {
         timer.setPause(true, TimerStatus.IDLE, "changed dimension");
 
         // For Timelines
-        if (Objects.equals(world.getRegistryKey().getValue().toString(), DimensionTypes.THE_NETHER_ID.toString())) {
+        if (Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionTypes.THE_NETHER_ID.toString())) {
             timer.tryInsertNewTimeline("enter_nether");
-        } else if (Objects.equals(world.getRegistryKey().getValue().toString(), DimensionTypes.THE_END_ID.toString())) {
+        } else if (Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionTypes.THE_END_ID.toString())) {
             timer.tryInsertNewTimeline("enter_end");
         }
 
         //Enter Nether
-        if (timer.getCategory() == RunCategories.ENTER_NETHER && Objects.equals(world.getRegistryKey().getValue().toString(), DimensionTypes.THE_NETHER_ID.toString())) {
+        if (timer.getCategory() == RunCategories.ENTER_NETHER && Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionTypes.THE_NETHER_ID.toString())) {
             InGameTimer.complete();
             return;
         }
 
         //Enter End
-        if (timer.getCategory() == RunCategories.ENTER_END && Objects.equals(world.getRegistryKey().getValue().toString(), DimensionTypes.THE_END_ID.toString())) {
+        if (timer.getCategory() == RunCategories.ENTER_END && Objects.equals(targetWorld.getRegistryKey().getValue().toString(), DimensionTypes.THE_END_ID.toString())) {
             InGameTimer.complete();
         }
 
         RunCategories.checkAllBossesCompleted();
     }
 
-    @Unique
     private int saveTickCount = 0;
     @Inject(method = "tick", at = @At("RETURN"))
     private void onTickMixin(CallbackInfo ci) {
@@ -118,7 +118,7 @@ public abstract class MinecraftClientMixin {
     /**
      * Add import font system
      */
-    @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;onFontOptionsChanged()V"))
+    @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/debug/DebugRenderer;<init>(Lnet/minecraft/client/MinecraftClient;)V", shift = At.Shift.BEFORE))
     public void onInit(RunArgs args, CallbackInfo ci) {
         this.resourceManager.registerReloader(new SinglePreparationResourceReloader<Map<Identifier, List<Font>>>() {
             @Override
@@ -158,8 +158,7 @@ public abstract class MinecraftClientMixin {
                     }
                     FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) MinecraftClient.getInstance()).getFontManager();
                     for (Map.Entry<Identifier, List<Font>> listEntry : loader.entrySet()) {
-                        GlyphBaker glyphBaker = new GlyphBaker(fontManager.getTextureManager(), listEntry.getKey());
-                        FontStorage fontStorage = new FontStorage(glyphBaker);
+                        FontStorage fontStorage = new FontStorage(fontManager.getTextureManager(), listEntry.getKey());
                         fontStorage.setFonts(listEntry.getValue().stream().map(font -> new Font.FontFilterPair(font, FontFilterType.FilterMap.NO_FILTER)).collect(Collectors.toList()), set);
                         fontManager.getFontStorages().put(listEntry.getKey(), fontStorage);
                     }
@@ -185,13 +184,13 @@ public abstract class MinecraftClientMixin {
     }
 
     // Record save
-    @Inject(method = "stop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;close()V"))
+    @Inject(method = "stop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;close()V", shift = At.Shift.BEFORE))
     public void onStop(CallbackInfo ci) {
         InGameTimer.getInstance().writeRecordFile(false);
     }
 
     // Disconnecting fix
-    @Inject(at = @At("HEAD"), method = "disconnect*")
+    @Inject(at = @At("HEAD"), method = "disconnect")
     public void disconnect(CallbackInfo ci) {
         if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE && InGameTimerUtils.CAN_DISCONNECT) {
             GameInstance.getInstance().callEvents("leave_world");

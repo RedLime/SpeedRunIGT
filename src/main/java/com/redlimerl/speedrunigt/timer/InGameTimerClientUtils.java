@@ -27,7 +27,7 @@ public class InGameTimerClientUtils {
             if (checkRender) {
                 WorldRendererAccessor worldRenderer = (WorldRendererAccessor) client.worldRenderer;
                 int chunks = worldRenderer.invokeCompletedChunkCount();
-                int entities = worldRenderer.srigt$getWorldRenderState().entityRenderStates.size() - (client.options.getPerspective().isFirstPerson() ? 0 : 1);
+                int entities = worldRenderer.getRenderedEntityCount() - (client.options.getPerspective().isFirstPerson() ? 0 : 1);
 
                 return chunks + entities > 0;
             }
@@ -47,7 +47,7 @@ public class InGameTimerClientUtils {
 
     public static boolean isHardcoreWorld() {
         MinecraftClient client = MinecraftClient.getInstance();
-        return client.player != null && client.player.getEntityWorld().getLevelProperties().isHardcore();
+        return client.player != null && client.player.getWorld().getLevelProperties().isHardcore();
     }
 
     public static Long getPlayerTime() {
