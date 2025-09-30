@@ -34,7 +34,7 @@ import java.util.stream.Stream;
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
-    @Shadow public abstract ServerWorld getWorld();
+    @Shadow public abstract ServerWorld getEntityWorld();
 
     @Unique
     private ServerWorld beforeWorld = null;
@@ -47,15 +47,15 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
     @Inject(method = "teleportTo(Lnet/minecraft/world/TeleportTarget;)Lnet/minecraft/server/network/ServerPlayerEntity;", at = @At("HEAD"))
     public void onChangeDimension(TeleportTarget target, CallbackInfoReturnable<Entity> cir) {
-        beforeWorld = this.getWorld();
-        lastPortalPos = this.getPos();
+        beforeWorld = this.getEntityWorld();
+        lastPortalPos = this.getEntityPos();
         InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = !InGameTimer.getInstance().isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY;
     }
 
     @Inject(method = "teleportTo(Lnet/minecraft/world/TeleportTarget;)Lnet/minecraft/server/network/ServerPlayerEntity;", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;onDimensionChanged(Lnet/minecraft/entity/Entity;)V", shift = At.Shift.AFTER))
     public void onChangedDimension(TeleportTarget target, CallbackInfoReturnable<Entity> cir) {
         RegistryKey<World> oldRegistryKey = beforeWorld.getRegistryKey();
-        RegistryKey<World> newRegistryKey = this.getWorld().getRegistryKey();
+        RegistryKey<World> newRegistryKey = this.getEntityWorld().getRegistryKey();
 
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() != TimerStatus.NONE) {

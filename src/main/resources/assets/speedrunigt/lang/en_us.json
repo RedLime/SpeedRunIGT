@@ -1,6 +1,7 @@
 {
   "speedrunigt.title": "SpeedRunIGT",
   "speedrunigt.title.options": "Speedrun Options",
+  "key.category.speedrunigt.title.options": "Speedrun Options",
   "speedrunigt.title.font": "Font...",
   "speedrunigt.title.background": "BG...",
   "speedrunigt.menu.open_github_repo": "Open Github Repository",

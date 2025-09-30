@@ -206,9 +206,9 @@ public class SpeedRunOptionScreen extends Screen {
             }
 
             @Override
-            public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-                buttonWidget.setY(y);
-                buttonWidget.render(context, mouseX, mouseY, tickDelta);
+            public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+                buttonWidget.setY(this.getY());
+                buttonWidget.render(context, mouseX, mouseY, deltaTicks);
             }
         }
     }

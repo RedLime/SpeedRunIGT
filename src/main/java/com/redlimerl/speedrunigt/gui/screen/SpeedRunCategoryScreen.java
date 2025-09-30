@@ -18,6 +18,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.CheckboxWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
+import net.minecraft.client.input.AbstractInput;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
@@ -76,6 +77,18 @@ public class SpeedRunCategoryScreen extends Screen {
             return super.getScrollbarX() + 30;
         }
 
+        public static class EmptyInput implements AbstractInput {
+            @Override
+            public int getKeycode() {
+                return 0;
+            }
+
+            @Override
+            public int modifiers() {
+                return 0;
+            }
+        }
+
         @Environment(EnvType.CLIENT)
         public class CategoryEntry extends ElementListWidget.Entry<CategoryEntry> {
 
@@ -93,14 +106,14 @@ public class SpeedRunCategoryScreen extends Screen {
                            if (!checked) {
                                // disallow disabling the selected checkbox by re-selecting it if it is deselected
                                if (entryList.stream().noneMatch(categoryEntry -> categoryEntry.checkBox.isChecked())) {
-                                   checkbox.onPress();
+                                   checkbox.onPress(new EmptyInput());
                                }
                                return;
                            }
                             for (CategoryEntry entry : entryList) {
                                 // make sure we're not unchecking the one we just checked
                                 if (entry.checkBox.isChecked() && entry != this) {
-                                    entry.checkBox.onPress();
+                                    entry.checkBox.onPress(new EmptyInput());
                                 }
                             }
                             SpeedRunOption.setOption(SpeedRunOptions.TIMER_CATEGORY, category);
@@ -114,13 +127,14 @@ public class SpeedRunCategoryScreen extends Screen {
                 children.add(checkBox);
             }
 
-            public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-                this.urlButton.setX(x);
-                this.urlButton.setY(y);
-                this.urlButton.render(context, mouseX, mouseY, tickDelta);
-                this.checkBox.setX(x + 34);
-                this.checkBox.setY(y);
-                this.checkBox.render(context, mouseX, mouseY, tickDelta);
+            @Override
+            public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+                this.urlButton.setX(this.getX());
+                this.urlButton.setY(this.getY());
+                this.urlButton.render(context, mouseX, mouseY, deltaTicks);
+                this.checkBox.setX(this.getX() + 34);
+                this.checkBox.setY(this.getY());
+                this.checkBox.render(context, mouseX, mouseY, deltaTicks);
             }
 
             @Override

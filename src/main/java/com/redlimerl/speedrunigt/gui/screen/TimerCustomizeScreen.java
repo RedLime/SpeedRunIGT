@@ -12,14 +12,17 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDisplayAlign;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.timer.TimerDrawer.PositionType;
 import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.SliderWidget;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.StyleSpriteSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 import net.minecraft.util.Formatting;
@@ -248,18 +251,18 @@ public class TimerCustomizeScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        boolean isClicked = super.mouseClicked(mouseX, mouseY, button);
-        if (!isClicked && button == 0 && !drawer.isLocked()) {
+    public boolean mouseClicked(Click click, boolean doubled) {
+        boolean isClicked = super.mouseClicked(click, doubled);
+        if (!isClicked && click.button() == 0 && !drawer.isLocked()) {
             if (!this.igtButton.active) {
-                drawer.setIGT_XPos(MathHelper.clamp((float) (mouseX / width), 0, 1));
-                drawer.setIGT_YPos(MathHelper.clamp((float) (mouseY / height), 0, 1));
+                drawer.setIGT_XPos(MathHelper.clamp((float) (click.x() / width), 0, 1));
+                drawer.setIGT_YPos(MathHelper.clamp((float) (click.y() / height), 0, 1));
                 posTypesIGT.put(currentPosType, new Vec2f(drawer.getIGT_XPos(), drawer.getIGT_YPos()));
                 changed = true;
             }
             if (!this.rtaButton.active) {
-                drawer.setRTA_XPos(MathHelper.clamp((float) (mouseX / width), 0, 1));
-                drawer.setRTA_YPos(MathHelper.clamp((float) (mouseY / height), 0, 1));
+                drawer.setRTA_XPos(MathHelper.clamp((float) (click.x() / width), 0, 1));
+                drawer.setRTA_YPos(MathHelper.clamp((float) (click.y() / height), 0, 1));
                 posTypesRTA.put(currentPosType, new Vec2f(drawer.getRTA_XPos(), drawer.getRTA_YPos()));
                 changed = true;
             }
@@ -268,10 +271,10 @@ public class TimerCustomizeScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (modifiers == 2 && keyCode >= 262 && keyCode <= 265 && client != null && !drawer.isLocked()) {
-            int moveX = keyCode == 262 ? 1 : keyCode == 263 ? -1 : 0;
-            int moveY = keyCode == 265 ? -1 : keyCode == 264 ? 1 : 0;
+    public boolean keyPressed(KeyInput input) {
+        if (input.modifiers() == 2 && input.getKeycode() >= 262 && input.getKeycode() <= 265 && client != null && !drawer.isLocked()) {
+            int moveX = input.getKeycode() == 262 ? 1 : input.getKeycode() == 263 ? -1 : 0;
+            int moveY = input.getKeycode() == 265 ? -1 : input.getKeycode() == 264 ? 1 : 0;
             if (!igtButton.active) {
                 drawer.setIGT_XPos(MathHelper.clamp(drawer.getIGT_XPos() + moveX * drawer.getIGTScale() / client.getWindow().getScaledWidth(), 0, 1));
                 drawer.setIGT_YPos(MathHelper.clamp(drawer.getIGT_YPos() + moveY * drawer.getIGTScale() / client.getWindow().getScaledHeight(), 0, 1));
@@ -286,7 +289,7 @@ public class TimerCustomizeScreen extends Screen {
             }
             setFocused(null);
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(input);
     }
 
     @Override
@@ -320,7 +323,7 @@ public class TimerCustomizeScreen extends Screen {
                         MutableText text = Text.literal(fontIdentifier.getPath());
 
                         if (client != null && fontManager.getFontStorages().containsKey(fontIdentifier) && !SpeedRunOption.getOption(SpeedRunOptions.CUSTOM_FONT_SAFE_MODE)) {
-                            text.setStyle(text.getStyle().withFont(fontIdentifier));
+                            text.setStyle(text.getStyle().withFont(new StyleSpriteSource.Font(fontIdentifier)));
                         } else {
                             text.append(Text.literal(" (Unavailable)")).formatted(Formatting.RED);
                         }
