@@ -72,7 +72,7 @@ public abstract class MinecraftClientMixin {
         // For Timelines
         if (Objects.equals(world.getRegistryKey().getValue().toString(), DimensionTypes.THE_NETHER.toString())) {
             timer.tryInsertNewTimeline("enter_nether");
-        } else if (Objects.equals(world.getRegistryKey().getValue().toString(), DimensionTypes.THE_NETHER.toString())) {
+        } else if (Objects.equals(world.getRegistryKey().getValue().toString(), DimensionTypes.THE_END.toString())) {
             timer.tryInsertNewTimeline("enter_end");
         }
 
