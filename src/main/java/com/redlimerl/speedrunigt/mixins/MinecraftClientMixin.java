@@ -70,20 +70,20 @@ public abstract class MinecraftClientMixin {
         timer.setPause(true, TimerStatus.IDLE, "changed dimension");
 
         // For Timelines
-        if (Objects.equals(world.getRegistryKey().getValue().toString(), DimensionTypes.THE_NETHER_ID.toString())) {
+        if (Objects.equals(world.getRegistryKey().getValue().toString(), DimensionTypes.THE_NETHER.toString())) {
             timer.tryInsertNewTimeline("enter_nether");
-        } else if (Objects.equals(world.getRegistryKey().getValue().toString(), DimensionTypes.THE_END_ID.toString())) {
+        } else if (Objects.equals(world.getRegistryKey().getValue().toString(), DimensionTypes.THE_NETHER.toString())) {
             timer.tryInsertNewTimeline("enter_end");
         }
 
         //Enter Nether
-        if (timer.getCategory() == RunCategories.ENTER_NETHER && Objects.equals(world.getRegistryKey().getValue().toString(), DimensionTypes.THE_NETHER_ID.toString())) {
+        if (timer.getCategory() == RunCategories.ENTER_NETHER && Objects.equals(world.getRegistryKey().getValue().toString(), DimensionTypes.THE_NETHER.toString())) {
             InGameTimer.complete();
             return;
         }
 
         //Enter End
-        if (timer.getCategory() == RunCategories.ENTER_END && Objects.equals(world.getRegistryKey().getValue().toString(), DimensionTypes.THE_END_ID.toString())) {
+        if (timer.getCategory() == RunCategories.ENTER_END && Objects.equals(world.getRegistryKey().getValue().toString(), DimensionTypes.THE_END.toString())) {
             InGameTimer.complete();
         }
 

@@ -2,7 +2,6 @@ package com.redlimerl.speedrunigt.mixins;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
@@ -13,26 +12,24 @@ import com.redlimerl.speedrunigt.timer.category.condition.StatCategoryCondition;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.Registries;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.ServerStatHandler;
 import net.minecraft.stat.Stat;
 import net.minecraft.stat.StatHandler;
 import net.minecraft.stat.StatType;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Objects;
 
 @Mixin(ServerStatHandler.class)
 public abstract class ServerStatHandlerMixin extends StatHandler {
 
-    @Shadow @Final private MinecraftServer server;
-
+    @Unique
     private int updateTick = 0;
 
     @Inject(method = "setStat", at = @At("TAIL"))
@@ -53,8 +50,10 @@ public abstract class ServerStatHandlerMixin extends StatHandler {
 
         // All Blocks
         if (timer.getCategory() == RunCategories.ALL_BLOCKS) {
-            if (RunCategories.ALL_BLOCKS.isCompleted(this.server))
-                InGameTimer.complete();
+            if (player instanceof ServerPlayerEntity) {
+                if (RunCategories.ALL_BLOCKS.isCompleted(player.getEntityWorld().getServer()))
+                    InGameTimer.complete();
+            }
         }
 
         if (this.updateTick++ > 20) {
@@ -63,17 +62,15 @@ public abstract class ServerStatHandlerMixin extends StatHandler {
         }
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked", "ConstantConditions"})
+    @Unique
     private JsonObject getStatJson() {
-        HashMap<StatType, JsonObject> map = Maps.newHashMap();
-        for (Object2IntMap.Entry entry : this.statMap.object2IntEntrySet()) {
-            Stat<?> stat = (Stat)entry.getKey();
+        HashMap<StatType<?>, JsonObject> map = Maps.newHashMap();
+        for (Object2IntMap.Entry<?> entry : this.statMap.object2IntEntrySet()) {
+            Stat<?> stat = (Stat<?>)entry.getKey();
             map.computeIfAbsent(stat.getType(), statType -> new JsonObject()).addProperty(stat.getValue().toString(), entry.getIntValue());
         }
         JsonObject jsonObject = new JsonObject();
-        for (Map.Entry entry : map.entrySet()) {
-            jsonObject.add(Registries.STAT_TYPE.getId((StatType<?>)entry.getKey()).toString(), (JsonElement)entry.getValue());
-        }
+        map.forEach((key, value) -> jsonObject.add(Objects.requireNonNull(Registries.STAT_TYPE.getId(key)).toString(), value));
         return jsonObject;
     }
 }

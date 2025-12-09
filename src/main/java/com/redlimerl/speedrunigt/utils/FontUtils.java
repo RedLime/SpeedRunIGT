@@ -32,17 +32,6 @@ public class FontUtils {
         try {
             fileInputStream = new FileInputStream(file);
             byteBuffer = TextureUtil.readResource(fileInputStream);
-            byteBuffer.flip();
-            try (MemoryStack memoryStack = MemoryStack.stackPush();){
-                PointerBuffer pointerBuffer = memoryStack.mallocPointer(1);
-                FreeTypeUtil.checkError(FreeType.FT_New_Memory_Face(FreeTypeUtil.initialize(), byteBuffer, 0L, pointerBuffer), "Initializing font face");
-                fT_Face = FT_Face.create(pointerBuffer.get());
-            }
-            String string = FreeType.FT_Get_Font_Format(fT_Face);
-            if (!"TrueType".equals(string)) {
-                throw new IOException("Font is not in TTF format, was " + string);
-            }
-            FreeTypeUtil.checkError(FreeType.FT_Select_Charmap(fT_Face, FreeType.FT_ENCODING_UNICODE), "Find unicode charmap");
 
             Identifier fontIdentifier = Identifier.of(SpeedRunIGT.MOD_ID, file.getName().toLowerCase(Locale.ROOT).replace(".ttf", "").replaceAll(" ", "_").replaceAll("[^a-z0-9/._-]", ""));
             ArrayList<Font> fontArrayList = new ArrayList<>();
@@ -53,7 +42,23 @@ public class FontUtils {
             } else {
                 fontConfigure = FontConfigure.create();
             }
-            fontArrayList.add(new TrueTypeFont(byteBuffer, fT_Face, fontConfigure.size, fontConfigure.oversample, fontConfigure.shift[0], fontConfigure.shift[1], fontConfigure.skip));
+
+            synchronized (FreeTypeUtil.LOCK) {
+                try (MemoryStack memoryStack = MemoryStack.stackPush()) {
+                    PointerBuffer pointerBuffer = memoryStack.mallocPointer(1);
+                    FreeTypeUtil.checkFatalError(FreeType.FT_New_Memory_Face(FreeTypeUtil.initialize(), byteBuffer, 0L, pointerBuffer), "Initializing font face");
+                    fT_Face = FT_Face.create(pointerBuffer.get());
+                }
+
+                String string = FreeType.FT_Get_Font_Format(fT_Face);
+                if (!"TrueType".equals(string)) {
+                    throw new IOException("Font is not in TTF format, was " + string);
+                }
+
+                FreeTypeUtil.checkFatalError(FreeType.FT_Select_Charmap(fT_Face, FreeType.FT_ENCODING_UNICODE), "Find unicode charmap");
+                fontArrayList.add(new TrueTypeFont(byteBuffer, fT_Face, fontConfigure.size, fontConfigure.oversample, fontConfigure.shift[0], fontConfigure.shift[1], fontConfigure.skip));
+            }
+
             SpeedRunIGT.FONT_MAPS.put(fontIdentifier, new FontIdentifier(file, fontIdentifier, fontConfigure));
 
             fontArrayList.add(new BlankFont());
