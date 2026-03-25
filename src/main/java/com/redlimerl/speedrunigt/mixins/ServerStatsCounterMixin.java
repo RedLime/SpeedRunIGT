@@ -10,13 +10,13 @@ import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.category.condition.StatCategoryCondition;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.Registries;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.stat.ServerStatHandler;
-import net.minecraft.stat.Stat;
-import net.minecraft.stat.StatHandler;
-import net.minecraft.stat.StatType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.ServerStatsCounter;
+import net.minecraft.stats.Stat;
+import net.minecraft.stats.StatType;
+import net.minecraft.stats.StatsCounter;
+import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,14 +26,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.HashMap;
 import java.util.Objects;
 
-@Mixin(ServerStatHandler.class)
-public abstract class ServerStatHandlerMixin extends StatHandler {
+@Mixin(ServerStatsCounter.class)
+public abstract class ServerStatsCounterMixin extends StatsCounter {
 
     @Unique
     private int updateTick = 0;
 
-    @Inject(method = "setStat", at = @At("TAIL"))
-    public void onUpdate(PlayerEntity player, Stat<?> stat, int value, CallbackInfo ci) {
+    @Inject(method = "setValue", at = @At("TAIL"))
+    public void onUpdate(Player player, Stat<?> stat, int value, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
         // Custom Json category
         if (timer.getCategory().getConditionJson() != null) {
@@ -50,8 +50,8 @@ public abstract class ServerStatHandlerMixin extends StatHandler {
 
         // All Blocks
         if (timer.getCategory() == RunCategories.ALL_BLOCKS) {
-            if (player instanceof ServerPlayerEntity) {
-                if (RunCategories.ALL_BLOCKS.isCompleted(player.getEntityWorld().getServer()))
+            if (player instanceof ServerPlayer) {
+                if (RunCategories.ALL_BLOCKS.isCompleted(player.level().getServer()))
                     InGameTimer.complete();
             }
         }
@@ -65,12 +65,12 @@ public abstract class ServerStatHandlerMixin extends StatHandler {
     @Unique
     private JsonObject getStatJson() {
         HashMap<StatType<?>, JsonObject> map = Maps.newHashMap();
-        for (Object2IntMap.Entry<?> entry : this.statMap.object2IntEntrySet()) {
+        for (Object2IntMap.Entry<?> entry : this.stats.object2IntEntrySet()) {
             Stat<?> stat = (Stat<?>)entry.getKey();
             map.computeIfAbsent(stat.getType(), statType -> new JsonObject()).addProperty(stat.getValue().toString(), entry.getIntValue());
         }
         JsonObject jsonObject = new JsonObject();
-        map.forEach((key, value) -> jsonObject.add(Objects.requireNonNull(Registries.STAT_TYPE.getId(key)).toString(), value));
+        map.forEach((key, value) -> jsonObject.add(Objects.requireNonNull(BuiltInRegistries.STAT_TYPE.getKey(key)).toString(), value));
         return jsonObject;
     }
 }

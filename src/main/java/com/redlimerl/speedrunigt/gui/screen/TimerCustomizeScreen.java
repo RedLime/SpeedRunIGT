@@ -3,7 +3,7 @@ package com.redlimerl.speedrunigt.gui.screen;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.SpeedRunIGTClient;
 import com.redlimerl.speedrunigt.mixins.access.FontManagerAccessor;
-import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
+import com.redlimerl.speedrunigt.mixins.access.MinecraftAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecimals;
@@ -12,25 +12,25 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDisplayAlign;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.timer.TimerDrawer.PositionType;
 import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.SliderWidget;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.StyleSpriteSource;
-import net.minecraft.text.Text;
-import net.minecraft.util.Colors;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractSliderButton;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FontDescription;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
+import net.minecraft.util.CommonColors;
+import net.minecraft.util.Mth;
 import net.minecraft.util.Util;
-import net.minecraft.util.math.ColorHelper;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec2f;
+import net.minecraft.world.phys.Vec2;
 
 import java.util.*;
 
@@ -40,35 +40,35 @@ public class TimerCustomizeScreen extends Screen {
     private final Screen parent;
 
     private PositionType currentPosType = PositionType.DEFAULT;
-    private final HashMap<PositionType, Vec2f> posTypesRTA = new HashMap<>();
-    private final HashMap<PositionType, Vec2f> posTypesIGT = new HashMap<>();
+    private final HashMap<PositionType, Vec2> posTypesRTA = new HashMap<>();
+    private final HashMap<PositionType, Vec2> posTypesIGT = new HashMap<>();
 
     private boolean changed = false;
     private boolean hide = false;
-    private final ArrayList<ClickableWidget> tabButtons = new ArrayList<>();
-    private final ArrayList<ClickableWidget> normalOptions = new ArrayList<>();
-    private final ArrayList<ClickableWidget> igtOptions = new ArrayList<>();
-    private final ArrayList<ClickableWidget> rtaOptions = new ArrayList<>();
-    private final ArrayList<ClickableWidget> posOptions = new ArrayList<>();
-    private final ArrayList<ClickableWidget> fontOptions = new ArrayList<>();
-    private final ArrayList<ClickableWidget> backgroundOptions = new ArrayList<>();
-    private ButtonWidget normalButton;
-    private ButtonWidget igtButton;
-    private ButtonWidget rtaButton;
-    private ButtonWidget posButton;
-    private ButtonWidget fontButton;
-    private ButtonWidget backgroundButton;
-    private ButtonWidget saveButton;
-    private ButtonWidget fontConfigButton;
+    private final ArrayList<AbstractWidget> tabButtons = new ArrayList<>();
+    private final ArrayList<AbstractWidget> normalOptions = new ArrayList<>();
+    private final ArrayList<AbstractWidget> igtOptions = new ArrayList<>();
+    private final ArrayList<AbstractWidget> rtaOptions = new ArrayList<>();
+    private final ArrayList<AbstractWidget> posOptions = new ArrayList<>();
+    private final ArrayList<AbstractWidget> fontOptions = new ArrayList<>();
+    private final ArrayList<AbstractWidget> backgroundOptions = new ArrayList<>();
+    private Button normalButton;
+    private Button igtButton;
+    private Button rtaButton;
+    private Button posButton;
+    private Button fontButton;
+    private Button backgroundButton;
+    private Button saveButton;
+    private Button fontConfigButton;
 
     private int fontPage = 0;
     private final ArrayList<Identifier> availableFonts = new ArrayList<>();
-    private final ArrayList<ButtonWidget> fontSelectButtons = new ArrayList<>();
+    private final ArrayList<Button> fontSelectButtons = new ArrayList<>();
 
     private boolean splitPosition = SpeedRunOption.getOption(SpeedRunOptions.ENABLE_TIMER_SPLIT_POS);
 
     public TimerCustomizeScreen(Screen parent) {
-        super(Text.translatable("speedrunigt.option.timer_position"));
+        super(Component.translatable("speedrunigt.option.timer_position"));
         this.parent = parent;
     }
 
@@ -83,22 +83,22 @@ public class TimerCustomizeScreen extends Screen {
         this.backgroundButton.active = tab != 4;
 
         if (hide) return;
-        for (ClickableWidget normalOption : normalOptions) {
+        for (AbstractWidget normalOption : normalOptions) {
             normalOption.visible = tab == 0;
         }
-        for (ClickableWidget igtOption : igtOptions) {
+        for (AbstractWidget igtOption : igtOptions) {
             igtOption.visible = tab == 1;
         }
-        for (ClickableWidget rtaOption : rtaOptions) {
+        for (AbstractWidget rtaOption : rtaOptions) {
             rtaOption.visible = tab == 2;
         }
-        for (ClickableWidget fontOption : fontOptions) {
+        for (AbstractWidget fontOption : fontOptions) {
             fontOption.visible = tab == 3;
         }
-        for (ClickableWidget backgroundOption : backgroundOptions) {
+        for (AbstractWidget backgroundOption : backgroundOptions) {
             backgroundOption.visible = tab == 4;
         }
-        for (ClickableWidget posOption : posOptions) {
+        for (AbstractWidget posOption : posOptions) {
             posOption.visible = tab == 5;
         }
 
@@ -116,13 +116,13 @@ public class TimerCustomizeScreen extends Screen {
         fontSelectButtons.clear();
         backgroundOptions.clear();
 
-        if (client != null) {
-            FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) client).getFontManager();
-            if (!fontManager.getFontStorages().containsKey(drawer.getTimerFont())) {
+        if (minecraft != null) {
+            FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftAccessor) minecraft).getFontManager();
+            if (!fontManager.getFontSets().containsKey(drawer.getTimerFont())) {
                 availableFonts.add(drawer.getTimerFont());
             }
 
-            availableFonts.addAll(fontManager.getFontStorages().keySet());
+            availableFonts.addAll(fontManager.getFontSets().keySet());
         }
 
         initNormal();
@@ -132,56 +132,56 @@ public class TimerCustomizeScreen extends Screen {
         initFontButtons();
         initBackgroundButtons();
 
-        this.normalButton = addDrawableChild(ButtonWidgetHelper.create(width / 2 - 179, height / 2 - 48, 58, 20, Text.translatable("options.title").append("..."), (ButtonWidget button) -> openTab(0)));
+        this.normalButton = addRenderableWidget(ButtonWidgetHelper.create(width / 2 - 179, height / 2 - 48, 58, 20, Component.translatable("options.title").append("..."), (Button button) -> openTab(0)));
         this.tabButtons.add(this.normalButton);
 
-        this.igtButton = addDrawableChild(ButtonWidgetHelper.create(width / 2 - 119, height / 2 - 48, 58, 20, Text.literal("IGT..."), (ButtonWidget button) -> openTab(1)));
+        this.igtButton = addRenderableWidget(ButtonWidgetHelper.create(width / 2 - 119, height / 2 - 48, 58, 20, Component.literal("IGT..."), (Button button) -> openTab(1)));
         this.tabButtons.add(this.igtButton);
 
-        this.rtaButton = addDrawableChild(ButtonWidgetHelper.create(width / 2 - 59, height / 2 - 48, 58, 20, Text.literal("RTA..."), (ButtonWidget button) -> openTab(2)));
+        this.rtaButton = addRenderableWidget(ButtonWidgetHelper.create(width / 2 - 59, height / 2 - 48, 58, 20, Component.literal("RTA..."), (Button button) -> openTab(2)));
         this.tabButtons.add(this.rtaButton);
 
-        this.posButton = addDrawableChild(ButtonWidgetHelper.create(width / 2 + 1, height / 2 - 48, 58, 20, Text.literal("Pos..."), (ButtonWidget button) -> openTab(5)));
+        this.posButton = addRenderableWidget(ButtonWidgetHelper.create(width / 2 + 1, height / 2 - 48, 58, 20, Component.literal("Pos..."), (Button button) -> openTab(5)));
         this.tabButtons.add(this.posButton);
 
-        this.fontButton = addDrawableChild(ButtonWidgetHelper.create(width / 2 + 61, height / 2 - 48, 58, 20, Text.translatable("speedrunigt.title.font"), (ButtonWidget button) -> {
+        this.fontButton = addRenderableWidget(ButtonWidgetHelper.create(width / 2 + 61, height / 2 - 48, 58, 20, Component.translatable("speedrunigt.title.font"), (Button button) -> {
             openTab(3);
             openFontPage();
         }));
         this.tabButtons.add(this.fontButton);
 
-        this.backgroundButton = addDrawableChild(ButtonWidgetHelper.create(width / 2 + 121, height / 2 - 48, 58, 20, Text.translatable("speedrunigt.title.background"), (ButtonWidget button) -> openTab(4)));
+        this.backgroundButton = addRenderableWidget(ButtonWidgetHelper.create(width / 2 + 121, height / 2 - 48, 58, 20, Component.translatable("speedrunigt.title.background"), (Button button) -> openTab(4)));
         this.tabButtons.add(this.backgroundButton);
 
 
-        addDrawableChild(ButtonWidgetHelper.create(width / 2 - 89, height / 2 + 62, 58, 20, Text.translatable("speedrunigt.option.hide"), (ButtonWidget button) -> {
+        addRenderableWidget(ButtonWidgetHelper.create(width / 2 - 89, height / 2 + 62, 58, 20, Component.translatable("speedrunigt.option.hide"), (Button button) -> {
             hide = !hide;
-            for (ClickableWidget normalOption : normalOptions) {
+            for (AbstractWidget normalOption : normalOptions) {
                 normalOption.visible = !hide && currentTab == 0;
             }
-            for (ClickableWidget igtOption : igtOptions) {
+            for (AbstractWidget igtOption : igtOptions) {
                 igtOption.visible = !hide && currentTab == 1;
             }
-            for (ClickableWidget rtaOption : rtaOptions) {
+            for (AbstractWidget rtaOption : rtaOptions) {
                 rtaOption.visible = !hide && currentTab == 2;
             }
-            for (ClickableWidget posOption : posOptions) {
+            for (AbstractWidget posOption : posOptions) {
                 posOption.visible = !hide && currentTab == 5;
             }
-            for (ClickableWidget fontOption : fontOptions) {
+            for (AbstractWidget fontOption : fontOptions) {
                 fontOption.visible = !hide && currentTab == 3;
             }
-            for (ClickableWidget backgroundOption : backgroundOptions) {
+            for (AbstractWidget backgroundOption : backgroundOptions) {
                 backgroundOption.visible = !hide && currentTab == 4;
             }
-            for (ClickableWidget tabButton : tabButtons) {
+            for (AbstractWidget tabButton : tabButtons) {
                 tabButton.visible = !hide;
             }
             openTab(currentTab);
-            button.setMessage(Text.translatable("speedrunigt.option." + (!hide ? "hide" : "show")));
+            button.setMessage(Component.translatable("speedrunigt.option." + (!hide ? "hide" : "show")));
         }));
 
-        this.saveButton = addDrawableChild(ButtonWidgetHelper.create(width / 2 - 29, height / 2 + 62, 58, 20, Text.translatable("selectWorld.edit.save"), (ButtonWidget button) -> {
+        this.saveButton = addRenderableWidget(ButtonWidgetHelper.create(width / 2 - 29, height / 2 + 62, 58, 20, Component.translatable("selectWorld.edit.save"), (Button button) -> {
             SpeedRunOption.setOption(SpeedRunOptions.TIMER_IGT_SCALE, drawer.getIGTScale());
             SpeedRunIGTClient.TIMER_DRAWER.setIGTScale(drawer.getIGTScale());
             SpeedRunOption.setOption(SpeedRunOptions.TIMER_IGT_COLOR, drawer.getIGTColor());
@@ -217,7 +217,7 @@ public class TimerCustomizeScreen extends Screen {
             SpeedRunOption.setOption(SpeedRunOptions.IGT_BACKGROUND_PADDING, drawer.getIGTPadding());
             SpeedRunIGTClient.TIMER_DRAWER.setIGTPadding(drawer.getIGTPadding());
 
-            for (Map.Entry<PositionType, Vec2f> igtPosEntry : posTypesIGT.entrySet()) {
+            for (Map.Entry<PositionType, Vec2> igtPosEntry : posTypesIGT.entrySet()) {
                 if (igtPosEntry.getKey() == PositionType.DEFAULT) {
                     SpeedRunOption.setOption(SpeedRunOptions.TIMER_IGT_POSITION_X, igtPosEntry.getValue().x);
                     SpeedRunOption.setOption(SpeedRunOptions.TIMER_IGT_POSITION_Y, igtPosEntry.getValue().y);
@@ -226,7 +226,7 @@ public class TimerCustomizeScreen extends Screen {
                 }
             }
 
-            for (Map.Entry<PositionType, Vec2f> rtaPosEntry : posTypesRTA.entrySet()) {
+            for (Map.Entry<PositionType, Vec2> rtaPosEntry : posTypesRTA.entrySet()) {
                 if (rtaPosEntry.getKey() == PositionType.DEFAULT) {
                     SpeedRunOption.setOption(SpeedRunOptions.TIMER_RTA_POSITION_X, rtaPosEntry.getValue().x);
                     SpeedRunOption.setOption(SpeedRunOptions.TIMER_RTA_POSITION_Y, rtaPosEntry.getValue().y);
@@ -241,8 +241,8 @@ public class TimerCustomizeScreen extends Screen {
             changed = false;
         }));
 
-        addDrawableChild(ButtonWidgetHelper.create(width / 2 + 31, height / 2 + 62, 58, 20, ScreenTexts.CANCEL, (ButtonWidget button) -> {
-            if (client != null) client.setScreen(parent);
+        addRenderableWidget(ButtonWidgetHelper.create(width / 2 + 31, height / 2 + 62, 58, 20, CommonComponents.GUI_CANCEL, (Button button) -> {
+            if (minecraft != null) minecraft.setScreen(parent);
         }));
 
         fontConfigButton.visible = false;
@@ -251,19 +251,19 @@ public class TimerCustomizeScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         boolean isClicked = super.mouseClicked(click, doubled);
         if (!isClicked && click.button() == 0 && !drawer.isLocked()) {
             if (!this.igtButton.active) {
-                drawer.setIGT_XPos(MathHelper.clamp((float) (click.x() / width), 0, 1));
-                drawer.setIGT_YPos(MathHelper.clamp((float) (click.y() / height), 0, 1));
-                posTypesIGT.put(currentPosType, new Vec2f(drawer.getIGT_XPos(), drawer.getIGT_YPos()));
+                drawer.setIGT_XPos(Mth.clamp((float) (click.x() / width), 0, 1));
+                drawer.setIGT_YPos(Mth.clamp((float) (click.y() / height), 0, 1));
+                posTypesIGT.put(currentPosType, new Vec2(drawer.getIGT_XPos(), drawer.getIGT_YPos()));
                 changed = true;
             }
             if (!this.rtaButton.active) {
-                drawer.setRTA_XPos(MathHelper.clamp((float) (click.x() / width), 0, 1));
-                drawer.setRTA_YPos(MathHelper.clamp((float) (click.y() / height), 0, 1));
-                posTypesRTA.put(currentPosType, new Vec2f(drawer.getRTA_XPos(), drawer.getRTA_YPos()));
+                drawer.setRTA_XPos(Mth.clamp((float) (click.x() / width), 0, 1));
+                drawer.setRTA_YPos(Mth.clamp((float) (click.y() / height), 0, 1));
+                posTypesRTA.put(currentPosType, new Vec2(drawer.getRTA_XPos(), drawer.getRTA_YPos()));
                 changed = true;
             }
         }
@@ -271,20 +271,20 @@ public class TimerCustomizeScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(KeyInput input) {
-        if (input.modifiers() == 2 && input.getKeycode() >= 262 && input.getKeycode() <= 265 && client != null && !drawer.isLocked()) {
-            int moveX = input.getKeycode() == 262 ? 1 : input.getKeycode() == 263 ? -1 : 0;
-            int moveY = input.getKeycode() == 265 ? -1 : input.getKeycode() == 264 ? 1 : 0;
+    public boolean keyPressed(KeyEvent input) {
+        if (input.modifiers() == 2 && input.input() >= 262 && input.input() <= 265 && minecraft != null && !drawer.isLocked()) {
+            int moveX = input.input() == 262 ? 1 : input.input() == 263 ? -1 : 0;
+            int moveY = input.input() == 265 ? -1 : input.input() == 264 ? 1 : 0;
             if (!igtButton.active) {
-                drawer.setIGT_XPos(MathHelper.clamp(drawer.getIGT_XPos() + moveX * drawer.getIGTScale() / client.getWindow().getScaledWidth(), 0, 1));
-                drawer.setIGT_YPos(MathHelper.clamp(drawer.getIGT_YPos() + moveY * drawer.getIGTScale() / client.getWindow().getScaledHeight(), 0, 1));
-                posTypesIGT.put(currentPosType, new Vec2f(drawer.getIGT_XPos(), drawer.getIGT_YPos()));
+                drawer.setIGT_XPos(Mth.clamp(drawer.getIGT_XPos() + moveX * drawer.getIGTScale() / minecraft.getWindow().getGuiScaledWidth(), 0, 1));
+                drawer.setIGT_YPos(Mth.clamp(drawer.getIGT_YPos() + moveY * drawer.getIGTScale() / minecraft.getWindow().getGuiScaledHeight(), 0, 1));
+                posTypesIGT.put(currentPosType, new Vec2(drawer.getIGT_XPos(), drawer.getIGT_YPos()));
                 changed = true;
             }
             if (!rtaButton.active) {
-                drawer.setRTA_XPos(MathHelper.clamp(drawer.getRTA_XPos() + moveX * drawer.getRTAScale() / client.getWindow().getScaledWidth(), 0, 1));
-                drawer.setRTA_YPos(MathHelper.clamp(drawer.getRTA_YPos() + moveY * drawer.getRTAScale() / client.getWindow().getScaledHeight(), 0, 1));
-                posTypesRTA.put(currentPosType, new Vec2f(drawer.getRTA_XPos(), drawer.getRTA_YPos()));
+                drawer.setRTA_XPos(Mth.clamp(drawer.getRTA_XPos() + moveX * drawer.getRTAScale() / minecraft.getWindow().getGuiScaledWidth(), 0, 1));
+                drawer.setRTA_YPos(Mth.clamp(drawer.getRTA_YPos() + moveY * drawer.getRTAScale() / minecraft.getWindow().getGuiScaledHeight(), 0, 1));
+                posTypesRTA.put(currentPosType, new Vec2(drawer.getRTA_XPos(), drawer.getRTA_YPos()));
                 changed = true;
             }
             setFocused(null);
@@ -293,46 +293,46 @@ public class TimerCustomizeScreen extends Screen {
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
         saveButton.active = changed;
 
         drawer.draw(context);
 
-        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 15, Colors.WHITE);
+        context.drawCenteredString(this.font, this.title, this.width / 2, 15, CommonColors.WHITE);
 
         if (!hide) {
             if (!igtButton.active || !rtaButton.active) {
                 if (drawer.isLocked()) {
-                    context.drawCenteredTextWithShadow(this.textRenderer,
-                            Text.translatable("speedrunigt.option.timer_position.description.lock"), this.width / 2, this.height / 2 - 80, Colors.WHITE);
+                    context.drawCenteredString(this.font,
+                            Component.translatable("speedrunigt.option.timer_position.description.lock"), this.width / 2, this.height / 2 - 80, CommonColors.WHITE);
                 } else {
-                    context.drawCenteredTextWithShadow(this.textRenderer,
-                            Text.translatable("speedrunigt.option.timer_position.description"), this.width / 2, this.height / 2 - 80, Colors.WHITE);
-                    context.drawCenteredTextWithShadow(this.textRenderer,
-                            Text.translatable("speedrunigt.option.timer_position.description.move"), this.width / 2, this.height / 2 - 69, Colors.WHITE);
+                    context.drawCenteredString(this.font,
+                            Component.translatable("speedrunigt.option.timer_position.description"), this.width / 2, this.height / 2 - 80, CommonColors.WHITE);
+                    context.drawCenteredString(this.font,
+                            Component.translatable("speedrunigt.option.timer_position.description.move"), this.width / 2, this.height / 2 - 69, CommonColors.WHITE);
                 }
             }
 
-            if (!fontButton.active && client != null) {
+            if (!fontButton.active && minecraft != null) {
                 int c = fontPage * 3;
-                FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) client).getFontManager();
+                FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftAccessor) minecraft).getFontManager();
                 for (int i = 0; i < fontSelectButtons.size(); i++) {
                     if (c + i < availableFonts.size()) {
                         Identifier fontIdentifier = availableFonts.get(c + i);
-                        MutableText text = Text.literal(fontIdentifier.getPath());
+                        MutableComponent text = Component.literal(fontIdentifier.getPath());
 
-                        if (client != null && fontManager.getFontStorages().containsKey(fontIdentifier) && !SpeedRunOption.getOption(SpeedRunOptions.CUSTOM_FONT_SAFE_MODE)) {
-                            text.setStyle(text.getStyle().withFont(new StyleSpriteSource.Font(fontIdentifier)));
+                        if (minecraft != null && fontManager.getFontSets().containsKey(fontIdentifier) && !SpeedRunOption.getOption(SpeedRunOptions.CUSTOM_FONT_SAFE_MODE)) {
+                            text.setStyle(text.getStyle().withFont(new FontDescription.Resource(fontIdentifier)));
                         } else {
-                            text.append(Text.literal(" (Unavailable)")).formatted(Formatting.RED);
+                            text.append(Component.literal(" (Unavailable)")).withStyle(ChatFormatting.RED);
                         }
 
                         if (fontIdentifier.toString().equals(drawer.getTimerFont().toString())) {
-                            text.append(" [Selected]").formatted(Formatting.ITALIC);
+                            text.append(" [Selected]").withStyle(ChatFormatting.ITALIC);
                         }
-                        context.drawCenteredTextWithShadow(this.textRenderer, text, this.width / 2 - 30,
-                                this.height / 2 - 11 + (i * 22), Colors.WHITE);
+                        context.drawCenteredString(this.font, text, this.width / 2 - 30,
+                                this.height / 2 - 11 + (i * 22), CommonColors.WHITE);
                     }
                 }
             }
@@ -340,26 +340,26 @@ public class TimerCustomizeScreen extends Screen {
     }
 
     @Override
-    public void close() {
-        assert client != null;
-        client.setScreen(parent);
+    public void onClose() {
+        assert minecraft != null;
+        minecraft.setScreen(parent);
     }
 
 
     private void refreshPosition() {
-        Vec2f igtPos, rtaPos;
+        Vec2 igtPos, rtaPos;
         if (posTypesIGT.containsKey(currentPosType)) {
             igtPos = posTypesIGT.get(currentPosType);
         } else {
             igtPos = currentPosType == PositionType.DEFAULT
-                    ? new Vec2f(SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_POSITION_X), SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_POSITION_Y))
+                    ? new Vec2(SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_POSITION_X), SpeedRunOption.getOption(SpeedRunOptions.TIMER_IGT_POSITION_Y))
                     : SpeedRunOption.getOption(currentPosType == PositionType.WHILE_F3 ? SpeedRunOptions.TIMER_IGT_POSITION_FOR_F3 : SpeedRunOptions.TIMER_IGT_POSITION_FOR_PAUSE);
         }
         if (posTypesRTA.containsKey(currentPosType)) {
             rtaPos = posTypesRTA.get(currentPosType);
         } else {
             rtaPos = currentPosType == PositionType.DEFAULT
-                    ? new Vec2f(SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_POSITION_X), SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_POSITION_Y))
+                    ? new Vec2(SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_POSITION_X), SpeedRunOption.getOption(SpeedRunOptions.TIMER_RTA_POSITION_Y))
                     : SpeedRunOption.getOption(currentPosType == PositionType.WHILE_F3 ? SpeedRunOptions.TIMER_RTA_POSITION_FOR_F3 : SpeedRunOptions.TIMER_RTA_POSITION_FOR_PAUSE);
         }
         drawer.setIGT_XPos(igtPos.x);
@@ -371,48 +371,48 @@ public class TimerCustomizeScreen extends Screen {
 
     public void initNormal() {
         normalOptions.add(
-                addDrawableChild(ButtonWidgetHelper.create(width / 2 - 80, height / 2 - 16, 160, 20, Text.translatable("speedrunigt.option.timer_position.show_time_only").append(" : ").append(drawer.isSimplyTimer() ? ScreenTexts.ON : ScreenTexts.OFF), (ButtonWidget button) -> {
+                addRenderableWidget(ButtonWidgetHelper.create(width / 2 - 80, height / 2 - 16, 160, 20, Component.translatable("speedrunigt.option.timer_position.show_time_only").append(" : ").append(drawer.isSimplyTimer() ? CommonComponents.OPTION_ON : CommonComponents.OPTION_OFF), (Button button) -> {
                     drawer.setSimplyTimer(!drawer.isSimplyTimer());
                     changed = true;
-                    button.setMessage(Text.translatable("speedrunigt.option.timer_position.show_time_only").append(" : ").append(drawer.isSimplyTimer() ? ScreenTexts.ON : ScreenTexts.OFF));
+                    button.setMessage(Component.translatable("speedrunigt.option.timer_position.show_time_only").append(" : ").append(drawer.isSimplyTimer() ? CommonComponents.OPTION_ON : CommonComponents.OPTION_OFF));
                 }))
         );
 
         normalOptions.add(
-                addDrawableChild(ButtonWidgetHelper.create(width / 2 - 80, height / 2 + 6, 160, 20, Text.translatable("speedrunigt.option.timer_position.lock_timer_position").append(" : ").append(drawer.isLocked() ? ScreenTexts.ON : ScreenTexts.OFF), (ButtonWidget button) -> {
+                addRenderableWidget(ButtonWidgetHelper.create(width / 2 - 80, height / 2 + 6, 160, 20, Component.translatable("speedrunigt.option.timer_position.lock_timer_position").append(" : ").append(drawer.isLocked() ? CommonComponents.OPTION_ON : CommonComponents.OPTION_OFF), (Button button) -> {
                     drawer.setLocked(!drawer.isLocked());
                     changed = true;
-                    button.setMessage(Text.translatable("speedrunigt.option.timer_position.lock_timer_position").append(" : ").append(drawer.isLocked() ? ScreenTexts.ON : ScreenTexts.OFF));
+                    button.setMessage(Component.translatable("speedrunigt.option.timer_position.lock_timer_position").append(" : ").append(drawer.isLocked() ? CommonComponents.OPTION_ON : CommonComponents.OPTION_OFF));
                 }))
         );
 
         normalOptions.add(
-                addDrawableChild(ButtonWidgetHelper.create(width / 2 - 80, height / 2 + 28, 160, 20, Text.translatable("speedrunigt.option.timer_position.show_decimals").append(" : ").append(Text.translatable("speedrunigt.option.timer_position.show_decimals.context", drawer.getTimerDecimals().getNumber())), (ButtonWidget button) -> {
+                addRenderableWidget(ButtonWidgetHelper.create(width / 2 - 80, height / 2 + 28, 160, 20, Component.translatable("speedrunigt.option.timer_position.show_decimals").append(" : ").append(Component.translatable("speedrunigt.option.timer_position.show_decimals.context", drawer.getTimerDecimals().getNumber())), (Button button) -> {
                     int order = drawer.getTimerDecimals().ordinal();
                     drawer.setTimerDecimals(TimerDecimals.values()[(++order) % TimerDecimals.values().length]);
                     changed = true;
-                    button.setMessage(Text.translatable("speedrunigt.option.timer_position.show_decimals").append(" : ").append(Text.translatable("speedrunigt.option.timer_position.show_decimals.context", drawer.getTimerDecimals().getNumber())));
-                }, Tooltip.of(Text.translatable("speedrunigt.option.timer_position.show_decimals.description"))))
+                    button.setMessage(Component.translatable("speedrunigt.option.timer_position.show_decimals").append(" : ").append(Component.translatable("speedrunigt.option.timer_position.show_decimals.context", drawer.getTimerDecimals().getNumber())));
+                }, Tooltip.create(Component.translatable("speedrunigt.option.timer_position.show_decimals.description"))))
         );
     }
 
     public void initIGTButtons() {
         igtOptions.add(
-                addDrawableChild(new SliderWidget(width / 2 - 127, height / 2 - 16, 120, 20, Text.translatable("speedrunigt.option.timer_position.color_red", "IGT").append(" : ").append(String.valueOf(ColorHelper.getRed(drawer.getIGTColor()))), ColorHelper.getRed(drawer.getIGTColor()) / 255.0f) {
+                addRenderableWidget(new AbstractSliderButton(width / 2 - 127, height / 2 - 16, 120, 20, Component.translatable("speedrunigt.option.timer_position.color_red", "IGT").append(" : ").append(String.valueOf(ARGB.red(drawer.getIGTColor()))), ARGB.red(drawer.getIGTColor()) / 255.0f) {
                     @Override
                     protected void updateMessage() {
-                        this.setMessage(Text.translatable("speedrunigt.option.timer_position.color_red", "IGT").append(" : ").append(String.valueOf(ColorHelper.getRed(drawer.getIGTColor()))));
+                        this.setMessage(Component.translatable("speedrunigt.option.timer_position.color_red", "IGT").append(" : ").append(String.valueOf(ARGB.red(drawer.getIGTColor()))));
                     }
 
                     @Override
                     protected void applyValue() {
                         int color = drawer.getIGTColor();
                         drawer.setIGTColor(
-                                ColorHelper.getArgb(
-                                        ColorHelper.getAlpha(color),
+                                ARGB.color(
+                                        ARGB.alpha(color),
                                         (int) (this.value * 255),
-                                        ColorHelper.getGreen(color),
-                                        ColorHelper.getBlue(color)
+                                        ARGB.green(color),
+                                        ARGB.blue(color)
                                 )
                         );
                         changed = true;
@@ -421,21 +421,21 @@ public class TimerCustomizeScreen extends Screen {
         );
 
         igtOptions.add(
-                addDrawableChild(new SliderWidget(width / 2 - 127, height / 2 + 6, 120, 20, Text.translatable("speedrunigt.option.timer_position.color_green", "IGT").append(" : ").append(String.valueOf(ColorHelper.getGreen(drawer.getIGTColor()))), ColorHelper.getGreen(drawer.getIGTColor()) / 255.0f) {
+                addRenderableWidget(new AbstractSliderButton(width / 2 - 127, height / 2 + 6, 120, 20, Component.translatable("speedrunigt.option.timer_position.color_green", "IGT").append(" : ").append(String.valueOf(ARGB.green(drawer.getIGTColor()))), ARGB.green(drawer.getIGTColor()) / 255.0f) {
                     @Override
                     protected void updateMessage() {
-                        this.setMessage(Text.translatable("speedrunigt.option.timer_position.color_green", "IGT").append(" : ").append(String.valueOf(ColorHelper.getGreen(drawer.getIGTColor()))));
+                        this.setMessage(Component.translatable("speedrunigt.option.timer_position.color_green", "IGT").append(" : ").append(String.valueOf(ARGB.green(drawer.getIGTColor()))));
                     }
 
                     @Override
                     protected void applyValue() {
                         int color = drawer.getIGTColor();
                         drawer.setIGTColor(
-                                ColorHelper.getArgb(
-                                        ColorHelper.getAlpha(color),
-                                        ColorHelper.getRed(color),
+                                ARGB.color(
+                                        ARGB.alpha(color),
+                                        ARGB.red(color),
                                         (int) (this.value * 255),
-                                        ColorHelper.getBlue(color)
+                                        ARGB.blue(color)
                                 )
                         );
                         changed = true;
@@ -444,20 +444,20 @@ public class TimerCustomizeScreen extends Screen {
         );
 
         igtOptions.add(
-                addDrawableChild(new SliderWidget(width / 2 - 127, height / 2 + 28, 120, 20, Text.translatable("speedrunigt.option.timer_position.color_blue", "IGT").append(" : ").append(String.valueOf(ColorHelper.getBlue(drawer.getIGTColor()))), ColorHelper.getBlue(drawer.getIGTColor()) / 255.0f) {
+                addRenderableWidget(new AbstractSliderButton(width / 2 - 127, height / 2 + 28, 120, 20, Component.translatable("speedrunigt.option.timer_position.color_blue", "IGT").append(" : ").append(String.valueOf(ARGB.blue(drawer.getIGTColor()))), ARGB.blue(drawer.getIGTColor()) / 255.0f) {
                     @Override
                     protected void updateMessage() {
-                        this.setMessage(Text.translatable("speedrunigt.option.timer_position.color_blue", "IGT").append(" : ").append(String.valueOf(ColorHelper.getBlue(drawer.getIGTColor()))));
+                        this.setMessage(Component.translatable("speedrunigt.option.timer_position.color_blue", "IGT").append(" : ").append(String.valueOf(ARGB.blue(drawer.getIGTColor()))));
                     }
 
                     @Override
                     protected void applyValue() {
                         int color = drawer.getIGTColor();
                         drawer.setIGTColor(
-                                ColorHelper.getArgb(
-                                        ColorHelper.getAlpha(color),
-                                        ColorHelper.getRed(color),
-                                        ColorHelper.getGreen(color),
+                                ARGB.color(
+                                        ARGB.alpha(color),
+                                        ARGB.red(color),
+                                        ARGB.green(color),
                                         (int) (this.value * 255)
                                 )
                         );
@@ -467,10 +467,10 @@ public class TimerCustomizeScreen extends Screen {
         );
 
         igtOptions.add(
-                addDrawableChild(new SliderWidget(width / 2 + 6, height / 2 - 16, 120, 20, Text.translatable("speedrunigt.option.timer_position.scale", "IGT").append(" : ").append((Math.round(drawer.getIGTScale() * 100)) + "%"), drawer.getIGTScale() / 3f) {
+                addRenderableWidget(new AbstractSliderButton(width / 2 + 6, height / 2 - 16, 120, 20, Component.translatable("speedrunigt.option.timer_position.scale", "IGT").append(" : ").append((Math.round(drawer.getIGTScale() * 100)) + "%"), drawer.getIGTScale() / 3f) {
                     @Override
                     protected void updateMessage() {
-                        this.setMessage(Text.translatable("speedrunigt.option.timer_position.scale", "IGT").append(" : ").append((Math.round(drawer.getIGTScale() * 100)) + "%"));
+                        this.setMessage(Component.translatable("speedrunigt.option.timer_position.scale", "IGT").append(" : ").append((Math.round(drawer.getIGTScale() * 100)) + "%"));
                     }
 
                     @Override
@@ -482,41 +482,41 @@ public class TimerCustomizeScreen extends Screen {
         );
 
         igtOptions.add(
-                addDrawableChild(ButtonWidgetHelper.create(width / 2 + 6, height / 2 + 6, 120, 20, Text.translatable("speedrunigt.option.timer_position.text_decorate", "IGT").append(" : ").append(Text.translatable("speedrunigt.option.timer_position.text_decorate." + drawer.getIGTDecoration().name().toLowerCase(Locale.ROOT))), (ButtonWidget button) -> {
+                addRenderableWidget(ButtonWidgetHelper.create(width / 2 + 6, height / 2 + 6, 120, 20, Component.translatable("speedrunigt.option.timer_position.text_decorate", "IGT").append(" : ").append(Component.translatable("speedrunigt.option.timer_position.text_decorate." + drawer.getIGTDecoration().name().toLowerCase(Locale.ROOT))), (Button button) -> {
                     int order = drawer.getIGTDecoration().ordinal();
                     drawer.setIGTDecoration(TimerDecoration.values()[(++order) % TimerDecoration.values().length]);
                     changed = true;
-                    button.setMessage(Text.translatable("speedrunigt.option.timer_position.text_decorate", "IGT").append(" : ").append(Text.translatable("speedrunigt.option.timer_position.text_decorate." + drawer.getIGTDecoration().name().toLowerCase(Locale.ROOT))));
+                    button.setMessage(Component.translatable("speedrunigt.option.timer_position.text_decorate", "IGT").append(" : ").append(Component.translatable("speedrunigt.option.timer_position.text_decorate." + drawer.getIGTDecoration().name().toLowerCase(Locale.ROOT))));
                 }))
         );
 
         igtOptions.add(
-                addDrawableChild(ButtonWidgetHelper.create(this.width / 2 + 6, this.height / 2 + 28, 120, 20, Text.translatable("speedrunigt.option.timer_position.align", "IGT").append(" : ").append(Text.translatable("speedrunigt.option.timer_position.align." + drawer.getIGTDisplayAlign().name().toLowerCase(Locale.ROOT))), (ButtonWidget button) -> {
+                addRenderableWidget(ButtonWidgetHelper.create(this.width / 2 + 6, this.height / 2 + 28, 120, 20, Component.translatable("speedrunigt.option.timer_position.align", "IGT").append(" : ").append(Component.translatable("speedrunigt.option.timer_position.align." + drawer.getIGTDisplayAlign().name().toLowerCase(Locale.ROOT))), (Button button) -> {
                     int order = drawer.getIGTDisplayAlign().ordinal();
                     drawer.setIGTDisplayAlign(TimerDisplayAlign.values()[(++order) % TimerDisplayAlign.values().length]);
                     changed = true;
-                    button.setMessage(Text.translatable("speedrunigt.option.timer_position.align", "IGT").append(" : ").append(Text.translatable("speedrunigt.option.timer_position.align." + drawer.getIGTDisplayAlign().name().toLowerCase(Locale.ROOT))));
+                    button.setMessage(Component.translatable("speedrunigt.option.timer_position.align", "IGT").append(" : ").append(Component.translatable("speedrunigt.option.timer_position.align." + drawer.getIGTDisplayAlign().name().toLowerCase(Locale.ROOT))));
                 }))
         );
     }
 
     public void initRTAButtons() {
         rtaOptions.add(
-                addDrawableChild(new SliderWidget(width / 2 - 127, height / 2 - 16, 120, 20, Text.translatable("speedrunigt.option.timer_position.color_red", "RTA").append(" : ").append(String.valueOf(ColorHelper.getRed(drawer.getRTAColor()))), ColorHelper.getRed(drawer.getRTAColor()) / 255.0f) {
+                addRenderableWidget(new AbstractSliderButton(width / 2 - 127, height / 2 - 16, 120, 20, Component.translatable("speedrunigt.option.timer_position.color_red", "RTA").append(" : ").append(String.valueOf(ARGB.red(drawer.getRTAColor()))), ARGB.red(drawer.getRTAColor()) / 255.0f) {
                     @Override
                     protected void updateMessage() {
-                        this.setMessage(Text.translatable("speedrunigt.option.timer_position.color_red", "RTA").append(" : ").append(String.valueOf(ColorHelper.getRed(drawer.getRTAColor()))));
+                        this.setMessage(Component.translatable("speedrunigt.option.timer_position.color_red", "RTA").append(" : ").append(String.valueOf(ARGB.red(drawer.getRTAColor()))));
                     }
 
                     @Override
                     protected void applyValue() {
                         int color = drawer.getRTAColor();
                         drawer.setRTAColor(
-                                ColorHelper.getArgb(
-                                        ColorHelper.getAlpha(color),
+                                ARGB.color(
+                                        ARGB.alpha(color),
                                         (int) (this.value * 255),
-                                        ColorHelper.getGreen(color),
-                                        ColorHelper.getBlue(color)
+                                        ARGB.green(color),
+                                        ARGB.blue(color)
                                 )
                         );
                         changed = true;
@@ -525,21 +525,21 @@ public class TimerCustomizeScreen extends Screen {
         );
 
         rtaOptions.add(
-                addDrawableChild(new SliderWidget(width / 2 - 127, height / 2 + 6, 120, 20, Text.translatable("speedrunigt.option.timer_position.color_green", "RTA").append(" : ").append(String.valueOf(ColorHelper.getGreen(drawer.getRTAColor()))), ColorHelper.getGreen(drawer.getRTAColor()) / 255.0f) {
+                addRenderableWidget(new AbstractSliderButton(width / 2 - 127, height / 2 + 6, 120, 20, Component.translatable("speedrunigt.option.timer_position.color_green", "RTA").append(" : ").append(String.valueOf(ARGB.green(drawer.getRTAColor()))), ARGB.green(drawer.getRTAColor()) / 255.0f) {
                     @Override
                     protected void updateMessage() {
-                        this.setMessage(Text.translatable("speedrunigt.option.timer_position.color_green", "RTA").append(" : ").append(String.valueOf(ColorHelper.getGreen(drawer.getRTAColor()))));
+                        this.setMessage(Component.translatable("speedrunigt.option.timer_position.color_green", "RTA").append(" : ").append(String.valueOf(ARGB.green(drawer.getRTAColor()))));
                     }
 
                     @Override
                     protected void applyValue() {
                         int color = drawer.getRTAColor();
                         drawer.setRTAColor(
-                                ColorHelper.getArgb(
-                                        ColorHelper.getAlpha(color),
-                                        ColorHelper.getRed(color),
+                                ARGB.color(
+                                        ARGB.alpha(color),
+                                        ARGB.red(color),
                                         (int) (this.value * 255),
-                                        ColorHelper.getBlue(color)
+                                        ARGB.blue(color)
                                 )
                         );
                         changed = true;
@@ -548,20 +548,20 @@ public class TimerCustomizeScreen extends Screen {
         );
 
         rtaOptions.add(
-                addDrawableChild(new SliderWidget(width / 2 - 127, height / 2 + 28, 120, 20, Text.translatable("speedrunigt.option.timer_position.color_blue", "RTA").append(" : ").append(String.valueOf(ColorHelper.getBlue(drawer.getRTAColor()))), ColorHelper.getBlue(drawer.getRTAColor()) / 255.0f) {
+                addRenderableWidget(new AbstractSliderButton(width / 2 - 127, height / 2 + 28, 120, 20, Component.translatable("speedrunigt.option.timer_position.color_blue", "RTA").append(" : ").append(String.valueOf(ARGB.blue(drawer.getRTAColor()))), ARGB.blue(drawer.getRTAColor()) / 255.0f) {
                     @Override
                     protected void updateMessage() {
-                        this.setMessage(Text.translatable("speedrunigt.option.timer_position.color_blue", "RTA").append(" : ").append(String.valueOf(ColorHelper.getBlue(drawer.getRTAColor()))));
+                        this.setMessage(Component.translatable("speedrunigt.option.timer_position.color_blue", "RTA").append(" : ").append(String.valueOf(ARGB.blue(drawer.getRTAColor()))));
                     }
 
                     @Override
                     protected void applyValue() {
                         int color = drawer.getRTAColor();
                         drawer.setRTAColor(
-                                ColorHelper.getArgb(
-                                        ColorHelper.getAlpha(color),
-                                        ColorHelper.getRed(color),
-                                        ColorHelper.getGreen(color),
+                                ARGB.color(
+                                        ARGB.alpha(color),
+                                        ARGB.red(color),
+                                        ARGB.green(color),
                                         (int) (this.value * 255)
                                 )
                         );
@@ -571,10 +571,10 @@ public class TimerCustomizeScreen extends Screen {
         );
 
         rtaOptions.add(
-                addDrawableChild(new SliderWidget(width / 2 + 6, height / 2 - 16, 120, 20, Text.translatable("speedrunigt.option.timer_position.scale", "RTA").append(" : ").append((Math.round(drawer.getRTAScale() * 100)) + "%"), drawer.getRTAScale() / 3f) {
+                addRenderableWidget(new AbstractSliderButton(width / 2 + 6, height / 2 - 16, 120, 20, Component.translatable("speedrunigt.option.timer_position.scale", "RTA").append(" : ").append((Math.round(drawer.getRTAScale() * 100)) + "%"), drawer.getRTAScale() / 3f) {
                     @Override
                     protected void updateMessage() {
-                        this.setMessage(Text.translatable("speedrunigt.option.timer_position.scale", "RTA").append(" : ").append((Math.round(drawer.getRTAScale() * 100)) + "%"));
+                        this.setMessage(Component.translatable("speedrunigt.option.timer_position.scale", "RTA").append(" : ").append((Math.round(drawer.getRTAScale() * 100)) + "%"));
                     }
 
                     @Override
@@ -586,44 +586,44 @@ public class TimerCustomizeScreen extends Screen {
         );
 
         rtaOptions.add(
-                addDrawableChild(ButtonWidgetHelper.create(width / 2 + 6, height / 2 + 6, 120, 20, Text.translatable("speedrunigt.option.timer_position.text_decorate", "RTA").append(" : ").append(Text.translatable("speedrunigt.option.timer_position.text_decorate." + drawer.getRTADecoration().name().toLowerCase(Locale.ROOT))), (ButtonWidget button) -> {
+                addRenderableWidget(ButtonWidgetHelper.create(width / 2 + 6, height / 2 + 6, 120, 20, Component.translatable("speedrunigt.option.timer_position.text_decorate", "RTA").append(" : ").append(Component.translatable("speedrunigt.option.timer_position.text_decorate." + drawer.getRTADecoration().name().toLowerCase(Locale.ROOT))), (Button button) -> {
                     int order = drawer.getRTADecoration().ordinal();
                     drawer.setRTADecoration(TimerDecoration.values()[(++order) % TimerDecoration.values().length]);
                     changed = true;
-                    button.setMessage(Text.translatable("speedrunigt.option.timer_position.text_decorate", "RTA").append(" : ").append(Text.translatable("speedrunigt.option.timer_position.text_decorate." + drawer.getRTADecoration().name().toLowerCase(Locale.ROOT))));
+                    button.setMessage(Component.translatable("speedrunigt.option.timer_position.text_decorate", "RTA").append(" : ").append(Component.translatable("speedrunigt.option.timer_position.text_decorate." + drawer.getRTADecoration().name().toLowerCase(Locale.ROOT))));
                 }))
         );
 
         rtaOptions.add(
-                addDrawableChild(ButtonWidgetHelper.create(this.width / 2 + 6, this.height / 2 + 28, 120, 20, Text.translatable("speedrunigt.option.timer_position.align", "RTA").append(" : ").append(Text.translatable("speedrunigt.option.timer_position.align." + drawer.getRTADisplayAlign().name().toLowerCase(Locale.ROOT))), (ButtonWidget button) -> {
+                addRenderableWidget(ButtonWidgetHelper.create(this.width / 2 + 6, this.height / 2 + 28, 120, 20, Component.translatable("speedrunigt.option.timer_position.align", "RTA").append(" : ").append(Component.translatable("speedrunigt.option.timer_position.align." + drawer.getRTADisplayAlign().name().toLowerCase(Locale.ROOT))), (Button button) -> {
                     int order = drawer.getRTADisplayAlign().ordinal();
                     drawer.setRTADisplayAlign(TimerDisplayAlign.values()[(++order) % TimerDisplayAlign.values().length]);
                     changed = true;
-                    button.setMessage(Text.translatable("speedrunigt.option.timer_position.align", "RTA").append(" : ").append(Text.translatable("speedrunigt.option.timer_position.align." + drawer.getRTADisplayAlign().name().toLowerCase(Locale.ROOT))));
+                    button.setMessage(Component.translatable("speedrunigt.option.timer_position.align", "RTA").append(" : ").append(Component.translatable("speedrunigt.option.timer_position.align." + drawer.getRTADisplayAlign().name().toLowerCase(Locale.ROOT))));
                 }))
         );
     }
 
     public void initPositionButtons() {
-        ButtonWidget posTypeButton = addDrawableChild(ButtonWidgetHelper.create(width / 2 - 80, height / 2 + 6, 160, 20, Text.translatable("speedrunigt.option.timer_position.split_position_type").append(" : ").append(Text.translatable("speedrunigt.option.timer_position.split_position_type."+currentPosType.name().toLowerCase(Locale.ROOT))), (button) -> {
+        Button posTypeButton = addRenderableWidget(ButtonWidgetHelper.create(width / 2 - 80, height / 2 + 6, 160, 20, Component.translatable("speedrunigt.option.timer_position.split_position_type").append(" : ").append(Component.translatable("speedrunigt.option.timer_position.split_position_type."+currentPosType.name().toLowerCase(Locale.ROOT))), (button) -> {
             int order = (currentPosType.ordinal() + 1) % PositionType.values().length;
             currentPosType = PositionType.values()[order];
             changed = true;
             refreshPosition();
-            button.setMessage(Text.translatable("speedrunigt.option.timer_position.split_position_type").append(" : ").append(Text.translatable("speedrunigt.option.timer_position.split_position_type."+currentPosType.name().toLowerCase(Locale.ROOT))));
+            button.setMessage(Component.translatable("speedrunigt.option.timer_position.split_position_type").append(" : ").append(Component.translatable("speedrunigt.option.timer_position.split_position_type."+currentPosType.name().toLowerCase(Locale.ROOT))));
         }));
         posTypeButton.active = splitPosition;
 
         posOptions.add(
-                addDrawableChild(ButtonWidgetHelper.create(width / 2 - 80, height / 2 - 16, 160, 20, Text.translatable("speedrunigt.option.timer_position.split_position").append(" : ").append(splitPosition ? ScreenTexts.ON : ScreenTexts.OFF), (button) -> {
+                addRenderableWidget(ButtonWidgetHelper.create(width / 2 - 80, height / 2 - 16, 160, 20, Component.translatable("speedrunigt.option.timer_position.split_position").append(" : ").append(splitPosition ? CommonComponents.OPTION_ON : CommonComponents.OPTION_OFF), (button) -> {
                     splitPosition = !splitPosition;
                     changed = true;
                     posTypeButton.active = splitPosition;
-                    button.setMessage(Text.translatable("speedrunigt.option.timer_position.split_position").append(" : ").append(splitPosition ? ScreenTexts.ON : ScreenTexts.OFF));
+                    button.setMessage(Component.translatable("speedrunigt.option.timer_position.split_position").append(" : ").append(splitPosition ? CommonComponents.OPTION_ON : CommonComponents.OPTION_OFF));
                     if (!splitPosition) {
                         currentPosType = PositionType.DEFAULT;
                         refreshPosition();
-                        posTypeButton.setMessage(Text.translatable("speedrunigt.option.timer_position.split_position_type").append(" : ").append(Text.translatable("speedrunigt.option.timer_position.split_position_type."+currentPosType.name().toLowerCase(Locale.ROOT))));
+                        posTypeButton.setMessage(Component.translatable("speedrunigt.option.timer_position.split_position_type").append(" : ").append(Component.translatable("speedrunigt.option.timer_position.split_position_type."+currentPosType.name().toLowerCase(Locale.ROOT))));
                     }
                 }))
         );
@@ -632,12 +632,12 @@ public class TimerCustomizeScreen extends Screen {
     }
 
     public void initFontButtons() {
-        ButtonWidget prevButton = addDrawableChild(ButtonWidgetHelper.create(width / 2 - 180, height / 2 + 6, 20, 20, Text.literal("<"), (ButtonWidget button) -> {
+        Button prevButton = addRenderableWidget(ButtonWidgetHelper.create(width / 2 - 180, height / 2 + 6, 20, 20, Component.literal("<"), (Button button) -> {
             fontPage--;
             openFontPage();
         }));
 
-        ButtonWidget nextButton = addDrawableChild(ButtonWidgetHelper.create(width / 2 + 180, height / 2 + 6, 20, 20, Text.literal(">"), (ButtonWidget button) -> {
+        Button nextButton = addRenderableWidget(ButtonWidgetHelper.create(width / 2 + 180, height / 2 + 6, 20, 20, Component.literal(">"), (Button button) -> {
             fontPage++;
             openFontPage();
         }));
@@ -645,10 +645,10 @@ public class TimerCustomizeScreen extends Screen {
         fontOptions.add(nextButton);
 
         fontSelectButtons.add(
-                addDrawableChild(ButtonWidgetHelper.create(width / 2 + 35, height / 2 - 16, 50, 20, Text.translatable("speedrunigt.option.select"), (ButtonWidget button) -> {
+                addRenderableWidget(ButtonWidgetHelper.create(width / 2 + 35, height / 2 - 16, 50, 20, Component.translatable("speedrunigt.option.select"), (Button button) -> {
                     int c = (fontPage * 3);
                     if (availableFonts.size() > c) {
-                        for (ButtonWidget fontSelectButton : fontSelectButtons) fontSelectButton.active = true;
+                        for (Button fontSelectButton : fontSelectButtons) fontSelectButton.active = true;
                         drawer.setTimerFont(availableFonts.get(c));
                         button.active = false;
                         openFontPage();
@@ -657,10 +657,10 @@ public class TimerCustomizeScreen extends Screen {
                 }))
         );
         fontSelectButtons.add(
-                addDrawableChild(ButtonWidgetHelper.create(width / 2 + 35, height / 2 + 6, 50, 20, Text.translatable("speedrunigt.option.select"), (ButtonWidget button) -> {
+                addRenderableWidget(ButtonWidgetHelper.create(width / 2 + 35, height / 2 + 6, 50, 20, Component.translatable("speedrunigt.option.select"), (Button button) -> {
                     int c = (fontPage * 3) + 1;
                     if (availableFonts.size() > c) {
-                        for (ButtonWidget fontSelectButton : fontSelectButtons) fontSelectButton.active = true;
+                        for (Button fontSelectButton : fontSelectButtons) fontSelectButton.active = true;
                         drawer.setTimerFont(availableFonts.get(c));
                         button.active = false;
                         openFontPage();
@@ -669,10 +669,10 @@ public class TimerCustomizeScreen extends Screen {
                 }))
         );
         fontSelectButtons.add(
-                addDrawableChild(ButtonWidgetHelper.create(width / 2 + 35, height / 2 + 28, 50, 20, Text.translatable("speedrunigt.option.select"), (ButtonWidget button) -> {
+                addRenderableWidget(ButtonWidgetHelper.create(width / 2 + 35, height / 2 + 28, 50, 20, Component.translatable("speedrunigt.option.select"), (Button button) -> {
                     int c = (fontPage * 3) + 2;
                     if (availableFonts.size() > c) {
-                        for (ButtonWidget fontSelectButton : fontSelectButtons) fontSelectButton.active = true;
+                        for (Button fontSelectButton : fontSelectButtons) fontSelectButton.active = true;
                         drawer.setTimerFont(availableFonts.get(c));
                         button.active = false;
                         openFontPage();
@@ -680,20 +680,20 @@ public class TimerCustomizeScreen extends Screen {
                     }
                 }))
         );
-        for (ClickableWidget fontOption : fontOptions) {
+        for (AbstractWidget fontOption : fontOptions) {
             fontOption.visible = false;
         }
-        for (ButtonWidget fontSelectButton : fontSelectButtons) {
+        for (Button fontSelectButton : fontSelectButtons) {
             fontSelectButton.visible = false;
         }
         fontOptions.addAll(fontSelectButtons);
 
 
-        fontConfigButton = addDrawableChild(ButtonWidgetHelper.create(width / 2 + 88, 0, 50, 20, Text.literal("Config"), (ButtonWidget button) -> {
-            if (client != null) client.setScreen(new FontConfigScreen(this, drawer.getTimerFont()));
+        fontConfigButton = addRenderableWidget(ButtonWidgetHelper.create(width / 2 + 88, 0, 50, 20, Component.literal("Config"), (Button button) -> {
+            if (minecraft != null) minecraft.setScreen(new FontConfigScreen(this, drawer.getTimerFont()));
         } ));
-        fontOptions.add(addDrawableChild(ButtonWidgetHelper.create(width / 2 - 154, height / 2 - 80, 150, 20, Text.translatable("speedrunigt.option.timer_position.font.open_folder"), (ButtonWidget button) -> Util.getOperatingSystem().open(SpeedRunIGT.FONT_PATH.toFile()))));
-        fontOptions.add(addDrawableChild(ButtonWidgetHelper.create(width / 2 + 4, height / 2 - 80, 150, 20, Text.translatable("speedrunigt.option.timer_position.font.description"), (ButtonWidget button) -> Util.getOperatingSystem().open("https://youtu.be/agBbiTQWj78"))));
+        fontOptions.add(addRenderableWidget(ButtonWidgetHelper.create(width / 2 - 154, height / 2 - 80, 150, 20, Component.translatable("speedrunigt.option.timer_position.font.open_folder"), (Button button) -> Util.getPlatform().openFile(SpeedRunIGT.FONT_PATH.toFile()))));
+        fontOptions.add(addRenderableWidget(ButtonWidgetHelper.create(width / 2 + 4, height / 2 - 80, 150, 20, Component.translatable("speedrunigt.option.timer_position.font.description"), (Button button) -> Util.getPlatform().openUri("https://youtu.be/agBbiTQWj78"))));
         openFontPage();
     }
 
@@ -704,7 +704,7 @@ public class TimerCustomizeScreen extends Screen {
         int c = fontPage * 3;
         int available = 0;
         for (int i = 0; i < fontSelectButtons.size(); i++) {
-            ButtonWidget button = fontSelectButtons.get(i);
+            Button button = fontSelectButtons.get(i);
             if (c + i < availableFonts.size()) {
                 button.active = !availableFonts.get(c + i).toString().equals(drawer.getTimerFont().toString());
                 if (!button.active && Objects.equals(drawer.getTimerFont().getNamespace(), SpeedRunIGT.MOD_ID)) available = button.getY();
@@ -720,10 +720,10 @@ public class TimerCustomizeScreen extends Screen {
 
     public void initBackgroundButtons() {
         backgroundOptions.add(
-                addDrawableChild(new SliderWidget(width / 2 - 80, height / 2 - 16, 160, 20, Text.translatable("speedrunigt.option.timer_position.background_opacity").append(" : ").append((int) (drawer.getBGOpacity()*100) + "%"), drawer.getBGOpacity()) {
+                addRenderableWidget(new AbstractSliderButton(width / 2 - 80, height / 2 - 16, 160, 20, Component.translatable("speedrunigt.option.timer_position.background_opacity").append(" : ").append((int) (drawer.getBGOpacity()*100) + "%"), drawer.getBGOpacity()) {
                     @Override
                     protected void updateMessage() {
-                        this.setMessage(Text.translatable("speedrunigt.option.timer_position.background_opacity").append(" : ").append((int) (drawer.getBGOpacity()*100) + "%"));
+                        this.setMessage(Component.translatable("speedrunigt.option.timer_position.background_opacity").append(" : ").append((int) (drawer.getBGOpacity()*100) + "%"));
                     }
 
                     @Override
@@ -735,10 +735,10 @@ public class TimerCustomizeScreen extends Screen {
         );
 
         backgroundOptions.add(
-                addDrawableChild(new SliderWidget(width / 2 - 80, height / 2 + 6, 160, 20, Text.translatable("speedrunigt.option.timer_position.background_padding", "RTA").append(" : ").append(String.valueOf(drawer.getRTAPadding())), (drawer.getRTAPadding()-1) / 24f) {
+                addRenderableWidget(new AbstractSliderButton(width / 2 - 80, height / 2 + 6, 160, 20, Component.translatable("speedrunigt.option.timer_position.background_padding", "RTA").append(" : ").append(String.valueOf(drawer.getRTAPadding())), (drawer.getRTAPadding()-1) / 24f) {
                     @Override
                     protected void updateMessage() {
-                        this.setMessage(Text.translatable("speedrunigt.option.timer_position.background_padding", "RTA").append(" : ").append(String.valueOf(drawer.getRTAPadding())));
+                        this.setMessage(Component.translatable("speedrunigt.option.timer_position.background_padding", "RTA").append(" : ").append(String.valueOf(drawer.getRTAPadding())));
                     }
 
                     @Override
@@ -750,10 +750,10 @@ public class TimerCustomizeScreen extends Screen {
         );
 
         backgroundOptions.add(
-                addDrawableChild(new SliderWidget(width / 2 - 80, height / 2 + 28, 160, 20, Text.translatable("speedrunigt.option.timer_position.background_padding", "IGT").append(" : ").append(String.valueOf(drawer.getIGTPadding())), (drawer.getIGTPadding()-1) / 24f) {
+                addRenderableWidget(new AbstractSliderButton(width / 2 - 80, height / 2 + 28, 160, 20, Component.translatable("speedrunigt.option.timer_position.background_padding", "IGT").append(" : ").append(String.valueOf(drawer.getIGTPadding())), (drawer.getIGTPadding()-1) / 24f) {
                     @Override
                     protected void updateMessage() {
-                        this.setMessage(Text.translatable("speedrunigt.option.timer_position.background_padding", "IGT").append(" : ").append(String.valueOf(drawer.getIGTPadding())));
+                        this.setMessage(Component.translatable("speedrunigt.option.timer_position.background_padding", "IGT").append(" : ").append(String.valueOf(drawer.getIGTPadding())));
                     }
 
                     @Override

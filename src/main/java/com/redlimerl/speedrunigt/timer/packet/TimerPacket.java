@@ -3,33 +3,33 @@ package com.redlimerl.speedrunigt.timer.packet;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketDecoder;
-import net.minecraft.network.codec.ValueFirstEncoder;
-import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.codec.StreamDecoder;
+import net.minecraft.network.codec.StreamMemberEncoder;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
 
-public abstract class TimerPacket<T extends CustomPayload> implements CustomPayload {
+public abstract class TimerPacket<T extends CustomPacketPayload> implements CustomPacketPayload {
 
-    public static <B, V> PacketCodec<B, V> codecOf(ValueFirstEncoder<B, V> encoder, PacketDecoder<B, V> decoder) {
-        return PacketCodec.of(encoder, decoder);
+    public static <B, V> StreamCodec<B, V> codecOf(StreamMemberEncoder<B, V> encoder, StreamDecoder<B, V> decoder) {
+        return StreamCodec.ofMember(encoder, decoder);
     }
 
-    public static <T extends CustomPayload> CustomPayload.Id<T> identifier(String id) {
-        return new CustomPayload.Id<>(Identifier.of(SpeedRunIGT.MOD_ID, id));
+    public static <T extends CustomPacketPayload> CustomPacketPayload.Type<T> identifier(String id) {
+        return new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(SpeedRunIGT.MOD_ID, id));
     }
 
-    private final CustomPayload.Id<T> identifier;
+    private final CustomPacketPayload.Type<T> identifier;
 
-    public TimerPacket(CustomPayload.Id<T> identifier) {
+    public TimerPacket(CustomPacketPayload.Type<T> identifier) {
         this.identifier = identifier;
     }
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return this.identifier;
     }
 
@@ -37,10 +37,10 @@ public abstract class TimerPacket<T extends CustomPayload> implements CustomPayl
         TimerPacketUtils.sendServer2ClientPacket(server, this);
     }
 
-    protected abstract void write(RegistryByteBuf buf);
+    protected abstract void write(RegistryFriendlyByteBuf buf);
 
     public abstract void receiveClient2ServerPacket(MinecraftServer server);
 
     @Environment(EnvType.CLIENT)
-    public abstract void receiveServer2ClientPacket(MinecraftClient client);
+    public abstract void receiveServer2ClientPacket(Minecraft client);
 }

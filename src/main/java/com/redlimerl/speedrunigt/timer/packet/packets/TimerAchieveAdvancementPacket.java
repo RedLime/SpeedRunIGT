@@ -3,20 +3,20 @@ package com.redlimerl.speedrunigt.timer.packet.packets;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.TimerAdvancementTracker;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
-import net.minecraft.advancement.AdvancementEntry;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
 
 import java.util.Map;
 
 public class TimerAchieveAdvancementPacket extends TimerPacket<TimerAchieveAdvancementPacket> {
 
-    public static final CustomPayload.Id<TimerAchieveAdvancementPacket> IDENTIFIER = TimerPacket.identifier("achieve_advancement");
-    public static final PacketCodec<RegistryByteBuf, TimerAchieveAdvancementPacket> CODEC = TimerPacket.codecOf(TimerAchieveAdvancementPacket::write, TimerAchieveAdvancementPacket::new);
+    public static final CustomPacketPayload.Type<TimerAchieveAdvancementPacket> IDENTIFIER = TimerPacket.identifier("achieve_advancement");
+    public static final StreamCodec<RegistryFriendlyByteBuf, TimerAchieveAdvancementPacket> CODEC = TimerPacket.codecOf(TimerAchieveAdvancementPacket::write, TimerAchieveAdvancementPacket::new);
     private final Identifier sendAdvancement;
 
     TimerAchieveAdvancementPacket(Identifier identifier) {
@@ -24,16 +24,16 @@ public class TimerAchieveAdvancementPacket extends TimerPacket<TimerAchieveAdvan
         this.sendAdvancement = identifier;
     }
 
-    public TimerAchieveAdvancementPacket(AdvancementEntry advancement) {
+    public TimerAchieveAdvancementPacket(AdvancementHolder advancement) {
         this(advancement.id());
     }
 
-    public TimerAchieveAdvancementPacket(RegistryByteBuf buf) {
+    public TimerAchieveAdvancementPacket(RegistryFriendlyByteBuf buf) {
         this(buf.readIdentifier());
     }
 
     @Override
-    protected void write(RegistryByteBuf buf) {
+    protected void write(RegistryFriendlyByteBuf buf) {
         buf.writeIdentifier(this.sendAdvancement);
     }
 
@@ -55,7 +55,7 @@ public class TimerAchieveAdvancementPacket extends TimerPacket<TimerAchieveAdvan
     }
 
     @Override
-    public void receiveServer2ClientPacket(MinecraftClient client) {
+    public void receiveServer2ClientPacket(Minecraft client) {
         InGameTimer.getInstance().tryInsertNewAdvancement(this.sendAdvancement.toString(), null, true);
     }
 }

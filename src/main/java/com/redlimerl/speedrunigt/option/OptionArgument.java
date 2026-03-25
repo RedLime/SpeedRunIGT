@@ -1,6 +1,6 @@
 package com.redlimerl.speedrunigt.option;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 
 public abstract class OptionArgument<T> {
     private final Identifier key;

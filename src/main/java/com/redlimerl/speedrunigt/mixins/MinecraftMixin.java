@@ -1,30 +1,30 @@
 package com.redlimerl.speedrunigt.mixins;
 
+import com.mojang.blaze3d.font.GlyphProvider;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.instance.GameInstance;
 import com.redlimerl.speedrunigt.mixins.access.FontManagerAccessor;
-import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
+import com.redlimerl.speedrunigt.mixins.access.MinecraftAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.timer.*;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.utils.FontUtils;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.RunArgs;
-import net.minecraft.client.font.Font;
-import net.minecraft.client.font.FontFilterType;
-import net.minecraft.client.font.FontStorage;
-import net.minecraft.client.font.GlyphBaker;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.world.LevelLoadingScreen;
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.resource.ReloadableResourceManagerImpl;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.SinglePreparationResourceReloader;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.crash.CrashReport;
-import net.minecraft.util.profiler.Profiler;
-import net.minecraft.world.dimension.DimensionTypes;
+import net.minecraft.CrashReport;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.font.FontOption;
+import net.minecraft.client.gui.font.FontSet;
+import net.minecraft.client.gui.font.GlyphStitcher;
+import net.minecraft.client.gui.screens.LevelLoadingScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.main.GameConfig;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.packs.resources.ReloadableResourceManager;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -38,16 +38,16 @@ import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Mixin(MinecraftClient.class)
-public abstract class MinecraftClientMixin {
+@Mixin(Minecraft.class)
+public abstract class MinecraftMixin {
 
-    @Shadow @Final public GameOptions options;
+    @Shadow @Final public Options options;
 
-    @Shadow @Nullable public ClientWorld world;
+    @Shadow @Nullable public ClientLevel level;
 
-    @Shadow @Final private ReloadableResourceManagerImpl resourceManager;
+    @Shadow @Final private ReloadableResourceManager resourceManager;
 
-    @Shadow private boolean paused;
+    @Shadow private boolean pause;
 
     @Inject(method = "setScreen", at = @At("RETURN"))
     public void onSetScreen(Screen screen, CallbackInfo ci) {
@@ -57,12 +57,12 @@ public abstract class MinecraftClientMixin {
         if (InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN != null) {
             Screen screen1 = InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN;
             InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN = null;
-            MinecraftClient.getInstance().setScreen(screen1);
+            Minecraft.getInstance().setScreen(screen1);
         }
     }
 
-    @Inject(at = @At("HEAD"), method = "joinWorld")
-    public void onJoin(ClientWorld world, CallbackInfo ci) {
+    @Inject(at = @At("HEAD"), method = "setLevel")
+    public void onJoin(ClientLevel world, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() == TimerStatus.NONE) return;
 
@@ -70,20 +70,20 @@ public abstract class MinecraftClientMixin {
         timer.setPause(true, TimerStatus.IDLE, "changed dimension");
 
         // For Timelines
-        if (Objects.equals(world.getRegistryKey().getValue().toString(), DimensionTypes.THE_NETHER.toString())) {
+        if (Objects.equals(world.dimension().identifier().toString(), BuiltinDimensionTypes.NETHER.toString())) {
             timer.tryInsertNewTimeline("enter_nether");
-        } else if (Objects.equals(world.getRegistryKey().getValue().toString(), DimensionTypes.THE_END.toString())) {
+        } else if (Objects.equals(world.dimension().identifier().toString(), BuiltinDimensionTypes.END.toString())) {
             timer.tryInsertNewTimeline("enter_end");
         }
 
         //Enter Nether
-        if (timer.getCategory() == RunCategories.ENTER_NETHER && Objects.equals(world.getRegistryKey().getValue().toString(), DimensionTypes.THE_NETHER.toString())) {
+        if (timer.getCategory() == RunCategories.ENTER_NETHER && Objects.equals(world.dimension().identifier().toString(), BuiltinDimensionTypes.NETHER.toString())) {
             InGameTimer.complete();
             return;
         }
 
         //Enter End
-        if (timer.getCategory() == RunCategories.ENTER_END && Objects.equals(world.getRegistryKey().getValue().toString(), DimensionTypes.THE_END.toString())) {
+        if (timer.getCategory() == RunCategories.ENTER_END && Objects.equals(world.dimension().identifier().toString(), BuiltinDimensionTypes.END.toString())) {
             InGameTimer.complete();
         }
 
@@ -100,16 +100,16 @@ public abstract class MinecraftClientMixin {
         }
     }
 
-    @Inject(method = "render(Z)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Util;getMeasuringTimeNano()J", shift = At.Shift.AFTER))
+    @Inject(method = "runTick(Z)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Util;getNanos()J", shift = At.Shift.AFTER))
     private void renderMixin(boolean tick, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
-        if (timer.getStatus() == TimerStatus.RUNNING && this.paused) {
+        if (timer.getStatus() == TimerStatus.RUNNING && this.pause) {
             timer.setPause(true, TimerStatus.PAUSED, "player");
             if (InGameTimerClientUtils.getGeneratedChunkRatio() < 0.1f) {
                 InGameTimerUtils.RETIME_IS_WAITING_LOAD = true;
             }
-        } else if (timer.getStatus() == TimerStatus.PAUSED && !this.paused) {
+        } else if (timer.getStatus() == TimerStatus.PAUSED && !this.pause) {
             timer.setPause(false, "player");
         }
     }
@@ -118,14 +118,14 @@ public abstract class MinecraftClientMixin {
     /**
      * Add import font system
      */
-    @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;onFontOptionsChanged()V"))
-    public void onInit(RunArgs args, CallbackInfo ci) {
-        this.resourceManager.registerReloader(new SinglePreparationResourceReloader<Map<Identifier, List<Font>>>() {
+    @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;updateFontOptions()V"))
+    public void onInit(GameConfig args, CallbackInfo ci) {
+        this.resourceManager.registerReloadListener(new SimplePreparableReloadListener<Map<Identifier, List<GlyphProvider>>>() {
             @Override
-            protected Map<Identifier, List<Font>> prepare(ResourceManager manager, Profiler profiler) {
+            protected Map<Identifier, List<GlyphProvider>> prepare(ResourceManager manager, ProfilerFiller profiler) {
                 SpeedRunIGT.FONT_MAPS.clear();
 
-                HashMap<Identifier, List<Font>> map = new HashMap<>();
+                HashMap<Identifier, List<GlyphProvider>> map = new HashMap<>();
 
                 File[] fontFiles = SpeedRunIGT.FONT_PATH.toFile().listFiles();
                 if (fontFiles == null) return new HashMap<>();
@@ -147,21 +147,21 @@ public abstract class MinecraftClientMixin {
             }
 
             @Override
-            protected void apply(Map<Identifier, List<Font>> loader, ResourceManager manager, Profiler profiler) {
+            protected void apply(Map<Identifier, List<GlyphProvider>> loader, ResourceManager manager, ProfilerFiller profiler) {
                 try {
-                    EnumSet<FontFilterType> set = EnumSet.noneOf(FontFilterType.class);
-                    if (options.getForceUnicodeFont().getValue()) {
-                        set.add(FontFilterType.UNIFORM);
+                    EnumSet<FontOption> set = EnumSet.noneOf(FontOption.class);
+                    if (options.forceUnicodeFont().get()) {
+                        set.add(FontOption.UNIFORM);
                     }
-                    if (options.getJapaneseGlyphVariants().getValue()) {
-                        set.add(FontFilterType.JAPANESE_VARIANTS);
+                    if (options.japaneseGlyphVariants().get()) {
+                        set.add(FontOption.JAPANESE_VARIANTS);
                     }
-                    FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) MinecraftClient.getInstance()).getFontManager();
-                    for (Map.Entry<Identifier, List<Font>> listEntry : loader.entrySet()) {
-                        GlyphBaker glyphBaker = new GlyphBaker(fontManager.getTextureManager(), listEntry.getKey());
-                        FontStorage fontStorage = new FontStorage(glyphBaker);
-                        fontStorage.setFonts(listEntry.getValue().stream().map(font -> new Font.FontFilterPair(font, FontFilterType.FilterMap.NO_FILTER)).collect(Collectors.toList()), set);
-                        fontManager.getFontStorages().put(listEntry.getKey(), fontStorage);
+                    FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftAccessor) Minecraft.getInstance()).getFontManager();
+                    for (Map.Entry<Identifier, List<GlyphProvider>> listEntry : loader.entrySet()) {
+                        GlyphStitcher glyphBaker = new GlyphStitcher(fontManager.getTextureManager(), listEntry.getKey());
+                        FontSet fontStorage = new FontSet(glyphBaker);
+                        fontStorage.reload(listEntry.getValue().stream().map(font -> new GlyphProvider.Conditional(font, FontOption.Filter.ALWAYS_PASS)).collect(Collectors.toList()), set);
+                        fontManager.getFontSets().put(listEntry.getKey(), fontStorage);
                     }
                     TimerDrawer.fontHeightMap.clear();
                 } catch (Throwable e) {
@@ -173,24 +173,24 @@ public abstract class MinecraftClientMixin {
     }
 
     // Crash safety
-    @Inject(method = "cleanUpAfterCrash", at = @At("HEAD"))
+    @Inject(method = "emergencySave", at = @At("HEAD"))
     private void onCrash(CallbackInfo ci) {
         if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) InGameTimer.leave();
     }
 
     // Crash safety
-    @Inject(method = "printCrashReport(Lnet/minecraft/client/MinecraftClient;Ljava/io/File;Lnet/minecraft/util/crash/CrashReport;)V", at = @At("HEAD"))
-    private static void onCrash(MinecraftClient client, File runDirectory, CrashReport crashReport, CallbackInfo ci) {
+    @Inject(method = "crash(Lnet/minecraft/client/Minecraft;Ljava/io/File;Lnet/minecraft/CrashReport;)V", at = @At("HEAD"))
+    private static void onCrash(Minecraft client, File runDirectory, CrashReport crashReport, CallbackInfo ci) {
         if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) InGameTimer.leave();
     }
 
     // Record save
-    @Inject(method = "stop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;close()V"))
+    @Inject(method = "destroy", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;close()V"))
     public void onStop(CallbackInfo ci) {
         InGameTimer.getInstance().writeRecordFile(false);
     }
 
-    // Disconnecting fix
+// Disconnecting fix
     @Inject(at = @At("HEAD"), method = "disconnect*")
     public void disconnect(CallbackInfo ci) {
         if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE && InGameTimerUtils.CAN_DISCONNECT) {

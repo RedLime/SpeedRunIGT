@@ -1,8 +1,8 @@
 package com.redlimerl.speedrunigt.utils;
 
 import com.google.common.collect.Lists;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.Language;
+import net.minecraft.client.Minecraft;
+import net.minecraft.locale.Language;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,7 +61,7 @@ public class TranslateHelper {
 
                 InputStream inputStream = TranslateHelper.class.getResourceAsStream(langFileName);
                 if (inputStream != null) {
-                    Language.load(inputStream, biConsumer);
+                    Language.loadFromJson(inputStream, biConsumer);
                 }
             }
         } catch (IOException | URISyntaxException e) {
@@ -70,6 +70,6 @@ public class TranslateHelper {
     }
 
     public static void reload() {
-        MinecraftClient.getInstance().reloadResources();
+        Minecraft.getInstance().reloadResourcePacks();
     }
 }

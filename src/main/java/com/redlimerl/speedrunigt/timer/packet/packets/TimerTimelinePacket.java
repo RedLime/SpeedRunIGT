@@ -5,16 +5,16 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 
 public class TimerTimelinePacket extends TimerPacket<TimerTimelinePacket> {
 
-    public static final CustomPayload.Id<TimerTimelinePacket> IDENTIFIER = TimerPacket.identifier("timer_timeline");
-    public static final PacketCodec<RegistryByteBuf, TimerTimelinePacket> CODEC = TimerPacket.codecOf(TimerTimelinePacket::write, TimerTimelinePacket::new);
+    public static final CustomPacketPayload.Type<TimerTimelinePacket> IDENTIFIER = TimerPacket.identifier("timer_timeline");
+    public static final StreamCodec<RegistryFriendlyByteBuf, TimerTimelinePacket> CODEC = TimerPacket.codecOf(TimerTimelinePacket::write, TimerTimelinePacket::new);
     private final String sendTimeline;
 
     public TimerTimelinePacket(String timeline) {
@@ -22,13 +22,13 @@ public class TimerTimelinePacket extends TimerPacket<TimerTimelinePacket> {
         this.sendTimeline = timeline;
     }
 
-    public TimerTimelinePacket(RegistryByteBuf buf) {
-        this(buf.readString());
+    public TimerTimelinePacket(RegistryFriendlyByteBuf buf) {
+        this(buf.readUtf());
     }
 
     @Override
-    protected void write(RegistryByteBuf buf) {
-        buf.writeString(this.sendTimeline);
+    protected void write(RegistryFriendlyByteBuf buf) {
+        buf.writeUtf(this.sendTimeline);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class TimerTimelinePacket extends TimerPacket<TimerTimelinePacket> {
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void receiveServer2ClientPacket(MinecraftClient client) {
+    public void receiveServer2ClientPacket(Minecraft client) {
         InGameTimer.getInstance().tryInsertNewTimeline(this.sendTimeline, false);
     }
 }

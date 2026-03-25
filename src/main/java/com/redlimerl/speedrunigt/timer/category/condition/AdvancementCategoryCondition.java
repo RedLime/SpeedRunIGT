@@ -2,11 +2,11 @@ package com.redlimerl.speedrunigt.timer.category.condition;
 
 import com.google.gson.JsonObject;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
-import net.minecraft.advancement.AdvancementEntry;
+import net.minecraft.advancements.AdvancementHolder;
 
 import java.util.Objects;
 
-public class AdvancementCategoryCondition extends CategoryCondition.Condition<AdvancementEntry> {
+public class AdvancementCategoryCondition extends CategoryCondition.Condition<AdvancementHolder> {
 
     private final String advancement;
 
@@ -21,7 +21,7 @@ public class AdvancementCategoryCondition extends CategoryCondition.Condition<Ad
     }
 
     @Override
-    public boolean checkConditionComplete(AdvancementEntry obj) {
+    public boolean checkConditionComplete(AdvancementHolder obj) {
         return Objects.equals(obj.id().toString(), advancement);
     }
 }

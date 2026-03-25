@@ -5,16 +5,16 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 
 public class TimerCompletePacket extends TimerPacket<TimerCompletePacket> {
 
-    public static final CustomPayload.Id<TimerCompletePacket> IDENTIFIER = TimerPacket.identifier("timer_complete");
-    public static final PacketCodec<RegistryByteBuf, TimerCompletePacket> CODEC = TimerPacket.codecOf(TimerCompletePacket::write, TimerCompletePacket::new);
+    public static final CustomPacketPayload.Type<TimerCompletePacket> IDENTIFIER = TimerPacket.identifier("timer_complete");
+    public static final StreamCodec<RegistryFriendlyByteBuf, TimerCompletePacket> CODEC = TimerPacket.codecOf(TimerCompletePacket::write, TimerCompletePacket::new);
     private final long sendRTA;
 
     public TimerCompletePacket(Long rta) {
@@ -22,11 +22,11 @@ public class TimerCompletePacket extends TimerPacket<TimerCompletePacket> {
         this.sendRTA = rta;
     }
 
-    public TimerCompletePacket(RegistryByteBuf buf) {
+    public TimerCompletePacket(RegistryFriendlyByteBuf buf) {
         this(buf.readLong());
     }
 
-    protected void write(RegistryByteBuf buf) {
+    protected void write(RegistryFriendlyByteBuf buf) {
         buf.writeLong(this.sendRTA);
     }
 
@@ -40,7 +40,7 @@ public class TimerCompletePacket extends TimerPacket<TimerCompletePacket> {
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void receiveServer2ClientPacket(MinecraftClient client) {
+    public void receiveServer2ClientPacket(Minecraft client) {
         InGameTimer.complete(InGameTimer.getInstance().getStartTime() + this.sendRTA, false);
     }
 }

@@ -1,13 +1,13 @@
 package com.redlimerl.speedrunigt.mixins.access;
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(MinecraftClient.class)
-public interface MinecraftClientAccessorForAttack {
+@Mixin(Minecraft.class)
+public interface MinecraftAccessorForAttack {
 
-    @Accessor("attackCooldown")
+    @Accessor("missTime")
     int getAttackCoolDown();
 
 }

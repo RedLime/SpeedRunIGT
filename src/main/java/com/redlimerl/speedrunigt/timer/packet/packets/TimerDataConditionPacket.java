@@ -5,16 +5,16 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 
 public class TimerDataConditionPacket extends TimerPacket<TimerDataConditionPacket> {
 
-    public static final CustomPayload.Id<TimerDataConditionPacket> IDENTIFIER = TimerPacket.identifier("condition_data");
-    public static final PacketCodec<RegistryByteBuf, TimerDataConditionPacket> CODEC = TimerPacket.codecOf(TimerDataConditionPacket::write, TimerDataConditionPacket::new);
+    public static final CustomPacketPayload.Type<TimerDataConditionPacket> IDENTIFIER = TimerPacket.identifier("condition_data");
+    public static final StreamCodec<RegistryFriendlyByteBuf, TimerDataConditionPacket> CODEC = TimerPacket.codecOf(TimerDataConditionPacket::write, TimerDataConditionPacket::new);
     private final int sendKey;
     private final int sendValue;
 
@@ -24,12 +24,12 @@ public class TimerDataConditionPacket extends TimerPacket<TimerDataConditionPack
         this.sendValue = value;
     }
 
-    public TimerDataConditionPacket(RegistryByteBuf buf) {
+    public TimerDataConditionPacket(RegistryFriendlyByteBuf buf) {
         this(buf.readInt(), buf.readInt());
     }
 
     @Override
-    protected void write(RegistryByteBuf buf) {
+    protected void write(RegistryFriendlyByteBuf buf) {
         buf.writeInt(this.sendKey);
         buf.writeInt(this.sendValue);
     }
@@ -44,7 +44,7 @@ public class TimerDataConditionPacket extends TimerPacket<TimerDataConditionPack
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void receiveServer2ClientPacket(MinecraftClient client) {
+    public void receiveServer2ClientPacket(Minecraft client) {
         InGameTimer.getInstance().updateMoreData(this.sendKey, this.sendValue, false);
     }
 }

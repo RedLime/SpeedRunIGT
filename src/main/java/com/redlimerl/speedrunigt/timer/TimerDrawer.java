@@ -2,7 +2,7 @@ package com.redlimerl.speedrunigt.timer;
 
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.mixins.access.FontManagerAccessor;
-import com.redlimerl.speedrunigt.mixins.access.MinecraftClientAccessor;
+import com.redlimerl.speedrunigt.mixins.access.MinecraftAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDecimals;
@@ -12,13 +12,13 @@ import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.StyleSpriteSource;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.ColorHelper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FontDescription;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 
 import java.util.HashMap;
 
@@ -32,7 +32,7 @@ public class TimerDrawer {
     public static final HashMap<String, Float> fontHeightMap = new HashMap<>();
 
     private final boolean translateZ;
-    private final MinecraftClient client = MinecraftClient.getInstance();
+    private final Minecraft client = Minecraft.getInstance();
 
     private boolean needUpdate = false;
 
@@ -304,39 +304,39 @@ public class TimerDrawer {
         }
     }
 
-    public MutableText getIGTText() {
+    public MutableComponent getIGTText() {
         InGameTimer timer = InGameTimer.getInstance();
 
         if (SpeedRunOption.getOption(SpeedRunOptions.TIMER_LEGACY_IGT_MODE) && timer.isServerIntegrated && InGameTimerUtils.getServer() != null && SpeedRunIGT.IS_CLIENT_SIDE) {
             Long inGameTime = timer.isCompleted() ? timer.getCompleteStatIGT() : InGameTimerClientUtils.getPlayerTime();
-            if (inGameTime != null) return Text.literal((this.simply ? "" : "IGT: ") + getTimeFormat(inGameTime));
+            if (inGameTime != null) return Component.literal((this.simply ? "" : "IGT: ") + getTimeFormat(inGameTime));
         }
 
         long igt = timer.isCompleted() && SpeedRunOption.getOption(SpeedRunOptions.AUTO_RETIME_FOR_GUIDELINE)
                 && timer.getCategory() == RunCategories.ANY && timer.getRunType() == RunType.RANDOM_SEED
                 && (System.currentTimeMillis() / 3000) % 2 == 0
                 ? timer.getRetimedInGameTime() : timer.getInGameTime();
-        return Text.literal((this.simply ? "" : "IGT: ") + getTimeFormat(igt));
+        return Component.literal((this.simply ? "" : "IGT: ") + getTimeFormat(igt));
     }
 
-    public MutableText getRTAText() {
-        return Text.literal((this.simply ? "" : "RTA: ") + getTimeFormat(InGameTimer.getInstance().getRealTimeAttack()));
+    public MutableComponent getRTAText() {
+        return Component.literal((this.simply ? "" : "RTA: ") + getTimeFormat(InGameTimer.getInstance().getRealTimeAttack()));
     }
 
-    public void draw(DrawContext drawContext) {
+    public void draw(GuiGraphics drawContext) {
         if (!toggle) return;
 
-        MutableText igtText = getIGTText();
-        MutableText rtaText = getRTAText();
+        MutableComponent igtText = getIGTText();
+        MutableComponent rtaText = getRTAText();
 
         //폰트 조정
         float fontHeight = 8;
         if (!SpeedRunOption.getOption(SpeedRunOptions.CUSTOM_FONT_SAFE_MODE)) {
 
-            FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftClientAccessor) client).getFontManager();
-            if (getTimerFont() != MinecraftClient.DEFAULT_FONT_ID && fontManager.getFontStorages().containsKey(getTimerFont())) {
-                rtaText.setStyle(rtaText.getStyle().withFont(new StyleSpriteSource.Font(getTimerFont())));
-                igtText.setStyle(igtText.getStyle().withFont(new StyleSpriteSource.Font(getTimerFont())));
+            FontManagerAccessor fontManager = (FontManagerAccessor) ((MinecraftAccessor) client).getFontManager();
+            if (getTimerFont() != Minecraft.DEFAULT_FONT && fontManager.getFontSets().containsKey(getTimerFont())) {
+                rtaText.setStyle(rtaText.getStyle().withFont(new FontDescription.Resource(getTimerFont())));
+                igtText.setStyle(igtText.getStyle().withFont(new FontDescription.Resource(getTimerFont())));
 //                if (!fontHeightMap.containsKey(getTimerFont().toString())) {
 //                    BakedGlyph glyph = fontManager.getFontStorages().get(getTimerFont()).getGlyphs(false).get('I');
 //                    glyph.create().textureView().sa,
@@ -354,13 +354,13 @@ public class TimerDrawer {
         igtTimerElement.init(igtXPos, igtYPos, igtScale, igtText, igtColor, igtDecoration, igtDisplayAlign, fontHeight);
 
         //배경 렌더
-        drawContext.getMatrices().pushMatrix();
+        drawContext.pose().pushMatrix();
         if (bgOpacity > 0.01f) {
             Position rtaMin = new Position(rtaTimerElement.getPosition().getX() - rtaPadding, rtaTimerElement.getPosition().getY() - rtaPadding);
             Position rtaMax = new Position(rtaMin.getX() + rtaTimerElement.getScaledTextWidth() + ((rtaPadding - 1) + rtaPadding), rtaMin.getY() + rtaTimerElement.getScaledTextHeight() + ((rtaPadding - 1) + rtaPadding));
             Position igtMin = new Position(igtTimerElement.getPosition().getX() - igtPadding, igtTimerElement.getPosition().getY() - igtPadding);
             Position igtMax = new Position(igtMin.getX() + igtTimerElement.getScaledTextWidth() + ((igtPadding - 1) + igtPadding), igtMin.getY() + igtTimerElement.getScaledTextHeight() + ((igtPadding - 1) + igtPadding));
-            int opacity = ColorHelper.getArgb((int) (bgOpacity * 255), 0, 0, 0);
+            int opacity = ARGB.color((int) (bgOpacity * 255), 0, 0, 0);
             if (rtaMin.getX() < igtMax.getX() && rtaMin.getY() < igtMax.getY() &&
                     igtMin.getX() < rtaMax.getX() && igtMin.getY() < rtaMax.getY()) {
                 drawContext.fill(Math.min(rtaMin.getX(), igtMin.getX()), Math.min(rtaMin.getY(), igtMin.getY()),
@@ -374,7 +374,7 @@ public class TimerDrawer {
         //렌더
         if (igtScale != 0) igtTimerElement.draw(drawContext, translateZ);
         if (rtaScale != 0) rtaTimerElement.draw(drawContext, translateZ);
-        drawContext.getMatrices().popMatrix();
+        drawContext.pose().popMatrix();
 
     }
 

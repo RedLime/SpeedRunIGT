@@ -8,16 +8,16 @@ import com.redlimerl.speedrunigt.timer.category.RunCategory;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 
 public class TimerChangeCategoryPacket extends TimerPacket<TimerChangeCategoryPacket> {
 
-    public static final CustomPayload.Id<TimerChangeCategoryPacket> IDENTIFIER = TimerPacket.identifier("timer_category");
-    public static final PacketCodec<RegistryByteBuf, TimerChangeCategoryPacket> CODEC = TimerPacket.codecOf(TimerChangeCategoryPacket::write, TimerChangeCategoryPacket::new);
+    public static final CustomPacketPayload.Type<TimerChangeCategoryPacket> IDENTIFIER = TimerPacket.identifier("timer_category");
+    public static final StreamCodec<RegistryFriendlyByteBuf, TimerChangeCategoryPacket> CODEC = TimerPacket.codecOf(TimerChangeCategoryPacket::write, TimerChangeCategoryPacket::new);
     private final RunCategory category;
 
     public TimerChangeCategoryPacket(RunCategory category) {
@@ -25,13 +25,13 @@ public class TimerChangeCategoryPacket extends TimerPacket<TimerChangeCategoryPa
         this.category = category;
     }
 
-    public TimerChangeCategoryPacket(RegistryByteBuf buf) {
-        this(RunCategory.getCategory(buf.readString()));
+    public TimerChangeCategoryPacket(RegistryFriendlyByteBuf buf) {
+        this(RunCategory.getCategory(buf.readUtf()));
     }
 
     @Override
-    protected void write(RegistryByteBuf buf) {
-        buf.writeString(this.category.getID());
+    protected void write(RegistryFriendlyByteBuf buf) {
+        buf.writeUtf(this.category.getID());
     }
 
     @Override
@@ -45,7 +45,7 @@ public class TimerChangeCategoryPacket extends TimerPacket<TimerChangeCategoryPa
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void receiveServer2ClientPacket(MinecraftClient client) {
+    public void receiveServer2ClientPacket(Minecraft client) {
         InGameTimer.getInstance().setCategory(this.category, false);
     }
 }

@@ -5,22 +5,22 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 
 public class TimerUncompletedPacket extends TimerPacket<TimerUncompletedPacket> {
 
-    public static final CustomPayload.Id<TimerUncompletedPacket> IDENTIFIER = TimerPacket.identifier("timer_uncompleted");
-    public static final PacketCodec<RegistryByteBuf, TimerUncompletedPacket> CODEC = TimerPacket.codecOf(TimerUncompletedPacket::write, buf -> new TimerUncompletedPacket());
+    public static final CustomPacketPayload.Type<TimerUncompletedPacket> IDENTIFIER = TimerPacket.identifier("timer_uncompleted");
+    public static final StreamCodec<RegistryFriendlyByteBuf, TimerUncompletedPacket> CODEC = TimerPacket.codecOf(TimerUncompletedPacket::write, buf -> new TimerUncompletedPacket());
 
     public TimerUncompletedPacket() {
         super(IDENTIFIER);
     }
 
-    protected void write(RegistryByteBuf buf) {
+    protected void write(RegistryFriendlyByteBuf buf) {
     }
 
     @Override
@@ -33,7 +33,7 @@ public class TimerUncompletedPacket extends TimerPacket<TimerUncompletedPacket> 
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void receiveServer2ClientPacket(MinecraftClient client) {
+    public void receiveServer2ClientPacket(Minecraft client) {
         InGameTimer.getInstance().setUncompleted(false);
     }
 }

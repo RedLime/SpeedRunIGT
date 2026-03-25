@@ -7,8 +7,8 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.events.EventRepository;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.GameVersion;
 import net.minecraft.SharedConstants;
+import net.minecraft.WorldVersion;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -19,13 +19,13 @@ public class TimerWorld {
     private static final String EVENT_LOG_FILE_NAME = "events.log";
     private final Path worldFolderPath;
     private final List<String> mods;
-    private final GameVersion version;
+    private final WorldVersion version;
     private final EventRepository eventRepository;
 
     TimerWorld(Path worldFolderPath, Path globalEventsPath) {
         this.worldFolderPath = worldFolderPath;
         this.mods = FabricLoader.getInstance().getAllMods().stream().map(mod -> mod.getMetadata().getId()).collect(Collectors.toList());
-        this.version = SharedConstants.getGameVersion();
+        this.version = SharedConstants.getCurrentVersion();
         this.eventRepository = new EventRepository(this, this.worldFolderPath.resolve(EVENT_LOG_FILE_NAME), globalEventsPath);
     }
 

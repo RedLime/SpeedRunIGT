@@ -6,7 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
-import com.redlimerl.speedrunigt.mixins.access.ServerStatHandlerAccessor;
+import com.redlimerl.speedrunigt.mixins.access.ServerStatsCounterAccessor;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
@@ -15,19 +15,19 @@ import com.redlimerl.speedrunigt.timer.logs.TimerTimeline;
 import com.redlimerl.speedrunigt.timer.running.RunPortalPos;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.block.ShulkerBoxBlock;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ContainerComponent;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.RegistryKey;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.GameMode;
-import net.minecraft.world.World;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -194,10 +194,10 @@ public class InGameTimerUtils {
     public static void updateStatsJson(InGameTimer timer) {
         JsonObject jsonObject = new JsonObject();
         MinecraftServer server = getServer();
-        if (timer.isServerIntegrated && server != null && server.getPlayerManager() != null) {
-            ArrayList<ServerPlayerEntity> serverPlayerEntities = Lists.newArrayList(server.getPlayerManager().getPlayerList());
-            for (ServerPlayerEntity serverPlayerEntity : serverPlayerEntities) {
-                jsonObject.add(serverPlayerEntity.getUuidAsString(), SpeedRunIGT.GSON.fromJson(((ServerStatHandlerAccessor) serverPlayerEntity.getStatHandler()).invokeAsString(), JsonObject.class));
+        if (timer.isServerIntegrated && server != null && server.getPlayerList() != null) {
+            ArrayList<ServerPlayer> serverPlayerEntities = Lists.newArrayList(server.getPlayerList().getPlayers());
+            for (ServerPlayer serverPlayerEntity : serverPlayerEntities) {
+                jsonObject.add(serverPlayerEntity.getStringUUID(), SpeedRunIGT.GSON.fromJson(((ServerStatsCounterAccessor) serverPlayerEntity.getStats()).invokeToJson(), JsonObject.class));
             }
         }
         STATS_UPDATE = jsonObject;
@@ -217,10 +217,10 @@ public class InGameTimerUtils {
         return "unknown";
     }
 
-    public static boolean isLoadableBlind(RegistryKey<World> worldKey, Vec3d netherPos, Vec3d overPos) {
+    public static boolean isLoadableBlind(ResourceKey<Level> worldKey, Vec3 netherPos, Vec3 overPos) {
         InGameTimer timer = InGameTimer.getInstance();
-        List<RunPortalPos> arrayList = worldKey == World.NETHER ? timer.lastNetherPortalPos : worldKey == World.OVERWORLD ? timer.lastOverWorldPortalPos : null;
-        Vec3d targetPos = worldKey == World.NETHER ? netherPos : worldKey == World.OVERWORLD ? overPos : null;
+        List<RunPortalPos> arrayList = worldKey == Level.NETHER ? timer.lastNetherPortalPos : worldKey == Level.OVERWORLD ? timer.lastOverWorldPortalPos : null;
+        Vec3 targetPos = worldKey == Level.NETHER ? netherPos : worldKey == Level.OVERWORLD ? overPos : null;
         if (arrayList == null || targetPos == null) return true;
         for (RunPortalPos portalPos : arrayList) {
             if (portalPos.squaredDistanceTo(targetPos) < 16) return false;
@@ -230,7 +230,7 @@ public class InGameTimerUtils {
         return true;
     }
 
-    public static int isBlindTraveled(Vec3d netherPos) {
+    public static int isBlindTraveled(Vec3 netherPos) {
         InGameTimer timer = InGameTimer.getInstance();
         for (int i = 0; i < timer.lastNetherPortalPos.size(); i++) {
             if (timer.lastNetherPortalPos.get(i).squaredDistanceTo(netherPos) < 16) return i;
@@ -238,7 +238,7 @@ public class InGameTimerUtils {
         return -1;
     }
 
-    public static int getPortalNumber(Vec3d portalPos) {
+    public static int getPortalNumber(Vec3 portalPos) {
         int index = isBlindTraveled(portalPos);
         return Math.max(hasHomeTraveled() ? index : index - 1, 0);
     }
@@ -263,13 +263,13 @@ public class InGameTimerUtils {
         return SpeedRunIGT.IS_CLIENT_SIDE ? InGameTimerClientUtils.getClientServer() : SpeedRunIGT.DEDICATED_SERVER;
     }
 
-    public static int getItemCountFromShulkerBox(World world, ItemStack itemStack, Item targetItem) {
+    public static int getItemCountFromShulkerBox(Level world, ItemStack itemStack, Item targetItem) {
         int count = 0;
 
         if (!(itemStack.getItem() instanceof BlockItem) || !(((BlockItem) itemStack.getItem()).getBlock() instanceof ShulkerBoxBlock))
             return 0;
 
-        Iterable<ItemStack> stacks = itemStack.getOrDefault(DataComponentTypes.CONTAINER, ContainerComponent.DEFAULT).iterateNonEmpty();
+        Iterable<ItemStack> stacks = itemStack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).nonEmptyItems();
         for (ItemStack stack : stacks) {
             if (stack != null && stack.getItem() == targetItem) {
                 count += stack.getCount();
@@ -281,19 +281,19 @@ public class InGameTimerUtils {
 
     public static int getCurrentWorldDefaultGameMode() {
         MinecraftServer server = getServer();
-        if (server == null) return GameMode.SURVIVAL.getIndex();
-        return server.getDefaultGameMode().getIndex();
+        if (server == null) return GameType.SURVIVAL.getId();
+        return server.getDefaultGameType().getId();
     }
 
     public static boolean isCurrentWorldCheatAvailable() {
         MinecraftServer server = getServer();
         if (server == null) return false;
-        return server.getPlayerManager().areCheatsAllowed();
+        return server.getPlayerList().isAllowCommandsForAllPlayers();
     }
 
     public static Difficulty getCurrentDifficulty() {
         MinecraftServer server = getServer();
         if (server == null) { return Difficulty.EASY; }
-        return server.getSaveProperties().getDifficulty();
+        return server.getWorldData().getDifficulty();
     }
 }

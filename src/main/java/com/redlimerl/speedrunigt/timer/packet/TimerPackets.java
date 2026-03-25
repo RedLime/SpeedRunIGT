@@ -6,9 +6,9 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
 public class TimerPackets {
     public static void init() {
@@ -23,7 +23,7 @@ public class TimerPackets {
         registerPacket(TimerAchieveAdvancementPacket.IDENTIFIER, TimerAchieveAdvancementPacket.CODEC);
         registerPacket(TimerAchieveCriteriaPacket.IDENTIFIER, TimerAchieveCriteriaPacket.CODEC);
     }
-    private static <T extends TimerPacket<?>> void registerPacket(CustomPayload.Id<T> id, PacketCodec<RegistryByteBuf, T> codec) {
+    private static <T extends TimerPacket<?>> void registerPacket(CustomPacketPayload.Type<T> id, StreamCodec<RegistryFriendlyByteBuf, T> codec) {
         PayloadTypeRegistry.playC2S().register(id, codec);
         PayloadTypeRegistry.playS2C().register(id, codec);
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {

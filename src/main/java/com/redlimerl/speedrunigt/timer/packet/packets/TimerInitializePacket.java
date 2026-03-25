@@ -8,16 +8,16 @@ import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 
 public class TimerInitializePacket extends TimerPacket<TimerInitializePacket> {
 
-    public static final CustomPayload.Id<TimerInitializePacket> IDENTIFIER = TimerPacket.identifier("timer_init");
-    public static final PacketCodec<RegistryByteBuf, TimerInitializePacket> CODEC = TimerPacket.codecOf(TimerInitializePacket::write, TimerInitializePacket::new);
+    public static final CustomPacketPayload.Type<TimerInitializePacket> IDENTIFIER = TimerPacket.identifier("timer_init");
+    public static final StreamCodec<RegistryFriendlyByteBuf, TimerInitializePacket> CODEC = TimerPacket.codecOf(TimerInitializePacket::write, TimerInitializePacket::new);
     private final RunType runType;
     private final RunCategory category;
 
@@ -32,15 +32,15 @@ public class TimerInitializePacket extends TimerPacket<TimerInitializePacket> {
         }
     }
 
-    public TimerInitializePacket(RegistryByteBuf buf) {
+    public TimerInitializePacket(RegistryFriendlyByteBuf buf) {
         super(IDENTIFIER);
         this.runType = RunType.fromInt(buf.readInt());
-        this.category = RunCategory.getCategory(buf.readString());
+        this.category = RunCategory.getCategory(buf.readUtf());
     }
 
-    protected void write(RegistryByteBuf buf) {
+    protected void write(RegistryFriendlyByteBuf buf) {
         buf.writeInt(this.runType.getCode());
-        buf.writeString(this.category.getID());
+        buf.writeUtf(this.category.getID());
     }
 
     @Override
@@ -53,8 +53,8 @@ public class TimerInitializePacket extends TimerPacket<TimerInitializePacket> {
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void receiveServer2ClientPacket(MinecraftClient client) {
-        this.init(client.isIntegratedServerRunning());
+    public void receiveServer2ClientPacket(Minecraft client) {
+        this.init(client.hasSingleplayerServer());
     }
 
     private void init(boolean isIntegrated) {

@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.api.SpeedRunIGTApi;
 import com.redlimerl.speedrunigt.impl.OptionButtonsImpl;
@@ -11,9 +12,8 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Collection;
@@ -21,8 +21,8 @@ import java.util.Collection;
 public class SpeedRunIGTClient implements ClientModInitializer {
     public static TimerDrawer TIMER_DRAWER = new TimerDrawer(true);
 
-    public static KeyBinding timerResetKeyBinding;
-    public static KeyBinding timerStopKeyBinding;
+    public static KeyMapping timerResetKeyBinding;
+    public static KeyMapping timerStopKeyBinding;
     public static boolean isInitialized = false;
 
     @Override
@@ -48,18 +48,18 @@ public class SpeedRunIGTClient implements ClientModInitializer {
         // End initializing
         isInitialized = true;
 
-        KeyBinding.Category keybindCategory = KeyBinding.Category.create(Identifier.of("speedrunigt", "title.options"));
+        KeyMapping.Category keybindCategory = KeyMapping.Category.register(Identifier.fromNamespaceAndPath("speedrunigt", "title.options"));
 
         // Key Bindings initialize
-        timerResetKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        timerResetKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyMapping(
                 "speedrunigt.controls.start_timer",
-                InputUtil.Type.KEYSYM,
+                InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_U,
                 keybindCategory
         ));
-        timerStopKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        timerStopKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyMapping(
                 "speedrunigt.controls.stop_timer",
-                InputUtil.Type.KEYSYM,
+                InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_I,
                 keybindCategory
         ));

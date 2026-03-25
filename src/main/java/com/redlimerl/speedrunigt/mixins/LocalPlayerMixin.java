@@ -9,19 +9,19 @@ import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.category.condition.ObtainItemCategoryCondition;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import net.minecraft.block.ShulkerBoxBlock;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.MovementType;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -32,23 +32,23 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mixin(ClientPlayerEntity.class)
-public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
+@Mixin(LocalPlayer.class)
+public abstract class LocalPlayerMixin extends AbstractClientPlayer {
 
-    @Shadow @Final protected MinecraftClient client;
+    @Shadow @Final protected Minecraft minecraft;
 
-    public ClientPlayerEntityMixin(ClientWorld world, GameProfile profile) {
+    public LocalPlayerMixin(ClientLevel world, GameProfile profile) {
         super(world, profile);
     }
 
-    @Inject(method = "move(Lnet/minecraft/entity/MovementType;Lnet/minecraft/util/math/Vec3d;)V",
+    @Inject(method = "move(Lnet/minecraft/world/entity/MoverType;Lnet/minecraft/world/phys/Vec3;)V",
             at = @At("TAIL"))
-    private void onMove(MovementType movementType, Vec3d vec3d, CallbackInfo ci) {
+    private void onMove(MoverType movementType, Vec3 vec3d, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 
         if (timer.getStatus() == TimerStatus.NONE || timer.getStatus() == TimerStatus.COMPLETED_LEGACY) return;
 
-        if (timer.getStatus() == TimerStatus.IDLE && !InGameTimerUtils.IS_CHANGING_DIMENSION && (vec3d.x != 0 || vec3d.z != 0 || this.jumping || this.isSneaking())) {
+        if (timer.getStatus() == TimerStatus.IDLE && !InGameTimerUtils.IS_CHANGING_DIMENSION && (vec3d.x != 0 || vec3d.z != 0 || this.jumping || this.isShiftKeyDown())) {
             timer.setPause(false, "moved player");
         }
         if (vec3d.x != 0 || vec3d.z != 0 || this.jumping) {
@@ -56,9 +56,9 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         }
 
         List<ItemStack> playerItemList = Lists.newArrayList();
-        playerItemList.addAll(this.getInventory().getMainStacks());
-        for (Integer slotId : PlayerInventory.EQUIPMENT_SLOTS.keySet()) {
-            playerItemList.add(this.getInventory().getStack(slotId));
+        playerItemList.addAll(this.getInventory().getNonEquipmentItems());
+        for (Integer slotId : Inventory.EQUIPMENT_SLOT_MAPPING.keySet()) {
+            playerItemList.add(this.getInventory().getItem(slotId));
         }
 
         // Custom Json category
@@ -96,7 +96,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
         //Full Inventory
         if (timer.getCategory() == RunCategories.FULL_INV) {
-            if (this.getInventory().getMainStacks().stream().filter(itemStack -> itemStack != null && itemStack != ItemStack.EMPTY && itemStack.getItem() != Items.AIR).map(ItemStack::getItem).distinct().toArray().length == 36)
+            if (this.getInventory().getNonEquipmentItems().stream().filter(itemStack -> itemStack != null && itemStack != ItemStack.EMPTY && itemStack.getItem() != Items.AIR).map(ItemStack::getItem).distinct().toArray().length == 36)
                 InGameTimer.complete();
             return;
         }
@@ -114,7 +114,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                 shells += itemStack.getCount();
             }
             if (itemStack.getItem() instanceof BlockItem && ((BlockItem) itemStack.getItem()).getBlock() instanceof ShulkerBoxBlock) {
-                shells += InGameTimerUtils.getItemCountFromShulkerBox(this.getEntityWorld(), itemStack, Items.NAUTILUS_SHELL);
+                shells += InGameTimerUtils.getItemCountFromShulkerBox(this.level(), itemStack, Items.NAUTILUS_SHELL);
             }
             if (shells > timer.getMoreData(1541)) {
                 int i = 1;
@@ -132,11 +132,11 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             }
         }
 
-        List<Item> items = this.getInventory().getMainStacks().stream().map(ItemStack::getItem).toList();
+        List<Item> items = this.getInventory().getNonEquipmentItems().stream().map(ItemStack::getItem).toList();
         List<Item> armors = new ArrayList<>();
-        for (Int2ObjectMap.Entry<EquipmentSlot> entry : PlayerInventory.EQUIPMENT_SLOTS.int2ObjectEntrySet()) {
+        for (Int2ObjectMap.Entry<EquipmentSlot> entry : Inventory.EQUIPMENT_SLOT_MAPPING.int2ObjectEntrySet()) {
             if (entry.getValue().getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
-                armors.add(this.getInventory().getStack(entry.getIntKey()).getItem());
+                armors.add(this.getInventory().getItem(entry.getIntKey()).getItem());
             }
         }
 
@@ -205,10 +205,10 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     @Inject(at = @At("HEAD"), method = "tick")
     public void updateNausea(CallbackInfo ci) {
         // Portal time update
-        if (this.portalManager != null && this.portalManager.isInPortal()) {
+        if (this.portalProcess != null && this.portalProcess.isInsidePortalThisTick()) {
             if (++portalTick >= 81 && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
                 portalTick = 0;
-                if (InGameTimer.getInstance().getStatus() != TimerStatus.IDLE && client.isInSingleplayer()) {
+                if (InGameTimer.getInstance().getStatus() != TimerStatus.IDLE && minecraft.isLocalServer()) {
                     latestPortalEnter = System.currentTimeMillis();
                 }
             }
@@ -222,8 +222,8 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     }
 
     @Override
-    public void changeLookDirection(double cursorDeltaX, double cursorDeltaY) {
-        super.changeLookDirection(cursorDeltaX, cursorDeltaY);
+    public void turn(double cursorDeltaX, double cursorDeltaY) {
+        super.turn(cursorDeltaX, cursorDeltaY);
 
         if (cursorDeltaX != 0 || cursorDeltaY != 0) {
             InGameTimer timer = InGameTimer.getInstance();

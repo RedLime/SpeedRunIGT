@@ -7,18 +7,18 @@ import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.TeleportTarget;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.portal.TeleportTransition;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -31,43 +31,43 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Mixin(ServerPlayerEntity.class)
-public abstract class ServerPlayerEntityMixin extends PlayerEntity {
+@Mixin(ServerPlayer.class)
+public abstract class ServerPlayerMixin extends Player {
 
-    @Shadow public abstract ServerWorld getEntityWorld();
+    @Shadow public abstract ServerLevel level();
 
     @Unique
-    private ServerWorld beforeWorld = null;
+    private ServerLevel beforeWorld = null;
     @Unique
-    private Vec3d lastPortalPos = null;
+    private Vec3 lastPortalPos = null;
 
-    public ServerPlayerEntityMixin(World world, GameProfile profile) {
+    public ServerPlayerMixin(Level world, GameProfile profile) {
         super(world, profile);
     }
 
-    @Inject(method = "teleportTo(Lnet/minecraft/world/TeleportTarget;)Lnet/minecraft/server/network/ServerPlayerEntity;", at = @At("HEAD"))
-    public void onChangeDimension(TeleportTarget target, CallbackInfoReturnable<Entity> cir) {
-        beforeWorld = this.getEntityWorld();
-        lastPortalPos = this.getEntityPos();
+    @Inject(method = "teleport(Lnet/minecraft/world/level/portal/TeleportTransition;)Lnet/minecraft/server/level/ServerPlayer;", at = @At("HEAD"))
+    public void onChangeDimension(TeleportTransition target, CallbackInfoReturnable<Entity> cir) {
+        beforeWorld = this.level();
+        lastPortalPos = this.position();
         InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = !InGameTimer.getInstance().isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY;
     }
 
-    @Inject(method = "teleportTo(Lnet/minecraft/world/TeleportTarget;)Lnet/minecraft/server/network/ServerPlayerEntity;", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;onDimensionChanged(Lnet/minecraft/entity/Entity;)V", shift = At.Shift.AFTER))
-    public void onChangedDimension(TeleportTarget target, CallbackInfoReturnable<Entity> cir) {
-        RegistryKey<World> oldRegistryKey = beforeWorld.getRegistryKey();
-        RegistryKey<World> newRegistryKey = this.getEntityWorld().getRegistryKey();
+    @Inject(method = "teleport(Lnet/minecraft/world/level/portal/TeleportTransition;)Lnet/minecraft/server/level/ServerPlayer;", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;addDuringTeleport(Lnet/minecraft/world/entity/Entity;)V", shift = At.Shift.AFTER))
+    public void onChangedDimension(TeleportTransition target, CallbackInfoReturnable<Entity> cir) {
+        ResourceKey<Level> oldRegistryKey = beforeWorld.dimension();
+        ResourceKey<Level> newRegistryKey = this.level().dimension();
 
         InGameTimer timer = InGameTimer.getInstance();
         if (timer.getStatus() != TimerStatus.NONE) {
-            if (oldRegistryKey == World.OVERWORLD && newRegistryKey == World.NETHER) {
+            if (oldRegistryKey == Level.OVERWORLD && newRegistryKey == Level.NETHER) {
                 if (!timer.isCoop() && InGameTimer.getInstance().getCategory() == RunCategories.ANY)
-                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(World.NETHER, target.position().add(0, 0, 0), lastPortalPos.add(0, 0, 0));
+                    InGameTimerUtils.IS_CAN_WAIT_WORLD_LOAD = InGameTimerUtils.isLoadableBlind(Level.NETHER, target.position().add(0, 0, 0), lastPortalPos.add(0, 0, 0));
             }
 
-            if (oldRegistryKey == World.NETHER && newRegistryKey == World.OVERWORLD) {
+            if (oldRegistryKey == Level.NETHER && newRegistryKey == Level.OVERWORLD) {
                 // doing this early, so we can use the portal pos list for the portal number
                 int portalIndex = InGameTimerUtils.isBlindTraveled(this.lastPortalPos);
-                boolean isNewPortal = InGameTimerUtils.isLoadableBlind(World.OVERWORLD, this.lastPortalPos.add(0, 0, 0), target.position().add(0, 0, 0));
+                boolean isNewPortal = InGameTimerUtils.isLoadableBlind(Level.OVERWORLD, this.lastPortalPos.add(0, 0, 0), target.position().add(0, 0, 0));
                 if (this.isEnoughTravel()) {
                     int portalNum = InGameTimerUtils.getPortalNumber(this.lastPortalPos);
                     SpeedRunIGT.debug("Portal number: " + portalNum);
@@ -87,7 +87,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
     @Unique
     private boolean isEnoughTravel() {
-        Set<Item> currentItemTypes = Stream.concat(this.getInventory().getMainStacks().stream(), Stream.of(this.getInventory().getStack(PlayerInventory.OFF_HAND_SLOT))) // Go over both main inventory and offHand item list
+        Set<Item> currentItemTypes = Stream.concat(this.getInventory().getNonEquipmentItems().stream(), Stream.of(this.getInventory().getItem(Inventory.SLOT_OFFHAND))) // Go over both main inventory and offHand item list
                 .filter(Objects::nonNull) // Remove nulls
                 .map(ItemStack::getItem) // Turn each item stack into its item
                 .collect(Collectors.toSet()); // Collect to a set of items that the player has

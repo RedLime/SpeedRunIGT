@@ -1,12 +1,12 @@
 package com.redlimerl.speedrunigt.utils;
 
+import com.mojang.blaze3d.font.GlyphProvider;
+import com.mojang.blaze3d.font.TrueTypeGlyphProvider;
 import com.mojang.blaze3d.platform.TextureUtil;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
-import net.minecraft.client.font.BlankFont;
-import net.minecraft.client.font.Font;
-import net.minecraft.client.font.FreeTypeUtil;
-import net.minecraft.client.font.TrueTypeFont;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.font.AllMissingGlyphProvider;
+import net.minecraft.client.gui.font.providers.FreeTypeUtil;
+import net.minecraft.resources.Identifier;
 import org.apache.commons.io.FileUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class FontUtils {
-    public static void addFont(HashMap<Identifier, List<Font>> map, File file, File configFile) {
+    public static void addFont(HashMap<Identifier, List<GlyphProvider>> map, File file, File configFile) {
         FileInputStream fileInputStream = null;
         FT_Face fT_Face = null;
         ByteBuffer byteBuffer = null;
@@ -33,8 +33,8 @@ public class FontUtils {
             fileInputStream = new FileInputStream(file);
             byteBuffer = TextureUtil.readResource(fileInputStream);
 
-            Identifier fontIdentifier = Identifier.of(SpeedRunIGT.MOD_ID, file.getName().toLowerCase(Locale.ROOT).replace(".ttf", "").replaceAll(" ", "_").replaceAll("[^a-z0-9/._-]", ""));
-            ArrayList<Font> fontArrayList = new ArrayList<>();
+            Identifier fontIdentifier = Identifier.fromNamespaceAndPath(SpeedRunIGT.MOD_ID, file.getName().toLowerCase(Locale.ROOT).replace(".ttf", "").replaceAll(" ", "_").replaceAll("[^a-z0-9/._-]", ""));
+            ArrayList<GlyphProvider> fontArrayList = new ArrayList<>();
 
             FontConfigure fontConfigure;
             if (configFile != null && configFile.exists()) {
@@ -43,10 +43,10 @@ public class FontUtils {
                 fontConfigure = FontConfigure.create();
             }
 
-            synchronized (FreeTypeUtil.LOCK) {
+            synchronized (FreeTypeUtil.LIBRARY_LOCK) {
                 try (MemoryStack memoryStack = MemoryStack.stackPush()) {
                     PointerBuffer pointerBuffer = memoryStack.mallocPointer(1);
-                    FreeTypeUtil.checkFatalError(FreeType.FT_New_Memory_Face(FreeTypeUtil.initialize(), byteBuffer, 0L, pointerBuffer), "Initializing font face");
+                    FreeTypeUtil.assertError(FreeType.FT_New_Memory_Face(FreeTypeUtil.getLibrary(), byteBuffer, 0L, pointerBuffer), "Initializing font face");
                     fT_Face = FT_Face.create(pointerBuffer.get());
                 }
 
@@ -55,13 +55,13 @@ public class FontUtils {
                     throw new IOException("Font is not in TTF format, was " + string);
                 }
 
-                FreeTypeUtil.checkFatalError(FreeType.FT_Select_Charmap(fT_Face, FreeType.FT_ENCODING_UNICODE), "Find unicode charmap");
-                fontArrayList.add(new TrueTypeFont(byteBuffer, fT_Face, fontConfigure.size, fontConfigure.oversample, fontConfigure.shift[0], fontConfigure.shift[1], fontConfigure.skip));
+                FreeTypeUtil.assertError(FreeType.FT_Select_Charmap(fT_Face, FreeType.FT_ENCODING_UNICODE), "Find unicode charmap");
+                fontArrayList.add(new TrueTypeGlyphProvider(byteBuffer, fT_Face, fontConfigure.size, fontConfigure.oversample, fontConfigure.shift[0], fontConfigure.shift[1], fontConfigure.skip));
             }
 
             SpeedRunIGT.FONT_MAPS.put(fontIdentifier, new FontIdentifier(file, fontIdentifier, fontConfigure));
 
-            fontArrayList.add(new BlankFont());
+            fontArrayList.add(new AllMissingGlyphProvider());
 
             map.put(fontIdentifier, fontArrayList);
         } catch (FileNotFoundException e) {

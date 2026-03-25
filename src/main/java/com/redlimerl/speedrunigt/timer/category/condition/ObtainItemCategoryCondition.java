@@ -3,11 +3,11 @@ package com.redlimerl.speedrunigt.timer.category.condition;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
-import net.minecraft.component.ComponentMap;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.StringNbtReader;
-import net.minecraft.registry.Registries;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.TagParser;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 import java.util.Objects;
@@ -17,7 +17,7 @@ public class ObtainItemCategoryCondition extends CategoryCondition.Condition<Lis
     private final String itemID;
     private final Integer itemDamage;
     private final int itemAmount;
-    private final NbtCompound nbtTag;
+    private final CompoundTag nbtTag;
     private final boolean strictMode;
 
     public ObtainItemCategoryCondition(JsonObject jsonObject) throws InvalidCategoryException {
@@ -30,9 +30,9 @@ public class ObtainItemCategoryCondition extends CategoryCondition.Condition<Lis
             this.strictMode = !jsonObject.has("strict_mode") || jsonObject.get("strict_mode").getAsBoolean(); // Optional
             if (jsonObject.has("item_tag")) {
                 JsonElement jsonElement = jsonObject.get("item_tag");
-                this.nbtTag = StringNbtReader.readCompound(jsonElement.getAsString());
+                this.nbtTag = TagParser.parseCompoundFully(jsonElement.getAsString());
             } else {
-                this.nbtTag = new NbtCompound();
+                this.nbtTag = new CompoundTag();
             }
         } catch (Exception e) {
             throw new InvalidCategoryException(InvalidCategoryException.Reason.INVALID_JSON_DATA, "Failed to read condition \"" + this.getName() + "\"");
@@ -44,10 +44,10 @@ public class ObtainItemCategoryCondition extends CategoryCondition.Condition<Lis
         int amount = 0;
 
         for (ItemStack itemStack : itemStacks) {
-            if (itemStack != null && Objects.equals(Registries.ITEM.getId(itemStack.getItem()).toString(), itemID) && (itemDamage == null || itemStack.getDamage() == itemDamage)) {
+            if (itemStack != null && Objects.equals(BuiltInRegistries.ITEM.getKey(itemStack.getItem()).toString(), itemID) && (itemDamage == null || itemStack.getDamageValue() == itemDamage)) {
                 if (!nbtTag.isEmpty()) {
                     if (itemStack.getComponents() == null) continue;
-                    ComponentMap itemTag = itemStack.getComponents();
+                    DataComponentMap itemTag = itemStack.getComponents();
                     if (!itemTag.equals(nbtTag)) continue;
                 }
                 amount += itemStack.getCount();

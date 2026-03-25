@@ -3,8 +3,8 @@ package com.redlimerl.speedrunigt.mixins;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.InGameTimerClientUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.Mouse;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.MouseHandler;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -12,17 +12,17 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(Mouse.class)
-public abstract class MouseMixin {
+@Mixin(MouseHandler.class)
+public abstract class MouseHandlerMixin {
 
-    @Shadow public abstract boolean isCursorLocked();
+    @Shadow public abstract boolean isMouseGrabbed();
 
-    @Inject(at = @At("HEAD"), method = "onCursorPos")
+    @Inject(at = @At("HEAD"), method = "onMove")
     public void onMove(CallbackInfo ci) {
         this.unlock();
     }
 
-    @Inject(at = @At("HEAD"), method = "onMouseScroll")
+    @Inject(at = @At("HEAD"), method = "onScroll")
     public void onMouseScroll(CallbackInfo ci) {
         this.unlock();
     }
@@ -35,7 +35,7 @@ public abstract class MouseMixin {
         if (InGameTimerClientUtils.canUnpauseTimer(false)) {
             timer.setPause(false, "moved mouse");
         }
-        if (this.isCursorLocked() && !MinecraftClient.getInstance().isPaused()) {
+        if (this.isMouseGrabbed() && !Minecraft.getInstance().isPaused()) {
             timer.updateFirstInput();
         }
     }

@@ -7,10 +7,10 @@ import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
 import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 
 import java.util.Enumeration;
@@ -19,8 +19,8 @@ import java.util.UUID;
 
 public class TimerStartPacket extends TimerPacket<TimerStartPacket> {
 
-    public static final CustomPayload.Id<TimerStartPacket> IDENTIFIER = TimerPacket.identifier("timer_start");
-    public static final PacketCodec<RegistryByteBuf, TimerStartPacket> CODEC = TimerPacket.codecOf(TimerStartPacket::write, TimerStartPacket::new);
+    public static final CustomPacketPayload.Type<TimerStartPacket> IDENTIFIER = TimerPacket.identifier("timer_start");
+    public static final StreamCodec<RegistryFriendlyByteBuf, TimerStartPacket> CODEC = TimerPacket.codecOf(TimerStartPacket::write, TimerStartPacket::new);
     private final UUID timerUuid;
     private final RunType runType;
     private final RunCategory category;
@@ -43,20 +43,20 @@ public class TimerStartPacket extends TimerPacket<TimerStartPacket> {
         this.sendRTA = rta;
     }
 
-    public TimerStartPacket(RegistryByteBuf buf) {
+    public TimerStartPacket(RegistryFriendlyByteBuf buf) {
         super(IDENTIFIER);
-        this.timerUuid = buf.readUuid();
-        this.category = RunCategory.getCategory(buf.readString());
+        this.timerUuid = buf.readUUID();
+        this.category = RunCategory.getCategory(buf.readUtf());
         this.runType = RunType.fromInt(buf.readInt());
-        this.customData = buf.readString();
+        this.customData = buf.readUtf();
         this.sendRTA = buf.readLong();
     }
 
-    protected void write(RegistryByteBuf buf) {
-        buf.writeUuid(this.timerUuid);
-        buf.writeString(this.category.getID());
+    protected void write(RegistryFriendlyByteBuf buf) {
+        buf.writeUUID(this.timerUuid);
+        buf.writeUtf(this.category.getID());
         buf.writeInt(this.runType.getCode());
-        buf.writeString(this.customData);
+        buf.writeUtf(this.customData);
         buf.writeLong(this.sendRTA);
     }
 
@@ -70,8 +70,8 @@ public class TimerStartPacket extends TimerPacket<TimerStartPacket> {
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void receiveServer2ClientPacket(MinecraftClient client) {
-        this.timerInit(client.isIntegratedServerRunning());
+    public void receiveServer2ClientPacket(Minecraft client) {
+        this.timerInit(client.hasSingleplayerServer());
     }
 
     public void timerInit(boolean isIntegrated) {

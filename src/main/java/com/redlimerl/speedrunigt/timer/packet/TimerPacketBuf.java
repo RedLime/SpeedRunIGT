@@ -1,45 +1,45 @@
 package com.redlimerl.speedrunigt.timer.packet;
 
 import io.netty.buffer.Unpooled;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.Identifier;
 
 /**
  * This is for make easier support multiple Minecraft versions
  */
 public class TimerPacketBuf {
-    private final PacketByteBuf buf;
+    private final FriendlyByteBuf buf;
 
-    public static TimerPacketBuf of(PacketByteBuf buf) {
+    public static TimerPacketBuf of(FriendlyByteBuf buf) {
         return new TimerPacketBuf(buf);
     }
 
     public static TimerPacketBuf create() {
-        return TimerPacketBuf.of(new PacketByteBuf(Unpooled.buffer()));
+        return TimerPacketBuf.of(new FriendlyByteBuf(Unpooled.buffer()));
     }
 
-    private TimerPacketBuf(PacketByteBuf buf) {
+    private TimerPacketBuf(FriendlyByteBuf buf) {
         this.buf = buf;
     }
 
-    public PacketByteBuf getBuffer() {
-        return new PacketByteBuf(this.buf);
+    public FriendlyByteBuf getBuffer() {
+        return new FriendlyByteBuf(this.buf);
     }
 
     public TimerPacketBuf copy() {
         return new TimerPacketBuf(
-                new PacketByteBuf(
+                new FriendlyByteBuf(
                         this.buf.copy()
                 )
         );
     }
 
     public void writeString(String string) {
-        this.buf.writeString(string);
+        this.buf.writeUtf(string);
     }
 
     public String readString() {
-        return this.buf.readString(Short.MAX_VALUE);
+        return this.buf.readUtf(Short.MAX_VALUE);
     }
 
     public void writeLong(long l) {

@@ -6,10 +6,10 @@ import com.redlimerl.speedrunigt.timer.TimerAdvancementTracker;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacketUtils;
 import com.redlimerl.speedrunigt.timer.packet.packets.TimerAchieveCriteriaPacket;
-import net.minecraft.advancement.AdvancementEntry;
-import net.minecraft.advancement.PlayerAdvancementTracker;
-import net.minecraft.server.ServerAdvancementLoader;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.server.PlayerAdvancements;
+import net.minecraft.server.ServerAdvancementManager;
+import net.minecraft.server.level.ServerPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,24 +21,24 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 import java.util.Map;
 import java.util.Objects;
 
-@Mixin(PlayerAdvancementTracker.class)
-public abstract class PlayerAdvancementTrackerMixin {
+@Mixin(PlayerAdvancements.class)
+public abstract class PlayerAdvancementsMixin {
 
-    @Shadow private ServerPlayerEntity owner;
+    @Shadow private ServerPlayer player;
 
-    @Inject(method = "beginTrackingAllAdvancements", at = @At("RETURN"))
-    private void onBegin(ServerAdvancementLoader advancementLoader, CallbackInfo ci) {
+    @Inject(method = "registerListeners", at = @At("RETURN"))
+    private void onBegin(ServerAdvancementManager advancementLoader, CallbackInfo ci) {
         int count = 0;
-        for (AdvancementEntry advancement : advancementLoader.getAdvancements()) {
+        for (AdvancementHolder advancement : advancementLoader.getAllAdvancements()) {
             if (advancement.value().display().isPresent()) count++;
         }
         SpeedRunIGT.debug("Detected Advancements: " + count);
         InGameTimer.getInstance().updateMoreData(7441, count);
     }
 
-    @ModifyArgs(method = "endTrackingCompleted(Lnet/minecraft/advancement/AdvancementEntry;Ljava/lang/String;Lnet/minecraft/advancement/AdvancementCriterion;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancement/criterion/Criterion$ConditionsContainer;<init>(Lnet/minecraft/advancement/criterion/CriterionConditions;Lnet/minecraft/advancement/AdvancementEntry;Ljava/lang/String;)V"))
+    @ModifyArgs(method = "removeListener(Lnet/minecraft/advancements/AdvancementHolder;Ljava/lang/String;Lnet/minecraft/advancements/Criterion;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/CriterionTrigger$Listener;<init>(Lnet/minecraft/advancements/CriterionTriggerInstance;Lnet/minecraft/advancements/AdvancementHolder;Ljava/lang/String;)V"))
     private void getCriteria(Args args) {
-        AdvancementEntry advancement = args.get(1);
+        AdvancementHolder advancement = args.get(1);
         String criteriaKey = args.get(2);
 
         Map<String, TimerAdvancementTracker.AdvancementTrack> advancements = InGameTimer.getInstance().getAdvancementsTracker().getAdvancements();
@@ -51,7 +51,7 @@ public abstract class PlayerAdvancementTrackerMixin {
 
         if (timer.getStatus() != TimerStatus.NONE) {
             timer.tryInsertNewAdvancement(advancement.id().toString(), criteriaKey, advancement.value().display().isPresent());
-            if (timer.isCoop()) TimerPacketUtils.sendServer2ClientPacket(Objects.requireNonNull(owner.getEntityWorld().getServer()), new TimerAchieveCriteriaPacket(advancement.id().toString(), criteriaKey, advancement.value().display().isPresent()));
+            if (timer.isCoop()) TimerPacketUtils.sendServer2ClientPacket(Objects.requireNonNull(player.level().getServer()), new TimerAchieveCriteriaPacket(advancement.id().toString(), criteriaKey, advancement.value().display().isPresent()));
         }
     }
 }

@@ -6,7 +6,7 @@ import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -88,7 +88,7 @@ public class SpeedRunOption {
                 for (String s : optionData.split("\n")) {
                     String[] od = s.split(":", 3);
                     if (od.length == 3) {
-                        options.put(Identifier.of(od[0], od[1]), od[2]);
+                        options.put(Identifier.fromNamespaceAndPath(od[0], od[1]), od[2]);
                     }
                 }
             }

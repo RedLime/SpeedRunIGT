@@ -17,8 +17,8 @@ import com.redlimerl.speedrunigt.timer.packet.TimerPacketUtils;
 import com.redlimerl.speedrunigt.timer.packet.packets.*;
 import com.redlimerl.speedrunigt.timer.running.RunPortalPos;
 import com.redlimerl.speedrunigt.timer.running.RunType;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -173,7 +173,7 @@ public class InGameTimer implements Serializable {
         INSTANCE.setPause(true, TimerStatus.IDLE, "reset");
         INSTANCE.setPause(false, "reset");
         InGameTimerUtils.STATS_UPDATE = null;
-        if (isCoop && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerStartPacket(INSTANCE, INSTANCE.getRealTimeAttack()));
+        if (isCoop && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(Minecraft.getInstance(), new TimerStartPacket(INSTANCE, INSTANCE.getRealTimeAttack()));
     }
 
     /**
@@ -216,7 +216,7 @@ public class InGameTimer implements Serializable {
         timer.setStatus(TimerStatus.COMPLETED_LEGACY);
 
 
-        if (timer.isCoop() && canSendPacket && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerCompletePacket(timer.getRealTimeAttack()));
+        if (timer.isCoop() && canSendPacket && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(Minecraft.getInstance(), new TimerCompletePacket(timer.getRealTimeAttack()));
 
         if (INSTANCE.isServerIntegrated) {
             writeTimerLogs(timer);
@@ -299,7 +299,7 @@ public class InGameTimer implements Serializable {
         });
 
         if (SpeedRunOption.getOption(SpeedRunOptions.AUTO_SAVE_PLAYER_DATA) && InGameTimerUtils.getServer() != null && !anyPercentSplit) {
-            InGameTimerUtils.getServer().getPlayerManager().saveAllPlayerData();
+            InGameTimerUtils.getServer().getPlayerList().saveAll();
         }
     }
 
@@ -480,7 +480,7 @@ public class InGameTimer implements Serializable {
                 InGameTimerUtils.setCategoryWarningScreen(category.getConditionFileName(), exception);
             }
         }
-        if (this.isCoop() && canSendPacket && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerChangeCategoryPacket(this.getCategory()));
+        if (this.isCoop() && canSendPacket && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(Minecraft.getInstance(), new TimerChangeCategoryPacket(this.getCategory()));
     }
 
     public boolean isCoop() {
@@ -517,7 +517,7 @@ public class InGameTimer implements Serializable {
 
     public void updateMoreData(int key, int value, boolean canSendPacket) {
         this.moreData.put(key, value);
-        if (this.isCoop() && canSendPacket && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerDataConditionPacket(key, value));
+        if (this.isCoop() && canSendPacket && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(Minecraft.getInstance(), new TimerDataConditionPacket(key, value));
     }
 
     public @NotNull TimerStatus getStatus() {
@@ -532,7 +532,7 @@ public class InGameTimer implements Serializable {
     public void setUncompleted(boolean canSendPacket) {
         if (!this.isCompleted) return;
         this.isCompleted = false;
-        if (canSendPacket && this.isCoop() && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerUncompletedPacket());
+        if (canSendPacket && this.isCoop() && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(Minecraft.getInstance(), new TimerUncompletedPacket());
     }
 
     public boolean isCompleted() {
@@ -628,7 +628,7 @@ public class InGameTimer implements Serializable {
 
         //Rebase time (When a joined world or changed dimension)
         if (this.leastStartTime != 0 && this.leastTickTime != 0 && this.leastStartTime != currentTime) {
-            double value = MathHelper.clamp((this.leastStartTime - this.leastTickTime) * 1.0 / tickDelays, 0, 1) * 50.0;
+            double value = Mth.clamp((this.leastStartTime - this.leastTickTime) * 1.0 / tickDelays, 0, 1) * 50.0;
             this.rebaseIGTime += (long) value;
             this.leastStartTime = 0;
         }
@@ -748,7 +748,7 @@ public class InGameTimer implements Serializable {
                 if (this.loggerTicks != 0) this.leastStartTime = this.startTime;
                 if (this.isCoop()) {
                     if (SpeedRunIGT.IS_CLIENT_SIDE) {
-                        TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerStartPacket(InGameTimer.getInstance(), 0));
+                        TimerPacketUtils.sendClient2ServerPacket(Minecraft.getInstance(), new TimerStartPacket(InGameTimer.getInstance(), 0));
                     } else {
                         TimerPacketUtils.sendServer2ClientPacket(SpeedRunIGT.DEDICATED_SERVER, new TimerStartPacket(InGameTimer.getInstance(), 0));
                     }
@@ -774,7 +774,7 @@ public class InGameTimer implements Serializable {
             if (Objects.equals(timeline.getName(), name)) return false;
         }
         this.timelines.add(new TimerTimeline(name, this.getInGameTime(false), this.getRealTimeAttack()));
-        if (canSendPacket && this.isCoop() && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerTimelinePacket(name));
+        if (canSendPacket && this.isCoop() && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(Minecraft.getInstance(), new TimerTimelinePacket(name));
         return true;
     }
 
@@ -835,7 +835,7 @@ public class InGameTimer implements Serializable {
         if (completed) {
             condition.setCompleted(true);
             this.tryInsertNewTimeline(condition.getName());
-            if (this.isCoop() && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(MinecraftClient.getInstance(), new TimerCustomConditionPacket(condition));
+            if (this.isCoop() && SpeedRunIGT.IS_CLIENT_SIDE) TimerPacketUtils.sendClient2ServerPacket(Minecraft.getInstance(), new TimerCustomConditionPacket(condition));
         }
     }
 

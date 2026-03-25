@@ -1,14 +1,14 @@
 package com.redlimerl.speedrunigt.mixins.access;
 
 import com.google.gson.JsonElement;
-import net.minecraft.stat.ServerStatHandler;
+import net.minecraft.stats.ServerStatsCounter;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-@Mixin(ServerStatHandler.class)
-public interface ServerStatHandlerAccessor {
+@Mixin(ServerStatsCounter.class)
+public interface ServerStatsCounterAccessor {
 
-    @Invoker("asString")
-    JsonElement invokeAsString();
+    @Invoker("toJson")
+    JsonElement invokeToJson();
 
 }

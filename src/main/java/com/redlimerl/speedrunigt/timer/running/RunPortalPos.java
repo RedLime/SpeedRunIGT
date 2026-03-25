@@ -1,7 +1,7 @@
 package com.redlimerl.speedrunigt.timer.running;
 
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.core.Vec3i;
+import net.minecraft.world.phys.Vec3;
 
 import java.io.Serializable;
 
@@ -11,7 +11,7 @@ public class RunPortalPos implements Serializable {
     private final double y;
     private final double z;
 
-    public RunPortalPos(Vec3d pos) {
+    public RunPortalPos(Vec3 pos) {
         this.x = pos.x;
         this.y = pos.y;
         this.z = pos.z;
@@ -35,7 +35,7 @@ public class RunPortalPos implements Serializable {
         return this.z;
     }
 
-    public double squaredDistanceTo(Vec3d vec) {
+    public double squaredDistanceTo(Vec3 vec) {
         double d = vec.x - this.x;
         double e = vec.y - this.y;
         double f = vec.z - this.z;
@@ -49,7 +49,7 @@ public class RunPortalPos implements Serializable {
         return d * d + e * e + f * f;
     }
 
-    public boolean isAt(Vec3d vec3d) {
-        return this.getX() == vec3d.getX() || this.getY() == vec3d.getY() || this.getZ() == vec3d.getZ();
+    public boolean isAt(Vec3 vec3d) {
+        return this.getX() == vec3d.x() || this.getY() == vec3d.y() || this.getZ() == vec3d.z();
     }
 }

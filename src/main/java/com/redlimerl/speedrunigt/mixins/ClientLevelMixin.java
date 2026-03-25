@@ -2,20 +2,20 @@ package com.redlimerl.speedrunigt.mixins;
 
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Heightmap;
-import net.minecraft.world.MutableWorldProperties;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.EmptyChunk;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.gen.chunk.FlatChunkGenerator;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.EmptyLevelChunk;
+import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.levelgen.FlatLevelSource;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.storage.WritableLevelData;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -24,16 +24,16 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ClientWorld.class)
-public abstract class ClientWorldMixin extends World {
+@Mixin(ClientLevel.class)
+public abstract class ClientLevelMixin extends Level {
     @Shadow
-    public abstract ClientWorld.Properties getLevelProperties();
+    public abstract ClientLevel.ClientLevelData getLevelData();
 
     @Shadow
     @Final
-    private MinecraftClient client;
+    private Minecraft minecraft;
 
-    protected ClientWorldMixin(MutableWorldProperties properties, RegistryKey<World> registryRef, DynamicRegistryManager registryManager, RegistryEntry<DimensionType> dimensionEntry, boolean isClient, boolean debugWorld, long seed, int maxChainedNeighborUpdates) {
+    protected ClientLevelMixin(WritableLevelData properties, ResourceKey<Level> registryRef, RegistryAccess registryManager, Holder<DimensionType> dimensionEntry, boolean isClient, boolean debugWorld, long seed, int maxChainedNeighborUpdates) {
         super(properties, registryRef, registryManager, dimensionEntry, isClient, debugWorld, seed, maxChainedNeighborUpdates);
     }
 
@@ -43,10 +43,10 @@ public abstract class ClientWorldMixin extends World {
         InGameTimer.getInstance().tick();
     }
 
-    @Inject(method = "updateListeners", at = @At("TAIL"))
+    @Inject(method = "sendBlockUpdated", at = @At("TAIL"))
     public void onBlockUpdate(BlockPos pos, BlockState oldState, BlockState newState, int flags, CallbackInfo ci) {
         // TODO: doesn't support nether or overworld caves
-        if (this.getDimension().hasCeiling()) {
+        if (this.dimensionType().hasCeiling()) {
             return;
         }
 
@@ -58,7 +58,7 @@ public abstract class ClientWorldMixin extends World {
             for (int i = -1; i < 2; ++i) {
                 for (int j = -1; j < 2; ++j) {
                     // if all the chunks aren't loaded (and chunks are given as EmptyChunks), it will break because the heightmap is reported as all 0's
-                    if (getChunk(chunkX + i, chunkZ + j) instanceof EmptyChunk) {
+                    if (getChunk(chunkX + i, chunkZ + j) instanceof EmptyLevelChunk) {
                         return;
                     }
                 }
@@ -71,8 +71,8 @@ public abstract class ClientWorldMixin extends World {
             for (int x = 0; x < 16 * 3; ++x) {
                 for (int z = 0; z < 16 * 3; ++z) {
                     // convert the 0 to 47 x and z counters in to -1 to 1 chunk offsets
-                    Chunk chunk = this.getChunk(chunkX + (x >> 4) - 1, chunkZ + (z >> 4) - 1);
-                    int height = chunk.getHeightmap(Heightmap.Type.WORLD_SURFACE).get(mod(x, 16), mod(z, 16));
+                    ChunkAccess chunk = this.getChunk(chunkX + (x >> 4) - 1, chunkZ + (z >> 4) - 1);
+                    int height = chunk.getOrCreateHeightmapUnprimed(Heightmap.Types.WORLD_SURFACE).getFirstAvailable(mod(x, 16), mod(z, 16));
                     if (height <= getBedrockMaxHeight()) {
                         if (x == 0 || z == 0) {
                             // special case for first row and column, no previous work to check
@@ -104,10 +104,10 @@ public abstract class ClientWorldMixin extends World {
 
     @Unique
     private int getBedrockMaxHeight() {
-        if (this.client.isIntegratedServerRunning() && this.client.getServer().getWorld((this.getRegistryKey())).getChunkManager().getChunkGenerator() instanceof FlatChunkGenerator) {
-            return this.getBottomY() + 1;
+        if (this.minecraft.hasSingleplayerServer() && this.minecraft.getSingleplayerServer().getLevel((this.dimension())).getChunkSource().getGenerator() instanceof FlatLevelSource) {
+            return this.getMinY() + 1;
         }
-        return this.getBottomY() + 5;
+        return this.getMinY() + 5;
     }
 
     // for debugging purposes
@@ -126,8 +126,8 @@ public abstract class ClientWorldMixin extends World {
     private void printHeightmap(int chunkX, int chunkZ) {
         for (int x = 0; x < 16 * 3; ++x) {
             for (int z = 0; z < 16 * 3; ++z) {
-                Chunk chunk = this.getChunk(chunkX + (x >> 4) - 1, chunkZ + (z >> 4) - 1);
-                int height = chunk.getHeightmap(Heightmap.Type.WORLD_SURFACE).get(mod(x, 16), mod(z, 16));
+                ChunkAccess chunk = this.getChunk(chunkX + (x >> 4) - 1, chunkZ + (z >> 4) - 1);
+                int height = chunk.getOrCreateHeightmapUnprimed(Heightmap.Types.WORLD_SURFACE).getFirstAvailable(mod(x, 16), mod(z, 16));
                 System.out.printf("%02d ", height);
             }
             System.out.println();

@@ -2,14 +2,14 @@ package com.redlimerl.speedrunigt.timer.category;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import net.minecraft.block.*;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.stat.Stats;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +30,9 @@ public class AllBlocksRunCategory extends RunCategory {
         Set<String> placedBlocks = Sets.newHashSet();
 
         for (Item item : getAllItems()) {
-            for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-                if (player.getStatHandler().getStat(Stats.USED, item) > 0) {
-                    placedBlocks.add(Registries.ITEM.getId(item).toString());
+            for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                if (player.getStats().getValue(Stats.ITEM_USED, item) > 0) {
+                    placedBlocks.add(BuiltInRegistries.ITEM.getKey(item).toString());
                     break;
                 }
             }
@@ -42,7 +42,7 @@ public class AllBlocksRunCategory extends RunCategory {
     }
 
     private static boolean isIncludedAllBlocks(Block block) {
-        if (block.getLootTableKey().isEmpty()) return false;
+        if (block.getLootTable().isEmpty()) return false;
         if (block == Blocks.NETHER_PORTAL) return false;
         if (block == Blocks.FARMLAND) return false;
         if (block == Blocks.DIRT_PATH) return false;
@@ -69,11 +69,11 @@ public class AllBlocksRunCategory extends RunCategory {
         if (block == Blocks.POWDER_SNOW) return false;
         if (block == Blocks.CAVE_VINES) return false;
         if (block == Blocks.BUDDING_AMETHYST) return false;
-        if (block instanceof FluidBlock) return false;
+        if (block instanceof LiquidBlock) return false;
         if (block instanceof CropBlock) return false;
         if (block instanceof AttachedStemBlock) return false;
         if (block instanceof StemBlock) return false;
-        if (block instanceof Oxidizable) return false;
+        if (block instanceof WeatheringCopper) return false;
 
         return block != Blocks.AIR;
     }
@@ -105,7 +105,7 @@ public class AllBlocksRunCategory extends RunCategory {
     public static List<Item> getAllItems() {
         ArrayList<Item> items = Lists.newArrayList();
 
-        for (Item item : Registries.ITEM) {
+        for (Item item : BuiltInRegistries.ITEM) {
             if (getItemsForAllBlocks().contains(item)) items.add(item);
 
             if (item instanceof BlockItem blockItem) {

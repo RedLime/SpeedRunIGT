@@ -4,8 +4,8 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
 import com.redlimerl.speedrunigt.timer.PracticeTimerManager;
-import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -14,11 +14,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Mixin(InGameHud.class)
-public class InGameHudMixin {
+@Mixin(Gui.class)
+public class GuiMixin {
 
     @Inject(method = "setOverlayMessage", at = @At("HEAD"))
-    public void onTitleMixin(Text message, boolean tinted, CallbackInfo ci) {
+    public void onTitleMixin(Component message, boolean tinted, CallbackInfo ci) {
         if (!SpeedRunOption.getOption(SpeedRunOptions.ENABLE_PRACTICE_DETECT))
             return;
         if ((InGameTimer.getInstance().isStarted() && !InGameTimer.getInstance().isCompleted()) && InGameTimer.getInstance().getCategory() == PracticeTimerManager.PRACTICE_CATEGORY)

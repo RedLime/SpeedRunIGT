@@ -7,18 +7,18 @@ import com.redlimerl.speedrunigt.timer.category.condition.CategoryCondition;
 import com.redlimerl.speedrunigt.timer.packet.TimerPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 
 import java.util.Objects;
 
 public class TimerCustomConditionPacket extends TimerPacket<TimerCustomConditionPacket> {
 
-    public static final CustomPayload.Id<TimerCustomConditionPacket> IDENTIFIER = TimerPacket.identifier("condition_custom");
-    public static final PacketCodec<RegistryByteBuf, TimerCustomConditionPacket> CODEC = TimerPacket.codecOf(TimerCustomConditionPacket::write, TimerCustomConditionPacket::new);
+    public static final CustomPacketPayload.Type<TimerCustomConditionPacket> IDENTIFIER = TimerPacket.identifier("condition_custom");
+    public static final StreamCodec<RegistryFriendlyByteBuf, TimerCustomConditionPacket> CODEC = TimerPacket.codecOf(TimerCustomConditionPacket::write, TimerCustomConditionPacket::new);
     private final String conditionName;
 
     TimerCustomConditionPacket(String conditionName) {
@@ -30,13 +30,13 @@ public class TimerCustomConditionPacket extends TimerPacket<TimerCustomCondition
         this(condition.getName());
     }
 
-    public TimerCustomConditionPacket(RegistryByteBuf buf) {
-        this(buf.readString());
+    public TimerCustomConditionPacket(RegistryFriendlyByteBuf buf) {
+        this(buf.readUtf());
     }
 
     @Override
-    protected void write(RegistryByteBuf buf) {
-        buf.writeString(this.conditionName);
+    protected void write(RegistryFriendlyByteBuf buf) {
+        buf.writeUtf(this.conditionName);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class TimerCustomConditionPacket extends TimerPacket<TimerCustomCondition
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void receiveServer2ClientPacket(MinecraftClient client) {
+    public void receiveServer2ClientPacket(Minecraft client) {
         this.updateTimerCondition();
     }
 
