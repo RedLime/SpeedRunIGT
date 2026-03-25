@@ -10,7 +10,7 @@ import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
@@ -55,11 +55,11 @@ public class SpeedRunCategoryScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
-        this.listWidget.render(context, mouseX, mouseY, delta);
-        context.drawCenteredString(this.font, this.title, this.width / 2, 16, CommonColors.WHITE);
-        context.drawCenteredString(this.font, "(" + I18n.get("speedrunigt.option.timer_category.warning") + ")", this.width / 2, this.height - 46, 8421504);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+        super.extractRenderState(graphics, mouseX, mouseY, delta);
+        this.listWidget.extractRenderState(graphics, mouseX, mouseY, delta);
+        graphics.centeredText(this.font, this.title, this.width / 2, 16, CommonColors.WHITE);
+        graphics.centeredText(this.font, "(" + I18n.get("speedrunigt.option.timer_category.warning") + ")", this.width / 2, this.height - 46, 8421504);
     }
 
     @Environment(EnvType.CLIENT)
@@ -128,13 +128,13 @@ public class SpeedRunCategoryScreen extends Screen {
             }
 
             @Override
-            public void renderContent(GuiGraphics context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+            public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
                 this.urlButton.setX(this.getX());
                 this.urlButton.setY(this.getY());
-                this.urlButton.render(context, mouseX, mouseY, deltaTicks);
+                this.urlButton.extractRenderState(graphics, mouseX, mouseY, deltaTicks);
                 this.checkBox.setX(this.getX() + 34);
                 this.checkBox.setY(this.getY());
-                this.checkBox.render(context, mouseX, mouseY, deltaTicks);
+                this.checkBox.extractRenderState(graphics, mouseX, mouseY, deltaTicks);
             }
 
             @Override

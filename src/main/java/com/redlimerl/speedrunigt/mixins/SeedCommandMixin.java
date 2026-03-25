@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(SeedCommand.class)
 public class SeedCommandMixin {
-    @Inject(method = "method_13617", at = @At("TAIL"))
+    @Inject(method = "lambda$register$0", at = @At("TAIL"))
     private static void seenSeed(CommandContext<CommandSourceStack> commandContext, CallbackInfoReturnable<Integer> cir) {
         GameInstance.getInstance().callEvents("view_seed");
     }

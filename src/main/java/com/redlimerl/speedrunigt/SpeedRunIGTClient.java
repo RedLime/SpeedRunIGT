@@ -9,7 +9,7 @@ import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.utils.FontUtils;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.minecraft.client.KeyMapping;
@@ -51,13 +51,13 @@ public class SpeedRunIGTClient implements ClientModInitializer {
         KeyMapping.Category keybindCategory = KeyMapping.Category.register(Identifier.fromNamespaceAndPath("speedrunigt", "title.options"));
 
         // Key Bindings initialize
-        timerResetKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+        timerResetKeyBinding = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "speedrunigt.controls.start_timer",
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_U,
                 keybindCategory
         ));
-        timerStopKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+        timerStopKeyBinding = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "speedrunigt.controls.stop_timer",
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_I,

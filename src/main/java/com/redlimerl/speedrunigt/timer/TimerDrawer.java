@@ -13,12 +13,13 @@ import com.redlimerl.speedrunigt.timer.running.RunType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FontDescription;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
+import org.jspecify.annotations.NonNull;
 
 import java.util.HashMap;
 
@@ -323,7 +324,7 @@ public class TimerDrawer {
         return Component.literal((this.simply ? "" : "RTA: ") + getTimeFormat(InGameTimer.getInstance().getRealTimeAttack()));
     }
 
-    public void draw(GuiGraphics drawContext) {
+    public void draw(@NonNull GuiGraphicsExtractor graphics) {
         if (!toggle) return;
 
         MutableComponent igtText = getIGTText();
@@ -354,7 +355,7 @@ public class TimerDrawer {
         igtTimerElement.init(igtXPos, igtYPos, igtScale, igtText, igtColor, igtDecoration, igtDisplayAlign, fontHeight);
 
         //배경 렌더
-        drawContext.pose().pushMatrix();
+        graphics.pose().pushMatrix();
         if (bgOpacity > 0.01f) {
             Position rtaMin = new Position(rtaTimerElement.getPosition().getX() - rtaPadding, rtaTimerElement.getPosition().getY() - rtaPadding);
             Position rtaMax = new Position(rtaMin.getX() + rtaTimerElement.getScaledTextWidth() + ((rtaPadding - 1) + rtaPadding), rtaMin.getY() + rtaTimerElement.getScaledTextHeight() + ((rtaPadding - 1) + rtaPadding));
@@ -363,18 +364,18 @@ public class TimerDrawer {
             int opacity = ARGB.color((int) (bgOpacity * 255), 0, 0, 0);
             if (rtaMin.getX() < igtMax.getX() && rtaMin.getY() < igtMax.getY() &&
                     igtMin.getX() < rtaMax.getX() && igtMin.getY() < rtaMax.getY()) {
-                drawContext.fill(Math.min(rtaMin.getX(), igtMin.getX()), Math.min(rtaMin.getY(), igtMin.getY()),
+                graphics.fill(Math.min(rtaMin.getX(), igtMin.getX()), Math.min(rtaMin.getY(), igtMin.getY()),
                         Math.max(rtaMax.getX(), igtMax.getX()), Math.max(rtaMax.getY(), igtMax.getY()), opacity);
             } else {
-                if (rtaScale != 0) drawContext.fill(rtaMin.getX(), rtaMin.getY(), rtaMax.getX(), rtaMax.getY(), opacity);
-                if (igtScale != 0) drawContext.fill(igtMin.getX(), igtMin.getY(), igtMax.getX(), igtMax.getY(), opacity);
+                if (rtaScale != 0) graphics.fill(rtaMin.getX(), rtaMin.getY(), rtaMax.getX(), rtaMax.getY(), opacity);
+                if (igtScale != 0) graphics.fill(igtMin.getX(), igtMin.getY(), igtMax.getX(), igtMax.getY(), opacity);
             }
         }
 
         //렌더
-        if (igtScale != 0) igtTimerElement.draw(drawContext, translateZ);
-        if (rtaScale != 0) rtaTimerElement.draw(drawContext, translateZ);
-        drawContext.pose().popMatrix();
+        if (igtScale != 0) igtTimerElement.draw(graphics, translateZ);
+        if (rtaScale != 0) rtaTimerElement.draw(graphics, translateZ);
+        graphics.pose().popMatrix();
 
     }
 

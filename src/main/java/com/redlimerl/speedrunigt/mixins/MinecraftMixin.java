@@ -100,7 +100,7 @@ public abstract class MinecraftMixin {
         }
     }
 
-    @Inject(method = "runTick(Z)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Util;getNanos()J", shift = At.Shift.AFTER))
+    @Inject(method = "runTick(Z)V", at = @At("TAIL"))
     private void renderMixin(boolean tick, CallbackInfo ci) {
         InGameTimer timer = InGameTimer.getInstance();
 

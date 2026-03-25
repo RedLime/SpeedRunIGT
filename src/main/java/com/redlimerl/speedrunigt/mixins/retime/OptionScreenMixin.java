@@ -1,20 +1,25 @@
 package com.redlimerl.speedrunigt.mixins.retime;
 
 import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.CycleButton;
+import net.minecraft.client.gui.screens.options.DifficultyButtons;
 import net.minecraft.client.gui.screens.options.OptionsScreen;
-import net.minecraft.world.Difficulty;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Objects;
+
 @Mixin(OptionsScreen.class)
 public class OptionScreenMixin {
 
-    @Inject(method = "method_39487", remap = false, at = @At("TAIL"))
-    private static void onChangeDifficulty(Minecraft minecraftClient, CycleButton<?> cyclingButtonWidget, Difficulty difficulty, CallbackInfo ci) {
-        InGameTimerUtils.CHANGED_OPTIONS.add(cyclingButtonWidget);
+    @Shadow
+    private @Nullable DifficultyButtons difficultyButtons;
+
+    @Inject(method = "onDifficultyChanged", remap = false, at = @At("TAIL"))
+    private void onChangeDifficulty(CallbackInfo ci) {
+        InGameTimerUtils.CHANGED_OPTIONS.add(Objects.requireNonNull(this.difficultyButtons).difficultyButton());
     }
 }

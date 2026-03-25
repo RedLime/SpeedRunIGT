@@ -28,7 +28,7 @@ public abstract class DownloadingTerrainScreenMixin extends Screen {
         }
     }
 
-    @WrapOperation(method = "render", at = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/screens/LevelLoadingScreen;DOWNLOADING_TERRAIN_TEXT:Lnet/minecraft/network/chat/Component;"))
+    @WrapOperation(method = "extractRenderState", at = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/screens/LevelLoadingScreen;DOWNLOADING_TERRAIN_TEXT:Lnet/minecraft/network/chat/Component;"))
     public Component onRender(Operation<Component> original) {
         if (InGameTimer.getInstance().isPaused() && InGameTimer.getInstance().isStarted() && !InGameTimer.getInstance().isCoop()) {
             return Component.literal(original.call().getString() + " (#" + InGameTimer.getInstance().getPauseCount() + ")");

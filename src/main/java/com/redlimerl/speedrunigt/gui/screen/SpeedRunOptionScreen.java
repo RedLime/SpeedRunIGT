@@ -5,7 +5,7 @@ import com.redlimerl.speedrunigt.SpeedRunIGTUpdateChecker;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
@@ -17,6 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.CommonColors;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Util;
+import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -111,14 +112,14 @@ public class SpeedRunOptionScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
-        this.buttonListWidget.render(context, mouseX, mouseY, delta);
-        context.drawCenteredString(font, this.title, this.width / 2, 10, CommonColors.WHITE);
-        context.drawString(font, "v"+ SpeedRunIGT.MOD_VERSION, 4, 4, CommonColors.WHITE, true);
+    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+        super.extractRenderState(graphics, mouseX, mouseY, delta);
+        this.buttonListWidget.extractRenderState(graphics, mouseX, mouseY, delta);
+        graphics.centeredText(font, this.title, this.width / 2, 10, CommonColors.WHITE);
+        graphics.text(font, "v"+ SpeedRunIGT.MOD_VERSION, 4, 4, CommonColors.WHITE, true);
 
         ArrayList<Component> tooltip = getToolTip(mouseX, mouseY);
-        if (!tooltip.isEmpty() && !this.isDragging()) context.setComponentTooltipForNextFrame(font, tooltip, 0, height);
+        if (!tooltip.isEmpty() && !this.isDragging()) graphics.setComponentTooltipForNextFrame(font, tooltip, 0, height);
     }
 
     public ArrayList<Component> getToolTip(int mouseX, int mouseY) {
@@ -176,11 +177,6 @@ public class SpeedRunOptionScreen extends Screen {
             return 150;
         }
 
-        @Override
-        public void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {
-            super.renderWidget(context, mouseX, mouseY, delta);
-        }
-
         class Entry extends ContainerObjectSelectionList.Entry<Entry> {
             ArrayList<AbstractWidget> children = new ArrayList<>();
             private final AbstractWidget buttonWidget;
@@ -206,9 +202,9 @@ public class SpeedRunOptionScreen extends Screen {
             }
 
             @Override
-            public void renderContent(GuiGraphics context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+            public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
                 buttonWidget.setY(this.getY());
-                buttonWidget.render(context, mouseX, mouseY, deltaTicks);
+                buttonWidget.extractRenderState(graphics, mouseX, mouseY, deltaTicks);
             }
         }
     }

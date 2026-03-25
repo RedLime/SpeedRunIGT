@@ -3,7 +3,7 @@ package com.redlimerl.speedrunigt.gui.screen;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.timer.category.InvalidCategoryException;
 import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -34,10 +34,10 @@ public class FailedCategoryInitScreen extends Screen {
     private static final int TEXT_WHITE = ARGB.color(255, 255, 255, 255);
     private static final int TEXT_RED = ARGB.color(255, 255, 70, 70);
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
-        context.drawCenteredString(this.font, Component.translatable("speedrunigt.message.failed_add_category", this.fileName), width / 2, height / 2 - 35, TEXT_RED);
-        context.drawCenteredString(this.font, Component.translatable("speedrunigt.message.failed_add_category."+exception.getReason().name().toLowerCase(Locale.ROOT)), width / 2, height / 2 - 10, TEXT_WHITE);
-        context.drawCenteredString(this.font, exception.getDetails(), width / 2, height / 2 + 2, TEXT_WHITE);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+        super.extractRenderState(graphics, mouseX, mouseY, delta);
+        graphics.centeredText(this.font, Component.translatable("speedrunigt.message.failed_add_category", this.fileName), width / 2, height / 2 - 35, TEXT_RED);
+        graphics.centeredText(this.font, Component.translatable("speedrunigt.message.failed_add_category."+exception.getReason().name().toLowerCase(Locale.ROOT)), width / 2, height / 2 - 10, TEXT_WHITE);
+        graphics.centeredText(this.font, exception.getDetails(), width / 2, height / 2 + 2, TEXT_WHITE);
     }
 }

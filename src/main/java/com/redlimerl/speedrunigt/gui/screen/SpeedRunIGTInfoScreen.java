@@ -3,13 +3,14 @@ package com.redlimerl.speedrunigt.gui.screen;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.CommonColors;
 import net.minecraft.util.Util;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Locale;
 
@@ -40,22 +41,22 @@ public class SpeedRunIGTInfoScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
+    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+        super.extractRenderState(graphics, mouseX, mouseY, delta);
 
-        context.pose().pushMatrix();
-        context.pose().scale(1.5F, 1.5F);
-        context.drawCenteredString(this.font, this.title, this.width / 3, 15, CommonColors.WHITE);
-        context.pose().popMatrix();
+        graphics.pose().pushMatrix();
+        graphics.pose().scale(1.5F, 1.5F);
+        graphics.centeredText(this.font, this.title, this.width / 3, 15, CommonColors.WHITE);
+        graphics.pose().popMatrix();
 
-        context.drawCenteredString(this.font,
+        graphics.centeredText(this.font,
                 Component.literal("Version : "+ SpeedRunIGT.MOD_VERSION.split("\\+")[0]), this.width / 2, 78, CommonColors.WHITE);
         if (UPDATE_STATUS != UpdateStatus.NONE) {
             if (UPDATE_STATUS == UpdateStatus.OUTDATED) {
                 update.active = true;
-                context.drawCenteredString(this.font, Component.literal("Updated Version : "+ UPDATE_VERSION).withStyle(ChatFormatting.YELLOW), this.width / 2, 88, CommonColors.WHITE);
+                graphics.centeredText(this.font, Component.literal("Updated Version : "+ UPDATE_VERSION).withStyle(ChatFormatting.YELLOW), this.width / 2, 88, CommonColors.WHITE);
             }
-            context.drawCenteredString(this.font,
+            graphics.centeredText(this.font,
                     Component.translatable("speedrunigt.message.update."+UPDATE_STATUS.name().toLowerCase(Locale.ROOT)),
                     this.width / 2, 116, CommonColors.WHITE);
         }

@@ -23,6 +23,7 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
@@ -269,10 +270,10 @@ public class InGameTimerUtils {
         if (!(itemStack.getItem() instanceof BlockItem) || !(((BlockItem) itemStack.getItem()).getBlock() instanceof ShulkerBoxBlock))
             return 0;
 
-        Iterable<ItemStack> stacks = itemStack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).nonEmptyItems();
-        for (ItemStack stack : stacks) {
-            if (stack != null && stack.getItem() == targetItem) {
-                count += stack.getCount();
+        Iterable<ItemStackTemplate> stacks = itemStack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).nonEmptyItems();
+        for (ItemStackTemplate stack : stacks) {
+            if (stack != null && stack.item().value() == targetItem) {
+                count += stack.count();
             }
         }
 

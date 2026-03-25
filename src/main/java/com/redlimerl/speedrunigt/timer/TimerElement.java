@@ -5,11 +5,12 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions.TimerDisplayAlign;
 import com.redlimerl.speedrunigt.timer.TimerDrawer.Position;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.CommonColors;
 import net.minecraft.util.Mth;
+import org.jspecify.annotations.NonNull;
 
 public class TimerElement {
     private static final Minecraft client = Minecraft.getInstance();
@@ -60,28 +61,28 @@ public class TimerElement {
         }
     }
 
-    public void draw(GuiGraphics drawContext, boolean doTranslate) {
-        drawContext.pose().pushMatrix();
+    public void draw(@NonNull GuiGraphicsExtractor graphics, boolean doTranslate) {
+        graphics.pose().pushMatrix();
 //        if (doTranslate) drawContext.getMatrices().transform(new Vector3f(0, 0, 1));
-        drawContext.pose().scale(scale, scale);
-        drawOutLine(client.font, drawContext, scaledPosition.getX(), scaledPosition.getY(), text, color, decoration);
-        drawContext.pose().popMatrix();
+        graphics.pose().scale(scale, scale);
+        drawOutLine(client.font, graphics, scaledPosition.getX(), scaledPosition.getY(), text, color, decoration);
+        graphics.pose().popMatrix();
     }
 
-    private static void drawOutLine(Font textRenderer, GuiGraphics drawContext, int x, int y, MutableComponent text, Integer color, TimerDecoration decoration) {
+    private static void drawOutLine(Font textRenderer, GuiGraphicsExtractor graphics, int x, int y, MutableComponent text, Integer color, TimerDecoration decoration) {
         if (decoration == TimerDecoration.OUTLINE) {
-            drawContext.drawString(textRenderer, text, x + 1, y + 1, CommonColors.BLACK, false);
-            drawContext.drawString(textRenderer, text, x + 1, y, CommonColors.BLACK, false);
-            drawContext.drawString(textRenderer, text, x + 1, y - 1, CommonColors.BLACK, false);
-            drawContext.drawString(textRenderer, text, x, y - 1, CommonColors.BLACK, false);
-            drawContext.drawString(textRenderer, text, x, y + 1, CommonColors.BLACK, false);
-            drawContext.drawString(textRenderer, text, x - 1, y + 1, CommonColors.BLACK, false);
-            drawContext.drawString(textRenderer, text, x - 1, y, CommonColors.BLACK, false);
-            drawContext.drawString(textRenderer, text, x - 1, y - 1, CommonColors.BLACK, false);
+            graphics.text(textRenderer, text, x + 1, y + 1, CommonColors.BLACK, false);
+            graphics.text(textRenderer, text, x + 1, y, CommonColors.BLACK, false);
+            graphics.text(textRenderer, text, x + 1, y - 1, CommonColors.BLACK, false);
+            graphics.text(textRenderer, text, x, y - 1, CommonColors.BLACK, false);
+            graphics.text(textRenderer, text, x, y + 1, CommonColors.BLACK, false);
+            graphics.text(textRenderer, text, x - 1, y + 1, CommonColors.BLACK, false);
+            graphics.text(textRenderer, text, x - 1, y, CommonColors.BLACK, false);
+            graphics.text(textRenderer, text, x - 1, y - 1, CommonColors.BLACK, false);
         } else if (decoration == TimerDecoration.SHADOW) {
-            drawContext.drawString(textRenderer, text, x + 1, y + 1, CommonColors.DARK_GRAY, false);
+            graphics.text(textRenderer, text, x + 1, y + 1, CommonColors.DARK_GRAY, false);
         }
-        drawContext.drawString(textRenderer, text, x, y, ARGB.color(ARGB.red(color), ARGB.green(color), ARGB.blue(color)), false);
+        graphics.text(textRenderer, text, x, y, ARGB.color(ARGB.red(color), ARGB.green(color), ARGB.blue(color)), false);
     }
 
     public Position getPosition() {

@@ -10,7 +10,7 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.*;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.LevelLoadingScreen;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.WinScreen;
@@ -32,9 +32,9 @@ public class GameRendererMixin {
     private Minecraft minecraft;
     @Unique
     private TimerDrawer.PositionType currentPositionType = TimerDrawer.PositionType.DEFAULT;
-    @Inject(method = "render", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/components/toasts/ToastManager;render(Lnet/minecraft/client/gui/GuiGraphics;)V", shift = At.Shift.AFTER))
-    private void drawTimer(DeltaTracker tickCounter, boolean tick, CallbackInfo ci, @Local GuiGraphics drawContext) {
+    @Inject(method = "extractGui", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/client/gui/components/toasts/ToastManager;extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;)V", shift = At.Shift.AFTER))
+    private void drawTimer(DeltaTracker deltaTracker, boolean shouldRenderLevel, boolean resourcesLoaded, CallbackInfo ci, @Local GuiGraphicsExtractor graphics) {
         InGameTimer timer = InGameTimer.getInstance();
 
         if (InGameTimerClientUtils.canUnpauseTimer(true)) {
@@ -48,7 +48,7 @@ public class GameRendererMixin {
         long time = System.currentTimeMillis() - InGameTimerUtils.LATEST_TIMER_TIME;
         if (time < 2950) {
             String text = "SpeedRunIGT v" + (SpeedRunIGT.MOD_VERSION.split("\\+")[0]);
-            drawContext.drawString(this.minecraft.font, text, this.minecraft.screen != null ? (int) ((this.minecraft.getWindow().getGuiScaledWidth() - this.minecraft.font.width(text)) / 2f) : 4, this.minecraft.getWindow().getGuiScaledHeight() - 12,
+            graphics.text(this.minecraft.font, text, this.minecraft.screen != null ? (int) ((this.minecraft.getWindow().getGuiScaledWidth() - this.minecraft.font.width(text)) / 2f) : 4, this.minecraft.getWindow().getGuiScaledHeight() - 12,
                     ARGB.color((int) (Mth.clamp((3000 - time) / 1000.0, 0, 1) * (this.minecraft.screen != null ? 90 : 130)), 255, 255, 255), false);
         }
 
@@ -83,7 +83,7 @@ public class GameRendererMixin {
                     SpeedRunIGTClient.TIMER_DRAWER.setIGT_YPos(igtPos.y);
                 }
             }
-            SpeedRunIGTClient.TIMER_DRAWER.draw(drawContext);
+            SpeedRunIGTClient.TIMER_DRAWER.draw(graphics);
         }
     }
 

@@ -11,24 +11,27 @@ import net.minecraft.client.gui.screens.worldselection.WorldOpenFlows;
 import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.server.RegistryLayer;
 import net.minecraft.server.ReloadableServerResources;
+import net.minecraft.world.level.gamerules.GameRules;
+import net.minecraft.world.level.storage.LevelDataAndDimensions;
 import net.minecraft.world.level.storage.LevelStorageSource;
-import net.minecraft.world.level.storage.WorldData;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Optional;
+
 @Mixin(WorldOpenFlows.class)
 public class WorldOpenFlowsMixin {
 
     @Inject(at = @At("HEAD"), method = "createLevelFromExistingSettings")
-    public void onCreate(LevelStorageSource.LevelStorageAccess session, ReloadableServerResources dataPackContents, LayeredRegistryAccess<RegistryLayer> dynamicRegistryManager, WorldData saveProperties, CallbackInfo ci) {
+    public void onCreate(LevelStorageSource.LevelStorageAccess levelSourceAccess, ReloadableServerResources serverResources, LayeredRegistryAccess<RegistryLayer> registryAccess, LevelDataAndDimensions.WorldDataAndGenSettings worldDataAndGenSettings, Optional<GameRules> gameRules, CallbackInfo ci) {
         RunCategory category = SpeedRunOption.getOption(SpeedRunOptions.TIMER_CATEGORY);
         if (category.isAutoStart()) {
-            InGameTimer.start(session.getLevelId(), RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
-            InGameTimer.getInstance().setDefaultGameMode(saveProperties.getLevelSettings().gameType().getId());
-            InGameTimer.getInstance().setCheatAvailable(saveProperties.getLevelSettings().allowCommands());
-            InGameTimer.getInstance().checkDifficulty(saveProperties.getDifficulty());
+            InGameTimer.start(levelSourceAccess.getLevelId(), RunType.fromBoolean(InGameTimerUtils.IS_SET_SEED));
+            InGameTimer.getInstance().setDefaultGameMode(worldDataAndGenSettings.data().getGameType().getId());
+            InGameTimer.getInstance().setCheatAvailable(worldDataAndGenSettings.data().isAllowCommands());
+            InGameTimer.getInstance().checkDifficulty(worldDataAndGenSettings.data().getDifficulty());
         }
         InGameTimerUtils.IS_CHANGING_DIMENSION = true;
         InGameTimerUtils.CAN_DISCONNECT = false;

@@ -4,7 +4,7 @@ import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
 import com.redlimerl.speedrunigt.utils.FontConfigure;
 import com.redlimerl.speedrunigt.utils.FontIdentifier;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.CommonComponents;
@@ -61,12 +61,12 @@ public class FontConfigScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
-        context.drawCenteredString(font, Component.literal("IGT: 01:23.456").setStyle(Style.EMPTY.withFont(new FontDescription.Resource(fontIdentifier.getIdentifier()))), width / 2, 30, CommonColors.WHITE);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+        super.extractRenderState(graphics, mouseX, mouseY, delta);
+        graphics.centeredText(font, Component.literal("IGT: 01:23.456").setStyle(Style.EMPTY.withFont(new FontDescription.Resource(fontIdentifier.getIdentifier()))), width / 2, 30, CommonColors.WHITE);
 
-        context.drawCenteredString(font, "§l" + I18n.get("speedrunigt.font.size") + ": " + ((int) newFontConfigure.size), width / 2, height / 2 - 55, CommonColors.WHITE);
-        context.drawCenteredString(font, "§l" + I18n.get("speedrunigt.font.oversample") + ": " + newFontConfigure.oversample, width / 2, height / 2 - 5, CommonColors.WHITE);
-        context.drawCenteredString(font, I18n.get("speedrunigt.font.oversample.description"), width / 2, height / 2 + 27, CommonColors.WHITE);
+        graphics.centeredText(font, "§l" + I18n.get("speedrunigt.font.size") + ": " + ((int) newFontConfigure.size), width / 2, height / 2 - 55, CommonColors.WHITE);
+        graphics.centeredText(font, "§l" + I18n.get("speedrunigt.font.oversample") + ": " + newFontConfigure.oversample, width / 2, height / 2 - 5, CommonColors.WHITE);
+        graphics.centeredText(font, I18n.get("speedrunigt.font.oversample.description"), width / 2, height / 2 + 27, CommonColors.WHITE);
     }
 }

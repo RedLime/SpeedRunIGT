@@ -13,7 +13,7 @@ import com.redlimerl.speedrunigt.timer.TimerDrawer;
 import com.redlimerl.speedrunigt.timer.TimerDrawer.PositionType;
 import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
@@ -31,6 +31,7 @@ import net.minecraft.util.CommonColors;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Util;
 import net.minecraft.world.phys.Vec2;
+import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 
@@ -293,23 +294,23 @@ public class TimerCustomizeScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
+    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+        super.extractRenderState(graphics, mouseX, mouseY, delta);
         saveButton.active = changed;
 
-        drawer.draw(context);
+        drawer.draw(graphics);
 
-        context.drawCenteredString(this.font, this.title, this.width / 2, 15, CommonColors.WHITE);
+        graphics.centeredText(this.font, this.title, this.width / 2, 15, CommonColors.WHITE);
 
         if (!hide) {
             if (!igtButton.active || !rtaButton.active) {
                 if (drawer.isLocked()) {
-                    context.drawCenteredString(this.font,
+                    graphics.centeredText(this.font,
                             Component.translatable("speedrunigt.option.timer_position.description.lock"), this.width / 2, this.height / 2 - 80, CommonColors.WHITE);
                 } else {
-                    context.drawCenteredString(this.font,
+                    graphics.centeredText(this.font,
                             Component.translatable("speedrunigt.option.timer_position.description"), this.width / 2, this.height / 2 - 80, CommonColors.WHITE);
-                    context.drawCenteredString(this.font,
+                    graphics.centeredText(this.font,
                             Component.translatable("speedrunigt.option.timer_position.description.move"), this.width / 2, this.height / 2 - 69, CommonColors.WHITE);
                 }
             }
@@ -331,7 +332,7 @@ public class TimerCustomizeScreen extends Screen {
                         if (fontIdentifier.toString().equals(drawer.getTimerFont().toString())) {
                             text.append(" [Selected]").withStyle(ChatFormatting.ITALIC);
                         }
-                        context.drawCenteredString(this.font, text, this.width / 2 - 30,
+                        graphics.centeredText(this.font, text, this.width / 2 - 30,
                                 this.height / 2 - 11 + (i * 22), CommonColors.WHITE);
                     }
                 }

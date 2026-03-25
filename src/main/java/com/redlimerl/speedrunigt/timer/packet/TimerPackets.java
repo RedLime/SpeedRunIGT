@@ -24,8 +24,8 @@ public class TimerPackets {
         registerPacket(TimerAchieveCriteriaPacket.IDENTIFIER, TimerAchieveCriteriaPacket.CODEC);
     }
     private static <T extends TimerPacket<?>> void registerPacket(CustomPacketPayload.Type<T> id, StreamCodec<RegistryFriendlyByteBuf, T> codec) {
-        PayloadTypeRegistry.playC2S().register(id, codec);
-        PayloadTypeRegistry.playS2C().register(id, codec);
+        PayloadTypeRegistry.clientboundPlay().register(id, codec);
+        PayloadTypeRegistry.serverboundPlay().register(id, codec);
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
             ClientPlayNetworking.registerGlobalReceiver(id,
                     (payload, context) -> payload.receiveServer2ClientPacket(context.client()));
