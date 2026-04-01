@@ -34,7 +34,7 @@
 
   "depends": {
     "fabricloader": ">=0.15",
-    "minecraft": "{{MC_VERSION}}"
+    "minecraft": "~26.1"
   },
 
   "breaks": {
