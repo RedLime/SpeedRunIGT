@@ -243,7 +243,7 @@ public class TimerCustomizeScreen extends Screen {
         }));
 
         addRenderableWidget(ButtonWidgetHelper.create(width / 2 + 31, height / 2 + 62, 58, 20, CommonComponents.GUI_CANCEL, (Button button) -> {
-            if (minecraft != null) minecraft.setScreen(parent);
+            if (minecraft != null) minecraft.gui.setScreen(parent);
         }));
 
         fontConfigButton.visible = false;
@@ -343,7 +343,7 @@ public class TimerCustomizeScreen extends Screen {
     @Override
     public void onClose() {
         assert minecraft != null;
-        minecraft.setScreen(parent);
+        minecraft.gui.setScreen(parent);
     }
 
 
@@ -691,7 +691,7 @@ public class TimerCustomizeScreen extends Screen {
 
 
         fontConfigButton = addRenderableWidget(ButtonWidgetHelper.create(width / 2 + 88, 0, 50, 20, Component.literal("Config"), (Button button) -> {
-            if (minecraft != null) minecraft.setScreen(new FontConfigScreen(this, drawer.getTimerFont()));
+            if (minecraft != null) minecraft.gui.setScreen(new FontConfigScreen(this, drawer.getTimerFont()));
         } ));
         fontOptions.add(addRenderableWidget(ButtonWidgetHelper.create(width / 2 - 154, height / 2 - 80, 150, 20, Component.translatable("speedrunigt.option.timer_position.font.open_folder"), (Button button) -> Util.getPlatform().openFile(SpeedRunIGT.FONT_PATH.toFile()))));
         fontOptions.add(addRenderableWidget(ButtonWidgetHelper.create(width / 2 + 4, height / 2 - 80, 150, 20, Component.translatable("speedrunigt.option.timer_position.font.description"), (Button button) -> Util.getPlatform().openUri("https://youtu.be/agBbiTQWj78"))));

@@ -5,10 +5,7 @@ import com.redlimerl.speedrunigt.timer.InGameTimerUtils;
 import com.redlimerl.speedrunigt.timer.TimerStatus;
 import com.redlimerl.speedrunigt.timer.category.RunCategories;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityReference;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -37,46 +34,46 @@ public abstract class LivingEntityMixin extends Entity {
         if (this.isRemoved() || this.dead || timer.getStatus() == TimerStatus.NONE) return;
 
         // For Timelines
-        if (this.getType() == EntityType.WITHER && this.lastHurtByPlayer != null) timer.tryInsertNewTimeline("kill_wither");
-        if (this.getType() == EntityType.ELDER_GUARDIAN && this.lastHurtByPlayer != null) timer.tryInsertNewTimeline("kill_elder_guardian");
-        if (this.getType() == EntityType.WARDEN && this.lastHurtByPlayer != null) timer.tryInsertNewTimeline("kill_warden");
-        if (this.getType() == EntityType.ENDER_DRAGON) timer.tryInsertNewTimeline("kill_ender_dragon");
+        if (this.getType() == EntityTypes.WITHER && this.lastHurtByPlayer != null) timer.tryInsertNewTimeline("kill_wither");
+        if (this.getType() == EntityTypes.ELDER_GUARDIAN && this.lastHurtByPlayer != null) timer.tryInsertNewTimeline("kill_elder_guardian");
+        if (this.getType() == EntityTypes.WARDEN && this.lastHurtByPlayer != null) timer.tryInsertNewTimeline("kill_warden");
+        if (this.getType() == EntityTypes.ENDER_DRAGON) timer.tryInsertNewTimeline("kill_ender_dragon");
 
         //Kill All Bosses
         if (timer.getCategory() == RunCategories.KILL_ALL_BOSSES) {
-            if (this.getType() == EntityType.ENDER_DRAGON) {
+            if (this.getType() == EntityTypes.ENDER_DRAGON) {
                 timer.updateMoreData(0, 1);
             }
-            if (this.getType() == EntityType.WITHER && this.lastHurtByPlayer != null) {
+            if (this.getType() == EntityTypes.WITHER && this.lastHurtByPlayer != null) {
                 timer.updateMoreData(1, 1);
                 RunCategories.checkAllBossesCompleted();
             }
-            if (this.getType() == EntityType.ELDER_GUARDIAN && this.lastHurtByPlayer != null) {
+            if (this.getType() == EntityTypes.ELDER_GUARDIAN && this.lastHurtByPlayer != null) {
                 timer.updateMoreData(2, 1);
                 RunCategories.checkAllBossesCompleted();
             }
-            if (this.getType() == EntityType.WARDEN && this.lastHurtByPlayer != null) {
+            if (this.getType() == EntityTypes.WARDEN && this.lastHurtByPlayer != null) {
                 timer.updateMoreData(3, 1);
                 RunCategories.checkAllBossesCompleted();
             }
         }
 
         //Kill Wither
-        if (timer.getCategory() == RunCategories.KILL_WITHER && this.getType() == EntityType.WITHER && this.lastHurtByPlayer != null) {
+        if (timer.getCategory() == RunCategories.KILL_WITHER && this.getType() == EntityTypes.WITHER && this.lastHurtByPlayer != null) {
             InGameTimer.complete();
         }
 
         //Kill Elder Guardian
-        if (timer.getCategory() == RunCategories.KILL_ELDER_GUARDIAN && this.getType() == EntityType.ELDER_GUARDIAN && this.lastHurtByPlayer != null) {
+        if (timer.getCategory() == RunCategories.KILL_ELDER_GUARDIAN && this.getType() == EntityTypes.ELDER_GUARDIAN && this.lastHurtByPlayer != null) {
             InGameTimer.complete();
         }
 
         //Kill Warden
-        if (timer.getCategory() == RunCategories.KILL_WARDEN && this.getType() == EntityType.WARDEN && this.lastHurtByPlayer != null) {
+        if (timer.getCategory() == RunCategories.KILL_WARDEN && this.getType() == EntityTypes.WARDEN && this.lastHurtByPlayer != null) {
             InGameTimer.complete();
         }
 
-        if (this.getType() == EntityType.ENDER_DRAGON && !this.level().isClientSide()) {
+        if (this.getType() == EntityTypes.ENDER_DRAGON && !this.level().isClientSide()) {
             InGameTimerUtils.IS_KILLED_ENDER_DRAGON = true;
         }
     }

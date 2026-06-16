@@ -32,7 +32,7 @@ public class OptionsScreenMixin extends Screen {
     private void onInit(CallbackInfo ci) {
         timerButton = ButtonWidgetHelper.create(this.width / 2 - 180, this.height / 6 - 12, 20, 20, Component.empty(), (buttonWidget) -> {
             if (this.minecraft != null) {
-                this.minecraft.setScreen(new SpeedRunOptionScreen(this));
+                this.minecraft.gui.setScreen(new SpeedRunOptionScreen(this));
             }
         });
         this.addRenderableWidget(timerButton);

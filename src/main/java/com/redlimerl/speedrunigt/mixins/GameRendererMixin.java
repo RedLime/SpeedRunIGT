@@ -10,11 +10,12 @@ import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.*;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.LevelLoadingScreen;
 import net.minecraft.client.gui.screens.PauseScreen;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.WinScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec2;
@@ -26,15 +27,15 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(GameRenderer.class)
+@Mixin(Gui.class)
 public class GameRendererMixin {
     @Shadow @Final
     private Minecraft minecraft;
     @Unique
     private TimerDrawer.PositionType currentPositionType = TimerDrawer.PositionType.DEFAULT;
-    @Inject(method = "extractGui", at = @At(value = "INVOKE",
+    @Inject(method = "extractRenderState", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/gui/components/toasts/ToastManager;extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;)V", shift = At.Shift.AFTER))
-    private void drawTimer(DeltaTracker deltaTracker, boolean shouldRenderLevel, boolean resourcesLoaded, CallbackInfo ci, @Local GuiGraphicsExtractor graphics) {
+    private void drawTimer(DeltaTracker deltaTracker, boolean shouldRenderLevel, boolean resourcesLoaded, CallbackInfo ci, @Local(name = "graphics") GuiGraphicsExtractor graphics) {
         InGameTimer timer = InGameTimer.getInstance();
 
         if (InGameTimerClientUtils.canUnpauseTimer(true)) {
@@ -48,15 +49,15 @@ public class GameRendererMixin {
         long time = System.currentTimeMillis() - InGameTimerUtils.LATEST_TIMER_TIME;
         if (time < 2950) {
             String text = "SpeedRunIGT v" + (SpeedRunIGT.MOD_VERSION.split("\\+")[0]);
-            graphics.text(this.minecraft.font, text, this.minecraft.screen != null ? (int) ((this.minecraft.getWindow().getGuiScaledWidth() - this.minecraft.font.width(text)) / 2f) : 4, this.minecraft.getWindow().getGuiScaledHeight() - 12,
-                    ARGB.color((int) (Mth.clamp((3000 - time) / 1000.0, 0, 1) * (this.minecraft.screen != null ? 90 : 130)), 255, 255, 255), false);
+            graphics.text(this.minecraft.font, text, this.minecraft.gui.screen() != null ? (int) ((this.minecraft.getWindow().getGuiScaledWidth() - this.minecraft.font.width(text)) / 2f) : 4, this.minecraft.getWindow().getGuiScaledHeight() - 12,
+                    ARGB.color((int) (Mth.clamp((3000 - time) / 1000.0, 0, 1) * (this.minecraft.gui.screen() != null ? 90 : 130)), 255, 255, 255), false);
         }
 
         SpeedRunIGT.DEBUG_DATA = timer.getStatus().name();
-        if (!this.minecraft.options.hideGui && this.minecraft.level != null && timer.getStatus() != TimerStatus.NONE
-                && (!this.minecraft.isPaused() || this.minecraft.screen instanceof WinScreen || this.minecraft.screen instanceof PauseScreen || !SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS))
+        if (!this.minecraft.gui.hud.isHidden() && this.minecraft.level != null && timer.getStatus() != TimerStatus.NONE
+                && (!this.minecraft.isPaused() || this.minecraft.gui.screen() instanceof WinScreen || this.minecraft.gui.screen() instanceof PauseScreen || !SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_OPTIONS))
                 && !(!this.minecraft.isPaused() && SpeedRunOption.getOption(SpeedRunOptions.HIDE_TIMER_IN_DEBUGS) && this.minecraft.getDebugOverlay().showDebugScreen())
-                && !(this.minecraft.screen instanceof TimerCustomizeScreen)) {
+                && !(this.minecraft.gui.screen() instanceof TimerCustomizeScreen)) {
 
             boolean needUpdate = SpeedRunIGTClient.TIMER_DRAWER.isNeedUpdate();
             boolean enableSplit = SpeedRunOption.getOption(SpeedRunOptions.ENABLE_TIMER_SPLIT_POS);
@@ -64,7 +65,7 @@ public class GameRendererMixin {
                 TimerDrawer.PositionType updatePositionType = TimerDrawer.PositionType.DEFAULT;
                 if (enableSplit && this.minecraft.getDebugOverlay().showDebugScreen())
                     updatePositionType = TimerDrawer.PositionType.WHILE_F3;
-                if (enableSplit && this.minecraft.isPaused() && !(this.minecraft.screen instanceof LevelLoadingScreen) && (this.minecraft.screen instanceof PauseScreen && ((PauseScreenAccessor) this.minecraft.screen).isShowPauseMenu()))
+                if (enableSplit && this.minecraft.isPaused() && !(this.minecraft.gui.screen() instanceof LevelLoadingScreen) && (this.minecraft.gui.screen() instanceof PauseScreen && ((PauseScreenAccessor) this.minecraft.gui.screen()).isShowPauseMenu()))
                     updatePositionType = TimerDrawer.PositionType.WHILE_PAUSED;
 
                 if (currentPositionType != updatePositionType || needUpdate) {
@@ -86,5 +87,18 @@ public class GameRendererMixin {
             SpeedRunIGTClient.TIMER_DRAWER.draw(graphics);
         }
     }
+
+    @Inject(method = "setScreen", at = @At("RETURN"))
+    public void onSetScreenAndShow(Screen screen, CallbackInfo ci) {
+        if (screen instanceof LevelLoadingScreen) {
+            InGameTimerUtils.CAN_DISCONNECT = true;
+        }
+        if (InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN != null) {
+            Screen screen1 = InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN;
+            InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN = null;
+            Minecraft.getInstance().gui.setScreen(screen1);
+        }
+    }
+
 
 }

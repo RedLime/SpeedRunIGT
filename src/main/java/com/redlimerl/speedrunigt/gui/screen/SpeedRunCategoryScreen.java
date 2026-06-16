@@ -43,7 +43,7 @@ public class SpeedRunCategoryScreen extends Screen {
     @Override
     protected void init() {
         assert minecraft != null;
-        addRenderableWidget(ButtonWidgetHelper.create(width / 2 - 100, height - 35, 200, 20, CommonComponents.GUI_CANCEL, button -> minecraft.setScreen(parent)));
+        addRenderableWidget(ButtonWidgetHelper.create(width / 2 - 100, height - 35, 200, 20, CommonComponents.GUI_CANCEL, button -> minecraft.gui.setScreen(parent)));
 
         this.listWidget = new CategorySelectionListWidget(minecraft);
         addWidget(listWidget);
@@ -51,7 +51,7 @@ public class SpeedRunCategoryScreen extends Screen {
 
     @Override
     public void onClose() {
-        if (this.minecraft != null) this.minecraft.setScreen(parent);
+        if (this.minecraft != null) this.minecraft.gui.setScreen(parent);
     }
 
     @Override

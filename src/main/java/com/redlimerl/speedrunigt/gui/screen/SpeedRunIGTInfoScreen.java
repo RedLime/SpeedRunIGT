@@ -37,7 +37,7 @@ public class SpeedRunIGTInfoScreen extends Screen {
 
         addRenderableWidget(ButtonWidgetHelper.create(width / 2 - 155, height - 80, 150, 20, Component.translatable("speedrunigt.menu.open_github_repo"), (Button button) -> Util.getPlatform().openUri("https://github.com/RedLime/SpeedRunIGT/")));
         addRenderableWidget(ButtonWidgetHelper.create(width / 2 + 5, height - 80, 150, 20, Component.translatable("speedrunigt.menu.open_support_page"), (Button button) -> Util.getPlatform().openUri("https://ko-fi.com/redlimerl")));
-        addRenderableWidget(ButtonWidgetHelper.create(width / 2 - 100, height - 40, 200, 20, CommonComponents.GUI_BACK, (Button button) -> minecraft.setScreen(parent)));
+        addRenderableWidget(ButtonWidgetHelper.create(width / 2 - 100, height - 40, 200, 20, CommonComponents.GUI_BACK, (Button button) -> minecraft.gui.setScreen(parent)));
     }
 
     @Override
@@ -65,7 +65,7 @@ public class SpeedRunIGTInfoScreen extends Screen {
     @Override
     public void onClose() {
         if (minecraft != null) {
-            minecraft.setScreen(parent);
+            minecraft.gui.setScreen(parent);
         }
     }
 }

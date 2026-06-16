@@ -15,8 +15,6 @@ import net.minecraft.client.Options;
 import net.minecraft.client.gui.font.FontOption;
 import net.minecraft.client.gui.font.FontSet;
 import net.minecraft.client.gui.font.GlyphStitcher;
-import net.minecraft.client.gui.screens.LevelLoadingScreen;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.main.GameConfig;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.Identifier;
@@ -48,18 +46,6 @@ public abstract class MinecraftMixin {
     @Shadow @Final private ReloadableResourceManager resourceManager;
 
     @Shadow private boolean pause;
-
-    @Inject(method = "setScreen", at = @At("RETURN"))
-    public void onSetScreen(Screen screen, CallbackInfo ci) {
-        if (screen instanceof LevelLoadingScreen) {
-            InGameTimerUtils.CAN_DISCONNECT = true;
-        }
-        if (InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN != null) {
-            Screen screen1 = InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN;
-            InGameTimerClientUtils.FAILED_CATEGORY_INIT_SCREEN = null;
-            Minecraft.getInstance().setScreen(screen1);
-        }
-    }
 
     @Inject(at = @At("HEAD"), method = "setLevel")
     public void onJoin(ClientLevel world, CallbackInfo ci) {
@@ -179,13 +165,13 @@ public abstract class MinecraftMixin {
     }
 
     // Crash safety
-    @Inject(method = "crash(Lnet/minecraft/client/Minecraft;Ljava/io/File;Lnet/minecraft/CrashReport;)V", at = @At("HEAD"))
-    private static void onCrash(Minecraft client, File runDirectory, CrashReport crashReport, CallbackInfo ci) {
+    @Inject(method = "saveReport(Ljava/io/File;Lnet/minecraft/CrashReport;)V", at = @At("HEAD"))
+    private static void onCrash(File runDirectory, CrashReport crashReport, CallbackInfo ci) {
         if (InGameTimer.getInstance().getStatus() != TimerStatus.NONE) InGameTimer.leave();
     }
 
     // Record save
-    @Inject(method = "destroy", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;close()V"))
+    @Inject(method = "exitWorldAndClose", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;close()V"))
     public void onStop(CallbackInfo ci) {
         InGameTimer.getInstance().writeRecordFile(false);
     }

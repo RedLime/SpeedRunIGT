@@ -128,7 +128,7 @@ public abstract class LocalPlayerMixin extends AbstractClientPlayer {
 
             //Stack of Lime Wool
             if (timer.getCategory() == RunCategories.STACK_OF_LIME_WOOL) {
-                if (itemStack.getItem() == Items.LIME_WOOL && itemStack.getCount() == 64) InGameTimer.complete();
+                if (itemStack.getItem() == Items.WOOL.lime() && itemStack.getCount() == 64) InGameTimer.complete();
             }
         }
 

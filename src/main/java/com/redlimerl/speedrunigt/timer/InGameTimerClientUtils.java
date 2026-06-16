@@ -22,11 +22,10 @@ public class InGameTimerClientUtils {
 
         if (timer.getStatus() != TimerStatus.IDLE) return false;
 
-        if (!client.isPaused() && client.levelRenderer != null && client.isWindowActive() && client.mouseHandler.isMouseGrabbed()
-                && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
+        if (!client.isPaused() && client.isWindowActive() && client.mouseHandler.isMouseGrabbed() && !InGameTimerUtils.IS_CHANGING_DIMENSION) {
             if (checkRender) {
                 LevelRendererAccessor worldRenderer = (LevelRendererAccessor) client.levelRenderer;
-                int chunks = worldRenderer.invokeCompletedChunkCount();
+                int chunks = client.levelExtractor.countRenderedSections();
                 int entities = worldRenderer.srigt$getLevelRenderState().entityRenderStates.size() - (client.options.getCameraType().isFirstPerson() ? 0 : 1);
 
                 return chunks + entities > 0;
@@ -62,9 +61,9 @@ public class InGameTimerClientUtils {
 
     public static @Nullable FailedCategoryInitScreen FAILED_CATEGORY_INIT_SCREEN = null;
     static void setCategoryWarningScreen(@Nullable String conditionFileName, InvalidCategoryException exception) {
-        if (Minecraft.getInstance().screen == null)
+        if (Minecraft.getInstance().gui.screen() == null)
             FAILED_CATEGORY_INIT_SCREEN = new FailedCategoryInitScreen(conditionFileName, exception);
-        else Minecraft.getInstance().setScreen(new FailedCategoryInitScreen(conditionFileName, exception));
+        else Minecraft.getInstance().gui.setScreen(new FailedCategoryInitScreen(conditionFileName, exception));
     }
 
     static MinecraftServer getClientServer() {
