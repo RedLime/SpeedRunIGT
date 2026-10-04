@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.gui.screen;
 
+import com.mojang.blaze3d.Blaze3D;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.SpeedRunIGTUpdateChecker;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
@@ -16,9 +17,9 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.CommonColors;
 import net.minecraft.util.Mth;
-import net.minecraft.util.Util;
 import org.jspecify.annotations.NonNull;
 
+import java.net.URI;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -75,9 +76,9 @@ public class SpeedRunOptionScreen extends Screen {
 
         addRenderableWidget(ButtonWidgetHelper.create(width - 85, height - 35, 70, 20, CommonComponents.GUI_CANCEL, (Button button) -> onClose()));
 
-        addRenderableWidget(ButtonWidgetHelper.create(15, height - 35, 70, 20, Component.translatable("speedrunigt.menu.donate"), (Button button) -> Util.getPlatform().openUri("https://ko-fi.com/redlimerl")));
+        addRenderableWidget(ButtonWidgetHelper.create(15, height - 35, 70, 20, Component.translatable("speedrunigt.menu.donate"), (Button button) -> Blaze3D.openUri(URI.create("https://ko-fi.com/redlimerl"))));
 
-        addRenderableWidget(ButtonWidgetHelper.create(88, height - 35, 140, 20, Component.translatable("speedrunigt.menu.crowdin"), (Button button) -> Util.getPlatform().openUri("https://crowdin.com/project/speedrunigt")));
+        addRenderableWidget(ButtonWidgetHelper.create(88, height - 35, 140, 20, Component.translatable("speedrunigt.menu.crowdin"), (Button button) -> Blaze3D.openUri(URI.create("https://crowdin.com/project/speedrunigt"))));
 
         buttonListWidget = addWidget(new ButtonScrollListWidget());
 

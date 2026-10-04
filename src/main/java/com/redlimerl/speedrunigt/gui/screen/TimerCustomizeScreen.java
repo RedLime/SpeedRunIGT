@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.gui.screen;
 
+import com.mojang.blaze3d.Blaze3D;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.SpeedRunIGTClient;
 import com.redlimerl.speedrunigt.mixins.access.FontManagerAccessor;
@@ -29,10 +30,10 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.CommonColors;
 import net.minecraft.util.Mth;
-import net.minecraft.util.Util;
 import net.minecraft.world.phys.Vec2;
 import org.jspecify.annotations.NonNull;
 
+import java.net.URI;
 import java.util.*;
 
 public class TimerCustomizeScreen extends Screen {
@@ -693,8 +694,8 @@ public class TimerCustomizeScreen extends Screen {
         fontConfigButton = addRenderableWidget(ButtonWidgetHelper.create(width / 2 + 88, 0, 50, 20, Component.literal("Config"), (Button button) -> {
             if (minecraft != null) minecraft.gui.setScreen(new FontConfigScreen(this, drawer.getTimerFont()));
         } ));
-        fontOptions.add(addRenderableWidget(ButtonWidgetHelper.create(width / 2 - 154, height / 2 - 80, 150, 20, Component.translatable("speedrunigt.option.timer_position.font.open_folder"), (Button button) -> Util.getPlatform().openFile(SpeedRunIGT.FONT_PATH.toFile()))));
-        fontOptions.add(addRenderableWidget(ButtonWidgetHelper.create(width / 2 + 4, height / 2 - 80, 150, 20, Component.translatable("speedrunigt.option.timer_position.font.description"), (Button button) -> Util.getPlatform().openUri("https://youtu.be/agBbiTQWj78"))));
+        fontOptions.add(addRenderableWidget(ButtonWidgetHelper.create(width / 2 - 154, height / 2 - 80, 150, 20, Component.translatable("speedrunigt.option.timer_position.font.open_folder"), (Button button) -> Blaze3D.openPath(SpeedRunIGT.FONT_PATH))));
+        fontOptions.add(addRenderableWidget(ButtonWidgetHelper.create(width / 2 + 4, height / 2 - 80, 150, 20, Component.translatable("speedrunigt.option.timer_position.font.description"), (Button button) -> Blaze3D.openUri(URI.create("https://youtu.be/agBbiTQWj78")))));
         openFontPage();
     }
 

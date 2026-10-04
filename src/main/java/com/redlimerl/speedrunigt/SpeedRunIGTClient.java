@@ -14,7 +14,6 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.resources.Identifier;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.Collection;
 
@@ -53,14 +52,14 @@ public class SpeedRunIGTClient implements ClientModInitializer {
         // Key Bindings initialize
         timerResetKeyBinding = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "speedrunigt.controls.start_timer",
-                InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_U,
+                InputConstants.Type.KEYBOARD,
+                InputConstants.KEY_U,
                 keybindCategory
         ));
         timerStopKeyBinding = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "speedrunigt.controls.stop_timer",
-                InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_I,
+                InputConstants.Type.KEYBOARD,
+                InputConstants.KEY_I,
                 keybindCategory
         ));
 

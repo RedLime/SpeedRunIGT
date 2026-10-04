@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.gui.screen;
 
+import com.mojang.blaze3d.Blaze3D;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.utils.ButtonWidgetHelper;
 import net.minecraft.ChatFormatting;
@@ -9,9 +10,9 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.CommonColors;
-import net.minecraft.util.Util;
 import org.jspecify.annotations.NonNull;
 
+import java.net.URI;
 import java.util.Locale;
 
 import static com.redlimerl.speedrunigt.SpeedRunIGTUpdateChecker.*;
@@ -31,12 +32,12 @@ public class SpeedRunIGTInfoScreen extends Screen {
     protected void init() {
         checkUpdate();
         assert minecraft != null;
-        update = addRenderableWidget(ButtonWidgetHelper.create(width / 2 - 155, height - 104, 150, 20, Component.translatable("speedrunigt.menu.download_update"), (Button button) -> Util.getPlatform().openUri(UPDATE_URL)));
+        update = addRenderableWidget(ButtonWidgetHelper.create(width / 2 - 155, height - 104, 150, 20, Component.translatable("speedrunigt.menu.download_update"), (Button button) -> Blaze3D.openUri(URI.create(UPDATE_URL))));
         update.active = false;
-        addRenderableWidget(ButtonWidgetHelper.create(width / 2 + 5, height - 104, 150, 20, Component.translatable("speedrunigt.menu.latest_change_log"), (Button button) -> Util.getPlatform().openUri("https://github.com/RedLime/SpeedRunIGT/releases/latest")));
+        addRenderableWidget(ButtonWidgetHelper.create(width / 2 + 5, height - 104, 150, 20, Component.translatable("speedrunigt.menu.latest_change_log"), (Button button) -> Blaze3D.openUri(URI.create("https://github.com/RedLime/SpeedRunIGT/releases/latest"))));
 
-        addRenderableWidget(ButtonWidgetHelper.create(width / 2 - 155, height - 80, 150, 20, Component.translatable("speedrunigt.menu.open_github_repo"), (Button button) -> Util.getPlatform().openUri("https://github.com/RedLime/SpeedRunIGT/")));
-        addRenderableWidget(ButtonWidgetHelper.create(width / 2 + 5, height - 80, 150, 20, Component.translatable("speedrunigt.menu.open_support_page"), (Button button) -> Util.getPlatform().openUri("https://ko-fi.com/redlimerl")));
+        addRenderableWidget(ButtonWidgetHelper.create(width / 2 - 155, height - 80, 150, 20, Component.translatable("speedrunigt.menu.open_github_repo"), (Button button) -> Blaze3D.openUri(URI.create("https://github.com/RedLime/SpeedRunIGT/"))));
+        addRenderableWidget(ButtonWidgetHelper.create(width / 2 + 5, height - 80, 150, 20, Component.translatable("speedrunigt.menu.open_support_page"), (Button button) -> Blaze3D.openUri(URI.create("https://ko-fi.com/redlimerl"))));
         addRenderableWidget(ButtonWidgetHelper.create(width / 2 - 100, height - 40, 200, 20, CommonComponents.GUI_BACK, (Button button) -> minecraft.gui.setScreen(parent)));
     }
 

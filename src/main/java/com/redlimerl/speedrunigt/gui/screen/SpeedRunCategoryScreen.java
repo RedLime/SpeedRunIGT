@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.gui.screen;
 
+import com.mojang.blaze3d.Blaze3D;
 import com.redlimerl.speedrunigt.option.SpeedRunOption;
 import com.redlimerl.speedrunigt.option.SpeedRunOptions;
 import com.redlimerl.speedrunigt.timer.InGameTimer;
@@ -23,9 +24,9 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.CommonColors;
-import net.minecraft.util.Util;
 import org.apache.commons.compress.utils.Lists;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,7 +123,7 @@ public class SpeedRunCategoryScreen extends Screen {
                         })
                         .pos(0, 0)
                         .build();
-                this.urlButton = ButtonWidgetHelper.create(0, 0, 30, 20, Component.translatable("speedrunigt.option.more"), button -> Util.getPlatform().openUri(category.getLeaderboardUrl()));
+                this.urlButton = ButtonWidgetHelper.create(0, 0, 30, 20, Component.translatable("speedrunigt.option.more"), button -> Blaze3D.openUri(URI.create(category.getLeaderboardUrl())));
                 children.add(urlButton);
                 children.add(checkBox);
             }

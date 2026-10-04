@@ -289,7 +289,7 @@ public class InGameTimerUtils {
     public static boolean isCurrentWorldCheatAvailable() {
         MinecraftServer server = getServer();
         if (server == null) return false;
-        return server.getPlayerList().isAllowCommandsForAllPlayers();
+        return server.getWorldData().isAllowCommands();
     }
 
     public static Difficulty getCurrentDifficulty() {

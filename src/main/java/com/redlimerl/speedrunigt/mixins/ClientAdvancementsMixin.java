@@ -38,9 +38,8 @@ public abstract class ClientAdvancementsMixin {
     @Shadow @Final private AdvancementTree tree;
     @Shadow @Final private Minecraft minecraft;
     @Shadow @Final private Map<Advancement, AdvancementProgress> progress;
-    @Shadow public abstract AdvancementTree getTree();
 
-    @ModifyVariable(method = "update", at = @At(value = "INVOKE", target = "Ljava/util/Map$Entry;getValue()Ljava/lang/Object;"))
+    @ModifyVariable(method = "update", at = @At(value = "INVOKE", target = "Ljava/util/Map$Entry;getValue()Ljava/lang/Object;"), name = "entry")
     public Map.Entry<Identifier, AdvancementProgress> advancement(Map.Entry<Identifier, AdvancementProgress> entry) {
         InGameTimer timer = InGameTimer.getInstance();
         
@@ -128,7 +127,7 @@ public abstract class ClientAdvancementsMixin {
         for (Map.Entry<String, TimerAdvancementTracker.AdvancementTrack> track : InGameTimer.getInstance().getAdvancementsTracker().getAdvancements().entrySet()) {
             if (track.getValue().isAdvancement() && track.getValue().isComplete()) completedAdvancements.add(track.getKey());
         }
-        for (AdvancementNode advancement : this.getTree().nodes()) {
+        for (AdvancementNode advancement : this.tree.nodes()) {
             if (this.progress.containsKey(advancement.advancement()) && advancement.advancement().display().isPresent()) {
                 AdvancementProgress advancementProgress = this.progress.get(advancement.advancement());
 

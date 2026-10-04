@@ -1,5 +1,6 @@
 package com.redlimerl.speedrunigt.impl;
 
+import com.mojang.blaze3d.Blaze3D;
 import com.redlimerl.speedrunigt.SpeedRunIGT;
 import com.redlimerl.speedrunigt.api.OptionButtonFactory;
 import com.redlimerl.speedrunigt.api.SpeedRunIGTApi;
@@ -21,10 +22,10 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import net.minecraft.util.Util;
 import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
@@ -41,7 +42,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
                         ButtonWidgetHelper.create(0, 0, 150, 20, Component.literal("SpeedRunIGT Discord"),
-                                (Button button) -> Util.getPlatform().openUri("https://discord.gg/7G2tfP7Xpe"))
+                                (Button button) -> Blaze3D.openUri(URI.create("https://discord.gg/7G2tfP7Xpe")))
                 )
                 .setCategory("speedrunigt.option.category.general")
         );
@@ -349,7 +350,7 @@ public class OptionButtonsImpl implements SpeedRunIGTApi {
         factories.add(screen -> new OptionButtonFactory.Builder()
                 .setButtonWidget(
                         ButtonWidgetHelper.create(0, 0, 150, 20, Component.translatable("speedrunigt.option.open_records_folder"),
-                                (Button button) -> Util.getPlatform().openFile(SpeedRunIGT.getRecordsPath().toFile()))
+                                (Button button) -> Blaze3D.openPath(SpeedRunIGT.getRecordsPath()))
                 )
                 .setCategory("speedrunigt.option.category.records")
         );
